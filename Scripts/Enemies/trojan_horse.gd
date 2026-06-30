@@ -100,6 +100,59 @@ func reset_for_spawn() -> void:
 	_play_audio_player(_enter_sfx)
 
 
+func spawn_as_cloaked() -> void:
+	_base_visual_scale = scale
+	cloaked = true
+	_transforming = false
+	_scanner_revealed = false
+	_cloak_elapsed = 0.0
+	_play_animation(CLOAKED_HORSE_MOVE_ANIMATION)
+	_position_health_bar()
+	if _deployed:
+		set_process(true)
+
+
+func prepare_cutscene_preview() -> void:
+	scale = _base_visual_scale
+	cloaked = false
+	_transforming = false
+	_scanner_revealed = false
+	_destroy_cutscene_active = false
+	_destroy_cutscene_elapsed = 0.0
+	_cloak_elapsed = 0.0
+	_deployed = false
+	show()
+	_ensure_health_bar()
+	_set_health_bar_visible(false)
+	play_idle()
+	set_process(false)
+
+
+func play_cutscene_cloak_transform() -> void:
+	if _destroying or _destroy_cutscene_active:
+		return
+
+	show()
+	scale = _base_visual_scale
+	cloaked = false
+	_transforming = true
+	_scanner_revealed = false
+	set_process(false)
+	_ensure_health_bar()
+	_set_health_bar_visible(false)
+	if _has_animation(HORSE_TRANSFORM_ANIMATION):
+		_play_audio_player(_transform_sfx)
+		_play_animation(HORSE_TRANSFORM_ANIMATION)
+		await animation_finished
+
+	if _destroying or _destroy_cutscene_active:
+		return
+
+	cloaked = true
+	_transforming = false
+	_play_animation(CLOAKED_HORSE_MOVE_ANIMATION)
+
+
 func play_idle() -> void:
 	if _destroying or _destroy_cutscene_active:
 		return

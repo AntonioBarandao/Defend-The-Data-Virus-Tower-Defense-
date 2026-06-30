@@ -7,8 +7,11 @@ signal phase_finished(act_number: int, phase_name: StringName)
 signal cutscene_finished
 
 const ACT_ONE := 1
+const ACT_WAVE_FIVE := 5
 const PHASE_ONE := &"phase_1"
 const PHASE_TWO := &"phase_2"
+const PHASE_THREE := &"phase_3"
+const PHASE_FOUR := &"phase_4"
 const PHASE_END := &"phase_end"
 const PHASE_ONE_DESTROY_SFX := preload("res://assets/sfx/virus_destroy.wav")
 
@@ -43,6 +46,16 @@ const PHASE_ONE_DESTROY_SFX := preload("res://assets/sfx/virus_destroy.wav")
 @export_range(2.0, 60.0, 1.0) var mascot_bob_distance := 18.0
 @export_range(0.05, 0.8, 0.01) var mascot_bob_half_duration := 0.18
 @export var dim_color := Color(0.055, 0.06, 0.075, 0.76)
+@export_group("Wave 5 Cutscene")
+@export var wave5_trojan_preview_path: NodePath = ^"../Otherground_Cutscene/CutsceneBack/Wave5CutsceneTrojanHorse"
+@export_range(0.2, 6.0, 0.05) var wave5_trojan_hold_duration := 1.4
+@export_range(0.2, 5.0, 0.05) var wave5_invisible_hold_duration := 1.0
+@export var wave5_phase_two_lines: PackedStringArray = [
+	"A Trojan horse has entered the network. It hides inside normal traffic, then turns invisible so most towers cannot target it."
+]
+@export var wave5_phase_four_lines: PackedStringArray = [
+	"Use the IDS Scanner to reveal the camouflaged Trojan horse. Once it is detected, your defenses can lock on and destroy it."
+]
 @export_group("")
 
 @onready var _root: Control = $Root
@@ -56,7 +69,11 @@ const PHASE_ONE_DESTROY_SFX := preload("res://assets/sfx/virus_destroy.wav")
 
 var current_act := 0
 var current_phase: StringName = &""
+var _current_phase_finished := false
 var _line_index := 0
+var _active_dialogue_lines: PackedStringArray = []
+var _dialogue_completes_cutscene := true
+var _dialogue_phase_done := false
 var _typing := false
 var _skip_typing := false
 var _running := false
@@ -66,12 +83,18 @@ var _mascot_bob_tween: Tween
 var _cutscene_camera: Camera2D
 var _camera_start_global_position := Vector2.ZERO
 var _camera_start_zoom := Vector2.ONE
+var _camera_tween: Tween
+var _phase_one_attack_tween: Tween
+var _phase_two_intro_tween: Tween
+var _phase_end_tween: Tween
 var _phase_one_hover_tweens: Array[Tween] = []
 var _phase_one_hover_start_positions := {}
 var _phase_one_initial_positions := {}
 var _phase_one_destroy_sfx_players: Array[AudioStreamPlayer] = []
+var _wave5_preview_trojan: TrojanHorse
 var _last_handled_cutscene_input_event_id := 0
 var _skip_requested := false
+var _cutscene_finished_emitted := false
 
 
 func _ready() -> void:
@@ -81,6 +104,7 @@ func _ready() -> void:
 	_ensure_continue_button_styles()
 	_speaker_label.text = "CYBER GUARDIAN"
 	_cutscene_camera = get_node_or_null(cutscene_camera_path) as Camera2D
+	_capture_cutscene_camera_start()
 	_root.visible = false
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if play_on_ready:
@@ -93,8 +117,14 @@ func start_cutscene() -> void:
 
 	_running = true
 	_skip_requested = false
+	_cutscene_finished_emitted = false
 	visible = true
 	current_act = ACT_ONE
+	current_phase = &""
+	_current_phase_finished = false
+	_active_dialogue_lines = dialogue_lines
+	_dialogue_completes_cutscene = true
+	_dialogue_phase_done = false
 	act_started.emit(current_act)
 	_root.visible = true
 	_root.modulate = Color.WHITE
@@ -109,6 +139,40 @@ func start_cutscene() -> void:
 	if _skip_requested or not _running:
 		return
 	await _run_act_one_phase_two()
+
+
+func start_wave5_cutscene() -> void:
+	if _running:
+		return
+
+	_running = true
+	_skip_requested = false
+	_cutscene_finished_emitted = false
+	visible = true
+	current_act = ACT_WAVE_FIVE
+	current_phase = &""
+	_current_phase_finished = false
+	act_started.emit(current_act)
+	_root.visible = true
+	_root.modulate = Color.WHITE
+	_root.mouse_filter = Control.MOUSE_FILTER_STOP
+	await get_tree().process_frame
+	_capture_ui_final_positions()
+	_prepare_all_overlays_hidden()
+
+	await _run_wave5_phase_one()
+	if _skip_requested or not _running:
+		return
+	await _run_dialogue_phase(PHASE_TWO, wave5_phase_two_lines, false)
+	if _skip_requested or not _running:
+		return
+	await _run_wave5_phase_three()
+	if _skip_requested or not _running:
+		return
+	await _run_dialogue_phase(PHASE_FOUR, wave5_phase_four_lines, false)
+	if _skip_requested or not _running:
+		return
+	await _finish_cutscene()
 
 
 func _run_act_one_phase_one() -> void:
@@ -144,7 +208,14 @@ func _run_act_one_phase_one() -> void:
 
 
 func _run_act_one_phase_two() -> void:
-	_start_phase(PHASE_TWO)
+	await _run_dialogue_phase(PHASE_TWO, dialogue_lines, true)
+
+
+func _run_dialogue_phase(phase_name: StringName, lines: PackedStringArray, completes_cutscene: bool) -> void:
+	_start_phase(phase_name)
+	_active_dialogue_lines = lines
+	_dialogue_completes_cutscene = completes_cutscene
+	_dialogue_phase_done = false
 	_line_index = 0
 	_dialogue_label.text = ""
 	_continue_button.hide()
@@ -158,26 +229,34 @@ func _run_act_one_phase_two() -> void:
 	_mascot.global_position = _mascot_final_global_position + Vector2(mascot_slide_distance, 0.0)
 	_mascot.modulate = Color(1, 1, 1, 0)
 
-	var intro_tween := create_tween()
-	intro_tween.set_parallel(true)
-	intro_tween.tween_property(_dim_overlay, "color", dim_color, entry_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	intro_tween.tween_property(_dialogue_panel, "global_position", _panel_final_global_position, entry_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	intro_tween.tween_property(_dialogue_panel, "modulate", Color.WHITE, entry_duration * 0.8)
-	intro_tween.tween_property(_mascot, "global_position", _mascot_final_global_position, entry_duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	intro_tween.tween_property(_mascot, "modulate", Color.WHITE, entry_duration * 0.75)
-	await intro_tween.finished
+	_kill_tween(_phase_two_intro_tween)
+	_phase_two_intro_tween = create_tween()
+	_phase_two_intro_tween.set_parallel(true)
+	_phase_two_intro_tween.tween_property(_dim_overlay, "color", dim_color, entry_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_phase_two_intro_tween.tween_property(_dialogue_panel, "global_position", _panel_final_global_position, entry_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_phase_two_intro_tween.tween_property(_dialogue_panel, "modulate", Color.WHITE, entry_duration * 0.8)
+	_phase_two_intro_tween.tween_property(_mascot, "global_position", _mascot_final_global_position, entry_duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_phase_two_intro_tween.tween_property(_mascot, "modulate", Color.WHITE, entry_duration * 0.75)
+	await _phase_two_intro_tween.finished
+	_phase_two_intro_tween = null
 	if _skip_requested or not _running:
 		return
 
-	if dialogue_lines.is_empty():
-		_finish_cutscene()
+	if _active_dialogue_lines.is_empty():
+		if completes_cutscene:
+			await _finish_cutscene()
+		else:
+			_finish_current_dialogue_phase()
 		return
 
 	_play_current_line()
+	if not completes_cutscene:
+		while _running and not _skip_requested and not _dialogue_phase_done:
+			await get_tree().process_frame
 
 
 func _advance_dialogue() -> void:
-	if not _running or current_phase != PHASE_TWO:
+	if not _running or not _is_dialogue_phase():
 		return
 
 	if _typing:
@@ -185,8 +264,11 @@ func _advance_dialogue() -> void:
 		return
 
 	_line_index += 1
-	if _line_index >= dialogue_lines.size():
-		_finish_cutscene()
+	if _line_index >= _active_dialogue_lines.size():
+		if _dialogue_completes_cutscene:
+			_finish_cutscene()
+		else:
+			_finish_current_dialogue_phase()
 		return
 
 	_play_current_line()
@@ -198,7 +280,7 @@ func _input(event: InputEvent) -> void:
 
 
 func handle_cutscene_advance_input(event: InputEvent) -> bool:
-	if not _running or current_phase != PHASE_TWO:
+	if not _running or not _is_dialogue_phase():
 		return false
 	if not _is_enter_press(event) and not _is_primary_press(event):
 		return false
@@ -251,7 +333,7 @@ func _play_current_line() -> void:
 	_dialogue_label.text = ""
 	_start_mascot_bob()
 
-	var line := String(dialogue_lines[_line_index])
+	var line := String(_active_dialogue_lines[_line_index])
 	var delay := 1.0 / maxf(1.0, characters_per_second)
 	for index in range(line.length()):
 		if _skip_typing:
@@ -266,7 +348,7 @@ func _play_current_line() -> void:
 	_typing = false
 	_skip_typing = false
 	_stop_mascot_bob()
-	_continue_button.text = "Begin" if _line_index >= dialogue_lines.size() - 1 else "Continue"
+	_continue_button.text = "Begin" if _line_index >= _active_dialogue_lines.size() - 1 and _dialogue_completes_cutscene else "Continue"
 	_continue_button.show()
 	_animate_continue_button()
 
@@ -279,20 +361,29 @@ func skip_cutscene() -> void:
 	if not _running:
 		return
 
+	var skipped_phase := current_phase
 	_skip_requested = true
+	_typing = false
+	_skip_typing = false
+	_stop_active_cutscene_tweens()
 	_stop_mascot_bob()
 	_stop_phase_one_virus_hover()
-	if _cutscene_camera != null:
-		_cutscene_camera.global_position = _camera_start_global_position
-		_cutscene_camera.zoom = _camera_start_zoom
+	_cleanup_wave5_preview_trojan()
+	_restore_cutscene_camera_to_start()
 	_dialogue_panel.global_position = _panel_final_global_position
 	_mascot.global_position = _mascot_final_global_position
 	_prepare_all_overlays_hidden()
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.hide()
+
+	if skipped_phase != &"" and skipped_phase != PHASE_END:
+		_finish_phase(skipped_phase)
+	if current_phase != PHASE_END:
+		_start_phase(PHASE_END)
+
 	_running = false
-	current_phase = PHASE_END
-	cutscene_finished.emit()
+	_finish_phase(PHASE_END)
+	_emit_cutscene_finished_once()
 
 
 func _ensure_continue_button_styles() -> void:
@@ -313,19 +404,28 @@ func _finish_cutscene() -> void:
 	if not _running:
 		return
 
-	_finish_phase(PHASE_TWO)
+	if current_phase != &"" and current_phase != PHASE_END:
+		_finish_phase(current_phase)
 	_start_phase(PHASE_END)
 	_stop_mascot_bob()
 	_continue_button.hide()
+	_cleanup_wave5_preview_trojan()
+	await _return_camera_to_start()
+	if _skip_requested or not _running:
+		return
 
-	var outro_tween := create_tween()
-	outro_tween.set_parallel(true)
-	outro_tween.tween_property(_dim_overlay, "color", Color(dim_color.r, dim_color.g, dim_color.b, 0.0), exit_duration)
-	outro_tween.tween_property(_dialogue_panel, "global_position", _panel_final_global_position + Vector2(-text_box_slide_distance, 0.0), exit_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	outro_tween.tween_property(_dialogue_panel, "modulate", Color(1, 1, 1, 0), exit_duration * 0.75)
-	outro_tween.tween_property(_mascot, "global_position", _mascot_final_global_position + Vector2(mascot_slide_distance, 0.0), exit_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	outro_tween.tween_property(_mascot, "modulate", Color(1, 1, 1, 0), exit_duration * 0.75)
-	await outro_tween.finished
+	_kill_tween(_phase_end_tween)
+	_phase_end_tween = create_tween()
+	_phase_end_tween.set_parallel(true)
+	_phase_end_tween.tween_property(_dim_overlay, "color", Color(dim_color.r, dim_color.g, dim_color.b, 0.0), exit_duration)
+	_phase_end_tween.tween_property(_dialogue_panel, "global_position", _panel_final_global_position + Vector2(-text_box_slide_distance, 0.0), exit_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	_phase_end_tween.tween_property(_dialogue_panel, "modulate", Color(1, 1, 1, 0), exit_duration * 0.75)
+	_phase_end_tween.tween_property(_mascot, "global_position", _mascot_final_global_position + Vector2(mascot_slide_distance, 0.0), exit_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	_phase_end_tween.tween_property(_mascot, "modulate", Color(1, 1, 1, 0), exit_duration * 0.75)
+	await _phase_end_tween.finished
+	_phase_end_tween = null
+	if _skip_requested or not _running:
+		return
 
 	_dialogue_panel.global_position = _panel_final_global_position
 	_mascot.global_position = _mascot_final_global_position
@@ -334,7 +434,71 @@ func _finish_cutscene() -> void:
 	_root.hide()
 	_running = false
 	_finish_phase(PHASE_END)
-	cutscene_finished.emit()
+	_emit_cutscene_finished_once()
+
+
+func _finish_current_dialogue_phase() -> void:
+	_stop_mascot_bob()
+	_continue_button.hide()
+	_dialogue_phase_done = true
+	_finish_phase(current_phase)
+
+
+func _is_dialogue_phase() -> bool:
+	return current_phase == PHASE_TWO or current_phase == PHASE_FOUR
+
+
+func _run_wave5_phase_one() -> void:
+	_start_phase(PHASE_ONE)
+	_prepare_phase_one_camera()
+	_prepare_all_overlays_hidden()
+	_prepare_wave5_preview_trojan()
+	await _pan_camera_to_target(_get_wave5_trojan_camera_center(), Vector2.ZERO)
+	if _skip_requested or not _running:
+		return
+
+	await get_tree().create_timer(wave5_trojan_hold_duration).timeout
+	if _skip_requested or not _running:
+		return
+
+	_finish_phase(PHASE_ONE)
+
+
+func _run_wave5_phase_three() -> void:
+	_start_phase(PHASE_THREE)
+	_dialogue_panel.hide()
+	_mascot.hide()
+	_dim_overlay.hide()
+	if is_instance_valid(_wave5_preview_trojan):
+		await _wave5_preview_trojan.play_cutscene_cloak_transform()
+	else:
+		await get_tree().create_timer(wave5_invisible_hold_duration).timeout
+	if _skip_requested or not _running:
+		return
+
+	_finish_phase(PHASE_THREE)
+
+
+func _prepare_wave5_preview_trojan() -> void:
+	_cleanup_wave5_preview_trojan()
+	_wave5_preview_trojan = get_node_or_null(wave5_trojan_preview_path) as TrojanHorse
+	if not is_instance_valid(_wave5_preview_trojan):
+		return
+
+	_wave5_preview_trojan.prepare_cutscene_preview()
+
+
+func _cleanup_wave5_preview_trojan() -> void:
+	if is_instance_valid(_wave5_preview_trojan):
+		_wave5_preview_trojan.hide()
+	_wave5_preview_trojan = null
+
+
+func _get_wave5_trojan_camera_center() -> Vector2:
+	if is_instance_valid(_wave5_preview_trojan):
+		return _wave5_preview_trojan.global_position
+
+	return _get_phase_one_target_center()
 
 
 func _play_red_alert() -> void:
@@ -351,21 +515,33 @@ func _prepare_phase_one_camera() -> void:
 		return
 
 	_cutscene_camera.make_current()
+	_capture_cutscene_camera_start()
+
+
+func _capture_cutscene_camera_start() -> void:
+	if _cutscene_camera == null:
+		return
+
 	_camera_start_global_position = _cutscene_camera.global_position
 	_camera_start_zoom = _cutscene_camera.zoom
 
 
 func _pan_camera_to_phase_one_target() -> void:
+	await _pan_camera_to_target(_get_phase_one_target_center(), enemy_camera_padding)
+
+
+func _pan_camera_to_target(target_position: Vector2, camera_padding: Vector2) -> void:
 	if _cutscene_camera == null:
 		await get_tree().create_timer(camera_pan_duration).timeout
 		return
 
-	var target_position := _get_phase_one_target_center()
-	var camera_tween := create_tween()
-	camera_tween.set_parallel(true)
-	camera_tween.tween_property(_cutscene_camera, "global_position", target_position + enemy_camera_padding, camera_pan_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	camera_tween.tween_property(_cutscene_camera, "zoom", Vector2.ONE * phase_one_camera_zoom, camera_pan_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	await camera_tween.finished
+	_kill_tween(_camera_tween)
+	_camera_tween = create_tween()
+	_camera_tween.set_parallel(true)
+	_camera_tween.tween_property(_cutscene_camera, "global_position", target_position + camera_padding, camera_pan_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	_camera_tween.tween_property(_cutscene_camera, "zoom", Vector2.ONE * phase_one_camera_zoom, camera_pan_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	await _camera_tween.finished
+	_camera_tween = null
 
 
 func _return_camera_to_start() -> void:
@@ -373,11 +549,13 @@ func _return_camera_to_start() -> void:
 		await get_tree().create_timer(camera_return_duration).timeout
 		return
 
-	var camera_tween := create_tween()
-	camera_tween.set_parallel(true)
-	camera_tween.tween_property(_cutscene_camera, "global_position", _camera_start_global_position, camera_return_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	camera_tween.tween_property(_cutscene_camera, "zoom", _camera_start_zoom, camera_return_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	await camera_tween.finished
+	_kill_tween(_camera_tween)
+	_camera_tween = create_tween()
+	_camera_tween.set_parallel(true)
+	_camera_tween.tween_property(_cutscene_camera, "global_position", _camera_start_global_position, camera_return_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	_camera_tween.tween_property(_cutscene_camera, "zoom", _camera_start_zoom, camera_return_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	await _camera_tween.finished
+	_camera_tween = null
 
 
 func _get_phase_one_target_center() -> Vector2:
@@ -489,13 +667,14 @@ func _move_phase_one_viruses_to_entrance() -> void:
 		return
 
 	var attack_target := _get_phase_one_attack_target_position()
-	var attack_tween := create_tween()
-	attack_tween.set_parallel(true)
+	_kill_tween(_phase_one_attack_tween)
+	_phase_one_attack_tween = create_tween()
+	_phase_one_attack_tween.set_parallel(true)
 
 	for index in range(visuals.size()):
 		var canvas_item := visuals[index]
 		var destination := attack_target + _get_phase_one_attack_offset(index)
-		attack_tween.tween_property(
+		_phase_one_attack_tween.tween_property(
 			canvas_item,
 			"global_position",
 			destination,
@@ -503,14 +682,15 @@ func _move_phase_one_viruses_to_entrance() -> void:
 		).set_delay(float(index) * 0.08).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 
 	if _cutscene_camera != null:
-		attack_tween.tween_property(
+		_phase_one_attack_tween.tween_property(
 			_cutscene_camera,
 			"global_position",
 			attack_target + entrance_camera_padding,
 			enemy_attack_duration
 		).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 
-	await attack_tween.finished
+	await _phase_one_attack_tween.finished
+	_phase_one_attack_tween = null
 
 
 func _get_phase_one_attack_target_position() -> Vector2:
@@ -590,12 +770,51 @@ func _prepare_all_overlays_hidden() -> void:
 	_alert_overlay.color = Color(red_alert_color.r, red_alert_color.g, red_alert_color.b, 0.0)
 
 
+func _stop_active_cutscene_tweens() -> void:
+	_kill_tween(_camera_tween)
+	_camera_tween = null
+	_kill_tween(_phase_one_attack_tween)
+	_phase_one_attack_tween = null
+	_kill_tween(_phase_two_intro_tween)
+	_phase_two_intro_tween = null
+	_kill_tween(_phase_end_tween)
+	_phase_end_tween = null
+
+
+func _kill_tween(tween: Tween) -> void:
+	if tween != null and tween.is_valid():
+		tween.kill()
+
+
+func _restore_cutscene_camera_to_start() -> void:
+	if _cutscene_camera == null:
+		return
+
+	_cutscene_camera.make_current()
+	_cutscene_camera.global_position = _camera_start_global_position
+	_cutscene_camera.zoom = _camera_start_zoom
+
+
+func _emit_cutscene_finished_once() -> void:
+	if _cutscene_finished_emitted:
+		return
+
+	_cutscene_finished_emitted = true
+	cutscene_finished.emit()
+
+
 func _start_phase(phase_name: StringName) -> void:
 	current_phase = phase_name
+	_current_phase_finished = false
 	phase_started.emit(current_act, current_phase)
 
 
 func _finish_phase(phase_name: StringName) -> void:
+	if current_phase == phase_name:
+		if _current_phase_finished:
+			return
+		_current_phase_finished = true
+
 	phase_finished.emit(current_act, phase_name)
 
 

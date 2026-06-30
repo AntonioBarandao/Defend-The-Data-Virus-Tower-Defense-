@@ -30,7 +30,7 @@ extends Area2D
 		show_visual_in_editor = value
 		_sync_nodes()
 
-@export var collision_shape_path: NodePath = ^"CollisionShape2D":
+@export var collision_shape_path: NodePath = ^"PlacementSlot1":
 	set(value):
 		collision_shape_path = value
 		_sync_nodes()
@@ -53,7 +53,6 @@ func _sync_nodes() -> void:
 
 	var collision_shape := get_node_or_null(collision_shape_path) as CollisionShape2D
 	if collision_shape != null:
-		collision_shape.position = placement_offset
 		var rectangle_shape := collision_shape.shape as RectangleShape2D
 		if rectangle_shape == null:
 			rectangle_shape = RectangleShape2D.new()
@@ -71,7 +70,8 @@ func _sync_nodes() -> void:
 	visual.visible = show_visual_in_editor and Engine.is_editor_hint()
 	visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	visual.color = visual_color
-	visual.offset_left = placement_offset.x - placement_size.x * 0.5
-	visual.offset_top = placement_offset.y - placement_size.y * 0.5
-	visual.offset_right = placement_offset.x + placement_size.x * 0.5
-	visual.offset_bottom = placement_offset.y + placement_size.y * 0.5
+	var visual_center := collision_shape.position if collision_shape != null else placement_offset
+	visual.offset_left = visual_center.x - placement_size.x * 0.5
+	visual.offset_top = visual_center.y - placement_size.y * 0.5
+	visual.offset_right = visual_center.x + placement_size.x * 0.5
+	visual.offset_bottom = visual_center.y + placement_size.y * 0.5

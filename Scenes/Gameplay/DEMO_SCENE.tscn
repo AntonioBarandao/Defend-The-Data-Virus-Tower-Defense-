@@ -1254,7 +1254,7 @@ scale = Vector2(5, 5)
 script = ExtResource("13_place")
 placement_size = Vector2(92.59923, 92.59923)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=1417027579]
+[node name="PlacementSlot1" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=1417027579]
 scale = Vector2(0.36217004, 0.36217004)
 shape = SubResource("RectangleShape2D_geh8c")
 

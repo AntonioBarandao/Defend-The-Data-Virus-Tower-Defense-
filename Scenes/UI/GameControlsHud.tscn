@@ -76,9 +76,9 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -436.0
+offset_left = -382.0
 offset_top = 918.0
-offset_right = -234.0
+offset_right = -180.0
 offset_bottom = 954.0
 grow_horizontal = 0
 scale = Vector2(1.7253503, 1.7253503)
@@ -96,52 +96,6 @@ custom_minimum_size = Vector2(96, 36)
 layout_mode = 2
 focus_mode = 0
 text = "Add 100"
-
-[node name="MainMenuButton" type="Button" parent="Root" unique_id=1814937485]
-custom_minimum_size = Vector2(56, 48)
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = 1208.0
-offset_top = 24.0
-offset_right = 1264.0
-offset_bottom = 72.0
-grow_horizontal = 2
-focus_mode = 0
-
-[node name="IconCenter" type="CenterContainer" parent="Root/MainMenuButton" unique_id=765876014]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="Bars" type="VBoxContainer" parent="Root/MainMenuButton/IconCenter" unique_id=1959477407]
-custom_minimum_size = Vector2(24, 20)
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 5
-
-[node name="Bar1" type="ColorRect" parent="Root/MainMenuButton/IconCenter/Bars" unique_id=1313077812]
-custom_minimum_size = Vector2(24, 3)
-layout_mode = 2
-mouse_filter = 2
-color = Color(0.9, 0.96, 1, 1)
-
-[node name="Bar2" type="ColorRect" parent="Root/MainMenuButton/IconCenter/Bars" unique_id=1431615431]
-custom_minimum_size = Vector2(24, 3)
-layout_mode = 2
-mouse_filter = 2
-color = Color(0.9, 0.96, 1, 1)
-
-[node name="Bar3" type="ColorRect" parent="Root/MainMenuButton/IconCenter/Bars" unique_id=1134318633]
-custom_minimum_size = Vector2(24, 3)
-layout_mode = 2
-mouse_filter = 2
-color = Color(0.9, 0.96, 1, 1)
 
 [node name="MainMenuPanel" type="PanelContainer" parent="Root" unique_id=1704217034]
 visible = false

@@ -9,6 +9,7 @@ const SUMMON_ANIMATION := &"SummonAnim"
 const SHOOT_ANIMATION := &"ShootAnim"
 const GRAB_SIZE := Vector2(240, 180)
 const PLACEMENT_HIGHLIGHT_SIZE := Vector2(180, 120)
+const PLACEMENT_SLOT_PREFIX := "placementslot"
 const PLATFORM_VALID_COLOR := Color(0.1, 0.9, 0.25, 0.45)
 const PLATFORM_INVALID_COLOR := Color(1.0, 0.1, 0.08, 0.45)
 const MAX_LEVEL := 5
@@ -26,8 +27,6 @@ const SUMMON_EFFECT_Z_OFFSET := -1
 const DRAG_VALID_MODULATE := Color(0.42, 1.0, 0.46, 0.84)
 const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
 
-@export var placement_area_prefix := "TowerPlacementArea"
-@export var placement_area_group := "tower_placement_area"
 @export var platform_highlight_path: NodePath = ^"../../PlatformHighlight"
 @export var forward_rotation_offset := PI * 0.5
 @export_range(1, MAX_LEVEL, 1) var level := 1
@@ -447,55 +446,61 @@ func _find_placement_shape_at_position(global_position_to_test: Vector2) -> Coll
 	if game_root == null:
 		return null
 
-	for node in get_tree().get_nodes_in_group(placement_area_group):
-		var area := node as Area2D
-		if area == null or not game_root.is_ancestor_of(area):
-			continue
-
-		var grouped_shape := _find_placement_shape_in_area(area, global_position_to_test)
-		if grouped_shape != null:
-			return grouped_shape
-
-	for child in game_root.get_children():
-		var area := child as Area2D
-		if area == null or not String(area.name).begins_with(placement_area_prefix):
-			continue
-
-		var shape := _find_placement_shape_in_area(area, global_position_to_test)
-		if shape != null:
-			return shape
-
-	return null
+	return _find_placement_slot_at_position(game_root, global_position_to_test)
 
 
-func _find_placement_shape_in_area(area: Area2D, global_position_to_test: Vector2) -> CollisionShape2D:
-	for area_child in area.get_children():
-		var collision_shape := area_child as CollisionShape2D
-		if collision_shape == null or collision_shape.disabled:
-			continue
-
-		var rectangle_shape := collision_shape.shape as RectangleShape2D
-		if rectangle_shape == null:
-			continue
-
-		var local_position := collision_shape.global_transform.affine_inverse() * global_position_to_test
-		var rectangle := Rect2(-rectangle_shape.size * 0.5, rectangle_shape.size)
-		if rectangle.has_point(local_position):
+func _find_placement_slot_at_position(node: Node, global_position_to_test: Vector2) -> CollisionShape2D:
+	if node != self:
+		var collision_shape := node as CollisionShape2D
+		if _is_placement_slot_shape(collision_shape) and _placement_shape_contains_point(collision_shape, global_position_to_test):
 			return collision_shape
 
+	for child in node.get_children():
+		var found_shape := _find_placement_slot_at_position(child, global_position_to_test)
+		if found_shape != null:
+			return found_shape
+
 	return null
 
 
-func _find_first_placement_shape_in_area(area: Area2D) -> CollisionShape2D:
-	for area_child in area.get_children():
-		var collision_shape := area_child as CollisionShape2D
-		if collision_shape == null or collision_shape.disabled:
-			continue
-
-		if collision_shape.shape is RectangleShape2D:
+func _find_first_placement_slot(node: Node) -> CollisionShape2D:
+	if node != self:
+		var collision_shape := node as CollisionShape2D
+		if _is_placement_slot_shape(collision_shape):
 			return collision_shape
 
+	for child in node.get_children():
+		var found_shape := _find_first_placement_slot(child)
+		if found_shape != null:
+			return found_shape
+
 	return null
+
+
+func _is_placement_slot_shape(collision_shape: CollisionShape2D) -> bool:
+	return collision_shape != null \
+		and not collision_shape.disabled \
+		and collision_shape.shape is RectangleShape2D \
+		and _is_placement_slot_name(String(collision_shape.name))
+
+
+func _is_placement_slot_name(node_name: String) -> bool:
+	var lower_name := node_name.to_lower()
+	if not lower_name.begins_with(PLACEMENT_SLOT_PREFIX):
+		return false
+
+	var suffix := lower_name.substr(PLACEMENT_SLOT_PREFIX.length())
+	return not suffix.is_empty() and suffix.is_valid_int() and int(suffix) > 0
+
+
+func _placement_shape_contains_point(collision_shape: CollisionShape2D, global_position_to_test: Vector2) -> bool:
+	var rectangle_shape := collision_shape.shape as RectangleShape2D
+	if rectangle_shape == null:
+		return false
+
+	var local_position := collision_shape.global_transform.affine_inverse() * global_position_to_test
+	var rectangle := Rect2(-rectangle_shape.size * 0.5, rectangle_shape.size)
+	return rectangle.has_point(local_position)
 
 
 func _get_platform_highlight_rect(placement_shape: CollisionShape2D) -> Rect2:
@@ -511,23 +516,9 @@ func _get_default_placement_highlight_size() -> Vector2:
 	if game_root == null:
 		return PLACEMENT_HIGHLIGHT_SIZE
 
-	for node in get_tree().get_nodes_in_group(placement_area_group):
-		var area := node as Area2D
-		if area == null or not game_root.is_ancestor_of(area):
-			continue
-
-		var grouped_shape := _find_first_placement_shape_in_area(area)
-		if grouped_shape != null:
-			return _get_placement_shape_global_rect(grouped_shape).size
-
-	for child in game_root.get_children():
-		var area := child as Area2D
-		if area == null or not String(area.name).begins_with(placement_area_prefix):
-			continue
-
-		var prefixed_shape := _find_first_placement_shape_in_area(area)
-		if prefixed_shape != null:
-			return _get_placement_shape_global_rect(prefixed_shape).size
+	var first_slot := _find_first_placement_slot(game_root)
+	if first_slot != null:
+		return _get_placement_shape_global_rect(first_slot).size
 
 	return PLACEMENT_HIGHLIGHT_SIZE
 
@@ -597,13 +588,8 @@ func _spawn_summon_effect() -> void:
 
 
 func _get_game_root() -> Node:
-	var node: Node = self
-	while node != null:
-		if node.get_node_or_null(^"TowerPlacementArea") != null:
-			return node
-		node = node.get_parent()
-
-	return get_tree().current_scene
+	var current_scene := get_tree().current_scene
+	return current_scene if current_scene != null else get_tree().root
 
 
 func _apply_sprite_frames(frames: SpriteFrames) -> void:

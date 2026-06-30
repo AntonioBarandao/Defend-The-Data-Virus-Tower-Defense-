@@ -2,14 +2,19 @@ class_name IDSScannerTower
 extends AnimatedSprite2D
 
 signal placed(scanner: IDSScannerTower)
+signal upgraded(scanner: IDSScannerTower, level: int)
 
 const TowerSummonEffectScript := preload("res://Scripts/Effects/tower_summon_effect.gd")
 const IDLE_ANIMATION := &"idle"
 const CYBER_GUARDIAN_LEVEL_ONE_RADIUS := 250.0
+const MAX_LEVEL := 5
+const LEVEL_SCAN_RADII := [250.0, 310.0, 390.0, 500.0, 640.0]
+const LEVEL_UPGRADE_COSTS := [0, 500, 2000, 5000, 12000]
 const RADAR_SEGMENTS := 96
 const SWEEP_HALF_ANGLE := PI / 10.0
 const TOWER_GRAB_SIZE := Vector2(180, 180)
 const PLACEMENT_HIGHLIGHT_SIZE := Vector2(180, 120)
+const PLACEMENT_SLOT_PREFIX := "placementslot"
 const SUMMON_EFFECT_Z_OFFSET := -2
 const DRAG_VALID_MODULATE := Color(0.42, 1.0, 0.46, 0.84)
 const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
@@ -18,9 +23,8 @@ const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
 	set(value):
 		deployed = value
 		_sync_deployed_state()
-@export var placement_area_prefix := "TowerPlacementArea"
-@export var placement_area_group := "tower_placement_area"
 @export var platform_highlight_path: NodePath = ^"../../PlatformHighlight"
+@export_range(1, MAX_LEVEL, 1) var level := 1
 @export_range(32.0, 1200.0, 1.0) var scan_radius := CYBER_GUARDIAN_LEVEL_ONE_RADIUS:
 	set(value):
 		scan_radius = value
@@ -59,6 +63,7 @@ func _ready() -> void:
 	if sprite_frames != null and sprite_frames.has_animation(IDLE_ANIMATION):
 		play(IDLE_ANIMATION)
 	_ensure_radar_nodes()
+	_apply_level_stats()
 	_sync_deployed_state()
 	set_process(true)
 
@@ -126,6 +131,7 @@ func get_occupied_placement_shape() -> CollisionShape2D:
 
 
 func reset_tower() -> void:
+	level = 1
 	global_position = _home_position
 	deployed = false
 	_dragging = false
@@ -136,6 +142,7 @@ func reset_tower() -> void:
 	_clear_drag_feedback()
 	if _platform_highlight != null:
 		_platform_highlight.hide()
+	_apply_level_stats()
 	_sync_deployed_state()
 
 
@@ -145,6 +152,45 @@ func can_scan_cloaked_viruses() -> bool:
 
 func get_scan_radius() -> float:
 	return scan_radius
+
+
+func get_attack_range() -> float:
+	return get_scan_radius()
+
+
+func set_menu_range_preview_active(_active: bool) -> void:
+	_sync_deployed_state()
+
+
+func get_level() -> int:
+	return level
+
+
+func get_max_level() -> int:
+	return MAX_LEVEL
+
+
+func can_upgrade() -> bool:
+	return level < MAX_LEVEL
+
+
+func get_upgrade_cost() -> int:
+	if not can_upgrade():
+		return 0
+
+	return int(LEVEL_UPGRADE_COSTS[level])
+
+
+func upgrade() -> bool:
+	if not can_upgrade():
+		return false
+
+	level += 1
+	_apply_level_stats()
+	if deployed:
+		_spawn_summon_effect()
+	upgraded.emit(self, level)
+	return true
 
 
 func update_support_scan(active_viruses: Array[PathFollow2D], _delta: float) -> void:
@@ -167,6 +213,12 @@ func update_support_scan(active_viruses: Array[PathFollow2D], _delta: float) -> 
 
 func contains_global_point(pointer_position: Vector2) -> bool:
 	return _get_tower_rect().has_point(pointer_position)
+
+
+func _apply_level_stats() -> void:
+	level = clampi(level, 1, MAX_LEVEL)
+	scan_radius = LEVEL_SCAN_RADII[level - 1]
+	_rebuild_radar_geometry()
 
 
 func _try_start_drag(pointer_position: Vector2) -> void:
@@ -323,43 +375,47 @@ func _find_placement_shape_at_position(global_position_to_test: Vector2) -> Coll
 	if game_root == null:
 		return null
 
-	for node in get_tree().get_nodes_in_group(placement_area_group):
-		var area := node as Area2D
-		if area == null or not game_root.is_ancestor_of(area):
-			continue
-
-		var grouped_shape := _find_placement_shape_in_area(area, global_position_to_test)
-		if grouped_shape != null:
-			return grouped_shape
-
-	for child in game_root.get_children():
-		var area := child as Area2D
-		if area == null or not String(area.name).begins_with(placement_area_prefix):
-			continue
-
-		var prefixed_shape := _find_placement_shape_in_area(area, global_position_to_test)
-		if prefixed_shape != null:
-			return prefixed_shape
-
-	return null
+	return _find_placement_slot_at_position(game_root, global_position_to_test)
 
 
-func _find_placement_shape_in_area(area: Area2D, global_position_to_test: Vector2) -> CollisionShape2D:
-	for area_child in area.get_children():
-		var collision_shape := area_child as CollisionShape2D
-		if collision_shape == null or collision_shape.disabled:
-			continue
-
-		var rectangle_shape := collision_shape.shape as RectangleShape2D
-		if rectangle_shape == null:
-			continue
-
-		var local_position := collision_shape.global_transform.affine_inverse() * global_position_to_test
-		var rectangle := Rect2(-rectangle_shape.size * 0.5, rectangle_shape.size)
-		if rectangle.has_point(local_position):
+func _find_placement_slot_at_position(node: Node, global_position_to_test: Vector2) -> CollisionShape2D:
+	if node != self:
+		var collision_shape := node as CollisionShape2D
+		if _is_placement_slot_shape(collision_shape) and _placement_shape_contains_point(collision_shape, global_position_to_test):
 			return collision_shape
 
+	for child in node.get_children():
+		var found_shape := _find_placement_slot_at_position(child, global_position_to_test)
+		if found_shape != null:
+			return found_shape
+
 	return null
+
+
+func _is_placement_slot_shape(collision_shape: CollisionShape2D) -> bool:
+	return collision_shape != null \
+		and not collision_shape.disabled \
+		and collision_shape.shape is RectangleShape2D \
+		and _is_placement_slot_name(String(collision_shape.name))
+
+
+func _is_placement_slot_name(node_name: String) -> bool:
+	var lower_name := node_name.to_lower()
+	if not lower_name.begins_with(PLACEMENT_SLOT_PREFIX):
+		return false
+
+	var suffix := lower_name.substr(PLACEMENT_SLOT_PREFIX.length())
+	return not suffix.is_empty() and suffix.is_valid_int() and int(suffix) > 0
+
+
+func _placement_shape_contains_point(collision_shape: CollisionShape2D, global_position_to_test: Vector2) -> bool:
+	var rectangle_shape := collision_shape.shape as RectangleShape2D
+	if rectangle_shape == null:
+		return false
+
+	var local_position := collision_shape.global_transform.affine_inverse() * global_position_to_test
+	var rectangle := Rect2(-rectangle_shape.size * 0.5, rectangle_shape.size)
+	return rectangle.has_point(local_position)
 
 
 func _get_placement_area_center() -> Vector2:
@@ -408,13 +464,8 @@ func _spawn_summon_effect() -> void:
 
 
 func _get_game_root() -> Node:
-	var node: Node = self
-	while node != null:
-		if node.get_node_or_null(^"TowerPlacementArea") != null:
-			return node
-		node = node.get_parent()
-
-	return get_tree().current_scene
+	var current_scene := get_tree().current_scene
+	return current_scene if current_scene != null else get_tree().root
 
 
 func _get_tower_rect() -> Rect2:

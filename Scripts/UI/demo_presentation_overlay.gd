@@ -3,6 +3,7 @@ extends CanvasLayer
 
 signal laser_upgrade_requested
 signal guardian_upgrade_requested
+signal scanner_upgrade_requested
 
 const POPUP_DURATION := 1.45
 const BUCKS_ICON_SIZE := Vector2(38, 38)
@@ -21,13 +22,17 @@ const COST_LOCKED_COLOR := Color(1.0, 0.48, 0.48, 1.0)
 @onready var _guardian_upgrade_cost_label: Label = $Root/GuardianUpgradeButton/Content/CostRow/Amount
 @onready var _laser_upgrade_button: Button = $Root/LaserUpgradeButton
 @onready var _laser_upgrade_cost_label: Label = $Root/LaserUpgradeButton/Content/CostRow/Amount
+@onready var _scanner_upgrade_button: Button = $Root/ScannerUpgradeButton
+@onready var _scanner_upgrade_cost_label: Label = $Root/ScannerUpgradeButton/Content/CostRow/Amount
 
 
 func _ready() -> void:
 	_configure_upgrade_button(_guardian_upgrade_button)
 	_configure_upgrade_button(_laser_upgrade_button)
+	_configure_upgrade_button(_scanner_upgrade_button)
 	_guardian_upgrade_button.pressed.connect(func() -> void: guardian_upgrade_requested.emit())
 	_laser_upgrade_button.pressed.connect(func() -> void: laser_upgrade_requested.emit())
+	_scanner_upgrade_button.pressed.connect(func() -> void: scanner_upgrade_requested.emit())
 
 
 func show_guardian_destroy_popup(
@@ -114,6 +119,26 @@ func set_laser_upgrade_button_state(
 	)
 
 
+func set_scanner_upgrade_button_state(
+	scanner_screen_position: Vector2,
+	deployed: bool,
+	can_upgrade: bool,
+	hovered: bool,
+	cost: int,
+	affordable: bool
+) -> void:
+	_set_upgrade_button_state(
+		_scanner_upgrade_button,
+		_scanner_upgrade_cost_label,
+		scanner_screen_position,
+		deployed,
+		can_upgrade,
+		hovered,
+		cost,
+		affordable
+	)
+
+
 func guardian_upgrade_button_has_point(screen_position: Vector2) -> bool:
 	return _button_has_point(_guardian_upgrade_button, screen_position)
 
@@ -122,8 +147,14 @@ func laser_upgrade_button_has_point(screen_position: Vector2) -> bool:
 	return _button_has_point(_laser_upgrade_button, screen_position)
 
 
+func scanner_upgrade_button_has_point(screen_position: Vector2) -> bool:
+	return _button_has_point(_scanner_upgrade_button, screen_position)
+
+
 func upgrade_button_has_point(screen_position: Vector2) -> bool:
-	return guardian_upgrade_button_has_point(screen_position) or laser_upgrade_button_has_point(screen_position)
+	return guardian_upgrade_button_has_point(screen_position) \
+		or laser_upgrade_button_has_point(screen_position) \
+		or scanner_upgrade_button_has_point(screen_position)
 
 
 func show_laser_upgrade_fx(laser_position: Vector2) -> void:

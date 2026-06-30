@@ -15,23 +15,28 @@ signal exit_pressed
 @onready var _wave_button: Button = $Root/BottomRightControls/StartWaveButton
 @onready var _add_ten_button: Button = $Root/VirusBatchControls/AddTenVirusesButton
 @onready var _add_hundred_button: Button = $Root/VirusBatchControls/AddHundredVirusesButton
-@onready var _menu_button: Button = $Root/MainMenuButton
-@onready var _menu_panel: PanelContainer = $Root/MainMenuPanel
-@onready var _continue_button: Button = $Root/MainMenuPanel/Margin/Options/ContinueButton
-@onready var _settings_button: Button = $Root/MainMenuPanel/Margin/Options/SettingsButton
-@onready var _exit_button: Button = $Root/MainMenuPanel/Margin/Options/ExitButton
+@onready var _menu_button: Button = get_node_or_null(^"Root/MainMenuButton") as Button
+@onready var _menu_panel: PanelContainer = get_node_or_null(^"Root/MainMenuPanel") as PanelContainer
+@onready var _continue_button: Button = get_node_or_null(^"Root/MainMenuPanel/Margin/Options/ContinueButton") as Button
+@onready var _settings_button: Button = get_node_or_null(^"Root/MainMenuPanel/Margin/Options/SettingsButton") as Button
+@onready var _exit_button: Button = get_node_or_null(^"Root/MainMenuPanel/Margin/Options/ExitButton") as Button
 
 
 func _ready() -> void:
-	_menu_panel.hide()
 	_reset_button.pressed.connect(func() -> void: reset_pressed.emit())
 	_wave_button.pressed.connect(func() -> void: start_wave_pressed.emit())
 	_add_ten_button.pressed.connect(_request_ten_viruses)
 	_add_hundred_button.pressed.connect(_request_hundred_viruses)
-	_menu_button.pressed.connect(toggle_menu)
-	_continue_button.pressed.connect(hide_menu)
-	_settings_button.pressed.connect(hide_menu)
-	_exit_button.pressed.connect(func() -> void: exit_pressed.emit())
+	if _menu_panel != null:
+		_menu_panel.hide()
+	if _menu_button != null:
+		_menu_button.pressed.connect(toggle_menu)
+	if _continue_button != null:
+		_continue_button.pressed.connect(hide_menu)
+	if _settings_button != null:
+		_settings_button.pressed.connect(hide_menu)
+	if _exit_button != null:
+		_exit_button.pressed.connect(func() -> void: exit_pressed.emit())
 
 
 func set_wave_button(text: String, disabled: bool) -> void:
@@ -55,6 +60,9 @@ func _request_hundred_viruses() -> void:
 
 
 func toggle_menu() -> void:
+	if _menu_panel == null:
+		return
+
 	if _menu_panel.visible:
 		hide_menu()
 	else:
@@ -62,8 +70,10 @@ func toggle_menu() -> void:
 
 
 func show_menu() -> void:
-	_menu_panel.show()
+	if _menu_panel != null:
+		_menu_panel.show()
 
 
 func hide_menu() -> void:
-	_menu_panel.hide()
+	if _menu_panel != null:
+		_menu_panel.hide()

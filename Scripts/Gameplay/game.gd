@@ -5,8 +5,10 @@ signal current_wave_changed(wave_number: int)
 
 const CyberGuardianTowerScript := preload("res://Scripts/Towers/cyber_guardian_idle_sprite.gd")
 const LaserTurretScript := preload("res://Scripts/Towers/laser_turret.gd")
+const IDSScannerTowerScript := preload("res://Scripts/Towers/ids_scanner.gd")
 const RedVirusScript := preload("res://Scripts/Enemies/red_virus.gd")
 const RedVirusScene := preload("res://Scenes/Enemies/RedVirus.tscn")
+const TrojanHorseScene := preload("res://Scenes/Enemies/TrojanHorse.tscn")
 const CyberQuestionHudScript := preload("res://Scripts/UI/cyber_question_hud.gd")
 const PerformanceHudScript := preload("res://Scripts/UI/performance_hud.gd")
 const GameControlsHudScript := preload("res://Scripts/UI/game_controls_hud.gd")
@@ -19,12 +21,16 @@ const WAVE_BASE_VIRUS_COUNT := 5
 const WAVE_VIRUS_COUNT_STEP := 2
 const WAVE_SPAWN_INTERVAL := 0.6
 const WAVE_MAX_COUNT := 20
+const WAVE_FIVE_CUTSCENE_WAVE := 5
 const LASER_DURATION := 0.24
 const GUARDIAN_CYBERBUCK_REWARD := 5
 const LASER_TURRET_CYBERBUCK_REWARD := 5
+const DEFAULT_VIRUS_SPAWN_SCALE := Vector2(0.2, 0.2)
+const DEFAULT_TROJAN_HORSE_SPAWN_SCALE := Vector2(0.4, 0.4)
 
 @export var guardian_path: NodePath = ^"Sprites/Cybersec Guardian"
 @export var laser_turret_path: NodePath = ^"Sprites/Laser Turret"
+@export var ids_scanner_path: NodePath = ^"Sprites/IDS_Scanner"
 @export var virus_template_path: NodePath = ^"Sprites/BasicVirus"
 @export var virus_scene: PackedScene = RedVirusScene
 @export var virus_path_path: NodePath = ^"VirusElements/Path2D"
@@ -50,6 +56,7 @@ const LASER_TURRET_CYBERBUCK_REWARD := 5
 var _fps_update_elapsed := 0.0
 var _guardian: CyberGuardianTowerScript
 var _laser_turret: LaserTurretScript
+var _ids_scanner: IDSScannerTowerScript
 var _virus_template: RedVirusScript
 var _virus_templates: Array[RedVirusScript] = []
 var _virus_path: Path2D
@@ -69,11 +76,15 @@ var _wave_in_progress := false
 var _wave_question_pending := false
 var _wave_spawns_remaining := 0
 var _wave_spawn_cooldown_remaining := 0.0
+var _wave_five_cutscene_played := false
+var _wave_five_cutscene_running := false
 
 func _ready() -> void:
 	Engine.max_fps = TARGET_FPS
+	_show_canvas_layers_for_runtime()
 	_guardian = get_node_or_null(guardian_path) as CyberGuardianTowerScript
 	_laser_turret = get_node_or_null(laser_turret_path) as LaserTurretScript
+	_ids_scanner = get_node_or_null(ids_scanner_path) as IDSScannerTowerScript
 	_virus_template = get_node_or_null(virus_template_path) as RedVirusScript
 	_collect_virus_templates()
 	_virus_path = get_node_or_null(virus_path_path) as Path2D
@@ -93,7 +104,7 @@ func _ready() -> void:
 		push_warning("Cybersec Guardian drag target was not found.")
 	if _laser_turret == null:
 		push_warning("Laser Turret drag target was not found.")
-	if _virus_template == null:
+	if _virus_template == null and not String(virus_template_path).is_empty():
 		push_warning("Basic virus spawn button was not found.")
 	if _virus_path == null:
 		push_warning("Virus Path2D was not found.")
@@ -116,16 +127,31 @@ func _ready() -> void:
 		push_warning("TowerUpgradeHud was not found.")
 	else:
 		_tower_upgrade_hud.laser_upgrade_pressed.connect(Callable(self, "_upgrade_laser_turret"))
+		_tower_upgrade_hud.scanner_upgrade_pressed.connect(Callable(self, "_upgrade_ids_scanner"))
 	_create_path_guide()
 	if _demo_presentation_overlay != null:
 		_demo_presentation_overlay.guardian_upgrade_requested.connect(Callable(self, "_upgrade_guardian"))
 		_demo_presentation_overlay.laser_upgrade_requested.connect(Callable(self, "_upgrade_laser_turret"))
+		_demo_presentation_overlay.scanner_upgrade_requested.connect(Callable(self, "_upgrade_ids_scanner"))
 
 	_update_fps_label()
 	_update_virus_count_label()
 	_update_wave_button()
 	_update_wave_label()
 	_update_demo_upgrade_buttons()
+
+
+func _show_canvas_layers_for_runtime() -> void:
+	for child in get_children():
+		_show_canvas_layers_for_runtime_recursive(child)
+
+
+func _show_canvas_layers_for_runtime_recursive(node: Node) -> void:
+	if node is CanvasLayer:
+		(node as CanvasLayer).visible = true
+
+	for child in node.get_children():
+		_show_canvas_layers_for_runtime_recursive(child)
 
 
 func _collect_virus_templates() -> void:
@@ -178,6 +204,9 @@ func _input(event: InputEvent) -> void:
 			if _handle_laser_turret_press(pointer_position, mouse_button.position):
 				return
 
+			if _handle_ids_scanner_press(pointer_position, mouse_button.position):
+				return
+
 			if _guardian == null:
 				return
 
@@ -208,6 +237,9 @@ func _input(event: InputEvent) -> void:
 				return
 
 			if _handle_laser_turret_press(pointer_position, screen_touch.position):
+				return
+
+			if _handle_ids_scanner_press(pointer_position, screen_touch.position):
 				return
 
 			if _guardian == null:
@@ -286,6 +318,21 @@ func _handle_laser_turret_press(pointer_position: Vector2, screen_position: Vect
 	return false
 
 
+func _handle_ids_scanner_press(pointer_position: Vector2, screen_position: Vector2) -> bool:
+	if _tower_upgrade_hud != null and _tower_upgrade_hud.scanner_panel_has_point(screen_position):
+		return true
+
+	if _ids_scanner != null and _ids_scanner.is_deployed() and _ids_scanner.contains_global_point(pointer_position):
+		_show_scanner_upgrade_panel()
+		get_viewport().set_input_as_handled()
+		return true
+
+	if _tower_upgrade_hud != null and _tower_upgrade_hud.is_scanner_panel_visible():
+		_hide_scanner_upgrade_panel()
+
+	return false
+
+
 func _reset_tower() -> void:
 	if _is_act_input_locked():
 		return
@@ -301,7 +348,7 @@ func _reset_tower() -> void:
 			node.call("reset_tower")
 	if _tower_upgrade_hud != null:
 		_tower_upgrade_hud.hide_all()
-	_set_tower_menu_radius_previews(false, false)
+	_set_tower_menu_radius_previews(false, false, false)
 	_update_demo_upgrade_buttons()
 
 
@@ -314,10 +361,14 @@ func _upgrade_guardian() -> void:
 
 	var cost := _guardian.get_upgrade_cost()
 	if not _spend_upgrade_cost(cost):
+		_sync_laser_upgrade_panel()
+		_sync_scanner_upgrade_panel()
 		_update_demo_upgrade_buttons()
 		return
 
 	var upgraded := _guardian.upgrade()
+	_sync_laser_upgrade_panel()
+	_sync_scanner_upgrade_panel()
 	_update_demo_upgrade_buttons()
 	if upgraded and _demo_presentation_overlay != null:
 		_demo_presentation_overlay.show_tower_upgrade_fx(_world_to_screen_position(_guardian.global_position))
@@ -333,15 +384,39 @@ func _upgrade_laser_turret() -> void:
 	var cost := _laser_turret.get_upgrade_cost()
 	if not _spend_upgrade_cost(cost):
 		_sync_laser_upgrade_panel()
+		_sync_scanner_upgrade_panel()
 		_update_demo_upgrade_buttons()
 		return
 
 	var upgraded := _laser_turret.upgrade()
 	_sync_laser_upgrade_panel()
+	_sync_scanner_upgrade_panel()
 	_update_demo_upgrade_buttons()
 	if upgraded and _demo_presentation_overlay != null:
 		_laser_turret.preview_attack_range()
 		_demo_presentation_overlay.show_tower_upgrade_fx(_world_to_screen_position(_laser_turret.global_position))
+
+
+func _upgrade_ids_scanner() -> void:
+	if _is_act_input_locked():
+		return
+
+	if _ids_scanner == null or not _ids_scanner.can_upgrade():
+		return
+
+	var cost := _ids_scanner.get_upgrade_cost()
+	if not _spend_upgrade_cost(cost):
+		_sync_laser_upgrade_panel()
+		_sync_scanner_upgrade_panel()
+		_update_demo_upgrade_buttons()
+		return
+
+	var upgraded := _ids_scanner.upgrade()
+	_sync_laser_upgrade_panel()
+	_sync_scanner_upgrade_panel()
+	_update_demo_upgrade_buttons()
+	if upgraded and _demo_presentation_overlay != null:
+		_demo_presentation_overlay.show_tower_upgrade_fx(_world_to_screen_position(_ids_scanner.global_position))
 
 
 func _update_demo_upgrade_buttons() -> void:
@@ -366,6 +441,16 @@ func _update_demo_upgrade_buttons() -> void:
 		_is_demo_laser_upgrade_hovered(),
 		laser_cost,
 		_can_afford_upgrade(laser_cost)
+	)
+
+	var scanner_cost := _ids_scanner.get_upgrade_cost() if _ids_scanner != null else 0
+	_demo_presentation_overlay.set_scanner_upgrade_button_state(
+		_world_to_screen_position(_ids_scanner.global_position) if _ids_scanner != null else Vector2.ZERO,
+		_ids_scanner != null and _ids_scanner.is_deployed(),
+		_ids_scanner != null and _ids_scanner.can_upgrade(),
+		_is_demo_scanner_upgrade_hovered(),
+		scanner_cost,
+		_can_afford_upgrade(scanner_cost)
 	)
 
 
@@ -398,6 +483,18 @@ func _sync_laser_upgrade_panel() -> void:
 	_tower_upgrade_hud.set_laser_stats(level, max_level, power, range, _laser_turret.can_upgrade() and can_afford_next_level, upgrade_cost)
 
 
+func _sync_scanner_upgrade_panel() -> void:
+	if _ids_scanner == null or _tower_upgrade_hud == null:
+		return
+
+	var level := _ids_scanner.get_level()
+	var max_level := _ids_scanner.get_max_level()
+	var scan_radius := _ids_scanner.get_scan_radius()
+	var upgrade_cost := _ids_scanner.get_upgrade_cost()
+	var can_afford_next_level := _can_afford_upgrade(upgrade_cost)
+	_tower_upgrade_hud.set_scanner_stats(level, max_level, scan_radius, _ids_scanner.can_upgrade() and can_afford_next_level, upgrade_cost)
+
+
 func _start_next_wave() -> void:
 	if _is_act_input_locked():
 		return
@@ -408,6 +505,9 @@ func _start_next_wave() -> void:
 		_update_wave_button()
 		_update_wave_label()
 		return
+	if _should_play_wave_five_cutscene():
+		_play_wave_five_cutscene_then_start_wave()
+		return
 
 	_current_wave += 1
 	_wave_in_progress = true
@@ -417,6 +517,31 @@ func _start_next_wave() -> void:
 	_update_wave_label()
 	current_wave_changed.emit(_current_wave)
 	wave_started.emit(_current_wave)
+	if _current_wave == WAVE_FIVE_CUTSCENE_WAVE:
+		_spawn_cloaked_trojan_horse()
+
+
+func _should_play_wave_five_cutscene() -> bool:
+	return not _wave_five_cutscene_played \
+		and not _wave_five_cutscene_running \
+		and _current_wave + 1 == WAVE_FIVE_CUTSCENE_WAVE \
+		and _text_cutscene != null \
+		and _text_cutscene.has_method("start_wave5_cutscene")
+
+
+func _play_wave_five_cutscene_then_start_wave() -> void:
+	_wave_five_cutscene_running = true
+	_wave_five_cutscene_played = true
+	_update_wave_button()
+	_text_cutscene.call("start_wave5_cutscene")
+	if _text_cutscene.has_signal("cutscene_finished"):
+		await _text_cutscene.cutscene_finished
+	_wave_five_cutscene_running = false
+	_update_wave_button()
+	if _is_act_input_locked():
+		return
+
+	_start_next_wave()
 
 
 func get_current_wave() -> int:
@@ -429,6 +554,8 @@ func set_current_wave_for_demo(wave_number: int) -> void:
 	_wave_question_pending = false
 	_wave_spawns_remaining = 0
 	_wave_spawn_cooldown_remaining = 0.0
+	_wave_five_cutscene_running = false
+	_wave_five_cutscene_played = _current_wave >= WAVE_FIVE_CUTSCENE_WAVE
 	_update_wave_button()
 	_update_wave_label()
 	current_wave_changed.emit(_current_wave)
@@ -459,6 +586,11 @@ func _update_wave_button() -> void:
 	if _wave_question_pending:
 		_game_controls_hud.set_wave_button("Answer Question", true)
 		_set_spawn_buttons_disabled(not demo_spawn_buttons_ignore_question_lock)
+		return
+
+	if _wave_five_cutscene_running:
+		_game_controls_hud.set_wave_button("Wave 5 Intel", true)
+		_set_spawn_buttons_disabled(false)
 		return
 
 	if _wave_in_progress:
@@ -500,6 +632,7 @@ func _on_wave_question_solved(_reward: int) -> void:
 	_update_wave_button()
 	_update_wave_label()
 	_sync_laser_upgrade_panel()
+	_sync_scanner_upgrade_panel()
 
 
 func _exit_game() -> void:
@@ -539,7 +672,7 @@ func _spawn_virus(start_progress: float = -1.0, update_count: bool = true, templ
 		push_warning("Cannot spawn virus because the configured virus scene is invalid.")
 		return
 
-	var spawn_scale: Vector2 = spawn_template.global_scale if spawn_template != null else virus.global_scale
+	var spawn_scale := _get_spawn_scale(spawn_template, virus)
 	var follow := PathFollow2D.new()
 	follow.name = "SpawnedVirusFollow"
 	follow.loop = false
@@ -555,6 +688,33 @@ func _spawn_virus(start_progress: float = -1.0, update_count: bool = true, templ
 	_active_viruses.append(follow)
 	if update_count:
 		_update_virus_count_label()
+
+
+func _spawn_cloaked_trojan_horse() -> void:
+	if _virus_path == null or _virus_path.curve == null:
+		push_warning("Cannot spawn Trojan horse because VirusElements/Path2D is missing a curve.")
+		return
+
+	var trojan := TrojanHorseScene.instantiate() as TrojanHorse
+	if trojan == null:
+		push_warning("Cannot spawn Trojan horse because the configured scene is invalid.")
+		return
+
+	var follow := PathFollow2D.new()
+	follow.name = "SpawnedTrojanHorseFollow"
+	follow.loop = false
+	follow.progress = _get_virus_spawn_progress()
+	_virus_path.add_child(follow)
+
+	trojan.name = "SpawnedTrojanHorse"
+	trojan.position = Vector2.ZERO
+	follow.add_child(trojan)
+	trojan.global_scale = DEFAULT_TROJAN_HORSE_SPAWN_SCALE
+	trojan.reset_for_spawn()
+	trojan.spawn_as_cloaked()
+
+	_active_viruses.append(follow)
+	_update_virus_count_label()
 
 
 func _create_virus_instance(template: RedVirusScript = null) -> RedVirusScript:
@@ -574,6 +734,15 @@ func _create_virus_instance(template: RedVirusScript = null) -> RedVirusScript:
 		return template.duplicate() as RedVirusScript
 
 	return null
+
+
+func _get_spawn_scale(template: RedVirusScript, virus: RedVirusScript) -> Vector2:
+	if template != null:
+		return template.global_scale
+	if virus is TrojanHorse:
+		return DEFAULT_TROJAN_HORSE_SPAWN_SCALE
+
+	return DEFAULT_VIRUS_SPAWN_SCALE
 
 
 func spawn_virus_batch(count: int) -> void:
@@ -673,6 +842,7 @@ func _shoot_virus(target: PathFollow2D) -> void:
 		if _question_hud != null:
 			_question_hud.add_cyberbucks(GUARDIAN_CYBERBUCK_REWARD)
 			_sync_laser_upgrade_panel()
+			_sync_scanner_upgrade_panel()
 
 
 func _shoot_laser_turret_targets(targets: Array[PathFollow2D]) -> void:
@@ -709,6 +879,7 @@ func _shoot_laser_turret_targets(targets: Array[PathFollow2D]) -> void:
 			if _question_hud != null:
 				_question_hud.add_cyberbucks(reward)
 				_sync_laser_upgrade_panel()
+				_sync_scanner_upgrade_panel()
 		_laser_turret.mark_shot_fired()
 		_update_virus_count_label()
 
@@ -950,6 +1121,11 @@ func _demo_laser_upgrade_button_has_point(screen_position: Vector2) -> bool:
 		and _demo_presentation_overlay.laser_upgrade_button_has_point(screen_position)
 
 
+func _demo_scanner_upgrade_button_has_point(screen_position: Vector2) -> bool:
+	return _demo_presentation_overlay != null \
+		and _demo_presentation_overlay.scanner_upgrade_button_has_point(screen_position)
+
+
 func _is_demo_guardian_upgrade_hovered() -> bool:
 	if _guardian == null or not _guardian.is_placed():
 		return false
@@ -970,11 +1146,21 @@ func _is_demo_laser_upgrade_hovered() -> bool:
 		or _demo_laser_upgrade_button_has_point(mouse_screen_position)
 
 
+func _is_demo_scanner_upgrade_hovered() -> bool:
+	if _ids_scanner == null or not _ids_scanner.is_deployed():
+		return false
+
+	var mouse_screen_position := get_viewport().get_mouse_position()
+	var mouse_world_position := _screen_to_canvas_position(mouse_screen_position)
+	return _ids_scanner.contains_global_point(mouse_world_position) \
+		or _demo_scanner_upgrade_button_has_point(mouse_screen_position)
+
+
 func _show_upgrade_panel() -> void:
 	if _tower_upgrade_hud == null:
 		return
 
-	_set_tower_menu_radius_previews(true, false)
+	_set_tower_menu_radius_previews(true, false, false)
 	_tower_upgrade_hud.show_guardian_panel()
 
 
@@ -984,7 +1170,7 @@ func _hide_upgrade_panel() -> void:
 
 	_tower_upgrade_hud.hide_guardian_panel()
 	if not _tower_upgrade_hud.is_guardian_panel_visible():
-		_set_tower_menu_radius_previews(false, _tower_upgrade_hud.is_laser_panel_visible())
+		_set_tower_menu_radius_previews(false, _tower_upgrade_hud.is_laser_panel_visible(), _tower_upgrade_hud.is_scanner_panel_visible())
 
 
 func _show_laser_upgrade_panel() -> void:
@@ -992,7 +1178,7 @@ func _show_laser_upgrade_panel() -> void:
 		return
 
 	_sync_laser_upgrade_panel()
-	_set_tower_menu_radius_previews(false, true)
+	_set_tower_menu_radius_previews(false, true, false)
 	_tower_upgrade_hud.show_laser_panel()
 
 
@@ -1002,11 +1188,31 @@ func _hide_laser_upgrade_panel() -> void:
 
 	_tower_upgrade_hud.hide_laser_panel()
 	if not _tower_upgrade_hud.is_laser_panel_visible():
-		_set_tower_menu_radius_previews(_tower_upgrade_hud.is_guardian_panel_visible(), false)
+		_set_tower_menu_radius_previews(_tower_upgrade_hud.is_guardian_panel_visible(), false, _tower_upgrade_hud.is_scanner_panel_visible())
 
 
-func _set_tower_menu_radius_previews(guardian_active: bool, laser_active: bool) -> void:
+func _show_scanner_upgrade_panel() -> void:
+	if _tower_upgrade_hud == null or _ids_scanner == null:
+		return
+
+	_sync_scanner_upgrade_panel()
+	_set_tower_menu_radius_previews(false, false, true)
+	_tower_upgrade_hud.show_scanner_panel()
+
+
+func _hide_scanner_upgrade_panel() -> void:
+	if _tower_upgrade_hud == null:
+		return
+
+	_tower_upgrade_hud.hide_scanner_panel()
+	if not _tower_upgrade_hud.is_scanner_panel_visible():
+		_set_tower_menu_radius_previews(_tower_upgrade_hud.is_guardian_panel_visible(), _tower_upgrade_hud.is_laser_panel_visible(), false)
+
+
+func _set_tower_menu_radius_previews(guardian_active: bool, laser_active: bool, scanner_active: bool) -> void:
 	if _guardian != null and _guardian.has_method("set_menu_range_preview_active"):
 		_guardian.call("set_menu_range_preview_active", guardian_active)
 	if _laser_turret != null and _laser_turret.has_method("set_menu_range_preview_active"):
 		_laser_turret.call("set_menu_range_preview_active", laser_active)
+	if _ids_scanner != null and _ids_scanner.has_method("set_menu_range_preview_active"):
+		_ids_scanner.call("set_menu_range_preview_active", scanner_active)

@@ -119,7 +119,7 @@ position = Vector2(429, 223)
 script = ExtResource("15_place")
 placement_size = Vector2(92.59923, 92.59923)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=1417027579]
+[node name="PlacementSlot1" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=1417027579]
 shape = SubResource("RectangleShape2D_8y7lx")
 
 [node name="PlacementSlot2" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=48627030]

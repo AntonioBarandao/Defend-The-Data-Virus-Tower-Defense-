@@ -1,4 +1,4 @@
-class_name BotnetLV
+class_name ZombieNode
 extends Node2D
 
 const MOVEMENT_PHASE_1 := &"Movement Phase 1: Scatter"
@@ -57,12 +57,11 @@ func _process(delta: float) -> void:
 	_spawn_log_elapsed += delta
 	if _spawn_log_elapsed >= spawn_log_interval:
 		_spawn_log_elapsed = 0.0
-		print("botnet spawn at elapsed time %.2f" % _elapsed_time)
+		print("zombie node spawn at elapsed time %.2f" % _elapsed_time)
 
 
-func activate_at_position(target_global_position: Vector2) -> void:
-	global_position = target_global_position
-	_anchor_global_position = target_global_position
+func activate() -> void:
+	_anchor_global_position = global_position
 	_elapsed_time = 0.0
 	_spawn_log_elapsed = 0.0
 	current_health = maxi(1, max_health)

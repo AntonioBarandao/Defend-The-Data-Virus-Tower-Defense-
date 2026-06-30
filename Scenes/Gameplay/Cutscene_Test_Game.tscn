@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://cg642h3m1khds" path="res://Scripts/Gameplay/game.gd" id="1_on2he"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/IDS_Scanner.tscn" id="4_pc5c2"]
-[ext_resource type="FontFile" uid="uid://cc0f3h2ru1hiv" path="res://Assets/Fonts/space-armor/SPACE ARMOR.otf" id="5_1l26u"]
-[ext_resource type="Texture2D" uid="uid://tnwsqd5ntads" path="res://Assets/Backgrounds/NewMap.png" id="6_agy0f"]
+[ext_resource type="FontFile" uid="uid://cc0f3h2ru1hiv" path="res://assets/Fonts/space-armor/SPACE ARMOR.otf" id="5_1l26u"]
+[ext_resource type="Texture2D" uid="uid://tnwsqd5ntads" path="res://assets/Backgrounds/NewMap.png" id="6_agy0f"]
 [ext_resource type="PackedScene" uid="uid://cddp8ilcjadua" path="res://Scenes/Towers/CyberGuardian.tscn" id="6_cyber"]
 [ext_resource type="PackedScene" uid="uid://b658jrcj1ke3f" path="res://Scenes/Towers/LaserTurret.tscn" id="8_laser"]
 [ext_resource type="PackedScene" uid="uid://calhrslp08s80" path="res://Scenes/Enemies/RedVirus.tscn" id="9_redvirus"]
@@ -13,12 +13,12 @@
 [ext_resource type="PackedScene" uid="uid://61tajh7kof5b" path="res://Scenes/UI/GameControlsHud.tscn" id="13_controls"]
 [ext_resource type="PackedScene" uid="uid://dfmkdge7ll4f2" path="res://Scenes/UI/TowerUpgradeHud.tscn" id="14_upgrades"]
 [ext_resource type="Script" uid="uid://d1ugiseg13u06" path="res://Scripts/Gameplay/tower_placement_area.gd" id="15_place"]
-[ext_resource type="FontFile" uid="uid://2u6nbvofsl5k" path="res://Assets/Fonts/Cyber Crown/Cyber Crown.ttf" id="15_wq1r8"]
+[ext_resource type="FontFile" uid="uid://2u6nbvofsl5k" path="res://assets/Fonts/Cyber Crown/Cyber Crown.ttf" id="15_wq1r8"]
 [ext_resource type="PackedScene" uid="uid://fet10k45d4t6" path="res://Scenes/UI/DemoPresentationOverlay.tscn" id="16_demo_overlay"]
 [ext_resource type="Texture2D" uid="uid://bys5vnsudc4iq" path="res://tools/Cutscene.png" id="16_m0vd8"]
-[ext_resource type="AudioStream" uid="uid://bpts0mu1imbfp" path="res://Assets/soundtrack/Virtual Business.wav" id="17_soundtrack"]
+[ext_resource type="AudioStream" uid="uid://bpts0mu1imbfp" path="res://assets/soundtrack/Virtual Business.wav" id="17_soundtrack"]
 [ext_resource type="PackedScene" uid="uid://bthmcxcu7ao8p" path="res://Scenes/UI/Text_Cutscene.tscn" id="18_cutscene"]
-[ext_resource type="PackedScene" path="res://Scenes/Enemies/BotnetLV.tscn" id="19_botnet"]
+[ext_resource type="PackedScene" path="res://Scenes/Enemies/ZombieNode.tscn" id="19_zombie_node"]
 [ext_resource type="Script" uid="uid://bl4stwlf88ctn" path="res://Scripts/Gameplay/cutscene_demo_director.gd" id="20_director"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/CutsceneDemoMenu.tscn" id="21_demo_menu"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/AnnounceText.tscn" id="22_announce"]
@@ -119,7 +119,7 @@ size = Vector2(92.59923, 92.59923)
 
 [sub_resource type="Curve2D" id="Curve2D_63v24"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 38.509842, -24, 0, 0, 0, 0, 214.9374, -23, 0, 0, 0, 0, 240.5331, 14, 0, 0, 0, 0, 251.50267, 78, 0, 0, 0, 0, 341.08765, 83, 0, 0, 0, 0, 358.45618, -19, 0, 0, 0, 0, 403.24866, -38, 0, 0, 0, 0, 553.1664, -40, 0, 0, 0, 0, 579.6762, -101, 0, 0, 0, 0, 608.92847, -138, 0, 0, 0, 0, 790.84076, -136, 0, 0, 0, 0, 829.2343, -97, 0, 0, 0, 0, 831.97675, -30, 0, 0, 0, 0, 869.4562, -2, 0, 0, 0, 0, 1112.6154, -9, 0, 0, 0, 0, 1129.9839, -71, 0, 0, 0, 0, 1168.3774, -113, 0, 0, 0, 0, 1400.567, -111, 0, 0, 0, 0, 1449.9302, -73, 0, 0, 0, 0, 1463.6422, 157, 0, 0, 0, 0, 1269.8462, 163, 0, 0, 0, 0, 1239.6798, 207, 0, 0, 0, 0, 1248.821, 356, 0, 0, 0, 0, 1211.3417, 385, 0, 0, 0, 0, 901.4508, 385, 0, 0, 0, 0, 855.7442, 401, 0, 0, 0, 0, 843.8605, 467, 0, 0, 0, 0, 793.5832, 488, 0, 0, 0, 0, 521.17175, 483, 0, 0, 0, 0, 476.37927, 447, 0, 0, 0, 0, 479.12164, 381, 0, 0, 0, 0, 480.03577, 301, 0, 0, 0, 0, 456.2683, 262, 0, 0, 0, 0, 215.85152, 263, 0, 0, 0, 0, 189.34169, 307, 0, 0, 0, 0, 174.71556, 460, 0, 0, 0, 0, 124.43828, 483, 0, 0, 0, 0, 84.21646, 503, 0, 0, 0, 0, 65.01967, 546, 0, 0, 0, 0, 12, 555)
+"points": PackedVector2Array(0, 0, 0, 0, -58.81182, -26, 0, 0, 0, 0, 194.00346, -22, 0, 0, 0, 0, 220.31721, 20, 0, 0, 0, 0, 232.3777, 83, 0, 0, 0, 0, 315.7046, 82, 0, 0, 0, 0, 358.45618, -19, 0, 0, 0, 0, 403.24866, -38, 0, 0, 0, 0, 553.1664, -40, 0, 0, 0, 0, 579.6762, -101, 0, 0, 0, 0, 608.92847, -138, 0, 0, 0, 0, 790.84076, -136, 0, 0, 0, 0, 829.2343, -97, 0, 0, 0, 0, 831.97675, -30, 0, 0, 0, 0, 869.4562, -2, 0, 0, 0, 0, 1112.6154, -9, 0, 0, 0, 0, 1129.9839, -71, 0, 0, 0, 0, 1168.3774, -113, 0, 0, 0, 0, 1400.567, -111, 0, 0, 0, 0, 1449.9302, -73, 0, 0, 0, 0, 1453.5262, 169, 0, 0, 0, 0, 1264.3575, 172, 0, 0, 0, 0, 1234.4933, 207, 0, 0, 0, 0, 1236.686, 352, 0, 0, 0, 0, 1204.8903, 388, 0, 0, 0, 0, 901.4508, 385, 0, 0, 0, 0, 855.7442, 401, 0, 0, 0, 0, 843.8605, 467, 0, 0, 0, 0, 793.5832, 488, 0, 0, 0, 0, 521.17175, 483, 0, 0, 0, 0, 476.37927, 447, 0, 0, 0, 0, 479.12164, 381, 0, 0, 0, 0, 480.03577, 301, 0, 0, 0, 0, 431.92365, 262, 0, 0, 0, 0, 197.29268, 261, 0, 0, 0, 0, 168.78612, 299, 0, 0, 0, 0, 158.91847, 434, 0, 0, 0, 0, 124.43828, 483, 0, 0, 0, 0, 64.6275, 502, 0, 0, 0, 0, 49.277817, 547, 0, 0, 0, 0, 12, 555)
 }
 point_count = 40
 
@@ -127,15 +127,16 @@ point_count = 40
 
 [node name="Game2" type="Node2D" unique_id=574872578]
 script = ExtResource("1_on2he")
+virus_template_path = NodePath("")
 virus_spawn_path = NodePath("VirusElements/SpawnVirus")
 demo_presentation_overlay_path = NodePath("DemoPresentationOverlay")
 
 [node name="AdminSandboxSoundtrack" type="AudioStreamPlayer" parent="." unique_id=662457559]
 stream = ExtResource("17_soundtrack")
 volume_db = -6.0
-autoplay = true
 
 [node name="CyberQuestionHud" parent="." unique_id=923521268 instance=ExtResource("11_qhud")]
+visible = false
 demo_question_animation_enabled = true
 
 [node name="CyberBuckCounter" parent="CyberQuestionHud/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="0" unique_id=200258644]
@@ -153,13 +154,16 @@ offset_bottom = -3.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_question")
 
 [node name="PerformanceHud" parent="." unique_id=1039250105 instance=ExtResource("12_perf")]
+visible = false
 
 [node name="StatusPanel" parent="PerformanceHud/Root" index="0"]
 theme_override_styles/panel = SubResource("StyleBoxFlat_status")
 
 [node name="GameControlsHud" parent="." unique_id=772842743 instance=ExtResource("13_controls")]
+visible = false
 
 [node name="TowerUpgradeHud" parent="." unique_id=1985424915 instance=ExtResource("14_upgrades")]
+visible = false
 
 [node name="DemoPresentationOverlay" parent="." unique_id=1382216125 instance=ExtResource("16_demo_overlay")]
 
@@ -176,72 +180,97 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
 
 [node name="AnnounceText" parent="." unique_id=468431518 instance=ExtResource("22_announce")]
+visible = false
 
 [node name="CutsceneSkipHud" parent="." unique_id=575692336 instance=ExtResource("23_skip")]
+visible = false
 
 [node name="CutsceneDemoMenu" parent="." unique_id=29047704 instance=ExtResource("21_demo_menu")]
+visible = false
 
 [node name="CutsceneCamera" type="Camera2D" parent="." unique_id=2005815930]
-position = Vector2(1280, 540)
+position = Vector2(956, 544)
 
 [node name="CpuArena" type="Sprite2D" parent="." unique_id=1951202282]
-position = Vector2(1053.9265, 537.5)
-scale = Vector2(1.2560687, 1.1424017)
+position = Vector2(961.4265, 541.5)
+scale = Vector2(1.1454227, 1.1509033)
 texture = ExtResource("6_agy0f")
 
-[node name="BotnetLV3" parent="." unique_id=187820591 instance=ExtResource("19_botnet")]
-position = Vector2(1054, 448)
+[node name="ZombieNode" parent="." unique_id=187820591 instance=ExtResource("19_zombie_node")]
+position = Vector2(952, 457.00003)
+scale = Vector2(2.0761907, 2.0761907)
 
 [node name="CutsceneDemoDirector" type="Node" parent="." unique_id=1486481276]
 script = ExtResource("20_director")
 
 [node name="TowerPlacementArea" type="Area2D" parent="." unique_id=817734020]
-position = Vector2(429, 223)
 script = ExtResource("15_place")
 placement_size = Vector2(92.59923, 92.59923)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=1417027579]
+[node name="PlacementSlot1" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=1417027579]
+position = Vector2(396, 220)
 shape = SubResource("RectangleShape2D_e85uq")
+debug_color = Color(0.4383878, 0.4552768, 1, 0.41960785)
 
 [node name="PlacementSlot2" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=48627030]
-position = Vector2(1145, 176)
+position = Vector2(1437, 398)
 shape = SubResource("RectangleShape2D_d24o8")
+debug_color = Color(0.4392157, 0.45490196, 1, 0.41960785)
 
 [node name="PlacementSlot3" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=137045265]
-position = Vector2(904, 284)
+position = Vector2(1214, 511)
 shape = SubResource("RectangleShape2D_d24o8")
+debug_color = Color(0.4392157, 0.45490196, 1, 0.41960785)
 
 [node name="PlacementSlot4" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=1305535456]
-position = Vector2(220, 241)
+position = Vector2(590, 472)
 shape = SubResource("RectangleShape2D_d24o8")
+debug_color = Color(0.4392157, 0.45490196, 1, 0.41960785)
 
 [node name="PlacementSlot5" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=391813529]
-position = Vector2(442, -140)
+position = Vector2(794, 89)
 shape = SubResource("RectangleShape2D_d24o8")
+debug_color = Color(0.4392157, 0.45490196, 1, 0.41960785)
 
 [node name="PlacementSlot6" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=1249310685]
-position = Vector2(761, -12)
+position = Vector2(1085, 218)
 shape = SubResource("RectangleShape2D_d24o8")
+debug_color = Color(0.4392157, 0.45490196, 1, 0.41960785)
 
 [node name="PlacementSlot7" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=1482182287]
-position = Vector2(1393, 5)
+position = Vector2(1668, 232)
 shape = SubResource("RectangleShape2D_d24o8")
+debug_color = Color(0.4392157, 0.45490196, 1, 0.41960785)
 
 [node name="PlacementSlot8" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=982379324]
-position = Vector2(1487, 347)
+position = Vector2(1619, 578)
 shape = SubResource("RectangleShape2D_d24o8")
+debug_color = Color(0.4392157, 0.45490196, 1, 0.41960785)
 
 [node name="PlacementSlot9" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=1772379268]
-position = Vector2(1180, 483)
+position = Vector2(1466, 716)
 shape = SubResource("RectangleShape2D_d24o8")
+debug_color = Color(0.4392157, 0.45490196, 1, 0.41960785)
 
 [node name="PlacementSlot10" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=1444550936]
-position = Vector2(403, 477)
+position = Vector2(762, 703)
 shape = SubResource("RectangleShape2D_d24o8")
+debug_color = Color(0.4392157, 0.45490196, 1, 0.41960785)
 
 [node name="PlacementSlot11" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=1353559619]
-position = Vector2(-219, 339)
+position = Vector2(190, 574)
 shape = SubResource("RectangleShape2D_d24o8")
+debug_color = Color(0.4392157, 0.45490196, 1, 0.41960785)
+
+[node name="PlacementSlot12" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=1465608734]
+position = Vector2(491, 860)
+shape = SubResource("RectangleShape2D_d24o8")
+debug_color = Color(0.4392157, 0.45490196, 1, 0.41960785)
+
+[node name="PlacementSlot13" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=918020816]
+position = Vector2(1231, 820)
+shape = SubResource("RectangleShape2D_d24o8")
+debug_color = Color(0.4392157, 0.45490196, 1, 0.41960785)
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=394633943]
 visible = false
@@ -255,9 +284,9 @@ offset_bottom = -84.00006
 
 [node name="TowerTrayBackground" type="ColorRect" parent="TestDrag" unique_id=161859911]
 layout_mode = 0
-offset_left = 2103.0
+offset_left = 1562.0
 offset_top = 120.00006
-offset_right = 2562.0
+offset_right = 1921.146
 offset_bottom = 1204.0
 color = Color(0, 0, 0, 0.7058824)
 
@@ -279,6 +308,11 @@ position = Vector2(801.96924, 564)
 scale = Vector2(1.3333842, 1.1424017)
 texture = ExtResource("16_m0vd8")
 
+[node name="Wave5CutsceneTrojanHorse" parent="Otherground_Cutscene/CutsceneBack" unique_id=1612727341 instance=ExtResource("10_trojan")]
+position = Vector2(490.50436, -249.47443)
+rotation = -1.5808704
+scale = Vector2(0.4, 0.4)
+
 [node name="CutsceneVirus1" parent="Otherground_Cutscene/CutsceneBack" unique_id=1302363223 instance=ExtResource("9_redvirus")]
 position = Vector2(-120, -220)
 scale = Vector2(0.095, 0.11)
@@ -297,53 +331,36 @@ scale = Vector2(0.102, 0.116)
 
 [node name="CutsceneVirus5" parent="Otherground_Cutscene/CutsceneBack" unique_id=1708868175 instance=ExtResource("9_redvirus")]
 modulate = Color(1, 1, 1, 0.78)
-position = Vector2(-250, -55)
-scale = Vector2(0.08, 0.094)
+position = Vector2(-236.88477, -39.5896)
+scale = Vector2(0.11643121, 0.13680667)
 
 [node name="Sprites" type="Node2D" parent="." unique_id=1360860051]
 position = Vector2(0, -124.00006)
 
 [node name="IDS_Scanner" parent="Sprites" unique_id=35152626 instance=ExtResource("4_pc5c2")]
-position = Vector2(2206.9998, 502.00003)
-scale = Vector2(0.13197838, 0.13197838)
+position = Vector2(1664, 471.0001)
+scale = Vector2(0.11188765, 0.11188765)
 
 [node name="Cybersec Guardian" parent="Sprites" unique_id=1828353461 instance=ExtResource("6_cyber")]
-position = Vector2(2198, 301.00006)
+position = Vector2(1654.1461, 301.00006)
 
 [node name="Laser Turret" parent="Sprites" unique_id=1913387890 instance=ExtResource("8_laser")]
-position = Vector2(2388, 296.00006)
-
-[node name="BasicVirus" parent="Sprites" unique_id=1150048990 instance=ExtResource("9_redvirus")]
-position = Vector2(2208, 988.00006)
-scale = Vector2(0.2, 0.2)
-
-[node name="TrojanHorse" parent="Sprites" unique_id=236675419 instance=ExtResource("10_trojan")]
-position = Vector2(2476, 769.00006)
-scale = Vector2(0.4, 0.4)
+position = Vector2(1819.0001, 297.00006)
 
 [node name="Blue Towers" type="Label" parent="." unique_id=384477170]
-offset_left = 2147.0
+offset_left = 1570.0
 offset_top = 15.0
-offset_right = 2496.0
+offset_right = 1913.0
 offset_bottom = 59.0
 theme_override_fonts/font = ExtResource("5_1l26u")
 theme_override_font_sizes/font_size = 24
 text = "Blue Towers"
 
-[node name="Red Virus" type="Label" parent="." unique_id=538766559]
-offset_left = 2123.0
-offset_top = 509.0
-offset_right = 2534.0
-offset_bottom = 553.0
-theme_override_fonts/font = ExtResource("5_1l26u")
-theme_override_font_sizes/font_size = 32
-text = "Red Viruses"
-
 [node name="WavesLabel" type="Label" parent="." unique_id=1834529841]
-offset_left = 1838.0
-offset_top = 26.0
-offset_right = 2094.0
-offset_bottom = 84.0
+offset_left = 1291.0
+offset_top = 18.0
+offset_right = 1547.0
+offset_bottom = 76.0
 theme_override_fonts/font = ExtResource("15_wq1r8")
 theme_override_font_sizes/font_size = 44
 text = "Wave 0/20"
@@ -361,8 +378,8 @@ color = Color(0.42288277, 0.4228828, 0.4228828, 1)
 [node name="VirusElements" type="Node" parent="." unique_id=1926487214]
 
 [node name="Path2D" type="Path2D" parent="VirusElements" unique_id=1664708490]
-position = Vector2(119.8728, 319)
-scale = Vector2(1.0939335, 1)
+position = Vector2(121.13758, 319)
+scale = Vector2(0.9885356, 1)
 curve = SubResource("Curve2D_63v24")
 
 [node name="SpawnVirus" type="Marker2D" parent="VirusElements" unique_id=1524594111]

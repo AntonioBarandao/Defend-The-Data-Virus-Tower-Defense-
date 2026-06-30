@@ -195,3 +195,73 @@ theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 18
 text = "500"
 vertical_alignment = 1
+
+[node name="ScannerUpgradeButton" type="Button" parent="Root"]
+visible = false
+custom_minimum_size = Vector2(156, 74)
+layout_mode = 1
+offset_left = 1340.0
+offset_top = 480.0
+offset_right = 1496.0
+offset_bottom = 554.0
+focus_mode = 0
+theme_override_colors/font_color = Color(0.66, 0.72, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0.82, 0.94, 1, 1)
+theme_override_colors/font_disabled_color = Color(1, 0.48, 0.48, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.04, 0.16, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("StyleBoxFlat_upgrade_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_upgrade_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_upgrade_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_upgrade_normal")
+
+[node name="Content" type="VBoxContainer" parent="Root/ScannerUpgradeButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = -10.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="UpgradeLabel" type="Label" parent="Root/ScannerUpgradeButton/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.66, 0.72, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.04, 0.16, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 21
+text = "Upgrade"
+horizontal_alignment = 1
+
+[node name="CostRow" type="HBoxContainer" parent="Root/ScannerUpgradeButton/Content"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 5
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="Root/ScannerUpgradeButton/Content/CostRow"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("3_bucks")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="Root/ScannerUpgradeButton/Content/CostRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.91, 0.98, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.04, 0.16, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 18
+text = "500"
+vertical_alignment = 1

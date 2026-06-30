@@ -2,11 +2,13 @@ class_name TowerUpgradeHud
 extends CanvasLayer
 
 signal laser_upgrade_pressed
+signal scanner_upgrade_pressed
 
 enum MenuMode {
 	NONE,
 	GUARDIAN,
-	LASER
+	LASER,
+	SCANNER
 }
 
 @onready var _menu_panel: PanelContainer = $Root/MenuPanel
@@ -26,7 +28,7 @@ var _current_mode := MenuMode.NONE
 
 func _ready() -> void:
 	_menu_panel.hide()
-	_laser_upgrade_button.pressed.connect(func() -> void: laser_upgrade_pressed.emit())
+	_laser_upgrade_button.pressed.connect(Callable(self, "_on_upgrade_button_pressed"))
 
 
 func set_laser_stats(
@@ -40,6 +42,27 @@ func set_laser_stats(
 	_laser_level_label.text = "Level %d / %d" % [level, max_level]
 	_laser_power_label.text = "Power: %d" % power
 	_laser_range_label.text = "Range: %d px" % roundi(attack_range)
+
+	var at_max_level := level >= max_level
+	_laser_cost_row.visible = not at_max_level
+	_laser_upgrade_button.disabled = at_max_level or not can_upgrade
+	_laser_upgrade_button.text = "Max Level" if at_max_level else "Upgrade"
+	if at_max_level:
+		_laser_cost_label.text = ""
+	else:
+		_laser_cost_label.text = str(maxi(0, upgrade_cost))
+
+
+func set_scanner_stats(
+	level: int,
+	max_level: int,
+	scan_radius: float,
+	can_upgrade: bool,
+	upgrade_cost: int = 0
+) -> void:
+	_laser_level_label.text = "Level %d / %d" % [level, max_level]
+	_laser_power_label.text = "Detection: Cloaked threats"
+	_laser_range_label.text = "Scan Radius: %d px" % roundi(scan_radius)
 
 	var at_max_level := level >= max_level
 	_laser_cost_row.visible = not at_max_level
@@ -82,6 +105,15 @@ func show_laser_panel() -> void:
 	_menu_panel.show()
 
 
+func show_scanner_panel() -> void:
+	_current_mode = MenuMode.SCANNER
+	_title_label.text = "IDS Scanner"
+	_portrait_row.hide()
+	_guardian_mode_container.hide()
+	_upgrade_path_container.show()
+	_menu_panel.show()
+
+
 func hide_laser_panel() -> void:
 	if _current_mode == MenuMode.LASER:
 		hide_all()
@@ -95,6 +127,27 @@ func laser_panel_has_point(screen_position: Vector2) -> bool:
 	return is_laser_panel_visible() and _menu_panel.get_global_rect().has_point(screen_position)
 
 
+func hide_scanner_panel() -> void:
+	if _current_mode == MenuMode.SCANNER:
+		hide_all()
+
+
+func is_scanner_panel_visible() -> bool:
+	return _menu_panel.visible and _current_mode == MenuMode.SCANNER
+
+
+func scanner_panel_has_point(screen_position: Vector2) -> bool:
+	return is_scanner_panel_visible() and _menu_panel.get_global_rect().has_point(screen_position)
+
+
 func hide_all() -> void:
 	_current_mode = MenuMode.NONE
 	_menu_panel.hide()
+
+
+func _on_upgrade_button_pressed() -> void:
+	match _current_mode:
+		MenuMode.LASER:
+			laser_upgrade_pressed.emit()
+		MenuMode.SCANNER:
+			scanner_upgrade_pressed.emit()
