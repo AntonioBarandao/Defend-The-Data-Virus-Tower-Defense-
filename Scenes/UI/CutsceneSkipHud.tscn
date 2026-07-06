@@ -17,7 +17,7 @@ corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.45)
 shadow_size = 8
 
-[node name="CutsceneSkipHud" type="CanvasLayer"]
+[node name="CutsceneSkipHUD" type="CanvasLayer"]
 layer = 990
 script = ExtResource("1_script")
 

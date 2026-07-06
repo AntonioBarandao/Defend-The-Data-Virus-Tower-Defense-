@@ -1,4 +1,4 @@
-class_name GameControlsHud
+class_name GameControlsHUD
 extends CanvasLayer
 
 const ADD_TEN_VIRUS_COUNT := 10

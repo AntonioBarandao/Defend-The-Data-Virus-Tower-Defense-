@@ -7,14 +7,19 @@
 [ext_resource type="PackedScene" uid="uid://b658jrcj1ke3f" path="res://Scenes/Towers/LaserTurret.tscn" id="8_laser"]
 [ext_resource type="PackedScene" uid="uid://calhrslp08s80" path="res://Scenes/Enemies/RedVirus.tscn" id="9_redvirus"]
 [ext_resource type="PackedScene" uid="uid://c7b5taf2pji8r" path="res://Scenes/Enemies/TrojanHorse.tscn" id="10_trojan"]
-[ext_resource type="PackedScene" uid="uid://eg7rvsm4gmsf" path="res://Scenes/UI/CyberQuestionHud.tscn" id="11_qhud"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/PerformanceHud.tscn" id="12_perf"]
-[ext_resource type="PackedScene" uid="uid://61tajh7kof5b" path="res://Scenes/UI/GameControlsHud.tscn" id="13_controls"]
-[ext_resource type="PackedScene" uid="uid://dfmkdge7ll4f2" path="res://Scenes/UI/TowerUpgradeHud.tscn" id="14_upgrades"]
+[ext_resource type="PackedScene" uid="uid://eg7rvsm4gmsf" path="res://Scenes/UI/CyberQuestionHUD.tscn" id="11_qhud"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/PerformanceHUD.tscn" id="12_perf"]
+[ext_resource type="PackedScene" uid="uid://61tajh7kof5b" path="res://Scenes/UI/GameControlsHUD.tscn" id="13_controls"]
+[ext_resource type="PackedScene" uid="uid://dfmkdge7ll4f2" path="res://Scenes/UI/TowerUpgradeHUD.tscn" id="14_upgrades"]
 [ext_resource type="Script" uid="uid://d1ugiseg13u06" path="res://Scripts/Gameplay/tower_placement_area.gd" id="15_place"]
 [ext_resource type="FontFile" uid="uid://2u6nbvofsl5k" path="res://assets/Fonts/Cyber Crown/Cyber Crown.ttf" id="15_wq1r8"]
-[ext_resource type="PackedScene" uid="uid://fet10k45d4t6" path="res://Scenes/UI/DemoPresentationOverlay.tscn" id="16_demo_overlay"]
+[ext_resource type="PackedScene" uid="uid://fet10k45d4t6" path="res://Scenes/UI/UtilityOverlayHUD.tscn" id="16_demo_overlay"]
 [ext_resource type="AudioStream" uid="uid://bpts0mu1imbfp" path="res://assets/soundtrack/Virtual Business.wav" id="17_soundtrack"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/EDR_Hunter.tscn" id="18_edr"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/SIEM_Hawk.tscn" id="19_siem"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/ProgressHUD.tscn" id="20_knowledge"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/IPS_Intrusion.tscn" id="21_ips"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/Honeypot_Production.tscn" id="22_honeypot"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_counter"]
 bg_color = Color(0.025, 0.032, 0.05, 0.88)
@@ -77,37 +82,33 @@ point_count = 40
 [node name="Game" type="Node2D" unique_id=574872578]
 script = ExtResource("1_on2he")
 virus_spawn_path = NodePath("VirusElements/SpawnVirus")
-demo_presentation_overlay_path = NodePath("DemoPresentationOverlay")
+utility_overlay_hud_path = NodePath("UtilityOverlayHUD")
 
 [node name="AdminSandboxSoundtrack" type="AudioStreamPlayer" parent="." unique_id=662457559]
 stream = ExtResource("17_soundtrack")
 volume_db = -6.0
 
-[node name="CyberQuestionHud" parent="." unique_id=923521268 instance=ExtResource("11_qhud")]
+[node name="CyberQuestionHUD" parent="." unique_id=923521268 instance=ExtResource("11_qhud")]
 demo_question_animation_enabled = true
 
-[node name="CyberBuckCounter" parent="CyberQuestionHud/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="0" unique_id=200258644]
-offset_left = -817.0
-offset_right = -563.0
-scale = Vector2(1.2404745, 1.2404745)
-theme_override_styles/panel = SubResource("StyleBoxFlat_counter")
-
-[node name="QuestionPanel" parent="CyberQuestionHud/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="1" unique_id=1626758872]
+[node name="QuestionPanel" parent="CyberQuestionHUD/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="1" unique_id=1626758872]
 offset_top = -335.0
 offset_right = 823.0
 offset_bottom = -3.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_question")
 
-[node name="PerformanceHud" parent="." unique_id=1039250105 instance=ExtResource("12_perf")]
+[node name="PerformanceHUD" parent="." unique_id=1039250105 instance=ExtResource("12_perf")]
 
-[node name="StatusPanel" parent="PerformanceHud/Root" index="0"]
+[node name="StatusPanel" parent="PerformanceHUD/Root" index="0"]
 theme_override_styles/panel = SubResource("StyleBoxFlat_status")
 
-[node name="GameControlsHud" parent="." unique_id=772842743 instance=ExtResource("13_controls")]
+[node name="ProgressHUD" parent="." instance=ExtResource("20_knowledge")]
 
-[node name="TowerUpgradeHud" parent="." unique_id=1985424915 instance=ExtResource("14_upgrades")]
+[node name="GameControlsHUD" parent="." unique_id=772842743 instance=ExtResource("13_controls")]
 
-[node name="DemoPresentationOverlay" parent="." unique_id=1382216125 instance=ExtResource("16_demo_overlay")]
+[node name="TowerUpgradeHUD" parent="." unique_id=1985424915 instance=ExtResource("14_upgrades")]
+
+[node name="UtilityOverlayHUD" parent="." unique_id=1382216125 instance=ExtResource("16_demo_overlay")]
 
 [node name="CpuArena" type="Sprite2D" parent="." unique_id=1951202282]
 position = Vector2(1053.9265, 537.5)
@@ -158,6 +159,22 @@ position = Vector2(2198, 301.00006)
 
 [node name="Laser Turret" parent="Sprites" unique_id=1913387890 instance=ExtResource("8_laser")]
 position = Vector2(2388, 296.00006)
+
+[node name="EDR_Hunter" parent="Sprites" unique_id=768204913 instance=ExtResource("18_edr")]
+position = Vector2(2578, 301.00006)
+scale = Vector2(0.11188765, 0.11188765)
+
+[node name="SIEM_Hawk" parent="Sprites" unique_id=1126839204 instance=ExtResource("19_siem")]
+position = Vector2(2768, 301.00006)
+scale = Vector2(0.11188765, 0.11188765)
+
+[node name="IPS_Intrusion" parent="Sprites" instance=ExtResource("21_ips")]
+position = Vector2(2958, 301.00006)
+scale = Vector2(0.11188765, 0.11188765)
+
+[node name="Honeypot_Production" parent="Sprites" instance=ExtResource("22_honeypot")]
+position = Vector2(3148, 301.00006)
+scale = Vector2(0.11188765, 0.11188765)
 
 [node name="BasicVirus" parent="Sprites" unique_id=1150048990 instance=ExtResource("9_redvirus")]
 position = Vector2(2215, 889.00006)
@@ -222,5 +239,6 @@ scale = Vector2(3.9718153, 3.9718153)
 shape = SubResource("RectangleShape2D_xpbew")
 debug_color = Color(0.5323416, 0.5497722, 0.4333505, 0.41960785)
 
-[editable path="CyberQuestionHud"]
-[editable path="PerformanceHud"]
+[editable path="CyberQuestionHUD"]
+[editable path="PerformanceHUD"]
+[editable path="ProgressHUD"]

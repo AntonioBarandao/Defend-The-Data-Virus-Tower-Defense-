@@ -6,6 +6,6 @@
 [node name="IDS_Scanner" type="AnimatedSprite2D" groups=["Defender", "SUPPORT_TOWER"]]
 scale = Vector2(0.3, 0.3)
 sprite_frames = ExtResource("1_frames")
-animation = &"idle"
-autoplay = "idle"
+animation = &"camo"
+autoplay = "camo"
 script = ExtResource("2_script")

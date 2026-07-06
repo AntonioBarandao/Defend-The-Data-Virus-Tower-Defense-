@@ -17,28 +17,75 @@
 [ext_resource type="AudioStream" uid="uid://7swqslpqu6ry" path="res://assets/sfx/laser_turret_lv4_shoot.wav" id="15_shoot_lv4_sfx"]
 [ext_resource type="AudioStream" uid="uid://ccfo6bus8uwg" path="res://assets/sfx/laser_turret_lv5_shoot.wav" id="16_shoot_lv5_sfx"]
 
-[node name="Laser Turret" type="AnimatedSprite2D" unique_id=1322897199 groups=["Defender", "OFFENSE_TOWER"]]
+[node name="Laser Turret" type="Node2D" unique_id=1322897199 groups=["Defender", "OFFENSE_TOWER"]]
 scale = Vector2(0.3, 0.3)
+script = ExtResource("2_script")
+
+[node name="RotatingVisual" type="Node2D" parent="." unique_id=1051194587]
+
+[node name="TurretSpriteLevel1" type="AnimatedSprite2D" parent="RotatingVisual" unique_id=1149028378]
+visible = false
+position = Vector2(0, 79.99999)
+scale = Vector2(1.1081986, 1.1081986)
 sprite_frames = ExtResource("1_frames")
 animation = &"level_1"
 autoplay = "level_1"
-script = ExtResource("2_script")
+
+[node name="TurretSpriteLevel2" type="AnimatedSprite2D" parent="RotatingVisual" unique_id=214102837]
+position = Vector2(-13.333333, 63.333332)
+sprite_frames = ExtResource("1_frames")
+animation = &"level_2"
+autoplay = "level_2"
+
+[node name="TurretSpriteLevel3" type="AnimatedSprite2D" parent="RotatingVisual" unique_id=314102837]
+visible = false
+position = Vector2(0, 10.000001)
+scale = Vector2(1.026751, 1.026751)
+sprite_frames = ExtResource("1_frames")
+animation = &"level_3"
+autoplay = "level_3"
+
+[node name="TurretSpriteLevel4" type="AnimatedSprite2D" parent="RotatingVisual" unique_id=414102837]
+visible = false
+position = Vector2(0, 10)
+sprite_frames = ExtResource("1_frames")
+animation = &"level_4"
+autoplay = "level_4"
+
+[node name="TurretSpriteLevel5" type="AnimatedSprite2D" parent="RotatingVisual" unique_id=514102837]
+visible = false
+position = Vector2(0, -13.333336)
+sprite_frames = ExtResource("1_frames")
+animation = &"level_5"
+autoplay = "level_5"
+
+[node name="LaserBeamFx" type="AnimatedSprite2D" parent="RotatingVisual" unique_id=995594978]
+visible = false
+z_index = 101
+position = Vector2(-3.3333435, 240.00002)
+rotation = 0.7853982
+scale = Vector2(0.99999994, 0.99999994)
+sprite_frames = ExtResource("3_laser_fx")
+animation = &"Laser_Startup_Shoot"
+offset = Vector2(248, 257)
 
 [node name="Level1Plate" type="Sprite2D" parent="." unique_id=94239434]
+visible = false
 show_behind_parent = true
-position = Vector2(0, -40)
+position = Vector2(0, 23.333332)
 texture = ExtResource("4_plate_lv1")
 
 [node name="Level2Plate" type="Sprite2D" parent="." unique_id=384579371]
-visible = false
 show_behind_parent = true
-position = Vector2(6.6666665, -26.666666)
+position = Vector2(0, 23.333332)
+scale = Vector2(1.1325831, 1.1325831)
 texture = ExtResource("5_plate_lv2")
 
 [node name="Level3Plate" type="Sprite2D" parent="." unique_id=1308174632]
 visible = false
 show_behind_parent = true
 position = Vector2(0, 20)
+scale = Vector2(0.97114396, 0.97114396)
 texture = ExtResource("6_plate_lv3")
 
 [node name="Level4Plate" type="Sprite2D" parent="." unique_id=1611864099]
@@ -52,15 +99,6 @@ visible = false
 show_behind_parent = true
 position = Vector2(6.6666665, 73.33333)
 texture = ExtResource("8_plate_lv5")
-
-[node name="LaserBeamFx" type="AnimatedSprite2D" parent="." unique_id=995594978]
-visible = false
-z_index = 101
-position = Vector2(-3.3333435, 176.66669)
-rotation = 0.7853982
-sprite_frames = ExtResource("3_laser_fx")
-animation = &"Laser_Startup_Shoot"
-offset = Vector2(248, 257)
 
 [node name="Audio" type="Node" parent="." unique_id=1389736071]
 

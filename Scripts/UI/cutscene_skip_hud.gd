@@ -1,18 +1,18 @@
-class_name CutsceneSkipHud
+class_name CutsceneSkipHUD
 extends CanvasLayer
 
-@export var text_cutscene_path: NodePath = ^"../TextCutscene"
-@export var announce_text_path: NodePath = ^"../AnnounceText"
+@export var text_cutscene_hud_path: NodePath = ^"../TextCutsceneHUD"
+@export var announce_text_hud_path: NodePath = ^"../AnnounceTextHUD"
 
 @onready var _skip_button: Button = $Root/SkipButton
 
-var _text_cutscene: Node
-var _announce_text: AnnounceText
+var _text_cutscene_hud: Node
+var _announce_text_hud: AnnounceTextHUD
 
 
 func _ready() -> void:
-	_text_cutscene = get_node_or_null(text_cutscene_path)
-	_announce_text = get_node_or_null(announce_text_path) as AnnounceText
+	_text_cutscene_hud = get_node_or_null(text_cutscene_hud_path)
+	_announce_text_hud = get_node_or_null(announce_text_hud_path) as AnnounceTextHUD
 	_skip_button.pressed.connect(_on_skip_pressed)
 	_skip_button.disabled = true
 	hide()
@@ -42,16 +42,16 @@ func _on_skip_pressed() -> void:
 		return
 
 	_skip_button.disabled = true
-	_text_cutscene.call("skip_cutscene")
+	_text_cutscene_hud.call("skip_cutscene")
 
-	if _announce_text != null:
-		_announce_text.show_message("Cutscene Skipped", 3.0)
+	if _announce_text_hud != null:
+		_announce_text_hud.show_message("Cutscene Skipped", 3.0)
 
 
 func _is_cutscene_running() -> bool:
-	return _text_cutscene != null \
-		and _text_cutscene.has_method("is_cutscene_running") \
-		and bool(_text_cutscene.call("is_cutscene_running"))
+	return _text_cutscene_hud != null \
+		and _text_cutscene_hud.has_method("is_cutscene_running") \
+		and bool(_text_cutscene_hud.call("is_cutscene_running"))
 
 
 func _is_primary_press(event: InputEvent) -> bool:

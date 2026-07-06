@@ -12,12 +12,12 @@ const PLACEMENT_HIGHLIGHT_SIZE := Vector2(180, 120)
 const PLACEMENT_SLOT_PREFIX := "placementslot"
 const PLATFORM_VALID_COLOR := Color(0.1, 0.9, 0.25, 0.45)
 const PLATFORM_INVALID_COLOR := Color(1.0, 0.1, 0.08, 0.45)
-const MAX_LEVEL := 5
+const MAX_LEVEL := 1
 const LEVEL_DAMAGE_POINTS := [1, 2, 3, 4, 5]
 const LEVEL_ATTACK_RANGES := [250.0, 310.0, 390.0, 500.0, 640.0]
 const LEVEL_COOLDOWNS := [0.5, 0.42, 0.34, 0.28, 0.22]
 const LEVEL_LASER_WIDTHS := [10.0, 11.0, 12.0, 13.0, 14.0]
-const LEVEL_UPGRADE_COSTS := [0, 500, 2000, 5000, 12000]
+const LEVEL_UPGRADE_COSTS := [0, 0, 0, 0, 0]
 const SHOT_RETURN_DELAY := 3.0
 const RANGE_PREVIEW_SEGMENTS := 96
 const RANGE_PREVIEW_FILL_COLOR := Color(0.27, 0.55, 1.0, 0.16)
@@ -212,7 +212,7 @@ func get_max_level() -> int:
 
 
 func can_upgrade() -> bool:
-	return level < MAX_LEVEL
+	return false
 
 
 func can_scan_cloaked_viruses() -> bool:
@@ -227,13 +227,7 @@ func get_upgrade_cost() -> int:
 
 
 func upgrade() -> bool:
-	if not can_upgrade():
-		return false
-
-	level += 1
-	_shot_cooldown_remaining = 0.0
-	_range_preview_radius = -1.0
-	return true
+	return false
 
 
 func update_attack(delta: float, active_viruses: Array[PathFollow2D]) -> PathFollow2D:

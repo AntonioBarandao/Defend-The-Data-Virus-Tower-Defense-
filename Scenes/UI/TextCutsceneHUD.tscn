@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bthmcxcu7ao8p"]
 
-[ext_resource type="Script" uid="uid://cjk54qf6xwl1a" path="res://Scripts/UI/text_cutscene.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cjk54qf6xwl1a" path="res://Scripts/UI/text_cutscene_hud.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://80e8xosb7uq1" path="res://assets/UI/Cutscene/Cyberguardian_Mascot.png" id="2_mascot"]
 [ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="3_dialogue_font"]
 [ext_resource type="FontFile" uid="uid://cc0f3h2ru1hiv" path="res://assets/Fonts/space-armor/SPACE ARMOR.otf" id="4_speaker_font"]
@@ -48,7 +48,7 @@ corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.45)
 shadow_size = 7
 
-[node name="TextCutscene" type="CanvasLayer" unique_id=757964400]
+[node name="TextCutsceneHUD" type="CanvasLayer" unique_id=757964400]
 layer = 700
 script = ExtResource("1_script")
 

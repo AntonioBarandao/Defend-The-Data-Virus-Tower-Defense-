@@ -8,35 +8,26 @@
 [ext_resource type="PackedScene" uid="uid://b658jrcj1ke3f" path="res://Scenes/Towers/LaserTurret.tscn" id="8_laser"]
 [ext_resource type="PackedScene" uid="uid://calhrslp08s80" path="res://Scenes/Enemies/RedVirus.tscn" id="9_redvirus"]
 [ext_resource type="PackedScene" uid="uid://c7b5taf2pji8r" path="res://Scenes/Enemies/TrojanHorse.tscn" id="10_trojan"]
-[ext_resource type="PackedScene" uid="uid://eg7rvsm4gmsf" path="res://Scenes/UI/CyberQuestionHud.tscn" id="11_qhud"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/PerformanceHud.tscn" id="12_perf"]
-[ext_resource type="PackedScene" uid="uid://61tajh7kof5b" path="res://Scenes/UI/GameControlsHud.tscn" id="13_controls"]
-[ext_resource type="PackedScene" uid="uid://dfmkdge7ll4f2" path="res://Scenes/UI/TowerUpgradeHud.tscn" id="14_upgrades"]
+[ext_resource type="PackedScene" uid="uid://eg7rvsm4gmsf" path="res://Scenes/UI/CyberQuestionHUD.tscn" id="11_qhud"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/PerformanceHUD.tscn" id="12_perf"]
+[ext_resource type="PackedScene" uid="uid://61tajh7kof5b" path="res://Scenes/UI/GameControlsHUD.tscn" id="13_controls"]
+[ext_resource type="PackedScene" uid="uid://dfmkdge7ll4f2" path="res://Scenes/UI/TowerUpgradeHUD.tscn" id="14_upgrades"]
 [ext_resource type="Script" uid="uid://d1ugiseg13u06" path="res://Scripts/Gameplay/tower_placement_area.gd" id="15_place"]
 [ext_resource type="FontFile" uid="uid://2u6nbvofsl5k" path="res://assets/Fonts/Cyber Crown/Cyber Crown.ttf" id="15_wq1r8"]
-[ext_resource type="PackedScene" uid="uid://fet10k45d4t6" path="res://Scenes/UI/DemoPresentationOverlay.tscn" id="16_demo_overlay"]
+[ext_resource type="PackedScene" uid="uid://fet10k45d4t6" path="res://Scenes/UI/UtilityOverlayHUD.tscn" id="16_demo_overlay"]
 [ext_resource type="Texture2D" uid="uid://bys5vnsudc4iq" path="res://tools/Cutscene.png" id="16_m0vd8"]
 [ext_resource type="AudioStream" uid="uid://bpts0mu1imbfp" path="res://assets/soundtrack/Virtual Business.wav" id="17_soundtrack"]
-[ext_resource type="PackedScene" uid="uid://bthmcxcu7ao8p" path="res://Scenes/UI/Text_Cutscene.tscn" id="18_cutscene"]
-[ext_resource type="PackedScene" path="res://Scenes/Enemies/ZombieNode.tscn" id="19_zombie_node"]
+[ext_resource type="PackedScene" uid="uid://bthmcxcu7ao8p" path="res://Scenes/UI/TextCutsceneHUD.tscn" id="18_cutscene"]
+[ext_resource type="PackedScene" uid="uid://bttc6spxk8xfs" path="res://Scenes/Enemies/ZombieNode.tscn" id="19_zombie_node"]
 [ext_resource type="Script" uid="uid://bl4stwlf88ctn" path="res://Scripts/Gameplay/cutscene_demo_director.gd" id="20_director"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/CutsceneDemoMenu.tscn" id="21_demo_menu"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/AnnounceText.tscn" id="22_announce"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/CutsceneSkipHud.tscn" id="23_skip"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_counter"]
-bg_color = Color(0.025, 0.032, 0.05, 0.88)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.27, 0.73, 1, 0.95)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-shadow_color = Color(0, 0, 0, 0.45)
-shadow_size = 8
+[ext_resource type="PackedScene" path="res://Scenes/UI/CutsceneDemoMenuHUD.tscn" id="21_demo_menu"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/AnnounceTextHUD.tscn" id="22_announce"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/CutsceneSkipHUD.tscn" id="23_skip"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/EDR_Hunter.tscn" id="24_edr"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/SIEM_Hawk.tscn" id="25_siem"]
+[ext_resource type="PackedScene" uid="uid://da4s186a72uym" path="res://Scenes/UI/ProgressHUD.tscn" id="26_knowledge"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/IPS_Intrusion.tscn" id="27_ips"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/Honeypot_Production.tscn" id="28_honeypot"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_question"]
 bg_color = Color(0.025, 0.032, 0.05, 0.94)
@@ -129,64 +120,93 @@ point_count = 40
 script = ExtResource("1_on2he")
 virus_template_path = NodePath("")
 virus_spawn_path = NodePath("VirusElements/SpawnVirus")
-demo_presentation_overlay_path = NodePath("DemoPresentationOverlay")
+show_path_guide = false
 
 [node name="AdminSandboxSoundtrack" type="AudioStreamPlayer" parent="." unique_id=662457559]
 stream = ExtResource("17_soundtrack")
 volume_db = -6.0
 
-[node name="CyberQuestionHud" parent="." unique_id=923521268 instance=ExtResource("11_qhud")]
+[node name="CyberQuestionHUD" parent="." unique_id=923521268 instance=ExtResource("11_qhud")]
 visible = false
 demo_question_animation_enabled = true
 
-[node name="CyberBuckCounter" parent="CyberQuestionHud/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="0" unique_id=200258644]
-offset_left = -1045.0
-offset_top = 15.999999
-offset_right = -791.0
-offset_bottom = 80.0
-scale = Vector2(1.2404745, 1.2404745)
-theme_override_styles/panel = SubResource("StyleBoxFlat_counter")
-
-[node name="QuestionPanel" parent="CyberQuestionHud/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="1" unique_id=1626758872]
+[node name="QuestionPanel" parent="CyberQuestionHUD/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="0" unique_id=1626758872]
+offset_left = -959.0
 offset_top = -335.0
-offset_right = 823.0
+offset_right = 610.0
 offset_bottom = -3.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_question")
 
-[node name="PerformanceHud" parent="." unique_id=1039250105 instance=ExtResource("12_perf")]
-visible = false
+[node name="PerformanceHUD" parent="." unique_id=1039250105 instance=ExtResource("12_perf")]
 
-[node name="StatusPanel" parent="PerformanceHud/Root" index="0"]
+[node name="StatusPanel" parent="PerformanceHUD/Root" index="0"]
+offset_top = 955.0
+offset_right = 289.0
+offset_bottom = 1041.0
+scale = Vector2(1.3009353, 1.3009353)
 theme_override_styles/panel = SubResource("StyleBoxFlat_status")
 
-[node name="GameControlsHud" parent="." unique_id=772842743 instance=ExtResource("13_controls")]
+[node name="ProgressHUD" parent="." unique_id=70085792 instance=ExtResource("26_knowledge")]
+
+[node name="CyberBuckCounter" parent="ProgressHUD/Root" parent_id_path=PackedInt32Array(70085792, 640472974) index="0" unique_id=449757272]
+offset_left = -1476.0
+offset_top = 22.0
+offset_right = -1222.0
+offset_bottom = 86.0
+
+[node name="Panel" parent="ProgressHUD/Root" parent_id_path=PackedInt32Array(70085792, 640472974) index="1" unique_id=1667725914]
+oversampling_with_scale = 2
+custom_minimum_size = Vector2(360, 20)
+offset_left = -927.0
+offset_right = -567.0
+offset_bottom = 95.0
+
+[node name="GameControlsHUD" parent="." unique_id=772842743 instance=ExtResource("13_controls")]
 visible = false
 
-[node name="TowerUpgradeHud" parent="." unique_id=1985424915 instance=ExtResource("14_upgrades")]
+[node name="TowerUpgradeHUD" parent="." unique_id=1985424915 instance=ExtResource("14_upgrades")]
 visible = false
 
-[node name="DemoPresentationOverlay" parent="." unique_id=1382216125 instance=ExtResource("16_demo_overlay")]
+[node name="UtilityOverlayHUD" parent="." unique_id=1382216125 instance=ExtResource("16_demo_overlay")]
 
-[node name="TextCutscene" parent="." unique_id=2039921757 instance=ExtResource("18_cutscene")]
-visible = false
+[node name="TextCutsceneHUD" parent="." unique_id=2039921757 instance=ExtResource("18_cutscene")]
 
-[node name="DialoguePanel" parent="TextCutscene/Root" parent_id_path=PackedInt32Array(2039921757, 1776170494) index="2" unique_id=1701430842]
+[node name="DialoguePanel" parent="TextCutsceneHUD/Root" parent_id_path=PackedInt32Array(2039921757, 1776170494) index="2" unique_id=1701430842]
 theme_override_styles/panel = SubResource("StyleBoxFlat_dialogue_panel")
 
-[node name="ContinueButton" parent="TextCutscene/Root/DialoguePanel/Margin/Content/Footer" parent_id_path=PackedInt32Array(2039921757, 912886766) index="0" unique_id=1690167965]
+[node name="ContinueButton" parent="TextCutsceneHUD/Root/DialoguePanel/Margin/Content/Footer" parent_id_path=PackedInt32Array(2039921757, 912886766) index="0" unique_id=1690167965]
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
 
-[node name="AnnounceText" parent="." unique_id=468431518 instance=ExtResource("22_announce")]
+[node name="AnnounceTextHUD" parent="." unique_id=468431518 instance=ExtResource("22_announce")]
 visible = false
 
-[node name="CutsceneSkipHud" parent="." unique_id=575692336 instance=ExtResource("23_skip")]
-visible = false
+[node name="MessagePanel" parent="AnnounceTextHUD/Root" index="0"]
+scale = Vector2(1.2091238, 1.2091238)
 
-[node name="CutsceneDemoMenu" parent="." unique_id=29047704 instance=ExtResource("21_demo_menu")]
-visible = false
+[node name="CutsceneSkipHUD" parent="." unique_id=575692336 instance=ExtResource("23_skip")]
+
+[node name="SkipButton" parent="CutsceneSkipHUD/Root" index="0"]
+offset_left = -209.0
+offset_top = 10.0
+offset_right = -53.0
+offset_bottom = 58.0
+scale = Vector2(1.2522548, 1.2522548)
+
+[node name="CutsceneDemoMenuHUD" parent="." unique_id=29047704 instance=ExtResource("21_demo_menu")]
+
+[node name="HamburgerButton" parent="CutsceneDemoMenuHUD/Root" index="0"]
+offset_left = -100.0
+offset_right = 39.0
+text = "Menu"
+
+[node name="WaveSetPanel" parent="CutsceneDemoMenuHUD/Root" index="3"]
+offset_left = -725.0
+offset_top = 83.0
+offset_right = -362.0
+offset_bottom = 159.0
 
 [node name="CutsceneCamera" type="Camera2D" parent="." unique_id=2005815930]
 position = Vector2(956, 544)
@@ -197,7 +217,8 @@ scale = Vector2(1.1454227, 1.1509033)
 texture = ExtResource("6_agy0f")
 
 [node name="ZombieNode" parent="." unique_id=187820591 instance=ExtResource("19_zombie_node")]
-position = Vector2(952, 457.00003)
+visible = false
+position = Vector2(954.00006, 454)
 scale = Vector2(2.0761907, 2.0761907)
 
 [node name="CutsceneDemoDirector" type="Node" parent="." unique_id=1486481276]
@@ -347,6 +368,20 @@ position = Vector2(1654.1461, 301.00006)
 [node name="Laser Turret" parent="Sprites" unique_id=1913387890 instance=ExtResource("8_laser")]
 position = Vector2(1819.0001, 297.00006)
 
+[node name="EDR_Hunter" parent="Sprites" unique_id=768204913 instance=ExtResource("24_edr")]
+position = Vector2(1819, 471.0001)
+animation = &"SummonAnim"
+
+[node name="SIEM_Hawk" parent="Sprites" unique_id=1126839204 instance=ExtResource("25_siem")]
+position = Vector2(1670, 635.0001)
+scale = Vector2(0.14398043, 0.14398043)
+
+[node name="IPS_Intrusion" parent="Sprites" unique_id=295016480 instance=ExtResource("27_ips")]
+position = Vector2(1827, 631.0001)
+
+[node name="Honeypot_Production" parent="Sprites" unique_id=271354454 instance=ExtResource("28_honeypot")]
+position = Vector2(1668, 839.00006)
+
 [node name="Blue Towers" type="Label" parent="." unique_id=384477170]
 offset_left = 1570.0
 offset_top = 15.0
@@ -393,7 +428,13 @@ scale = Vector2(3.9718153, 3.9718153)
 shape = SubResource("RectangleShape2D_xpbew")
 debug_color = Color(0.5323416, 0.5497722, 0.4333505, 0.41960785)
 
-[editable path="CyberQuestionHud"]
-[editable path="PerformanceHud"]
-[editable path="TextCutscene"]
-[editable path="CutsceneDemoMenu"]
+[editable path="CyberQuestionHUD"]
+[editable path="PerformanceHUD"]
+[editable path="ProgressHUD"]
+[editable path="GameControlsHUD"]
+[editable path="TowerUpgradeHUD"]
+[editable path="UtilityOverlayHUD"]
+[editable path="TextCutsceneHUD"]
+[editable path="AnnounceTextHUD"]
+[editable path="CutsceneSkipHUD"]
+[editable path="CutsceneDemoMenuHUD"]

@@ -1,8 +1,8 @@
 class_name LaserTurret
-extends AnimatedSprite2D
+extends Node2D
 
-signal placed(turret: AnimatedSprite2D)
-signal upgraded(turret: AnimatedSprite2D, level: int)
+signal placed(turret: LaserTurret)
+signal upgraded(turret: LaserTurret, level: int)
 
 const TowerSummonEffectScript := preload("res://Scripts/Effects/tower_summon_effect.gd")
 const TOWER_GRAB_SIZE := Vector2(180, 180)
@@ -15,7 +15,7 @@ const LEVEL_POWERS := [1, 2, 3, 4, 5]
 const LEVEL_RANGES := [260.0, 310.0, 450.0, 650.0, 800.0]
 const LEVEL_COOLDOWNS := [0.82, 0.62, 0.52, 0.32, 0.05]
 const LEVEL_LASER_WIDTHS := [7.0, 8.5, 10.0, 11.5, 13.0]
-const LEVEL_UPGRADE_COSTS := [0, 500, 2000, 5000, 12000]
+const LEVEL_UPGRADE_COSTS := [0, 0, 0, 0, 0]
 const LASER_COLOR := Color(0.1, 1.0, 0.72, 1.0)
 const SHOT_RETURN_DELAY := 3.0
 const RANGE_PREVIEW_SEGMENTS := 96
@@ -43,8 +43,17 @@ const LEVEL_PLATE_NODE_NAMES := [
 @export var show_attack_range_preview := true
 @export var range_preview_fill_color := RANGE_PREVIEW_FILL_COLOR
 @export var range_preview_outline_color := RANGE_PREVIEW_OUTLINE_COLOR
+@export var rotation_pivot_path: NodePath = ^"RotatingVisual"
+@export var visual_sprite_path: NodePath = ^"RotatingVisual/TurretSpriteLevel1"
+@export var level_visual_paths: Array[NodePath] = [
+	^"RotatingVisual/TurretSpriteLevel1",
+	^"RotatingVisual/TurretSpriteLevel2",
+	^"RotatingVisual/TurretSpriteLevel3",
+	^"RotatingVisual/TurretSpriteLevel4",
+	^"RotatingVisual/TurretSpriteLevel5"
+]
 @export_group("Laser Beam FX")
-@export var beam_fx_path: NodePath = ^"LaserBeamFx"
+@export var beam_fx_path: NodePath = ^"RotatingVisual/LaserBeamFx"
 @export_range(1.0, 2000.0, 1.0) var beam_fx_source_length := 620.0
 @export_range(0.05, 4.0, 0.01) var beam_fx_scale_multiplier := 1.0
 @export_group("")
@@ -60,6 +69,7 @@ const LEVEL_PLATE_NODE_NAMES := [
 @export_group("")
 
 var _home_position := Vector2.ZERO
+var _home_rotation := 0.0
 var _dragging := false
 var _placed := false
 var _drag_start_position := Vector2.ZERO
@@ -76,6 +86,9 @@ var _range_preview_outline: Line2D
 var _range_preview_radius := -1.0
 var _range_preview_forced_time_remaining := 0.0
 var _menu_range_preview_active := false
+var _rotation_pivot: Node2D
+var _visual_sprite: AnimatedSprite2D
+var _level_visual_sprites: Array[AnimatedSprite2D] = []
 var _beam_fx_reference: AnimatedSprite2D
 var _level_plates: Array[Sprite2D] = []
 var _level_plate_local_offsets: Array[Vector2] = []
@@ -92,8 +105,20 @@ func _ready() -> void:
 	add_to_group("Defender")
 	add_to_group("OFFENSE_TOWER")
 	_home_position = global_position
-	_rest_rotation = rotation
+	_home_rotation = rotation
 	_base_modulate = modulate
+	_rotation_pivot = get_node_or_null(rotation_pivot_path) as Node2D
+	_visual_sprite = get_node_or_null(visual_sprite_path) as AnimatedSprite2D
+	_cache_level_visual_sprites()
+	var current_visual_sprite := _get_level_visual_sprite()
+	if current_visual_sprite != null:
+		_visual_sprite = current_visual_sprite
+	if _rotation_pivot == null:
+		_rotation_pivot = _visual_sprite
+	if _visual_sprite != null:
+		_rest_rotation = _rotation_pivot.rotation if _rotation_pivot != null else _visual_sprite.rotation
+	else:
+		push_warning("LaserTurret visual sprite was not found at %s." % visual_sprite_path)
 	_platform_highlight = get_node_or_null(platform_highlight_path) as ColorRect
 	_beam_fx_reference = get_node_or_null(beam_fx_path) as AnimatedSprite2D
 	_cache_audio_players()
@@ -178,7 +203,7 @@ func upgrade() -> bool:
 func reset_tower() -> void:
 	level = 1
 	global_position = _home_position
-	rotation = _rest_rotation
+	rotation = _home_rotation
 	_dragging = false
 	_placed = false
 	_drag_is_valid = false
@@ -322,8 +347,8 @@ func contains_global_point(pointer_position: Vector2) -> bool:
 
 func aim_at(target_position: Vector2) -> void:
 	var direction := target_position - global_position
-	if direction.length_squared() > 0.0:
-		rotation = direction.angle() - forward_rotation_offset
+	if direction.length_squared() > 0.0 and _rotation_pivot != null:
+		_rotation_pivot.global_rotation = direction.angle() - forward_rotation_offset
 
 
 func mark_shot_fired() -> void:
@@ -376,13 +401,15 @@ func _apply_level_animation() -> void:
 	level = clampi(level, 1, MAX_LEVEL)
 	_apply_level_plate()
 	var animation_name := StringName("level_%d" % level)
-	if sprite_frames == null or not sprite_frames.has_animation(animation_name):
+	_visual_sprite = _get_level_visual_sprite()
+	_apply_level_visual_visibility()
+	if _visual_sprite == null or _visual_sprite.sprite_frames == null or not _visual_sprite.sprite_frames.has_animation(animation_name):
 		return
 
-	animation = animation_name
-	frame = 0
-	frame_progress = 0.0
-	play()
+	_visual_sprite.animation = animation_name
+	_visual_sprite.frame = 0
+	_visual_sprite.frame_progress = 0.0
+	_visual_sprite.play()
 
 
 func _cache_level_plates() -> void:
@@ -396,6 +423,31 @@ func _cache_level_plates() -> void:
 		_level_plate_local_offsets.append(plate.position if plate != null else Vector2.ZERO)
 		_level_plate_local_scales.append(plate.scale if plate != null else Vector2.ONE)
 		_level_plate_base_modulates.append(plate.modulate if plate != null else Color.WHITE)
+
+
+func _cache_level_visual_sprites() -> void:
+	_level_visual_sprites.clear()
+	for visual_path in level_visual_paths:
+		_level_visual_sprites.append(get_node_or_null(visual_path) as AnimatedSprite2D)
+
+	if _level_visual_sprites.is_empty() and _visual_sprite != null:
+		_level_visual_sprites.append(_visual_sprite)
+
+
+func _get_level_visual_sprite() -> AnimatedSprite2D:
+	var visual_index := clampi(level, 1, MAX_LEVEL) - 1
+	if visual_index >= 0 and visual_index < _level_visual_sprites.size():
+		var level_sprite := _level_visual_sprites[visual_index]
+		if level_sprite != null:
+			return level_sprite
+
+	return _visual_sprite
+
+
+func _apply_level_visual_visibility() -> void:
+	for sprite in _level_visual_sprites:
+		if sprite != null:
+			sprite.visible = sprite == _visual_sprite
 
 
 func _cache_audio_players() -> void:
@@ -414,6 +466,10 @@ func _cache_audio_players() -> void:
 func _configure_level_plates() -> void:
 	z_index = maxi(z_index, TOWER_VISUAL_Z_INDEX)
 	z_as_relative = false
+	for sprite in _level_visual_sprites:
+		if sprite != null:
+			sprite.z_index = maxi(sprite.z_index, TOWER_VISUAL_Z_INDEX)
+			sprite.z_as_relative = false
 	for plate in _level_plates:
 		if plate == null:
 			continue
@@ -792,18 +848,21 @@ func _get_game_root() -> Node:
 
 func _get_tower_rect() -> Rect2:
 	var size := TOWER_GRAB_SIZE
-	if sprite_frames != null and sprite_frames.has_animation(animation):
-		var texture := sprite_frames.get_frame_texture(animation, frame)
+	if _visual_sprite != null \
+		and _visual_sprite.sprite_frames != null \
+		and _visual_sprite.sprite_frames.has_animation(_visual_sprite.animation):
+		var texture := _visual_sprite.sprite_frames.get_frame_texture(_visual_sprite.animation, _visual_sprite.frame)
 		if texture != null:
-			var current_scale := global_scale
+			var current_scale := _visual_sprite.global_scale
 			size = texture.get_size() * Vector2(abs(current_scale.x), abs(current_scale.y))
 
 	size.x = max(size.x, TOWER_GRAB_SIZE.x)
 	size.y = max(size.y, TOWER_GRAB_SIZE.y)
 
-	var top_left := global_position - size * 0.5
-	if not centered:
-		top_left = global_position
+	var visual_position := _visual_sprite.global_position if _visual_sprite != null else global_position
+	var top_left := visual_position - size * 0.5
+	if _visual_sprite != null and not _visual_sprite.centered:
+		top_left = visual_position
 
 	return Rect2(top_left, size)
 
@@ -817,7 +876,7 @@ func _is_cutscene_input_locked() -> bool:
 	if scene == null:
 		return false
 
-	var cutscene := scene.get_node_or_null(^"TextCutscene")
+	var cutscene := scene.get_node_or_null(^"TextCutsceneHUD")
 	return cutscene != null and cutscene.has_method("is_cutscene_running") and bool(cutscene.call("is_cutscene_running"))
 
 
@@ -840,4 +899,5 @@ func _return_to_rest_state_if_not_shooting() -> void:
 
 func _return_to_rest_state() -> void:
 	_shot_pose_active = false
-	rotation = _rest_rotation
+	if _rotation_pivot != null:
+		_rotation_pivot.rotation = _rest_rotation

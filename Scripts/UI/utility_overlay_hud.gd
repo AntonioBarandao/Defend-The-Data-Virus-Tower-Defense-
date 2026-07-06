@@ -1,9 +1,13 @@
-class_name DemoPresentationOverlay
+class_name UtilityOverlayHUD
 extends CanvasLayer
 
 signal laser_upgrade_requested
 signal guardian_upgrade_requested
 signal scanner_upgrade_requested
+signal edr_upgrade_requested
+signal siem_upgrade_requested
+signal ips_upgrade_requested
+signal honeypot_upgrade_requested
 
 const POPUP_DURATION := 1.45
 const BUCKS_ICON_SIZE := Vector2(38, 38)
@@ -25,14 +29,35 @@ const COST_LOCKED_COLOR := Color(1.0, 0.48, 0.48, 1.0)
 @onready var _scanner_upgrade_button: Button = $Root/ScannerUpgradeButton
 @onready var _scanner_upgrade_cost_label: Label = $Root/ScannerUpgradeButton/Content/CostRow/Amount
 
+var _edr_upgrade_button: Button
+var _edr_upgrade_cost_label: Label
+var _siem_upgrade_button: Button
+var _siem_upgrade_cost_label: Label
+var _ips_upgrade_button: Button
+var _ips_upgrade_cost_label: Label
+var _honeypot_upgrade_button: Button
+var _honeypot_upgrade_cost_label: Label
+
 
 func _ready() -> void:
 	_configure_upgrade_button(_guardian_upgrade_button)
 	_configure_upgrade_button(_laser_upgrade_button)
 	_configure_upgrade_button(_scanner_upgrade_button)
+	_edr_upgrade_button = _create_extra_upgrade_button("EDRUpgradeButton")
+	_edr_upgrade_cost_label = _get_upgrade_cost_label(_edr_upgrade_button)
+	_siem_upgrade_button = _create_extra_upgrade_button("SIEMUpgradeButton")
+	_siem_upgrade_cost_label = _get_upgrade_cost_label(_siem_upgrade_button)
+	_ips_upgrade_button = _create_extra_upgrade_button("IPSUpgradeButton")
+	_ips_upgrade_cost_label = _get_upgrade_cost_label(_ips_upgrade_button)
+	_honeypot_upgrade_button = _create_extra_upgrade_button("HoneypotUpgradeButton")
+	_honeypot_upgrade_cost_label = _get_upgrade_cost_label(_honeypot_upgrade_button)
 	_guardian_upgrade_button.pressed.connect(func() -> void: guardian_upgrade_requested.emit())
 	_laser_upgrade_button.pressed.connect(func() -> void: laser_upgrade_requested.emit())
 	_scanner_upgrade_button.pressed.connect(func() -> void: scanner_upgrade_requested.emit())
+	_edr_upgrade_button.pressed.connect(func() -> void: edr_upgrade_requested.emit())
+	_siem_upgrade_button.pressed.connect(func() -> void: siem_upgrade_requested.emit())
+	_ips_upgrade_button.pressed.connect(func() -> void: ips_upgrade_requested.emit())
+	_honeypot_upgrade_button.pressed.connect(func() -> void: honeypot_upgrade_requested.emit())
 
 
 func show_guardian_destroy_popup(
@@ -139,6 +164,86 @@ func set_scanner_upgrade_button_state(
 	)
 
 
+func set_edr_upgrade_button_state(
+	edr_screen_position: Vector2,
+	deployed: bool,
+	can_upgrade: bool,
+	hovered: bool,
+	cost: int,
+	affordable: bool
+) -> void:
+	_set_upgrade_button_state(
+		_edr_upgrade_button,
+		_edr_upgrade_cost_label,
+		edr_screen_position,
+		deployed,
+		can_upgrade,
+		hovered,
+		cost,
+		affordable
+	)
+
+
+func set_siem_upgrade_button_state(
+	siem_screen_position: Vector2,
+	deployed: bool,
+	can_upgrade: bool,
+	hovered: bool,
+	cost: int,
+	affordable: bool
+) -> void:
+	_set_upgrade_button_state(
+		_siem_upgrade_button,
+		_siem_upgrade_cost_label,
+		siem_screen_position,
+		deployed,
+		can_upgrade,
+		hovered,
+		cost,
+		affordable
+	)
+
+
+func set_ips_upgrade_button_state(
+	ips_screen_position: Vector2,
+	deployed: bool,
+	can_upgrade: bool,
+	hovered: bool,
+	cost: int,
+	affordable: bool
+) -> void:
+	_set_upgrade_button_state(
+		_ips_upgrade_button,
+		_ips_upgrade_cost_label,
+		ips_screen_position,
+		deployed,
+		can_upgrade,
+		hovered,
+		cost,
+		affordable
+	)
+
+
+func set_honeypot_upgrade_button_state(
+	honeypot_screen_position: Vector2,
+	deployed: bool,
+	can_upgrade: bool,
+	hovered: bool,
+	cost: int,
+	affordable: bool
+) -> void:
+	_set_upgrade_button_state(
+		_honeypot_upgrade_button,
+		_honeypot_upgrade_cost_label,
+		honeypot_screen_position,
+		deployed,
+		can_upgrade,
+		hovered,
+		cost,
+		affordable
+	)
+
+
 func guardian_upgrade_button_has_point(screen_position: Vector2) -> bool:
 	return _button_has_point(_guardian_upgrade_button, screen_position)
 
@@ -151,10 +256,30 @@ func scanner_upgrade_button_has_point(screen_position: Vector2) -> bool:
 	return _button_has_point(_scanner_upgrade_button, screen_position)
 
 
+func edr_upgrade_button_has_point(screen_position: Vector2) -> bool:
+	return _button_has_point(_edr_upgrade_button, screen_position)
+
+
+func siem_upgrade_button_has_point(screen_position: Vector2) -> bool:
+	return _button_has_point(_siem_upgrade_button, screen_position)
+
+
+func ips_upgrade_button_has_point(screen_position: Vector2) -> bool:
+	return _button_has_point(_ips_upgrade_button, screen_position)
+
+
+func honeypot_upgrade_button_has_point(screen_position: Vector2) -> bool:
+	return _button_has_point(_honeypot_upgrade_button, screen_position)
+
+
 func upgrade_button_has_point(screen_position: Vector2) -> bool:
 	return guardian_upgrade_button_has_point(screen_position) \
 		or laser_upgrade_button_has_point(screen_position) \
-		or scanner_upgrade_button_has_point(screen_position)
+		or scanner_upgrade_button_has_point(screen_position) \
+		or edr_upgrade_button_has_point(screen_position) \
+		or siem_upgrade_button_has_point(screen_position) \
+		or ips_upgrade_button_has_point(screen_position) \
+		or honeypot_upgrade_button_has_point(screen_position)
 
 
 func show_laser_upgrade_fx(laser_position: Vector2) -> void:
@@ -175,6 +300,18 @@ func show_tower_upgrade_fx(tower_position: Vector2) -> void:
 func _configure_upgrade_button(button: Button) -> void:
 	button.hide()
 	button.add_theme_font_override("font", naked_power_font)
+
+
+func _create_extra_upgrade_button(button_name: String) -> Button:
+	var button := _scanner_upgrade_button.duplicate() as Button
+	button.name = button_name
+	_scanner_upgrade_button.get_parent().add_child(button)
+	_configure_upgrade_button(button)
+	return button
+
+
+func _get_upgrade_cost_label(button: Button) -> Label:
+	return button.get_node(^"Content/CostRow/Amount") as Label
 
 
 func _set_upgrade_button_state(

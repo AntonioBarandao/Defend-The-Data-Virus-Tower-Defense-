@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://Scripts/UI/announce_text.gd" id="1_script"]
+[ext_resource type="Script" path="res://Scripts/UI/announce_text_hud.gd" id="1_script"]
 [ext_resource type="FontFile" path="res://assets/Fonts/space-armor/SPACE ARMOR.otf" id="2_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_message"]
@@ -18,7 +18,7 @@ shadow_color = Color(0, 0, 0, 0.55)
 shadow_size = 16
 shadow_offset = Vector2(0, 8)
 
-[node name="AnnounceText" type="CanvasLayer"]
+[node name="AnnounceTextHUD" type="CanvasLayer"]
 layer = 1000
 script = ExtResource("1_script")
 

@@ -1,12 +1,13 @@
-class_name CutsceneDemoMenu
+class_name CutsceneDemoMenuHUD
 extends CanvasLayer
 
 @export var game_path: NodePath = ^".."
 @export var music_player_path: NodePath = ^"../AdminSandboxSoundtrack"
-@export var text_cutscene_path: NodePath = ^"../TextCutscene"
+@export var text_cutscene_hud_path: NodePath = ^"../TextCutsceneHUD"
 @export_file("*.tscn") var main_menu_scene_path := "res://Scenes/Menus/MainMenu.tscn"
 @export_group("Editable UI Paths")
 @export var hamburger_button_path: NodePath = ^"Root/HamburgerButton"
+@export var dim_overlay_path: NodePath = ^"Root/DimOverlay"
 @export var menu_panel_path: NodePath = ^"Root/MenuPanel"
 @export var resume_button_path: NodePath = ^"Root/MenuPanel/Margin/Content/ResumeButton"
 @export var settings_button_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsButton"
@@ -18,8 +19,15 @@ extends CanvasLayer
 @export var wave_input_path: NodePath = ^"Root/WaveSetPanel/Margin/Content/WaveInput"
 @export var wave_set_button_path: NodePath = ^"Root/WaveSetPanel/Margin/Content/SetWaveButton"
 @export_group("")
+@export_group("Menu Animation")
+@export_range(80.0, 900.0, 1.0) var menu_slide_distance := 520.0
+@export_range(0.08, 1.0, 0.01) var menu_open_duration := 0.34
+@export_range(0.08, 1.0, 0.01) var menu_close_duration := 0.24
+@export_range(0.0, 1.0, 0.01) var dim_overlay_opacity := 1.0
+@export_group("")
 
 var _hamburger_button: Button
+var _dim_overlay: ColorRect
 var _menu_panel: PanelContainer
 var _resume_button: Button
 var _settings_button: Button
@@ -33,16 +41,27 @@ var _wave_set_button: Button
 
 var _game: Node
 var _music_player: AudioStreamPlayer
-var _text_cutscene: Node
+var _text_cutscene_hud: Node
+var _menu_open := false
+var _was_tree_paused_before_menu := false
+var _menu_rest_position := Vector2.ZERO
+var _menu_rest_modulate := Color.WHITE
+var _menu_tween: Tween
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_game = get_node_or_null(game_path)
 	_music_player = get_node_or_null(music_player_path) as AudioStreamPlayer
-	_text_cutscene = get_node_or_null(text_cutscene_path)
+	_text_cutscene_hud = get_node_or_null(text_cutscene_hud_path)
 	_resolve_ui_nodes()
 	if _menu_panel != null:
+		_menu_rest_position = _menu_panel.position
+		_menu_rest_modulate = _menu_panel.modulate
 		_menu_panel.hide()
+	if _dim_overlay != null:
+		_dim_overlay.hide()
+		_set_canvas_item_alpha(_dim_overlay, 0.0)
 	if _settings_panel != null:
 		_settings_panel.hide()
 	if _hamburger_button != null:
@@ -68,6 +87,7 @@ func _ready() -> void:
 
 func _resolve_ui_nodes() -> void:
 	_hamburger_button = get_node_or_null(hamburger_button_path) as Button
+	_dim_overlay = get_node_or_null(dim_overlay_path) as ColorRect
 	_menu_panel = get_node_or_null(menu_panel_path) as PanelContainer
 	_resume_button = get_node_or_null(resume_button_path) as Button
 	_settings_button = get_node_or_null(settings_button_path) as Button
@@ -84,12 +104,57 @@ func _toggle_menu() -> void:
 	if _menu_panel == null:
 		return
 
-	_menu_panel.visible = not _menu_panel.visible
+	if _menu_open:
+		_close_menu()
+	else:
+		_open_menu()
+
+
+func _open_menu() -> void:
+	if _menu_panel == null or _menu_open:
+		return
+
+	_menu_open = true
+	_was_tree_paused_before_menu = get_tree().paused
+	get_tree().paused = true
+	if _settings_panel != null:
+		_settings_panel.hide()
+
+	if _dim_overlay != null:
+		_dim_overlay.show()
+		_set_canvas_item_alpha(_dim_overlay, 0.0)
+
+	_menu_panel.show()
+	_menu_panel.position = _menu_rest_position + Vector2(0.0, menu_slide_distance)
+	_set_canvas_item_alpha(_menu_panel, 0.0)
+
+	var tween := _create_menu_tween()
+	tween.set_parallel(true)
+	if _dim_overlay != null:
+		tween.tween_property(_dim_overlay, "modulate:a", dim_overlay_opacity, menu_open_duration).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_menu_panel, "position", _menu_rest_position, menu_open_duration).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_menu_panel, "modulate:a", _menu_rest_modulate.a, menu_open_duration).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 
 func _close_menu() -> void:
-	if _menu_panel != null:
+	if _menu_panel == null:
+		return
+
+	if not _menu_open:
 		_menu_panel.hide()
+		if _dim_overlay != null:
+			_dim_overlay.hide()
+		return
+
+	_menu_open = false
+	var tween := _create_menu_tween()
+	tween.set_parallel(true)
+	if _dim_overlay != null:
+		tween.tween_property(_dim_overlay, "modulate:a", 0.0, menu_close_duration).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
+	tween.tween_property(_menu_panel, "position", _menu_rest_position + Vector2(0.0, menu_slide_distance), menu_close_duration).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
+	tween.tween_property(_menu_panel, "modulate:a", 0.0, menu_close_duration).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
+	tween.set_parallel(false)
+	tween.tween_callback(Callable(self, "_finish_close_menu"))
 
 
 func _toggle_settings() -> void:
@@ -100,6 +165,7 @@ func _toggle_settings() -> void:
 
 
 func _return_to_main_menu() -> void:
+	get_tree().paused = false
 	get_tree().change_scene_to_file(main_menu_scene_path)
 
 
@@ -158,3 +224,32 @@ func _get_music_linear() -> float:
 		return clampf(db_to_linear(_music_player.volume_db), 0.0, 1.0)
 
 	return _get_bus_linear("Music")
+
+
+func _create_menu_tween() -> Tween:
+	if _menu_tween != null:
+		_menu_tween.kill()
+
+	_menu_tween = create_tween()
+	_menu_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	return _menu_tween
+
+
+func _finish_close_menu() -> void:
+	if _menu_open:
+		return
+
+	if _menu_panel != null:
+		_menu_panel.hide()
+		_menu_panel.position = _menu_rest_position
+		_menu_panel.modulate = _menu_rest_modulate
+	if _dim_overlay != null:
+		_dim_overlay.hide()
+		_set_canvas_item_alpha(_dim_overlay, 0.0)
+	get_tree().paused = _was_tree_paused_before_menu
+
+
+func _set_canvas_item_alpha(canvas_item: CanvasItem, alpha: float) -> void:
+	var next_modulate := canvas_item.modulate
+	next_modulate.a = alpha
+	canvas_item.modulate = next_modulate

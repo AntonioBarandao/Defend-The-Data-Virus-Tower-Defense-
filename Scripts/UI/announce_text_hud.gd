@@ -1,4 +1,4 @@
-class_name AnnounceText
+class_name AnnounceTextHUD
 extends CanvasLayer
 
 @export_range(0.1, 2.0, 0.05) var entry_duration := 0.42

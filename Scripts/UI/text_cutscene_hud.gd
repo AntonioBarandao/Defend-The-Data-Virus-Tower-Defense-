@@ -1,4 +1,4 @@
-class_name TextCutscene
+class_name TextCutsceneHUD
 extends CanvasLayer
 
 signal act_started(act_number: int)

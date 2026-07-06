@@ -1,7 +1,8 @@
-class_name CyberQuestionHud
+class_name CyberQuestionHUD
 extends CanvasLayer
 
 signal question_solved(reward: int)
+signal cyberbucks_changed(amount: int)
 
 const CATEGORY_CYBERSECURITY := "cybersecurity"
 const CATEGORY_NETWORKING := "networking"
@@ -103,7 +104,6 @@ var _control_tweens: Dictionary = {}
 ]
 @onready var _feedback_label: Label = $Root/QuestionPanel/Margin/Content/QuestionView/FeedbackLabel
 @onready var _back_button: Button = $Root/QuestionPanel/Margin/Content/QuestionView/BackButton
-@onready var _cyberbuck_amount_label: Label = $Root/CyberBuckCounter/CounterBox/Amount
 
 
 func _ready() -> void:
@@ -237,7 +237,7 @@ func _answer_selected(answer_index: int) -> void:
 
 
 func _update_cyberbuck_amount() -> void:
-	_cyberbuck_amount_label.text = str(cyberbucks)
+	cyberbucks_changed.emit(cyberbucks)
 
 
 func _get_question_reward(difficulty: String) -> int:

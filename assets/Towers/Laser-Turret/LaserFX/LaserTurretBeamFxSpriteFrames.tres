@@ -130,7 +130,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fifbi")
 }],
-"loop": false,
+"loop": 0,
 "name": &"Laser_Continuous_Stop",
 "speed": 60.0
 }, {
@@ -165,7 +165,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ck7it")
 }],
-"loop": false,
+"loop": 0,
 "name": &"Laser_Startup_Shoot",
 "speed": 60.0
 }]

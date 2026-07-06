@@ -3,13 +3,71 @@ extends AnimatedSprite2D
 
 signal placed(scanner: IDSScannerTower)
 signal upgraded(scanner: IDSScannerTower, level: int)
+signal bounty_awarded(amount: int)
+signal virus_damage_requested(follow: PathFollow2D, amount: int)
 
 const TowerSummonEffectScript := preload("res://Scripts/Effects/tower_summon_effect.gd")
-const IDLE_ANIMATION := &"idle"
+const MODE_CAMO := &"camo"
+const MODE_BURNER := &"burner"
+const MODE_BOUNTY := &"bounty"
+const MODE_QUARANTINE := &"quarantine"
+const MODE_NULLIFIER := &"nullifier"
+const IDLE_ANIMATION := MODE_CAMO
 const CYBER_GUARDIAN_LEVEL_ONE_RADIUS := 250.0
 const MAX_LEVEL := 5
-const LEVEL_SCAN_RADII := [250.0, 310.0, 390.0, 500.0, 640.0]
-const LEVEL_UPGRADE_COSTS := [0, 500, 2000, 5000, 12000]
+const RADIUS_UPGRADE_MULTIPLIER := 1.15
+const LEVEL_UPGRADE_COSTS := [0, 0, 0, 0, 0]
+const MODE_SEQUENCE := [
+	MODE_CAMO,
+	MODE_BURNER,
+	MODE_BOUNTY,
+	MODE_QUARANTINE,
+	MODE_NULLIFIER
+]
+const MODE_DISPLAY_NAMES := {
+	MODE_CAMO: "Camo",
+	MODE_BURNER: "Burner",
+	MODE_BOUNTY: "Bounty",
+	MODE_QUARANTINE: "Quarantine",
+	MODE_NULLIFIER: "Nullifier"
+}
+const MODE_RADAR_COLORS := {
+	MODE_CAMO: {
+		"fill": Color(0.0, 1.0, 0.35, 0.08),
+		"outline": Color(0.28, 1.0, 0.48, 0.58),
+		"sweep": Color(0.4, 1.0, 0.5, 0.34),
+		"line": Color(0.65, 1.0, 0.68, 0.92)
+	},
+	MODE_BURNER: {
+		"fill": Color(1.0, 0.34, 0.05, 0.11),
+		"outline": Color(1.0, 0.55, 0.12, 0.72),
+		"sweep": Color(1.0, 0.42, 0.07, 0.34),
+		"line": Color(1.0, 0.76, 0.28, 0.94)
+	},
+	MODE_BOUNTY: {
+		"fill": Color(0.08, 0.47, 1.0, 0.1),
+		"outline": Color(0.25, 0.7, 1.0, 0.72),
+		"sweep": Color(0.2, 0.64, 1.0, 0.32),
+		"line": Color(0.68, 0.9, 1.0, 0.94)
+	},
+	MODE_QUARANTINE: {
+		"fill": Color(1.0, 0.84, 0.06, 0.11),
+		"outline": Color(1.0, 0.9, 0.22, 0.74),
+		"sweep": Color(1.0, 0.86, 0.12, 0.32),
+		"line": Color(1.0, 0.96, 0.58, 0.96)
+	},
+	MODE_NULLIFIER: {
+		"fill": Color(0.1, 0.28, 1.0, 0.1),
+		"outline": Color(0.34, 0.58, 1.0, 0.76),
+		"sweep": Color(0.2, 0.4, 1.0, 0.34),
+		"line": Color(0.72, 0.82, 1.0, 0.96)
+	}
+}
+const BURNER_DAMAGE := 1
+const BURNER_TICK_SECONDS := 1.0
+const BOUNTY_REWARD_PER_VIRUS := 5
+const QUARANTINE_SPEED_MULTIPLIER := 0.5
+const QUARANTINE_REFRESH_SECONDS := 0.25
 const RADAR_SEGMENTS := 96
 const SWEEP_HALF_ANGLE := PI / 10.0
 const TOWER_GRAB_SIZE := Vector2(180, 180)
@@ -34,6 +92,10 @@ const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
 @export var radar_outline_color := Color(0.28, 1.0, 0.48, 0.58)
 @export var radar_sweep_color := Color(0.4, 1.0, 0.5, 0.34)
 @export var radar_line_color := Color(0.65, 1.0, 0.68, 0.92)
+@export var scanner_mode: StringName = MODE_CAMO:
+	set(value):
+		scanner_mode = _normalize_mode(value)
+		_apply_mode_visuals()
 
 var _radar_root: Node2D
 var _radar_fill: Polygon2D
@@ -49,6 +111,9 @@ var _drag_is_valid := false
 var _current_placement_shape: CollisionShape2D
 var _platform_highlight: ColorRect
 var _base_modulate := Color.WHITE
+var _burner_elapsed_by_virus := {}
+var _bounty_scanned_viruses := {}
+var _virus_in_scan_radius := false
 
 
 func _ready() -> void:
@@ -60,10 +125,9 @@ func _ready() -> void:
 	_platform_highlight = get_node_or_null(platform_highlight_path) as ColorRect
 	if _platform_highlight != null:
 		_platform_highlight.hide()
-	if sprite_frames != null and sprite_frames.has_animation(IDLE_ANIMATION):
-		play(IDLE_ANIMATION)
 	_ensure_radar_nodes()
 	_apply_level_stats()
+	_apply_mode_visuals()
 	_sync_deployed_state()
 	set_process(true)
 
@@ -132,6 +196,7 @@ func get_occupied_placement_shape() -> CollisionShape2D:
 
 func reset_tower() -> void:
 	level = 1
+	scanner_mode = MODE_CAMO
 	global_position = _home_position
 	deployed = false
 	_dragging = false
@@ -139,6 +204,9 @@ func reset_tower() -> void:
 	_drag_offset = Vector2.ZERO
 	_drag_start_position = _home_position
 	_current_placement_shape = null
+	_burner_elapsed_by_virus.clear()
+	_bounty_scanned_viruses.clear()
+	_virus_in_scan_radius = false
 	_clear_drag_feedback()
 	if _platform_highlight != null:
 		_platform_highlight.hide()
@@ -170,6 +238,52 @@ func get_max_level() -> int:
 	return MAX_LEVEL
 
 
+func get_current_mode_id() -> StringName:
+	return scanner_mode
+
+
+func get_current_mode_display_name() -> String:
+	return get_mode_display_name(scanner_mode)
+
+
+func get_unlocked_mode_ids() -> Array[StringName]:
+	var unlocked: Array[StringName] = []
+	var unlock_count := clampi(level, 1, MAX_LEVEL)
+	for index in range(unlock_count):
+		unlocked.append(MODE_SEQUENCE[index])
+
+	return unlocked
+
+
+func get_mode_display_name(mode_id: StringName) -> String:
+	return String(MODE_DISPLAY_NAMES.get(_normalize_mode(mode_id), "Camo"))
+
+
+func is_mode_unlocked(mode_id: StringName) -> bool:
+	return get_unlocked_mode_ids().has(_normalize_mode(mode_id))
+
+
+func can_change_mode() -> bool:
+	return not _virus_in_scan_radius
+
+
+func refresh_mode_lock(active_viruses: Array[PathFollow2D]) -> bool:
+	_virus_in_scan_radius = _has_active_virus_in_scan_radius(active_viruses)
+	return can_change_mode()
+
+
+func set_scanner_mode(mode_id: StringName) -> bool:
+	var normalized_mode := _normalize_mode(mode_id)
+	if not is_mode_unlocked(normalized_mode):
+		return false
+	if normalized_mode != scanner_mode and not can_change_mode():
+		return false
+
+	scanner_mode = normalized_mode
+	_apply_mode_visuals()
+	return true
+
+
 func can_upgrade() -> bool:
 	return level < MAX_LEVEL
 
@@ -195,20 +309,52 @@ func upgrade() -> bool:
 
 func update_support_scan(active_viruses: Array[PathFollow2D], _delta: float) -> void:
 	if not deployed:
+		_virus_in_scan_radius = false
 		return
 
 	var radius_squared := scan_radius * scan_radius
+	var virus_in_scan_radius := false
+	var viruses_in_burner_range := {}
+	var burn_damage_requests: Array[PathFollow2D] = []
+	var bounty_reward_count := 0
 	for follow in active_viruses:
 		if not is_instance_valid(follow):
 			continue
 
-		var trojan := _get_trojan_horse(follow)
-		if trojan == null or not trojan.is_cloaked():
-			continue
-		if global_position.distance_squared_to(trojan.global_position) > radius_squared:
+		var virus := _get_red_virus(follow)
+		if virus == null or virus.is_destroying():
 			continue
 
-		trojan.reveal_from_scanner(self)
+		if global_position.distance_squared_to(virus.global_position) > radius_squared:
+			continue
+
+		virus_in_scan_radius = true
+		var virus_id := virus.get_instance_id()
+		match scanner_mode:
+			MODE_CAMO:
+				_apply_camo_scan(virus)
+			MODE_BURNER:
+				viruses_in_burner_range[virus_id] = true
+				_update_burner_cycle(follow, virus_id, _delta, burn_damage_requests)
+			MODE_BOUNTY:
+				if _apply_bounty_scan(virus_id):
+					bounty_reward_count += 1
+			MODE_QUARANTINE:
+				virus.apply_scanner_speed_multiplier(QUARANTINE_SPEED_MULTIPLIER, QUARANTINE_REFRESH_SECONDS)
+			MODE_NULLIFIER:
+				virus.nullify_abilities(self)
+
+	if scanner_mode == MODE_BURNER:
+		_prune_burner_cycles(viruses_in_burner_range)
+
+	_virus_in_scan_radius = virus_in_scan_radius
+
+	for follow in burn_damage_requests:
+		if is_instance_valid(follow):
+			virus_damage_requested.emit(follow, BURNER_DAMAGE)
+
+	if bounty_reward_count > 0:
+		bounty_awarded.emit(bounty_reward_count * BOUNTY_REWARD_PER_VIRUS)
 
 
 func contains_global_point(pointer_position: Vector2) -> bool:
@@ -217,8 +363,102 @@ func contains_global_point(pointer_position: Vector2) -> bool:
 
 func _apply_level_stats() -> void:
 	level = clampi(level, 1, MAX_LEVEL)
-	scan_radius = LEVEL_SCAN_RADII[level - 1]
+	scan_radius = CYBER_GUARDIAN_LEVEL_ONE_RADIUS * pow(RADIUS_UPGRADE_MULTIPLIER, float(level - 1))
+	if not is_mode_unlocked(scanner_mode):
+		scanner_mode = MODE_CAMO
 	_rebuild_radar_geometry()
+	_apply_mode_visuals()
+
+
+func _apply_mode_visuals() -> void:
+	if not is_inside_tree():
+		return
+
+	var mode := _normalize_mode(scanner_mode)
+	if sprite_frames != null and sprite_frames.has_animation(mode):
+		animation = mode
+		frame = 0
+		frame_progress = 0.0
+		play()
+
+	_apply_mode_radar_colors()
+
+
+func _apply_mode_radar_colors() -> void:
+	var colors: Dictionary = MODE_RADAR_COLORS.get(_normalize_mode(scanner_mode), MODE_RADAR_COLORS[MODE_CAMO])
+	radar_fill_color = colors["fill"]
+	radar_outline_color = colors["outline"]
+	radar_sweep_color = colors["sweep"]
+	radar_line_color = colors["line"]
+
+	if is_instance_valid(_radar_fill):
+		_radar_fill.color = radar_fill_color
+	if is_instance_valid(_radar_outline):
+		_radar_outline.default_color = radar_outline_color
+	if is_instance_valid(_radar_sweep):
+		_radar_sweep.color = radar_sweep_color
+	if is_instance_valid(_radar_line):
+		_radar_line.default_color = radar_line_color
+
+
+func _normalize_mode(mode_id: StringName) -> StringName:
+	if MODE_SEQUENCE.has(mode_id):
+		return mode_id
+
+	return MODE_CAMO
+
+
+func _apply_camo_scan(virus: RedVirus) -> void:
+	var trojan := virus as TrojanHorse
+	if trojan != null and trojan.is_cloaked():
+		trojan.reveal_from_scanner(self)
+
+
+func _update_burner_cycle(
+	follow: PathFollow2D,
+	virus_id: int,
+	delta: float,
+	damage_requests: Array[PathFollow2D]
+) -> void:
+	var elapsed := float(_burner_elapsed_by_virus.get(virus_id, 0.0)) + delta
+	if elapsed >= BURNER_TICK_SECONDS:
+		damage_requests.append(follow)
+		elapsed = 0.0
+
+	_burner_elapsed_by_virus[virus_id] = elapsed
+
+
+func _prune_burner_cycles(viruses_in_range: Dictionary) -> void:
+	for virus_id in _burner_elapsed_by_virus.keys():
+		if not viruses_in_range.has(virus_id):
+			_burner_elapsed_by_virus.erase(virus_id)
+
+
+func _apply_bounty_scan(virus_id: int) -> bool:
+	if _bounty_scanned_viruses.has(virus_id):
+		return false
+
+	_bounty_scanned_viruses[virus_id] = true
+	return true
+
+
+func _has_active_virus_in_scan_radius(active_viruses: Array[PathFollow2D]) -> bool:
+	if not deployed:
+		return false
+
+	var radius_squared := scan_radius * scan_radius
+	for follow in active_viruses:
+		if not is_instance_valid(follow):
+			continue
+
+		var virus := _get_red_virus(follow)
+		if virus == null or virus.is_destroying():
+			continue
+
+		if global_position.distance_squared_to(virus.global_position) <= radius_squared:
+			return true
+
+	return false
 
 
 func _try_start_drag(pointer_position: Vector2) -> void:
@@ -302,6 +542,7 @@ func _ensure_radar_nodes() -> void:
 	_radar_root.add_child(_radar_line)
 
 	_rebuild_radar_geometry()
+	_apply_mode_radar_colors()
 
 
 func _rebuild_radar_geometry() -> void:
@@ -495,14 +736,14 @@ func _is_cutscene_input_locked() -> bool:
 	if scene == null:
 		return false
 
-	var cutscene := scene.get_node_or_null(^"TextCutscene")
+	var cutscene := scene.get_node_or_null(^"TextCutsceneHUD")
 	return cutscene != null and cutscene.has_method("is_cutscene_running") and bool(cutscene.call("is_cutscene_running"))
 
 
-func _get_trojan_horse(follow: PathFollow2D) -> TrojanHorse:
+func _get_red_virus(follow: PathFollow2D) -> RedVirus:
 	for child in follow.get_children():
-		var trojan := child as TrojanHorse
-		if trojan != null:
-			return trojan
+		var virus := child as RedVirus
+		if virus != null:
+			return virus
 
 	return null

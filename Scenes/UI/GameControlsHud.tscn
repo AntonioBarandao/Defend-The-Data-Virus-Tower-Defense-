@@ -40,7 +40,7 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="GameControlsHud" type="CanvasLayer" unique_id=1568501266]
+[node name="GameControlsHUD" type="CanvasLayer" unique_id=1568501266]
 layer = 120
 script = ExtResource("1_script")
 

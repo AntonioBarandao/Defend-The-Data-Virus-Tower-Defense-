@@ -1,4 +1,4 @@
-class_name PerformanceHud
+class_name PerformanceHUD
 extends CanvasLayer
 
 @onready var _fps_label: Label = $Root/StatusPanel/Margin/Content/FPSLabel

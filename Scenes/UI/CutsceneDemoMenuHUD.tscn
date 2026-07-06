@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3]
 
-[ext_resource type="Script" path="res://Scripts/UI/cutscene_demo_menu.gd" id="1_script"]
+[ext_resource type="Script" path="res://Scripts/UI/cutscene_demo_menu_hud.gd" id="1_script"]
 [ext_resource type="FontFile" path="res://assets/Fonts/space-armor/SPACE ARMOR.otf" id="2_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
@@ -41,7 +41,7 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="CutsceneDemoMenu" type="CanvasLayer"]
+[node name="CutsceneDemoMenuHUD" type="CanvasLayer"]
 layer = 980
 script = ExtResource("1_script")
 
@@ -56,6 +56,7 @@ mouse_filter = 2
 
 [node name="HamburgerButton" type="Button" parent="Root"]
 custom_minimum_size = Vector2(76, 48)
+z_index = 30
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -72,45 +73,64 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
 text = "|||"
 
+[node name="DimOverlay" type="ColorRect" parent="Root"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.055, 0.06, 0.075, 0.76)
+
 [node name="MenuPanel" type="PanelContainer" parent="Root"]
-custom_minimum_size = Vector2(360, 0)
+custom_minimum_size = Vector2(620, 0)
+z_index = 20
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
+anchor_top = 0.5
 anchor_right = 0.5
-offset_left = -180.0
-offset_top = 84.0
-offset_right = 180.0
-offset_bottom = 454.0
+anchor_bottom = 0.5
+offset_left = -310.0
+offset_top = -250.0
+offset_right = 310.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="Margin" type="MarginContainer" parent="Root/MenuPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 22
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 22
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 28
 
 [node name="Content" type="VBoxContainer" parent="Root/MenuPanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 16
 
 [node name="ResumeButton" type="Button" parent="Root/MenuPanel/Margin/Content"]
-custom_minimum_size = Vector2(0, 46)
+custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.97, 1, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button")
 text = "Resume"
 
 [node name="SettingsButton" type="Button" parent="Root/MenuPanel/Margin/Content"]
-custom_minimum_size = Vector2(0, 46)
+custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.97, 1, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button")
 text = "Settings"
@@ -179,11 +199,11 @@ step = 0.01
 value = 1.0
 
 [node name="ExitButton" type="Button" parent="Root/MenuPanel/Margin/Content"]
-custom_minimum_size = Vector2(0, 46)
+custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.88, 0.88, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_exit")
 theme_override_styles/hover = SubResource("StyleBoxFlat_exit")
 text = "Exit Game"

@@ -22,6 +22,9 @@ var _destroying := false
 var _destroy_sfx: AudioStreamPlayer
 var _base_global_rotation := 0.0
 var _base_global_scale := Vector2.ONE
+var _speed_modifier_multiplier := 1.0
+var _speed_modifier_expires_msec := 0
+var _abilities_nullified := false
 
 
 func _ready() -> void:
@@ -40,6 +43,7 @@ func reset_for_spawn() -> void:
 	current_health = maxi(1, max_health)
 	_destroying = false
 	modulate = Color.WHITE
+	reset_status_effects()
 	_capture_base_visual_transform()
 	_preserve_visual_transform_on_path()
 	play_idle()
@@ -115,7 +119,33 @@ func should_remain_active_during_destroy() -> bool:
 
 
 func get_path_speed() -> float:
-	return path_speed
+	return path_speed * _get_active_speed_multiplier()
+
+
+func apply_scanner_speed_multiplier(multiplier: float, duration_seconds: float = 0.25) -> void:
+	if _destroying:
+		return
+
+	var now_msec := Time.get_ticks_msec()
+	if now_msec > _speed_modifier_expires_msec:
+		_speed_modifier_multiplier = 1.0
+
+	_speed_modifier_multiplier = minf(_speed_modifier_multiplier, clampf(multiplier, 0.0, 1.0))
+	_speed_modifier_expires_msec = max(_speed_modifier_expires_msec, now_msec + roundi(maxf(0.0, duration_seconds) * 1000.0))
+
+
+func nullify_abilities(_source: Node = null) -> void:
+	_abilities_nullified = true
+
+
+func are_abilities_nullified() -> bool:
+	return _abilities_nullified
+
+
+func reset_status_effects() -> void:
+	_speed_modifier_multiplier = 1.0
+	_speed_modifier_expires_msec = 0
+	_abilities_nullified = false
 
 
 func contains_global_point(pointer_position: Vector2) -> bool:
@@ -146,6 +176,14 @@ func _play_audio_player(player: AudioStreamPlayer) -> void:
 
 	player.stop()
 	player.play()
+
+
+func _get_active_speed_multiplier() -> float:
+	if Time.get_ticks_msec() <= _speed_modifier_expires_msec:
+		return _speed_modifier_multiplier
+
+	_speed_modifier_multiplier = 1.0
+	return 1.0
 
 
 func _capture_base_visual_transform() -> void:

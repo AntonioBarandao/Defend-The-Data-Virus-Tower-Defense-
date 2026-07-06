@@ -72,6 +72,9 @@ func _process(delta: float) -> void:
 	if _transforming or cloaked:
 		return
 
+	if are_abilities_nullified():
+		return
+
 	_cloak_elapsed += delta
 	if _cloak_elapsed >= cloak_delay_seconds:
 		_start_cloak_transform()
@@ -82,6 +85,7 @@ func reset_for_spawn() -> void:
 	current_health = maxi(1, max_health)
 	_destroying = false
 	modulate = Color.WHITE
+	reset_status_effects()
 	show()
 	cloaked = false
 	_deployed = true
@@ -225,7 +229,7 @@ func can_be_targeted_by(attacker: Node) -> bool:
 	if not super.can_be_targeted_by(attacker):
 		return false
 
-	if cloaked and not _attacker_has_scanner(attacker):
+	if cloaked and not are_abilities_nullified() and not _attacker_has_scanner(attacker):
 		return false
 
 	return true
@@ -235,8 +239,22 @@ func should_remain_active_during_destroy() -> bool:
 	return true
 
 
+func nullify_abilities(source: Node = null) -> void:
+	if are_abilities_nullified():
+		return
+
+	super.nullify_abilities(source)
+	_scanner_revealed = true
+	_cloak_elapsed = 0.0
+	if _destroying or _destroy_cutscene_active:
+		return
+
+	if cloaked and not _transforming:
+		reveal_from_scanner(source)
+
+
 func _start_cloak_transform() -> void:
-	if _scanner_revealed or _transforming or cloaked or _destroying or _destroy_cutscene_active:
+	if _scanner_revealed or _transforming or cloaked or _destroying or _destroy_cutscene_active or are_abilities_nullified():
 		return
 
 	_transforming = true
@@ -247,6 +265,14 @@ func _start_cloak_transform() -> void:
 		await animation_finished
 
 	if _destroying or _destroy_cutscene_active:
+		return
+
+	if _scanner_revealed or are_abilities_nullified():
+		cloaked = false
+		_transforming = false
+		_play_animation(HORSE_MOVE_ANIMATION)
+		if _deployed:
+			set_process(true)
 		return
 
 	cloaked = true
