@@ -367,20 +367,6 @@ func _input(event: InputEvent) -> void:
 				_guardian_store.try_start_drag(pointer_position)
 		elif _demo_upgrade_button_has_point(mouse_button.position):
 			return
-<<<<<<< HEAD
-		elif _siem_hawk != null and _siem_hawk.is_dragging():
-			_siem_hawk.finish_drag()
-		elif _honeypot_production != null and _honeypot_production.is_dragging():
-			_honeypot_production.finish_drag()
-		elif _ips_intrusion != null and _ips_intrusion.is_dragging():
-			_ips_intrusion.finish_drag()
-		elif _edr_hunter != null and _edr_hunter.is_dragging():
-			_edr_hunter.finish_drag()
-		elif _guardian != null and _guardian.is_dragging():
-			if _guardian.finish_drag():
-				_apply_guardian_signal_boost_state()
-				_sync_guardian_upgrade_panel()
-=======
 		elif _siem_hawk_store != null and _siem_hawk_store.is_dragging():
 			_siem_hawk_store.finish_drag()
 		elif _honeypot_production_store != null and _honeypot_production_store.is_dragging():
@@ -391,7 +377,6 @@ func _input(event: InputEvent) -> void:
 			_edr_hunter_store.finish_drag()
 		elif _guardian_store != null and _guardian_store.is_dragging():
 			_guardian_store.finish_drag()
->>>>>>> fc9b0136b361ac3d95b758a36013b948a3f60db0
 		return
 
 	if _edr_hunter_store != null and not _edr_hunter_store.is_placed() and event is InputEventMouseMotion and _edr_hunter_store.is_dragging():
@@ -473,20 +458,6 @@ func _input(event: InputEvent) -> void:
 				_guardian_store.try_start_drag(pointer_position)
 		elif _demo_upgrade_button_has_point(screen_touch.position):
 			return
-<<<<<<< HEAD
-		elif _siem_hawk != null and _siem_hawk.is_dragging():
-			_siem_hawk.finish_drag()
-		elif _honeypot_production != null and _honeypot_production.is_dragging():
-			_honeypot_production.finish_drag()
-		elif _ips_intrusion != null and _ips_intrusion.is_dragging():
-			_ips_intrusion.finish_drag()
-		elif _edr_hunter != null and _edr_hunter.is_dragging():
-			_edr_hunter.finish_drag()
-		elif _guardian != null and _guardian.is_dragging():
-			if _guardian.finish_drag():
-				_apply_guardian_signal_boost_state()
-				_sync_guardian_upgrade_panel()
-=======
 		elif _siem_hawk_store != null and _siem_hawk_store.is_dragging():
 			_siem_hawk_store.finish_drag()
 		elif _honeypot_production_store != null and _honeypot_production_store.is_dragging():
@@ -497,7 +468,6 @@ func _input(event: InputEvent) -> void:
 			_edr_hunter_store.finish_drag()
 		elif _guardian_store != null and _guardian_store.is_dragging():
 			_guardian_store.finish_drag()
->>>>>>> fc9b0136b361ac3d95b758a36013b948a3f60db0
 		return
 
 	if _edr_hunter_store != null and not _edr_hunter_store.is_placed() and event is InputEventScreenDrag and _edr_hunter_store.is_dragging():
@@ -1264,21 +1234,6 @@ func _reset_tower() -> void:
 	if _is_act_input_locked():
 		return
 
-<<<<<<< HEAD
-	if _guardian != null:
-		_guardian.reset_tower()
-	if _laser_turret != null:
-		_laser_turret.reset_tower()
-	if _edr_hunter != null:
-		_edr_hunter.reset_tower()
-	if _siem_hawk != null:
-		_siem_hawk.reset_tower()
-	if _ips_intrusion != null:
-		_ips_intrusion.reset_tower()
-	if _honeypot_production != null:
-		_honeypot_production.reset_tower()
-	_clear_adware_popups()
-=======
 	if _guardian_store != null:
 		_guardian_store.reset_tower()
 	if _laser_turret_store != null:
@@ -1293,7 +1248,7 @@ func _reset_tower() -> void:
 		_ips_intrusion_store.reset_tower()
 	if _honeypot_production_store != null:
 		_honeypot_production_store.reset_tower()
->>>>>>> fc9b0136b361ac3d95b758a36013b948a3f60db0
+	_clear_adware_popups()
 	for node in get_tree().get_nodes_in_group("Defender"):
 		if _is_store_prototype(node) or not is_instance_valid(node):
 			continue

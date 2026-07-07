@@ -1,14 +1,8 @@
 [gd_scene format=3 uid="uid://d1d2new0ebcw6"]
 
-<<<<<<< HEAD
-[ext_resource type="SpriteFrames" uid="uid://okjq4nkrqx2i" path="res://assets/Towers/SIEM_Hawk/SIEMHawkSpriteFrames.tres" id="1_frames"]
+[ext_resource type="SpriteFrames" uid="uid://okjq4nkrqx2i" path="res://Assets/Towers/SIEM_Hawk/SIEMHawkSpriteFrames.tres" id="1_frames"]
 [ext_resource type="Script" uid="uid://degsxbf8k6ewd" path="res://Scripts/Towers/siem_hawk.gd" id="2_script"]
-[ext_resource type="Texture2D" uid="uid://b6x0qkc0yqkv7" path="res://assets/Towers/SIEM_Hawk/SIEM_Hawk_Base.png" id="3_base"]
-=======
-[ext_resource type="SpriteFrames" path="res://Assets/Towers/SIEM_Hawk/SIEMHawkSpriteFrames.tres" id="1_frames"]
-[ext_resource type="Script" path="res://Scripts/Towers/siem_hawk.gd" id="2_script"]
-[ext_resource type="Texture2D" path="res://Assets/Towers/SIEM_Hawk/SIEM_Hawk_Base.png" id="3_base"]
->>>>>>> fc9b0136b361ac3d95b758a36013b948a3f60db0
+[ext_resource type="Texture2D" uid="uid://b6x0qkc0yqkv7" path="res://Assets/Towers/SIEM_Hawk/SIEM_Hawk_Base.png" id="3_base"]
 
 [node name="SIEM_Hawk" type="Node2D" unique_id=1629272437 groups=["Defender", "OFFENSE_TOWER"]]
 scale = Vector2(0.11188765, 0.11188765)
