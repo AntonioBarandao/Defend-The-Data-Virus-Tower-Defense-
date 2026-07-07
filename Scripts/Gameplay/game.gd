@@ -13,6 +13,7 @@ const HoneypotProductionTowerScript := preload("res://Scripts/Towers/honeypot_pr
 const RedVirusScript := preload("res://Scripts/Enemies/red_virus.gd")
 const RedVirusScene := preload("res://Scenes/Enemies/RedVirus.tscn")
 const TrojanHorseScene := preload("res://Scenes/Enemies/TrojanHorse.tscn")
+const AdwareScene := preload("res://Scenes/Enemies/Adware.tscn")
 const CyberQuestionHUDScript := preload("res://Scripts/UI/cyber_question_hud.gd")
 const PerformanceHUDScript := preload("res://Scripts/UI/performance_hud.gd")
 const GameControlsHUDScript := preload("res://Scripts/UI/game_controls_hud.gd")
@@ -34,9 +35,14 @@ const WAVE_VIRUS_COUNT_STEP := 2
 const WAVE_SPAWN_INTERVAL := 0.6
 const WAVE_MAX_COUNT := 20
 const WAVE_FIVE_CUTSCENE_WAVE := 5
+const ADWARE_WAVE := 11
+const ADWARE_POPUP_COUNT := 20
+const ADWARE_VARIATION_COUNT := 10
+const ADWARE_POPUP_INTERVAL := 0.5
 const LASER_DURATION := 0.24
 const GUARDIAN_CYBERBUCK_REWARD := 5
 const LASER_TURRET_CYBERBUCK_REWARD := 5
+const GUARDIAN_MODE_SIGNAL_BOOST := &"signal_boost"
 const DEFAULT_VIRUS_SPAWN_SCALE := Vector2(0.2, 0.2)
 const DEFAULT_TROJAN_HORSE_SPAWN_SCALE := Vector2(0.4, 0.4)
 const STORE_TOGGLE_SIZE := Vector2(132, 46)
@@ -137,9 +143,16 @@ var _wave_spawns_remaining := 0
 var _wave_spawn_cooldown_remaining := 0.0
 var _wave_five_cutscene_played := false
 var _wave_five_cutscene_running := false
+var _adware_spawns_remaining := 0
+var _adware_spawn_cooldown_remaining := 0.0
+var _adware_spawned_count := 0
+var _adware_rng := RandomNumberGenerator.new()
+var _adware_variation_deck: Array[int] = []
+var _active_adware_popups: Array[Node2D] = []
 
 func _ready() -> void:
 	Engine.max_fps = TARGET_FPS
+	_adware_rng.randomize()
 	_show_canvas_layers_for_runtime()
 	_guardian = get_node_or_null(guardian_path) as CyberGuardianTowerScript
 	_laser_turret = get_node_or_null(laser_turret_path) as LaserTurretScript
@@ -211,6 +224,7 @@ func _ready() -> void:
 	if _tower_upgrade_hud == null:
 		push_warning("TowerUpgradeHUD was not found.")
 	else:
+		_tower_upgrade_hud.guardian_mode_pressed.connect(Callable(self, "_set_guardian_mode"))
 		_tower_upgrade_hud.laser_upgrade_pressed.connect(Callable(self, "_upgrade_laser_turret"))
 		_tower_upgrade_hud.scanner_upgrade_pressed.connect(Callable(self, "_upgrade_ids_scanner"))
 		_tower_upgrade_hud.scanner_mode_pressed.connect(Callable(self, "_set_ids_scanner_mode"))
@@ -220,6 +234,8 @@ func _ready() -> void:
 		_tower_upgrade_hud.siem_land_pressed.connect(Callable(self, "_land_siem_hawk_to_headquarters"))
 		_tower_upgrade_hud.ips_upgrade_pressed.connect(Callable(self, "_upgrade_ips_intrusion"))
 		_tower_upgrade_hud.honeypot_upgrade_pressed.connect(Callable(self, "_upgrade_honeypot_production"))
+	if _guardian != null:
+		_guardian.mode_changed.connect(Callable(self, "_on_guardian_mode_changed"))
 	if _siem_hawk != null:
 		_siem_hawk.dispatch_mode_changed.connect(Callable(self, "_on_siem_hawk_dispatch_mode_changed"))
 		_siem_hawk.knowledge_extracted.connect(Callable(self, "_on_siem_hawk_knowledge_extracted"))
@@ -244,6 +260,7 @@ func _ready() -> void:
 	_update_virus_count_label()
 	_update_wave_button()
 	_update_wave_label()
+	_apply_guardian_signal_boost_state()
 	_update_demo_upgrade_buttons()
 
 
@@ -350,6 +367,20 @@ func _input(event: InputEvent) -> void:
 				_guardian_store.try_start_drag(pointer_position)
 		elif _demo_upgrade_button_has_point(mouse_button.position):
 			return
+<<<<<<< HEAD
+		elif _siem_hawk != null and _siem_hawk.is_dragging():
+			_siem_hawk.finish_drag()
+		elif _honeypot_production != null and _honeypot_production.is_dragging():
+			_honeypot_production.finish_drag()
+		elif _ips_intrusion != null and _ips_intrusion.is_dragging():
+			_ips_intrusion.finish_drag()
+		elif _edr_hunter != null and _edr_hunter.is_dragging():
+			_edr_hunter.finish_drag()
+		elif _guardian != null and _guardian.is_dragging():
+			if _guardian.finish_drag():
+				_apply_guardian_signal_boost_state()
+				_sync_guardian_upgrade_panel()
+=======
 		elif _siem_hawk_store != null and _siem_hawk_store.is_dragging():
 			_siem_hawk_store.finish_drag()
 		elif _honeypot_production_store != null and _honeypot_production_store.is_dragging():
@@ -360,6 +391,7 @@ func _input(event: InputEvent) -> void:
 			_edr_hunter_store.finish_drag()
 		elif _guardian_store != null and _guardian_store.is_dragging():
 			_guardian_store.finish_drag()
+>>>>>>> fc9b0136b361ac3d95b758a36013b948a3f60db0
 		return
 
 	if _edr_hunter_store != null and not _edr_hunter_store.is_placed() and event is InputEventMouseMotion and _edr_hunter_store.is_dragging():
@@ -441,6 +473,20 @@ func _input(event: InputEvent) -> void:
 				_guardian_store.try_start_drag(pointer_position)
 		elif _demo_upgrade_button_has_point(screen_touch.position):
 			return
+<<<<<<< HEAD
+		elif _siem_hawk != null and _siem_hawk.is_dragging():
+			_siem_hawk.finish_drag()
+		elif _honeypot_production != null and _honeypot_production.is_dragging():
+			_honeypot_production.finish_drag()
+		elif _ips_intrusion != null and _ips_intrusion.is_dragging():
+			_ips_intrusion.finish_drag()
+		elif _edr_hunter != null and _edr_hunter.is_dragging():
+			_edr_hunter.finish_drag()
+		elif _guardian != null and _guardian.is_dragging():
+			if _guardian.finish_drag():
+				_apply_guardian_signal_boost_state()
+				_sync_guardian_upgrade_panel()
+=======
 		elif _siem_hawk_store != null and _siem_hawk_store.is_dragging():
 			_siem_hawk_store.finish_drag()
 		elif _honeypot_production_store != null and _honeypot_production_store.is_dragging():
@@ -451,6 +497,7 @@ func _input(event: InputEvent) -> void:
 			_edr_hunter_store.finish_drag()
 		elif _guardian_store != null and _guardian_store.is_dragging():
 			_guardian_store.finish_drag()
+>>>>>>> fc9b0136b361ac3d95b758a36013b948a3f60db0
 		return
 
 	if _edr_hunter_store != null and not _edr_hunter_store.is_placed() and event is InputEventScreenDrag and _edr_hunter_store.is_dragging():
@@ -490,10 +537,13 @@ func _process(delta: float) -> void:
 	if _tower_store_tween == null:
 		_sync_tower_store_items(false)
 	_update_wave_spawner(delta)
+	_update_adware_spawner(delta)
 	_update_active_viruses(delta)
 	_update_support_tower_scans(delta)
 	_update_siem_hawk_knowledge(delta)
 	_update_ips_intrusion_spikes(delta)
+	if _tower_upgrade_hud != null and _tower_upgrade_hud.is_guardian_panel_visible():
+		_sync_guardian_upgrade_panel()
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.is_scanner_panel_visible():
 		_sync_scanner_upgrade_panel()
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.is_edr_panel_visible():
@@ -1214,6 +1264,21 @@ func _reset_tower() -> void:
 	if _is_act_input_locked():
 		return
 
+<<<<<<< HEAD
+	if _guardian != null:
+		_guardian.reset_tower()
+	if _laser_turret != null:
+		_laser_turret.reset_tower()
+	if _edr_hunter != null:
+		_edr_hunter.reset_tower()
+	if _siem_hawk != null:
+		_siem_hawk.reset_tower()
+	if _ips_intrusion != null:
+		_ips_intrusion.reset_tower()
+	if _honeypot_production != null:
+		_honeypot_production.reset_tower()
+	_clear_adware_popups()
+=======
 	if _guardian_store != null:
 		_guardian_store.reset_tower()
 	if _laser_turret_store != null:
@@ -1228,6 +1293,7 @@ func _reset_tower() -> void:
 		_ips_intrusion_store.reset_tower()
 	if _honeypot_production_store != null:
 		_honeypot_production_store.reset_tower()
+>>>>>>> fc9b0136b361ac3d95b758a36013b948a3f60db0
 	for node in get_tree().get_nodes_in_group("Defender"):
 		if _is_store_prototype(node) or not is_instance_valid(node):
 			continue
@@ -1250,6 +1316,7 @@ func _reset_tower() -> void:
 		_tower_upgrade_hud.hide_all()
 	if _progress_hud != null:
 		_progress_hud.reset_knowledge()
+	_apply_guardian_signal_boost_state()
 	_set_tower_menu_radius_previews(false, false, false, false, false)
 	_update_demo_upgrade_buttons()
 
@@ -1471,6 +1538,23 @@ func _set_ids_scanner_mode(mode_id: StringName) -> void:
 	_sync_scanner_upgrade_panel()
 
 
+func _set_guardian_mode(mode_id: StringName) -> void:
+	if _is_act_input_locked():
+		return
+	if _guardian == null:
+		return
+
+	var knowledge_level := _get_current_knowledge_level()
+	if not _guardian.is_mode_unlocked(mode_id, knowledge_level):
+		_sync_guardian_upgrade_panel()
+		return
+
+	_guardian.set_guardian_mode(mode_id)
+	_apply_guardian_signal_boost_state()
+	_sync_all_tower_upgrade_panels()
+	_update_demo_upgrade_buttons()
+
+
 func _on_scanner_virus_damage_requested(follow: PathFollow2D, amount: int) -> void:
 	_damage_virus(follow, amount)
 
@@ -1501,6 +1585,12 @@ func _on_siem_hawk_knowledge_extracted(amount: int) -> void:
 		return
 
 	_progress_hud.add_knowledge_points(amount)
+	_sync_guardian_upgrade_panel()
+
+
+func _on_guardian_mode_changed(_mode_id: StringName) -> void:
+	_apply_guardian_signal_boost_state()
+	_sync_guardian_upgrade_panel()
 
 
 func _on_siem_hawk_dispatch_mode_changed(_dispatched: bool) -> void:
@@ -1600,6 +1690,45 @@ func _spend_upgrade_cost(cost: int) -> bool:
 		return false
 
 	return _question_hud.spend_cyberbucks(cost)
+
+
+func _get_current_knowledge_level() -> int:
+	return _progress_hud.get_knowledge_level() if _progress_hud != null else 1
+
+
+func _apply_guardian_signal_boost_state() -> void:
+	var boost_active := _guardian != null \
+		and _guardian.is_placed() \
+		and _guardian.get_current_mode_id() == GUARDIAN_MODE_SIGNAL_BOOST
+
+	for node in get_tree().get_nodes_in_group("Defender"):
+		if not is_instance_valid(node) or not is_ancestor_of(node):
+			continue
+		if node.has_method("set_signal_boost_active"):
+			node.call("set_signal_boost_active", boost_active)
+
+
+func _sync_all_tower_upgrade_panels() -> void:
+	_sync_guardian_upgrade_panel()
+	_sync_laser_upgrade_panel()
+	_sync_scanner_upgrade_panel()
+	_sync_edr_upgrade_panel()
+	_sync_siem_upgrade_panel()
+	_sync_ips_upgrade_panel()
+	_sync_honeypot_upgrade_panel()
+
+
+func _sync_guardian_upgrade_panel() -> void:
+	if _guardian == null or _tower_upgrade_hud == null:
+		return
+
+	var knowledge_level := _get_current_knowledge_level()
+	_tower_upgrade_hud.set_guardian_modes(
+		_guardian.get_current_mode_id(),
+		_guardian.get_unlocked_mode_ids(knowledge_level),
+		knowledge_level,
+		_guardian.get_mode_unlock_levels()
+	)
 
 
 func _sync_laser_upgrade_panel() -> void:
@@ -1776,6 +1905,8 @@ func _start_next_wave() -> void:
 	wave_started.emit(_current_wave)
 	if _current_wave == WAVE_FIVE_CUTSCENE_WAVE:
 		_spawn_cloaked_trojan_horse()
+	if _current_wave == ADWARE_WAVE:
+		_begin_adware_wave_spawn()
 
 
 func _should_play_wave_five_cutscene() -> bool:
@@ -1811,6 +1942,7 @@ func set_current_wave_for_demo(wave_number: int) -> void:
 	_wave_question_pending = false
 	_wave_spawns_remaining = 0
 	_wave_spawn_cooldown_remaining = 0.0
+	_clear_adware_popups()
 	_wave_five_cutscene_running = false
 	_wave_five_cutscene_played = _current_wave >= WAVE_FIVE_CUTSCENE_WAVE
 	_update_wave_button()
@@ -1834,6 +1966,28 @@ func _update_wave_spawner(delta: float) -> void:
 		_show_wave_question()
 		_update_wave_button()
 		_update_wave_label()
+
+
+func _begin_adware_wave_spawn() -> void:
+	_adware_spawns_remaining = ADWARE_POPUP_COUNT
+	_adware_spawn_cooldown_remaining = 0.0
+	_adware_spawned_count = 0
+	_rebuild_adware_variation_deck()
+
+
+func _update_adware_spawner(delta: float) -> void:
+	_prune_adware_popups()
+	if _adware_spawns_remaining <= 0:
+		return
+
+	_adware_spawn_cooldown_remaining -= delta
+	if _adware_spawn_cooldown_remaining > 0.0:
+		return
+
+	_spawn_adware_popup()
+	_adware_spawns_remaining -= 1
+	_adware_spawned_count += 1
+	_adware_spawn_cooldown_remaining = ADWARE_POPUP_INTERVAL
 
 
 func _update_wave_button() -> void:
@@ -1974,6 +2128,61 @@ func _spawn_cloaked_trojan_horse() -> void:
 
 	_active_viruses.append(follow)
 	_update_virus_count_label()
+
+
+func _spawn_adware_popup() -> void:
+	var adware := AdwareScene.instantiate() as Adware
+	if adware == null:
+		push_warning("Cannot spawn adware because the configured scene is invalid.")
+		return
+
+	adware.setup(_get_next_adware_variation_index())
+
+	add_child(adware)
+	adware.global_position = _screen_to_canvas_position(
+		adware.get_spawn_screen_position(_adware_spawned_count, get_viewport_rect().size, _adware_rng)
+	)
+	adware.z_index = 95 + (_adware_spawned_count % ADWARE_POPUP_COUNT)
+	_active_adware_popups.append(adware)
+
+
+func _clear_adware_popups() -> void:
+	_adware_spawns_remaining = 0
+	_adware_spawn_cooldown_remaining = 0.0
+	_adware_spawned_count = 0
+	_adware_variation_deck.clear()
+	for popup in _active_adware_popups:
+		if is_instance_valid(popup):
+			popup.queue_free()
+	_active_adware_popups.clear()
+
+
+func _prune_adware_popups() -> void:
+	for index in range(_active_adware_popups.size() - 1, -1, -1):
+		if not is_instance_valid(_active_adware_popups[index]):
+			_active_adware_popups.remove_at(index)
+
+
+func _rebuild_adware_variation_deck() -> void:
+	_adware_variation_deck.clear()
+	while _adware_variation_deck.size() < ADWARE_POPUP_COUNT:
+		for variation_index in range(ADWARE_VARIATION_COUNT):
+			_adware_variation_deck.append(variation_index)
+			if _adware_variation_deck.size() >= ADWARE_POPUP_COUNT:
+				break
+
+	for index in range(_adware_variation_deck.size() - 1, 0, -1):
+		var swap_index := _adware_rng.randi_range(0, index)
+		var current_value := _adware_variation_deck[index]
+		_adware_variation_deck[index] = _adware_variation_deck[swap_index]
+		_adware_variation_deck[swap_index] = current_value
+
+
+func _get_next_adware_variation_index() -> int:
+	if _adware_variation_deck.is_empty():
+		return _adware_rng.randi_range(0, ADWARE_VARIATION_COUNT - 1)
+
+	return int(_adware_variation_deck.pop_back())
 
 
 func _create_virus_instance(template: RedVirusScript = null) -> RedVirusScript:
@@ -2534,6 +2743,7 @@ func _show_upgrade_panel() -> void:
 
 	_set_tower_menu_radius_previews(true, false, false, false, false)
 	_tower_upgrade_hud.show_guardian_panel()
+	_sync_guardian_upgrade_panel()
 
 
 func _hide_upgrade_panel() -> void:

@@ -75,19 +75,19 @@ text = "Guardian Mode"
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 focus_mode = 0
-text = "Signal Boost Guardian"
+text = "Defender Mode"
 
 [node name="ButtonPath2" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer" unique_id=2082994082]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 focus_mode = 0
-text = "Firewall Guardian"
+text = "Signal Boost Mode"
 
 [node name="ButtonPath3" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer" unique_id=1118276636]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 focus_mode = 0
-text = "Cyber Security Based Mode #3"
+text = "Firewall Mode"
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="Root/MenuPanel/Margin/Content" unique_id=736891973]
 layout_mode = 2

@@ -4,6 +4,7 @@ extends CanvasLayer
 const TowerTooltips := preload("res://Scripts/UI/tower_tooltip_data.gd")
 
 signal laser_upgrade_pressed
+signal guardian_mode_pressed(mode_id: StringName)
 signal scanner_upgrade_pressed
 signal scanner_mode_pressed(mode_id: StringName)
 signal edr_upgrade_pressed
@@ -24,13 +25,25 @@ enum MenuMode {
 	HONEYPOT
 }
 
+const GUARDIAN_MODE_DEFENDER := &"defender"
+const GUARDIAN_MODE_SIGNAL_BOOST := &"signal_boost"
+const GUARDIAN_MODE_FIREWALL := &"firewall"
+
 @onready var _menu_panel: PanelContainer = $Root/MenuPanel
 @onready var _title_label: Label = $Root/MenuPanel/Margin/Content/Title
 @onready var _portrait_row: Control = $Root/MenuPanel/Margin/Content/PortraitRow
 @onready var _guardian_mode_container: Control = $Root/MenuPanel/Margin/Content/VBoxContainer
+<<<<<<< HEAD
+@onready var _guardian_mode_buttons := {
+	GUARDIAN_MODE_DEFENDER: $Root/MenuPanel/Margin/Content/VBoxContainer/ButtonPath,
+	GUARDIAN_MODE_SIGNAL_BOOST: $Root/MenuPanel/Margin/Content/VBoxContainer/ButtonPath2,
+	GUARDIAN_MODE_FIREWALL: $Root/MenuPanel/Margin/Content/VBoxContainer/ButtonPath3
+}
+=======
 @onready var _guardian_signal_button: Button = $Root/MenuPanel/Margin/Content/VBoxContainer/ButtonPath
 @onready var _guardian_firewall_button: Button = $Root/MenuPanel/Margin/Content/VBoxContainer/ButtonPath2
 @onready var _guardian_future_button: Button = $Root/MenuPanel/Margin/Content/VBoxContainer/ButtonPath3
+>>>>>>> fc9b0136b361ac3d95b758a36013b948a3f60db0
 @onready var _upgrade_path_container: Control = $Root/MenuPanel/Margin/Content/VBoxContainer2
 @onready var _laser_level_label: Label = $Root/MenuPanel/Margin/Content/VBoxContainer2/LevelLabel
 @onready var _laser_power_label: Label = $Root/MenuPanel/Margin/Content/VBoxContainer2/PowerLabel
@@ -54,6 +67,16 @@ enum MenuMode {
 
 var _description_label: Label
 var _current_mode := MenuMode.NONE
+var _guardian_mode_names := {
+	GUARDIAN_MODE_DEFENDER: "Defender Mode",
+	GUARDIAN_MODE_SIGNAL_BOOST: "Signal Boost Mode",
+	GUARDIAN_MODE_FIREWALL: "Firewall Mode"
+}
+var _guardian_mode_unlock_levels := {
+	GUARDIAN_MODE_DEFENDER: 1,
+	GUARDIAN_MODE_SIGNAL_BOOST: 1,
+	GUARDIAN_MODE_FIREWALL: 1
+}
 var _scanner_mode_names := {
 	&"camo": "Camo",
 	&"burner": "Burner",
@@ -70,10 +93,41 @@ func _ready() -> void:
 	_laser_upgrade_button.pressed.connect(Callable(self, "_on_upgrade_button_pressed"))
 	_siem_dispatch_button.pressed.connect(Callable(self, "_on_siem_dispatch_button_pressed"))
 	_siem_land_button.pressed.connect(Callable(self, "_on_siem_land_button_pressed"))
+	for mode_id in _guardian_mode_buttons.keys():
+		var button := _guardian_mode_buttons[mode_id] as Button
+		if button != null:
+			button.pressed.connect(_emit_guardian_mode_pressed.bind(mode_id))
 	for mode_id in _scanner_mode_buttons.keys():
 		var button := _scanner_mode_buttons[mode_id] as Button
 		if button != null:
 			button.pressed.connect(_emit_scanner_mode_pressed.bind(mode_id))
+
+
+func set_guardian_modes(
+	current_mode: StringName,
+	unlocked_modes: Array[StringName],
+	knowledge_level: int,
+	unlock_levels: Dictionary = {}
+) -> void:
+	var unlocked_lookup := {}
+	for mode_id in unlocked_modes:
+		unlocked_lookup[mode_id] = true
+
+	for mode_id in _guardian_mode_buttons.keys():
+		var button := _guardian_mode_buttons[mode_id] as Button
+		if button == null:
+			continue
+
+		var required_level := _get_guardian_mode_unlock_level(mode_id, unlock_levels)
+		var unlocked: bool = unlocked_lookup.has(mode_id) or knowledge_level >= required_level
+		var active: bool = mode_id == current_mode
+		button.disabled = not unlocked or active
+		if active:
+			button.text = "%s Active" % _get_guardian_mode_name(mode_id)
+		elif unlocked:
+			button.text = _get_guardian_mode_name(mode_id)
+		else:
+			button.text = "%s Locked LV%d" % [_get_guardian_mode_name(mode_id), required_level]
 
 
 func set_laser_stats(
@@ -430,6 +484,13 @@ func _emit_scanner_mode_pressed(mode_id: StringName) -> void:
 	scanner_mode_pressed.emit(mode_id)
 
 
+func _emit_guardian_mode_pressed(mode_id: StringName) -> void:
+	if _current_mode != MenuMode.GUARDIAN:
+		return
+
+	guardian_mode_pressed.emit(mode_id)
+
+
 func _sync_scanner_mode_buttons(current_mode: StringName, unlocked_modes: Array[StringName], can_change_mode: bool) -> void:
 	var unlocked_lookup := {}
 	for mode_id in unlocked_modes:
@@ -454,6 +515,17 @@ func _sync_scanner_mode_buttons(current_mode: StringName, unlocked_modes: Array[
 
 func _get_scanner_mode_name(mode_id: StringName) -> String:
 	return String(_scanner_mode_names.get(mode_id, "Camo"))
+
+
+func _get_guardian_mode_name(mode_id: StringName) -> String:
+	return String(_guardian_mode_names.get(mode_id, "Defender Mode"))
+
+
+func _get_guardian_mode_unlock_level(mode_id: StringName, unlock_levels: Dictionary = {}) -> int:
+	if unlock_levels.has(mode_id):
+		return int(unlock_levels[mode_id])
+
+	return int(_guardian_mode_unlock_levels.get(mode_id, 1))
 
 
 func _hide_scanner_mode_notice() -> void:

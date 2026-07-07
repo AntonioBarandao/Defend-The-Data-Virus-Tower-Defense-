@@ -16,6 +16,8 @@ const LEVEL_RANGES := [260.0, 310.0, 450.0, 650.0, 800.0]
 const LEVEL_COOLDOWNS := [0.82, 0.62, 0.52, 0.32, 0.05]
 const LEVEL_LASER_WIDTHS := [7.0, 8.5, 10.0, 11.5, 13.0]
 const LEVEL_UPGRADE_COSTS := [0, 0, 0, 0, 0]
+const SIGNAL_BOOST_RANGE_MULTIPLIER := 1.1
+const SIGNAL_BOOST_COOLDOWN_MULTIPLIER := 0.9
 const LASER_COLOR := Color(0.1, 1.0, 0.72, 1.0)
 const SHOT_RETURN_DELAY := 3.0
 const RANGE_PREVIEW_SEGMENTS := 96
@@ -99,6 +101,7 @@ var _upgrade_sfx: AudioStreamPlayer
 var _upgrade_lv5_sfx: AudioStreamPlayer
 var _shoot_sfx_players: Array[AudioStreamPlayer] = []
 var _base_modulate := Color.WHITE
+var _signal_boost_active := false
 
 
 func _ready() -> void:
@@ -202,6 +205,7 @@ func upgrade() -> bool:
 
 func reset_tower() -> void:
 	level = 1
+	set_signal_boost_active(false)
 	global_position = _home_position
 	rotation = _home_rotation
 	_dragging = false
@@ -236,7 +240,7 @@ func get_shot_power() -> int:
 
 
 func get_attack_range() -> float:
-	return LEVEL_RANGES[level - 1]
+	return LEVEL_RANGES[level - 1] * _get_signal_boost_range_multiplier()
 
 
 func set_menu_range_preview_active(active: bool) -> void:
@@ -245,7 +249,7 @@ func set_menu_range_preview_active(active: bool) -> void:
 
 
 func get_shot_cooldown() -> float:
-	return LEVEL_COOLDOWNS[level - 1]
+	return LEVEL_COOLDOWNS[level - 1] * _get_signal_boost_cooldown_multiplier()
 
 
 func get_laser_width() -> float:
@@ -254,6 +258,31 @@ func get_laser_width() -> float:
 
 func get_laser_color() -> Color:
 	return LASER_COLOR
+
+
+func set_signal_boost_active(active: bool) -> void:
+	if _signal_boost_active == active:
+		return
+
+	_signal_boost_active = active
+	_range_preview_radius = -1.0
+	_update_attack_range_preview()
+
+
+func get_signal_boost_range_multiplier() -> float:
+	return SIGNAL_BOOST_RANGE_MULTIPLIER if _signal_boost_active else 1.0
+
+
+func get_signal_boost_cooldown_multiplier() -> float:
+	return SIGNAL_BOOST_COOLDOWN_MULTIPLIER if _signal_boost_active else 1.0
+
+
+func _get_signal_boost_range_multiplier() -> float:
+	return get_signal_boost_range_multiplier()
+
+
+func _get_signal_boost_cooldown_multiplier() -> float:
+	return get_signal_boost_cooldown_multiplier()
 
 
 func can_scan_cloaked_viruses() -> bool:

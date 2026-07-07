@@ -58,7 +58,7 @@ func update_spike_factory(delta: float, active_viruses: Array[PathFollow2D]) -> 
 		return
 
 	_production_elapsed += delta
-	if _production_elapsed < spike_production_seconds:
+	if _production_elapsed < get_shot_cooldown():
 		return
 
 	_production_elapsed = 0.0
@@ -66,7 +66,7 @@ func update_spike_factory(delta: float, active_viruses: Array[PathFollow2D]) -> 
 
 
 func get_attack_range() -> float:
-	return IPS_ATTACK_RANGE
+	return IPS_ATTACK_RANGE * _get_signal_boost_range_multiplier()
 
 
 func get_max_level() -> int:
@@ -89,7 +89,7 @@ func get_shot_power() -> int:
 
 
 func get_shot_cooldown() -> float:
-	return spike_production_seconds
+	return spike_production_seconds * _get_signal_boost_cooldown_multiplier()
 
 
 func get_max_spikes() -> int:

@@ -2,7 +2,13 @@
 
 [ext_resource type="SpriteFrames" uid="uid://r6uhqh3ktfcw" path="res://Assets/Towers/CyberGuardian/CyberGuardianSpriteFrames.res" id="1_frames"]
 [ext_resource type="Script" uid="uid://bi54nma58lbdq" path="res://Scripts/Towers/cyber_guardian_idle_sprite.gd" id="2_script"]
+<<<<<<< HEAD
+[ext_resource type="AudioStream" uid="uid://5t88uc81blnw" path="res://assets/sfx/cyberguardian_summon.wav" id="3_summon_sfx"]
+[ext_resource type="Texture2D" uid="uid://drni3bw1ta7k8" path="res://assets/Towers/CyberGuardian/Modes/Cyber_Guardian_SignalBoost_Sprite.png" id="4_signal_boost"]
+[ext_resource type="Texture2D" uid="uid://c52ke2x6eylyl" path="res://assets/Towers/CyberGuardian/Modes/Cyber_Guardian_Firewall_Sprite.png" id="5_firewall"]
+=======
 [ext_resource type="AudioStream" uid="uid://5t88uc81blnw" path="res://Assets/sfx/cyberguardian_summon.wav" id="3_summon_sfx"]
+>>>>>>> fc9b0136b361ac3d95b758a36013b948a3f60db0
 
 [node name="Cybersec Guardian" type="AnimatedSprite2D" unique_id=1315436382 groups=["Defender", "OFFENSE_TOWER"]]
 scale = Vector2(0.3, 0.3)
@@ -10,6 +16,20 @@ sprite_frames = ExtResource("1_frames")
 animation = &"idle"
 autoplay = "idle"
 script = ExtResource("2_script")
+
+[node name="ModeSprites" type="Node2D" parent="." unique_id=1891445728]
+position = Vector2(0, -360)
+
+[node name="SignalBoostSprite" type="Sprite2D" parent="ModeSprites" unique_id=1163574160]
+visible = false
+position = Vector2(-3.3333328, 336.66663)
+scale = Vector2(0.3136518, 0.3136518)
+texture = ExtResource("4_signal_boost")
+
+[node name="FirewallSprite" type="Sprite2D" parent="ModeSprites" unique_id=2012307439]
+position = Vector2(-2.3841858e-07, 356.6667)
+scale = Vector2(0.34309724, 0.34309724)
+texture = ExtResource("5_firewall")
 
 [node name="Audio" type="Node" parent="." unique_id=1923395083]
 

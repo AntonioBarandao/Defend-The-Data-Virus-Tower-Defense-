@@ -66,7 +66,7 @@ func reset_tower() -> void:
 
 
 func get_attack_range() -> float:
-	return production_radius
+	return production_radius * _get_signal_boost_range_multiplier()
 
 
 func get_max_level() -> int:
@@ -208,7 +208,8 @@ func _stop_production() -> void:
 
 
 func _count_viruses_in_radius(active_viruses: Array[PathFollow2D]) -> int:
-	var radius_squared := production_radius * production_radius
+	var attack_range := get_attack_range()
+	var radius_squared := attack_range * attack_range
 	var count := 0
 	for follow in active_viruses:
 		if not is_instance_valid(follow):
