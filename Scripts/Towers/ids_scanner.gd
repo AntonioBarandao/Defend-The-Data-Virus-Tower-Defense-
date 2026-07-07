@@ -68,6 +68,8 @@ const BURNER_TICK_SECONDS := 1.0
 const BOUNTY_REWARD_PER_VIRUS := 5
 const QUARANTINE_SPEED_MULTIPLIER := 0.5
 const QUARANTINE_REFRESH_SECONDS := 0.25
+const SIGNAL_BOOST_RANGE_MULTIPLIER := 1.1
+const SIGNAL_BOOST_COOLDOWN_MULTIPLIER := 0.9
 const RADAR_SEGMENTS := 96
 const SWEEP_HALF_ANGLE := PI / 10.0
 const TOWER_GRAB_SIZE := Vector2(180, 180)
@@ -114,6 +116,7 @@ var _base_modulate := Color.WHITE
 var _burner_elapsed_by_virus := {}
 var _bounty_scanned_viruses := {}
 var _virus_in_scan_radius := false
+var _signal_boost_active := false
 
 
 func _ready() -> void:
@@ -197,6 +200,7 @@ func get_occupied_placement_shape() -> CollisionShape2D:
 func reset_tower() -> void:
 	level = 1
 	scanner_mode = MODE_CAMO
+	set_signal_boost_active(false)
 	global_position = _home_position
 	deployed = false
 	_dragging = false
@@ -219,11 +223,36 @@ func can_scan_cloaked_viruses() -> bool:
 
 
 func get_scan_radius() -> float:
-	return scan_radius
+	return scan_radius * _get_signal_boost_range_multiplier()
 
 
 func get_attack_range() -> float:
 	return get_scan_radius()
+
+
+func set_signal_boost_active(active: bool) -> void:
+	if _signal_boost_active == active:
+		return
+
+	_signal_boost_active = active
+	_rebuild_radar_geometry()
+	_sync_deployed_state()
+
+
+func get_signal_boost_range_multiplier() -> float:
+	return SIGNAL_BOOST_RANGE_MULTIPLIER if _signal_boost_active else 1.0
+
+
+func get_signal_boost_cooldown_multiplier() -> float:
+	return SIGNAL_BOOST_COOLDOWN_MULTIPLIER if _signal_boost_active else 1.0
+
+
+func _get_signal_boost_range_multiplier() -> float:
+	return get_signal_boost_range_multiplier()
+
+
+func _get_signal_boost_cooldown_multiplier() -> float:
+	return get_signal_boost_cooldown_multiplier()
 
 
 func set_menu_range_preview_active(_active: bool) -> void:
@@ -312,7 +341,8 @@ func update_support_scan(active_viruses: Array[PathFollow2D], _delta: float) -> 
 		_virus_in_scan_radius = false
 		return
 
-	var radius_squared := scan_radius * scan_radius
+	var effective_scan_radius := get_scan_radius()
+	var radius_squared := effective_scan_radius * effective_scan_radius
 	var virus_in_scan_radius := false
 	var viruses_in_burner_range := {}
 	var burn_damage_requests: Array[PathFollow2D] = []
@@ -421,7 +451,7 @@ func _update_burner_cycle(
 	damage_requests: Array[PathFollow2D]
 ) -> void:
 	var elapsed := float(_burner_elapsed_by_virus.get(virus_id, 0.0)) + delta
-	if elapsed >= BURNER_TICK_SECONDS:
+	if elapsed >= BURNER_TICK_SECONDS * _get_signal_boost_cooldown_multiplier():
 		damage_requests.append(follow)
 		elapsed = 0.0
 
@@ -446,7 +476,8 @@ func _has_active_virus_in_scan_radius(active_viruses: Array[PathFollow2D]) -> bo
 	if not deployed:
 		return false
 
-	var radius_squared := scan_radius * scan_radius
+	var effective_scan_radius := get_scan_radius()
+	var radius_squared := effective_scan_radius * effective_scan_radius
 	for follow in active_viruses:
 		if not is_instance_valid(follow):
 			continue
@@ -549,8 +580,9 @@ func _rebuild_radar_geometry() -> void:
 	if not is_instance_valid(_radar_fill):
 		return
 
-	_radar_fill.polygon = _build_circle_points(scan_radius, false)
-	_radar_outline.points = _build_circle_points(scan_radius, true)
+	var effective_scan_radius := get_scan_radius()
+	_radar_fill.polygon = _build_circle_points(effective_scan_radius, false)
+	_radar_outline.points = _build_circle_points(effective_scan_radius, true)
 	_update_sweep_geometry()
 
 
@@ -584,12 +616,12 @@ func _update_sweep_geometry() -> void:
 	for index in range(sweep_segments + 1):
 		var t := float(index) / float(sweep_segments)
 		var angle := _sweep_angle - SWEEP_HALF_ANGLE + (SWEEP_HALF_ANGLE * 2.0 * t)
-		points.append(Vector2(cos(angle), sin(angle)) * scan_radius)
+		points.append(Vector2(cos(angle), sin(angle)) * get_scan_radius())
 
 	_radar_sweep.polygon = points
 	_radar_line.points = PackedVector2Array([
 		Vector2.ZERO,
-		Vector2(cos(_sweep_angle), sin(_sweep_angle)) * scan_radius
+		Vector2(cos(_sweep_angle), sin(_sweep_angle)) * get_scan_radius()
 	])
 
 

@@ -7,6 +7,11 @@ signal defeated(virus: RedVirus)
 const IDLE_ANIMATION := &"idle"
 const DESTROY_ANIMATION := &"destroy"
 const GRAB_SIZE := Vector2(128, 128)
+const DESTROY_SFX_STACK_LIMIT := 3
+const DESTROY_SFX_STACK_WINDOW_MSEC := 1000
+
+static var _destroy_sfx_window_started_msec := 0
+static var _destroy_sfx_plays_in_window := 0
 
 @export var path_speed := 150.0
 @export var max_health := 1
@@ -101,7 +106,7 @@ func take_damage(amount: int) -> bool:
 		return false
 
 	_destroying = true
-	_play_audio_player(_destroy_sfx)
+	_play_destroy_sfx()
 	defeated.emit(self)
 	return true
 
@@ -176,6 +181,26 @@ func _play_audio_player(player: AudioStreamPlayer) -> void:
 
 	player.stop()
 	player.play()
+
+
+func _play_destroy_sfx() -> void:
+	if not _can_play_destroy_sfx_now():
+		return
+
+	_play_audio_player(_destroy_sfx)
+
+
+static func _can_play_destroy_sfx_now() -> bool:
+	var now_msec := Time.get_ticks_msec()
+	if now_msec - _destroy_sfx_window_started_msec >= DESTROY_SFX_STACK_WINDOW_MSEC:
+		_destroy_sfx_window_started_msec = now_msec
+		_destroy_sfx_plays_in_window = 0
+
+	if _destroy_sfx_plays_in_window >= DESTROY_SFX_STACK_LIMIT:
+		return false
+
+	_destroy_sfx_plays_in_window += 1
+	return true
 
 
 func _get_active_speed_multiplier() -> float:

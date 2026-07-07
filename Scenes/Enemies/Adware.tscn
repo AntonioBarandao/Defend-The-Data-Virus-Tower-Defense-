@@ -1,0 +1,68 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Enemies/adware.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/Adware/Popups/Adware_Popup_01.png" id="2_popup_01"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/Adware/Popups/Adware_Popup_02.png" id="3_popup_02"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/Adware/Popups/Adware_Popup_03.png" id="4_popup_03"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/Adware/Popups/Adware_Popup_04.png" id="5_popup_04"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/Adware/Popups/Adware_Popup_05.png" id="6_popup_05"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/Adware/Popups/Adware_Popup_06.png" id="7_popup_06"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/Adware/Popups/Adware_Popup_07.png" id="8_popup_07"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/Adware/Popups/Adware_Popup_08.png" id="9_popup_08"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/Adware/Popups/Adware_Popup_09.png" id="10_popup_09"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/Adware/Popups/Adware_Popup_10.png" id="11_popup_10"]
+
+[node name="Adware" type="Node2D"]
+z_index = 95
+script = ExtResource("1_script")
+
+[node name="Popups" type="Node2D" parent="."]
+
+[node name="Popup01" type="Sprite2D" parent="Popups"]
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("2_popup_01")
+
+[node name="Popup02" type="Sprite2D" parent="Popups"]
+visible = false
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("3_popup_02")
+
+[node name="Popup03" type="Sprite2D" parent="Popups"]
+visible = false
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("4_popup_03")
+
+[node name="Popup04" type="Sprite2D" parent="Popups"]
+visible = false
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("5_popup_04")
+
+[node name="Popup05" type="Sprite2D" parent="Popups"]
+visible = false
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("6_popup_05")
+
+[node name="Popup06" type="Sprite2D" parent="Popups"]
+visible = false
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("7_popup_06")
+
+[node name="Popup07" type="Sprite2D" parent="Popups"]
+visible = false
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("8_popup_07")
+
+[node name="Popup08" type="Sprite2D" parent="Popups"]
+visible = false
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("9_popup_08")
+
+[node name="Popup09" type="Sprite2D" parent="Popups"]
+visible = false
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("10_popup_09")
+
+[node name="Popup10" type="Sprite2D" parent="Popups"]
+visible = false
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("11_popup_10")

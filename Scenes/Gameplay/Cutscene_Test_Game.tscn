@@ -24,7 +24,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/UI/AnnounceTextHUD.tscn" id="22_announce"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/CutsceneSkipHUD.tscn" id="23_skip"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/EDR_Hunter.tscn" id="24_edr"]
-[ext_resource type="PackedScene" path="res://Scenes/Towers/SIEM_Hawk.tscn" id="25_siem"]
+[ext_resource type="PackedScene" uid="uid://d1d2new0ebcw6" path="res://Scenes/Towers/SIEM_Hawk.tscn" id="25_siem"]
 [ext_resource type="PackedScene" uid="uid://da4s186a72uym" path="res://Scenes/UI/ProgressHUD.tscn" id="26_knowledge"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/IPS_Intrusion.tscn" id="27_ips"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/Honeypot_Production.tscn" id="28_honeypot"]
@@ -138,6 +138,7 @@ offset_bottom = -3.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_question")
 
 [node name="PerformanceHUD" parent="." unique_id=1039250105 instance=ExtResource("12_perf")]
+visible = false
 
 [node name="StatusPanel" parent="PerformanceHUD/Root" index="0"]
 offset_top = 955.0
@@ -170,6 +171,7 @@ visible = false
 [node name="UtilityOverlayHUD" parent="." unique_id=1382216125 instance=ExtResource("16_demo_overlay")]
 
 [node name="TextCutsceneHUD" parent="." unique_id=2039921757 instance=ExtResource("18_cutscene")]
+visible = false
 
 [node name="DialoguePanel" parent="TextCutsceneHUD/Root" parent_id_path=PackedInt32Array(2039921757, 1776170494) index="2" unique_id=1701430842]
 theme_override_styles/panel = SubResource("StyleBoxFlat_dialogue_panel")
@@ -187,6 +189,7 @@ visible = false
 scale = Vector2(1.2091238, 1.2091238)
 
 [node name="CutsceneSkipHUD" parent="." unique_id=575692336 instance=ExtResource("23_skip")]
+visible = false
 
 [node name="SkipButton" parent="CutsceneSkipHUD/Root" index="0"]
 offset_left = -209.0
@@ -196,6 +199,7 @@ offset_bottom = 58.0
 scale = Vector2(1.2522548, 1.2522548)
 
 [node name="CutsceneDemoMenuHUD" parent="." unique_id=29047704 instance=ExtResource("21_demo_menu")]
+visible = false
 
 [node name="HamburgerButton" parent="CutsceneDemoMenuHUD/Root" index="0"]
 offset_left = -100.0

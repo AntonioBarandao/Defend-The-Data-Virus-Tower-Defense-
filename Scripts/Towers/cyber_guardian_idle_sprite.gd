@@ -2,11 +2,37 @@ class_name CyberGuardianTower
 extends AnimatedSprite2D
 
 signal placed(tower: CyberGuardianTower)
+signal mode_changed(mode_id: StringName)
 
 const TowerSummonEffectScript := preload("res://Scripts/Effects/tower_summon_effect.gd")
+const SIGNAL_BOOST_TEXTURE := preload("res://assets/Towers/CyberGuardian/Modes/Cyber_Guardian_SignalBoost_Sprite.png")
+const FIREWALL_TEXTURE := preload("res://assets/Towers/CyberGuardian/Modes/Cyber_Guardian_Firewall_Sprite.png")
 const IDLE_ANIMATION := &"idle"
 const SUMMON_ANIMATION := &"SummonAnim"
 const SHOOT_ANIMATION := &"ShootAnim"
+const MODE_DEFENDER := &"defender"
+const MODE_SIGNAL_BOOST := &"signal_boost"
+const MODE_FIREWALL := &"firewall"
+const MODE_SEQUENCE := [
+	MODE_DEFENDER,
+	MODE_SIGNAL_BOOST,
+	MODE_FIREWALL
+]
+const MODE_DISPLAY_NAMES := {
+	MODE_DEFENDER: "Defender Mode",
+	MODE_SIGNAL_BOOST: "Signal Boost Mode",
+	MODE_FIREWALL: "Firewall Mode"
+}
+const SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL := 1
+const FIREWALL_UNLOCK_KNOWLEDGE_LEVEL := 1
+const MODE_UNLOCK_LEVELS := {
+	MODE_DEFENDER: 1,
+	MODE_SIGNAL_BOOST: SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL,
+	MODE_FIREWALL: FIREWALL_UNLOCK_KNOWLEDGE_LEVEL
+}
+const SIGNAL_BOOST_RANGE_MULTIPLIER := 1.1
+const SIGNAL_BOOST_COOLDOWN_MULTIPLIER := 0.9
+const SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER := 1.2
 const GRAB_SIZE := Vector2(240, 180)
 const PLACEMENT_HIGHLIGHT_SIZE := Vector2(180, 120)
 const PLACEMENT_SLOT_PREFIX := "placementslot"
@@ -34,6 +60,9 @@ const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
 @export var show_attack_range_preview := true
 @export var range_preview_fill_color := RANGE_PREVIEW_FILL_COLOR
 @export var range_preview_outline_color := RANGE_PREVIEW_OUTLINE_COLOR
+@export_group("Mode Sprites")
+@export var signal_boost_sprite_path: NodePath = ^"ModeSprites/SignalBoostSprite"
+@export var firewall_sprite_path: NodePath = ^"ModeSprites/FirewallSprite"
 @export_group("Audio")
 @export var summon_sfx_path: NodePath = ^"Audio/SummonSfx"
 @export_group("")
@@ -57,6 +86,12 @@ var _range_preview_radius := -1.0
 var _menu_range_preview_active := false
 var _summon_sfx: AudioStreamPlayer
 var _base_modulate := Color.WHITE
+var _current_mode: StringName = MODE_DEFENDER
+var _signal_boost_sprite: Sprite2D
+var _firewall_sprite: Sprite2D
+var _defender_sprite_frames: SpriteFrames
+var _static_mode_sprite_frames := {}
+var _signal_boost_active := false
 
 
 func _ready() -> void:
@@ -69,7 +104,10 @@ func _ready() -> void:
 	z_index = maxi(z_index, TOWER_VISUAL_Z_INDEX)
 	z_as_relative = false
 	_platform_highlight = get_node_or_null(platform_highlight_path) as ColorRect
+	_signal_boost_sprite = get_node_or_null(signal_boost_sprite_path) as Sprite2D
+	_firewall_sprite = get_node_or_null(firewall_sprite_path) as Sprite2D
 	_summon_sfx = get_node_or_null(summon_sfx_path) as AudioStreamPlayer
+	_hide_mode_sprite_source_nodes()
 	if _platform_highlight != null:
 		_platform_highlight.hide()
 
@@ -77,6 +115,8 @@ func _ready() -> void:
 		animation_finished.connect(_return_to_idle)
 
 	if _has_required_animations(sprite_frames):
+		_capture_defender_sprite_frames(sprite_frames)
+		_prepare_static_mode_sprite_frames()
 		play_animation(IDLE_ANIMATION)
 		return
 
@@ -158,6 +198,8 @@ func finish_drag() -> bool:
 
 func reset_tower() -> void:
 	level = 1
+	set_guardian_mode(MODE_DEFENDER)
+	set_signal_boost_active(false)
 	global_position = _home_position
 	rotation = _rest_rotation
 	_dragging = false
@@ -187,7 +229,7 @@ func get_laser_width() -> float:
 
 
 func get_attack_range() -> float:
-	return LEVEL_ATTACK_RANGES[level - 1]
+	return LEVEL_ATTACK_RANGES[level - 1] * _get_signal_boost_range_multiplier()
 
 
 func set_menu_range_preview_active(active: bool) -> void:
@@ -196,7 +238,7 @@ func set_menu_range_preview_active(active: bool) -> void:
 
 
 func get_shot_cooldown() -> float:
-	return LEVEL_COOLDOWNS[level - 1]
+	return LEVEL_COOLDOWNS[level - 1] * _get_signal_boost_cooldown_multiplier()
 
 
 func get_shot_power() -> int:
@@ -228,6 +270,72 @@ func get_upgrade_cost() -> int:
 
 func upgrade() -> bool:
 	return false
+
+
+func set_guardian_mode(mode_id: StringName) -> bool:
+	var normalized_mode := _normalize_mode(mode_id)
+	if normalized_mode == _current_mode:
+		return true
+
+	_current_mode = normalized_mode
+	_apply_guardian_mode_visual()
+	mode_changed.emit(_current_mode)
+	return true
+
+
+func get_current_mode_id() -> StringName:
+	return _current_mode
+
+
+func get_mode_display_name(mode_id: StringName = &"") -> String:
+	var normalized_mode := _current_mode if String(mode_id).is_empty() else _normalize_mode(mode_id)
+	return String(MODE_DISPLAY_NAMES.get(normalized_mode, "Defender Mode"))
+
+
+func get_mode_unlock_level(mode_id: StringName) -> int:
+	return int(MODE_UNLOCK_LEVELS.get(_normalize_mode(mode_id), 1))
+
+
+func get_mode_unlock_levels() -> Dictionary:
+	return MODE_UNLOCK_LEVELS.duplicate()
+
+
+func is_mode_unlocked(mode_id: StringName, knowledge_level: int) -> bool:
+	return knowledge_level >= get_mode_unlock_level(mode_id)
+
+
+func get_unlocked_mode_ids(knowledge_level: int) -> Array[StringName]:
+	var unlocked_modes: Array[StringName] = []
+	for mode_id in MODE_SEQUENCE:
+		if is_mode_unlocked(mode_id, knowledge_level):
+			unlocked_modes.append(mode_id)
+
+	return unlocked_modes
+
+
+func set_signal_boost_active(active: bool) -> void:
+	if _signal_boost_active == active:
+		return
+
+	_signal_boost_active = active
+	_range_preview_radius = -1.0
+	_update_attack_range_preview()
+
+
+func is_signal_boost_active() -> bool:
+	return _signal_boost_active
+
+
+func get_signal_boost_range_multiplier() -> float:
+	return SIGNAL_BOOST_RANGE_MULTIPLIER if _signal_boost_active else 1.0
+
+
+func get_signal_boost_cooldown_multiplier() -> float:
+	return SIGNAL_BOOST_COOLDOWN_MULTIPLIER if _signal_boost_active else 1.0
+
+
+func get_signal_boost_hawk_speed_multiplier() -> float:
+	return SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER if _signal_boost_active else 1.0
 
 
 func update_attack(delta: float, active_viruses: Array[PathFollow2D]) -> PathFollow2D:
@@ -587,6 +695,8 @@ func _get_game_root() -> Node:
 
 
 func _apply_sprite_frames(frames: SpriteFrames) -> void:
+	_capture_defender_sprite_frames(frames)
+	_prepare_static_mode_sprite_frames()
 	sprite_frames = frames
 	play_animation(IDLE_ANIMATION)
 
@@ -596,6 +706,82 @@ func _has_required_animations(frames: SpriteFrames) -> bool:
 		and frames.has_animation(IDLE_ANIMATION) \
 		and frames.has_animation(SUMMON_ANIMATION) \
 		and frames.has_animation(SHOOT_ANIMATION)
+
+
+func _capture_defender_sprite_frames(frames: SpriteFrames) -> void:
+	if frames != null:
+		_defender_sprite_frames = frames
+
+
+func _prepare_static_mode_sprite_frames() -> void:
+	if _static_mode_sprite_frames.is_empty():
+		_static_mode_sprite_frames[MODE_SIGNAL_BOOST] = _build_static_mode_sprite_frames(_get_signal_boost_texture())
+		_static_mode_sprite_frames[MODE_FIREWALL] = _build_static_mode_sprite_frames(_get_firewall_texture())
+
+
+func _build_static_mode_sprite_frames(texture: Texture2D) -> SpriteFrames:
+	var frames := SpriteFrames.new()
+	for animation_name in [IDLE_ANIMATION, SUMMON_ANIMATION, SHOOT_ANIMATION]:
+		if not frames.has_animation(animation_name):
+			frames.add_animation(animation_name)
+		frames.set_animation_loop(animation_name, animation_name == IDLE_ANIMATION)
+		frames.set_animation_speed(animation_name, 1.0)
+		frames.add_frame(animation_name, texture)
+
+	if frames.has_animation(&"default"):
+		frames.remove_animation(&"default")
+
+	return frames
+
+
+func _get_signal_boost_texture() -> Texture2D:
+	if _signal_boost_sprite != null and _signal_boost_sprite.texture != null:
+		return _signal_boost_sprite.texture
+
+	return SIGNAL_BOOST_TEXTURE
+
+
+func _get_firewall_texture() -> Texture2D:
+	if _firewall_sprite != null and _firewall_sprite.texture != null:
+		return _firewall_sprite.texture
+
+	return FIREWALL_TEXTURE
+
+
+func _hide_mode_sprite_source_nodes() -> void:
+	if _signal_boost_sprite != null:
+		_signal_boost_sprite.hide()
+	if _firewall_sprite != null:
+		_firewall_sprite.hide()
+
+
+func _apply_guardian_mode_visual() -> void:
+	_prepare_static_mode_sprite_frames()
+	if _current_mode == MODE_DEFENDER:
+		if _defender_sprite_frames != null:
+			sprite_frames = _defender_sprite_frames
+	else:
+		var mode_frames := _static_mode_sprite_frames.get(_current_mode) as SpriteFrames
+		if mode_frames != null:
+			sprite_frames = mode_frames
+
+	if _has_required_animations(sprite_frames):
+		play_animation(IDLE_ANIMATION)
+
+
+func _normalize_mode(mode_id: StringName) -> StringName:
+	if MODE_SEQUENCE.has(mode_id):
+		return mode_id
+
+	return MODE_DEFENDER
+
+
+func _get_signal_boost_range_multiplier() -> float:
+	return get_signal_boost_range_multiplier()
+
+
+func _get_signal_boost_cooldown_multiplier() -> float:
+	return get_signal_boost_cooldown_multiplier()
 
 
 func _return_to_idle() -> void:

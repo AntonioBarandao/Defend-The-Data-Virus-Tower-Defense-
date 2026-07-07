@@ -1,34 +1,66 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://d1d2new0ebcw6"]
 
-[ext_resource type="SpriteFrames" path="res://assets/Towers/SIEM_Hawk/SIEMHawkSpriteFrames.tres" id="1_frames"]
-[ext_resource type="Script" path="res://Scripts/Towers/siem_hawk.gd" id="2_script"]
-[ext_resource type="Texture2D" path="res://assets/Towers/SIEM_Hawk/SIEM_Hawk_Base.png" id="3_base"]
+[ext_resource type="SpriteFrames" uid="uid://okjq4nkrqx2i" path="res://assets/Towers/SIEM_Hawk/SIEMHawkSpriteFrames.tres" id="1_frames"]
+[ext_resource type="Script" uid="uid://degsxbf8k6ewd" path="res://Scripts/Towers/siem_hawk.gd" id="2_script"]
+[ext_resource type="Texture2D" uid="uid://b6x0qkc0yqkv7" path="res://assets/Towers/SIEM_Hawk/SIEM_Hawk_Base.png" id="3_base"]
 
-[node name="SIEM_Hawk" type="AnimatedSprite2D" groups=["Defender", "OFFENSE_TOWER"]]
+[node name="SIEM_Hawk" type="Node2D" unique_id=1629272437 groups=["Defender", "OFFENSE_TOWER"]]
 scale = Vector2(0.11188765, 0.11188765)
-sprite_frames = ExtResource("1_frames")
-animation = &"idle"
-autoplay = "idle"
 script = ExtResource("2_script")
 
-[node name="BaseSprite" type="Sprite2D" parent="."]
+[node name="LevelVisuals" type="Node2D" parent="." unique_id=1904474695]
+
+[node name="LV1Visual" type="AnimatedSprite2D" parent="LevelVisuals" unique_id=1229489492]
+visible = false
+sprite_frames = ExtResource("1_frames")
+animation = &"idle_lv1"
+autoplay = "idle_lv1"
+
+[node name="LV2Visual" type="AnimatedSprite2D" parent="LevelVisuals" unique_id=1773444962]
+visible = false
+sprite_frames = ExtResource("1_frames")
+animation = &"idle_lv2"
+autoplay = "idle_lv2"
+
+[node name="LV3Visual" type="AnimatedSprite2D" parent="LevelVisuals" unique_id=465038710]
+visible = false
+position = Vector2(0, -71.5003)
+scale = Vector2(1.3146276, 1.3146276)
+sprite_frames = ExtResource("1_frames")
+animation = &"idle_lv3"
+autoplay = "idle_lv3"
+
+[node name="LV4Visual" type="AnimatedSprite2D" parent="LevelVisuals" unique_id=1004218398]
+visible = false
+sprite_frames = ExtResource("1_frames")
+animation = &"idle_lv4"
+autoplay = "idle_lv4"
+
+[node name="LV5Visual" type="AnimatedSprite2D" parent="LevelVisuals" unique_id=1255206286]
+visible = false
+sprite_frames = ExtResource("1_frames")
+animation = &"idle_lv5"
+autoplay = "idle_lv5"
+
+[node name="BaseSprite" type="Sprite2D" parent="." unique_id=1995772345]
 z_index = -1
 texture = ExtResource("3_base")
 
-[node name="ScanArcFill" type="Polygon2D" parent="."]
-visible = false
+[node name="ScanArcFill" type="Polygon2D" parent="." unique_id=636580858]
 color = Color(0.12, 0.56, 1, 0.16)
 
-[node name="ScanArcOutline" type="Line2D" parent="."]
-visible = false
-width = 3.0
+[node name="ScanArcOutline" type="Line2D" parent="." unique_id=437043173]
+position = Vector2(-8.937537, 0)
+width = 5.0
 default_color = Color(0.34, 0.84, 1, 0.78)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
+sharp_limit = 5.0
+round_precision = 12
 antialiased = true
 
-[node name="KnowledgeHoverLabel" type="Label" parent="."]
+[node name="KnowledgeHoverLabel" type="Label" parent="." unique_id=1206191651]
 visible = false
 offset_left = -76.0
 offset_top = -96.0

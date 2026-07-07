@@ -23,11 +23,11 @@ func get_shot_power() -> int:
 
 
 func get_attack_range() -> float:
-	return EDR_ATTACK_RANGE
+	return EDR_ATTACK_RANGE * _get_signal_boost_range_multiplier()
 
 
 func get_shot_cooldown() -> float:
-	return EDR_COOLDOWN
+	return EDR_COOLDOWN * _get_signal_boost_cooldown_multiplier()
 
 
 func get_laser_width() -> float:
