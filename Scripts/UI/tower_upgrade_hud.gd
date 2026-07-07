@@ -33,17 +33,11 @@ const GUARDIAN_MODE_FIREWALL := &"firewall"
 @onready var _title_label: Label = $Root/MenuPanel/Margin/Content/Title
 @onready var _portrait_row: Control = $Root/MenuPanel/Margin/Content/PortraitRow
 @onready var _guardian_mode_container: Control = $Root/MenuPanel/Margin/Content/VBoxContainer
-<<<<<<< HEAD
 @onready var _guardian_mode_buttons := {
 	GUARDIAN_MODE_DEFENDER: $Root/MenuPanel/Margin/Content/VBoxContainer/ButtonPath,
 	GUARDIAN_MODE_SIGNAL_BOOST: $Root/MenuPanel/Margin/Content/VBoxContainer/ButtonPath2,
 	GUARDIAN_MODE_FIREWALL: $Root/MenuPanel/Margin/Content/VBoxContainer/ButtonPath3
 }
-=======
-@onready var _guardian_signal_button: Button = $Root/MenuPanel/Margin/Content/VBoxContainer/ButtonPath
-@onready var _guardian_firewall_button: Button = $Root/MenuPanel/Margin/Content/VBoxContainer/ButtonPath2
-@onready var _guardian_future_button: Button = $Root/MenuPanel/Margin/Content/VBoxContainer/ButtonPath3
->>>>>>> fc9b0136b361ac3d95b758a36013b948a3f60db0
 @onready var _upgrade_path_container: Control = $Root/MenuPanel/Margin/Content/VBoxContainer2
 @onready var _laser_level_label: Label = $Root/MenuPanel/Margin/Content/VBoxContainer2/LevelLabel
 @onready var _laser_power_label: Label = $Root/MenuPanel/Margin/Content/VBoxContainer2/PowerLabel
@@ -548,9 +542,10 @@ func _ensure_description_label() -> void:
 
 
 func _configure_static_tooltips() -> void:
-	_guardian_signal_button.tooltip_text = TowerTooltips.GUARDIAN_MODE_DETAILS[&"signal_boost"]
-	_guardian_firewall_button.tooltip_text = TowerTooltips.GUARDIAN_MODE_DETAILS[&"firewall"]
-	_guardian_future_button.tooltip_text = TowerTooltips.GUARDIAN_MODE_DETAILS[&"mode_three"]
+	for mode_id in _guardian_mode_buttons.keys():
+		var button := _guardian_mode_buttons[mode_id] as Button
+		if button != null:
+			button.tooltip_text = String(TowerTooltips.GUARDIAN_MODE_DETAILS.get(mode_id, TowerTooltips.tower_tooltip(&"guardian")))
 	_siem_dispatch_button.tooltip_text = TowerTooltips.SIEM_DISPATCH_TOOLTIP
 	_siem_land_button.tooltip_text = TowerTooltips.SIEM_LAND_TOOLTIP
 	for mode_id in _scanner_mode_buttons.keys():
