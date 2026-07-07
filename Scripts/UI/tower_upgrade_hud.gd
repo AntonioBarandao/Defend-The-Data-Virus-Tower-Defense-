@@ -545,7 +545,7 @@ func _configure_static_tooltips() -> void:
 	for mode_id in _guardian_mode_buttons.keys():
 		var button := _guardian_mode_buttons[mode_id] as Button
 		if button != null:
-			button.tooltip_text = TowerTooltips.GUARDIAN_MODE_DETAILS.get(mode_id, TowerTooltips.tower_tooltip(&"guardian"))
+			button.tooltip_text = String(TowerTooltips.GUARDIAN_MODE_DETAILS.get(mode_id, TowerTooltips.tower_tooltip(&"guardian")))
 	_siem_dispatch_button.tooltip_text = TowerTooltips.SIEM_DISPATCH_TOOLTIP
 	_siem_land_button.tooltip_text = TowerTooltips.SIEM_LAND_TOOLTIP
 	for mode_id in _scanner_mode_buttons.keys():

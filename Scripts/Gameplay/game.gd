@@ -380,7 +380,9 @@ func _input(event: InputEvent) -> void:
 		elif _edr_hunter_store != null and _edr_hunter_store.is_dragging():
 			_edr_hunter_store.finish_drag()
 		elif _guardian_store != null and _guardian_store.is_dragging():
-			_guardian_store.finish_drag()
+			if _guardian_store.finish_drag():
+				_apply_guardian_signal_boost_state()
+				_sync_guardian_upgrade_panel()
 		return
 
 	if _edr_hunter_store != null and not _edr_hunter_store.is_placed() and event is InputEventMouseMotion and _edr_hunter_store.is_dragging():
@@ -471,7 +473,9 @@ func _input(event: InputEvent) -> void:
 		elif _edr_hunter_store != null and _edr_hunter_store.is_dragging():
 			_edr_hunter_store.finish_drag()
 		elif _guardian_store != null and _guardian_store.is_dragging():
-			_guardian_store.finish_drag()
+			if _guardian_store.finish_drag():
+				_apply_guardian_signal_boost_state()
+				_sync_guardian_upgrade_panel()
 		return
 
 	if _edr_hunter_store != null and not _edr_hunter_store.is_placed() and event is InputEventScreenDrag and _edr_hunter_store.is_dragging():
