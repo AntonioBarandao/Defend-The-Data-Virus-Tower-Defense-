@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://eg7rvsm4gmsf"]
+[gd_scene format=3 uid="uid://t25c6hnsguqj"]
 
 [ext_resource type="Script" uid="uid://bikvcputit3ew" path="res://Scripts/UI/cyber_question_hud.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://c8mbr1sur5jts" path="res://Assets/UI/CyberBucks.png" id="2_bucks"]

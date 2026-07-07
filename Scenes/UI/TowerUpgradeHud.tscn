@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dfmkdge7ll4f2"]
+[gd_scene format=3 uid="uid://w84lgguasvp7"]
 
 [ext_resource type="Script" uid="uid://cx10pf1srbnq7" path="res://Scripts/UI/tower_upgrade_hud.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://80e8xosb7uq1" path="res://Assets/UI/Cutscene/Cyberguardian_Mascot.png" id="2_lydoq"]
