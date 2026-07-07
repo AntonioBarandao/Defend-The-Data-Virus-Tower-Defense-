@@ -53,8 +53,11 @@ const STORE_PANEL_SLIDE_DISTANCE := 360.0
 const STORE_PANEL_ANIM_SECONDS := 0.22
 const STORE_TOWER_ICON_X_OFFSET := 92.0
 const STORE_TOWER_LABEL_X_OFFSET := 258.0
-const STORE_TOWER_LABEL_SIZE := Vector2(190, 54)
-const STORE_TOWER_ROW_GAP := 126.0
+const STORE_TOWER_LABEL_SIZE := Vector2(188, 36)
+const STORE_TOWER_ROW_TOP_OFFSET := 132.0
+const STORE_TOWER_ROW_GAP := 104.0
+const STORE_TOWER_DISPLAY_SCALE_MULTIPLIER := 0.72
+const STORE_TOGGLE_BELOW_LAST_TOWER_OFFSET := 58.0
 
 @export var guardian_path: NodePath = ^"Sprites/Cybersec Guardian"
 @export var laser_turret_path: NodePath = ^"Sprites/Laser Turret"
@@ -132,6 +135,7 @@ var _tower_store_title_label: Label
 var _tower_store_hint_label: Label
 var _tower_store_item_labels: Dictionary = {}
 var _tower_store_home_positions: Dictionary = {}
+var _tower_store_placed_scales: Dictionary = {}
 var _tower_store_base_rect := Rect2()
 var _tower_store_open := true
 var _tower_store_tween: Tween
@@ -597,12 +601,14 @@ func _add_tower_store_item(items: Array[Dictionary], tower: Node2D, label_text: 
 func _layout_tower_store_items(store_items: Array[Dictionary]) -> void:
 	var store_rect := _get_store_panel_global_rect(store_items)
 	var icon_x := store_rect.position.x + STORE_TOWER_ICON_X_OFFSET
-	var row_top := store_rect.position.y + 144.0
+	var row_top := store_rect.position.y + STORE_TOWER_ROW_TOP_OFFSET
 	var row_gap := STORE_TOWER_ROW_GAP
 
 	for index in range(store_items.size()):
 		var tower := store_items[index]["tower"] as Node2D
 		var home_position := Vector2(icon_x, row_top + row_gap * float(index))
+		_cache_tower_placed_scale(tower)
+		_apply_store_display_scale(tower)
 		tower.global_position = home_position
 		_set_tower_store_home_position(tower, home_position)
 		_tower_store_home_positions[tower] = home_position
@@ -652,14 +658,17 @@ func _get_store_panel_global_rect(store_items: Array[Dictionary]) -> Rect2:
 
 
 func _create_tower_store_labels(store_items: Array[Dictionary]) -> void:
-	_tower_store_title_label = _make_store_label("TOWER STORE", 28, Color(0.74, 0.93, 1.0, 1.0))
+	_tower_store_title_label = _make_store_label("TOWER SHOP", 28, Color(0.74, 0.93, 1.0, 1.0))
 	_tower_store_hint_label = _make_store_label("Drag a tower onto a platform", 18, Color(0.52, 0.68, 0.82, 1.0))
 	add_child(_tower_store_title_label)
 	add_child(_tower_store_hint_label)
 
 	for item in store_items:
 		var tower := item["tower"] as Node2D
-		var label := _make_store_label(String(item["label"]), 17, Color(0.86, 0.94, 1.0, 1.0))
+		var label := _make_store_label(String(item["label"]), 15, Color(0.86, 0.94, 1.0, 1.0))
+		label.autowrap_mode = TextServer.AUTOWRAP_OFF
+		label.clip_text = true
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		add_child(label)
 		_tower_store_item_labels[tower] = label
 
@@ -698,9 +707,9 @@ func _position_tower_store_labels(slide_offset := 0.0) -> void:
 
 	var store_rect := _tower_store_base_rect
 	if _tower_store_title_label != null:
-		_position_store_label(_tower_store_title_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 28.0), Vector2(store_rect.size.x - 34.0, 34.0))
+		_position_store_label(_tower_store_title_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 16.0), Vector2(store_rect.size.x - 34.0, 40.0))
 	if _tower_store_hint_label != null:
-		_position_store_label(_tower_store_hint_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 66.0), Vector2(store_rect.size.x - 34.0, 34.0))
+		_position_store_label(_tower_store_hint_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 58.0), Vector2(store_rect.size.x - 34.0, 30.0))
 
 	for tower in _tower_store_item_labels.keys():
 		var tower_node := tower as Node2D
@@ -708,13 +717,21 @@ func _position_tower_store_labels(slide_offset := 0.0) -> void:
 		if tower_node == null or label == null:
 			continue
 
-		var label_center := Vector2(store_rect.position.x + STORE_TOWER_LABEL_X_OFFSET + slide_offset, tower_node.global_position.y - STORE_TOWER_LABEL_SIZE.y * 0.5)
-		_position_store_label(label, label_center, STORE_TOWER_LABEL_SIZE)
+		var label_top_left := Vector2(
+			store_rect.position.x + STORE_TOWER_LABEL_X_OFFSET - STORE_TOWER_LABEL_SIZE.x * 0.5 + slide_offset,
+			tower_node.global_position.y - STORE_TOWER_LABEL_SIZE.y * 0.5
+		)
+		_position_store_label_top_left(label, label_top_left, STORE_TOWER_LABEL_SIZE)
 
 
 func _position_store_label(label: Label, center_position: Vector2, size: Vector2) -> void:
 	label.size = size
 	label.global_position = center_position - Vector2(size.x * 0.5, 0)
+
+
+func _position_store_label_top_left(label: Label, top_left: Vector2, size: Vector2) -> void:
+	label.size = size
+	label.global_position = top_left
 
 
 func _create_tower_store_toggle_button() -> void:
@@ -761,9 +778,24 @@ func _position_tower_store_toggle_button() -> void:
 		return
 
 	var store_rect := _tower_store_base_rect
-	var screen_position := _world_to_screen_position(Vector2(store_rect.end.x - STORE_TOGGLE_SIZE.x - 24.0, store_rect.position.y + 18.0))
+	var toggle_world_position := Vector2(
+		store_rect.position.x + store_rect.size.x * 0.5 - STORE_TOGGLE_SIZE.x * 0.5,
+		_get_tower_store_toggle_world_y(store_rect)
+	)
+	var screen_position := _world_to_screen_position(toggle_world_position)
 	_tower_store_toggle_button.position = screen_position
 	_tower_store_toggle_button.size = STORE_TOGGLE_SIZE
+
+
+func _get_tower_store_toggle_world_y(store_rect: Rect2) -> float:
+	var last_row_y := store_rect.position.y + STORE_TOWER_ROW_TOP_OFFSET + STORE_TOWER_ROW_GAP * 6.0
+	for tower in _tower_store_home_positions.keys():
+		var home_position: Vector2 = _tower_store_home_positions[tower]
+		last_row_y = maxf(last_row_y, home_position.y)
+
+	var desired_y := last_row_y + STORE_TOGGLE_BELOW_LAST_TOWER_OFFSET
+	var panel_limit_y := store_rect.end.y - STORE_TOGGLE_SIZE.y - 18.0
+	return minf(desired_y, panel_limit_y)
 
 
 func _toggle_tower_store() -> void:
@@ -889,14 +921,54 @@ func _get_store_visual_nodes() -> Array[CanvasItem]:
 func _set_tower_store_home_position(tower: Node2D, home_position: Vector2) -> void:
 	tower.set("_home_position", home_position)
 	tower.set("_drag_start_position", home_position)
+	_sync_tower_scale_dependent_visuals(tower)
+
+
+func _cache_tower_placed_scale(tower: Node2D) -> void:
+	if tower == null or _tower_store_placed_scales.has(tower):
+		return
+
+	_tower_store_placed_scales[tower] = tower.scale
+
+
+func _apply_store_display_scale(tower: Node2D) -> void:
+	if tower == null:
+		return
+
+	var placed_scale: Vector2 = _tower_store_placed_scales.get(tower, tower.scale)
+	tower.scale = placed_scale * STORE_TOWER_DISPLAY_SCALE_MULTIPLIER
+	_sync_tower_scale_dependent_visuals(tower)
+
+
+func _restore_placed_tower_scale(tower: Node2D) -> void:
+	if tower == null:
+		return
+
+	var placed_scale: Vector2 = _tower_store_placed_scales.get(tower, tower.scale)
+	tower.scale = placed_scale
+	_sync_tower_scale_dependent_visuals(tower)
+
+
+func _sync_tower_scale_dependent_visuals(tower: Node2D) -> void:
 	if tower.has_method("_sync_base_sprite"):
 		tower.call_deferred("_sync_base_sprite")
+	if tower.has_method("_sync_level_plates_transform"):
+		tower.call_deferred("_sync_level_plates_transform")
+	if tower.has_method("_sync_deployed_state"):
+		tower.call_deferred("_sync_deployed_state")
 
 
 func _hide_legacy_store_title() -> void:
 	var legacy_title := get_node_or_null(^"Blue Towers") as CanvasItem
 	if legacy_title != null:
 		legacy_title.hide()
+
+	for child in get_children():
+		var label := child as Label
+		if label == null:
+			continue
+		if label.text == "Blue Towers" or label.text == "Blue Guardian Towers":
+			label.hide()
 
 
 func _connect_store_prototypes() -> void:
@@ -959,6 +1031,7 @@ func _connect_honeypot_store_prototype(tower: HoneypotProductionTowerScript) -> 
 
 
 func _on_guardian_store_tower_placed(tower: CyberGuardianTowerScript) -> void:
+	_restore_placed_tower_scale(tower)
 	_guardians.append(tower)
 	_guardian = tower
 	_spawn_replacement_guardian()
@@ -966,6 +1039,7 @@ func _on_guardian_store_tower_placed(tower: CyberGuardianTowerScript) -> void:
 
 
 func _on_laser_store_tower_placed(tower: LaserTurretScript) -> void:
+	_restore_placed_tower_scale(tower)
 	_laser_turrets.append(tower)
 	_laser_turret = tower
 	_spawn_replacement_laser()
@@ -973,6 +1047,7 @@ func _on_laser_store_tower_placed(tower: LaserTurretScript) -> void:
 
 
 func _on_scanner_store_tower_placed(tower: IDSScannerTowerScript) -> void:
+	_restore_placed_tower_scale(tower)
 	_ids_scanners.append(tower)
 	_ids_scanner = tower
 	_connect_placed_scanner(tower)
@@ -981,6 +1056,7 @@ func _on_scanner_store_tower_placed(tower: IDSScannerTowerScript) -> void:
 
 
 func _on_edr_store_tower_placed(tower: EDRHunterTowerScript) -> void:
+	_restore_placed_tower_scale(tower)
 	_edr_hunters.append(tower)
 	_edr_hunter = tower
 	_spawn_replacement_edr()
@@ -988,6 +1064,7 @@ func _on_edr_store_tower_placed(tower: EDRHunterTowerScript) -> void:
 
 
 func _on_siem_store_tower_placed(tower: SIEMHawkTowerScript) -> void:
+	_restore_placed_tower_scale(tower)
 	_siem_hawks.append(tower)
 	_siem_hawk = tower
 	_connect_placed_siem(tower)
@@ -996,6 +1073,7 @@ func _on_siem_store_tower_placed(tower: SIEMHawkTowerScript) -> void:
 
 
 func _on_ips_store_tower_placed(tower: IPSIntrusionTowerScript) -> void:
+	_restore_placed_tower_scale(tower)
 	_ips_intrusions.append(tower)
 	_ips_intrusion = tower
 	_connect_placed_ips(tower)
@@ -1004,6 +1082,7 @@ func _on_ips_store_tower_placed(tower: IPSIntrusionTowerScript) -> void:
 
 
 func _on_honeypot_store_tower_placed(tower: HoneypotProductionTowerScript) -> void:
+	_restore_placed_tower_scale(tower)
 	_honeypot_productions.append(tower)
 	_honeypot_production = tower
 	_spawn_replacement_honeypot()
@@ -1057,7 +1136,12 @@ func _spawn_store_replacement(scene: PackedScene, placed_tower: Node2D, node_nam
 
 	replacement.name = node_name
 	parent.add_child(replacement)
+	var placed_scale: Vector2 = _tower_store_placed_scales.get(placed_tower, placed_tower.scale)
+	replacement.scale = placed_scale
 	replacement.global_position = home_position
+	_tower_store_placed_scales.erase(placed_tower)
+	_tower_store_placed_scales[replacement] = placed_scale
+	_apply_store_display_scale(replacement)
 	_set_tower_store_home_position(replacement, home_position)
 	_tower_store_home_positions.erase(placed_tower)
 	_tower_store_home_positions[replacement] = home_position
