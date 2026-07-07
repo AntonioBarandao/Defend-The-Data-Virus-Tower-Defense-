@@ -48,9 +48,13 @@ const DEFAULT_TROJAN_HORSE_SPAWN_SCALE := Vector2(0.4, 0.4)
 const STORE_TOGGLE_SIZE := Vector2(132, 46)
 const STORE_PANEL_PADDING := Vector2(28, 28)
 const STORE_PANEL_EXTRA_BOTTOM := 34.0
+const STORE_PANEL_MIN_WIDTH := 376.0
 const STORE_PANEL_SLIDE_DISTANCE := 360.0
 const STORE_PANEL_ANIM_SECONDS := 0.22
-const STORE_TOWER_LABEL_OFFSET := Vector2(0, 96)
+const STORE_TOWER_ICON_X_OFFSET := 92.0
+const STORE_TOWER_LABEL_X_OFFSET := 258.0
+const STORE_TOWER_LABEL_SIZE := Vector2(190, 54)
+const STORE_TOWER_ROW_GAP := 126.0
 
 @export var guardian_path: NodePath = ^"Sprites/Cybersec Guardian"
 @export var laser_turret_path: NodePath = ^"Sprites/Laser Turret"
@@ -592,23 +596,13 @@ func _add_tower_store_item(items: Array[Dictionary], tower: Node2D, label_text: 
 
 func _layout_tower_store_items(store_items: Array[Dictionary]) -> void:
 	var store_rect := _get_store_panel_global_rect(store_items)
-	var column_left := store_rect.position.x + 108.0
-	var column_right := store_rect.end.x - 108.0
-	var row_top := store_rect.position.y + 178.0
-	var row_gap := 168.0
-	var layout_positions := [
-		Vector2(column_left, row_top),
-		Vector2(column_right, row_top),
-		Vector2(column_left, row_top + row_gap),
-		Vector2(column_right, row_top + row_gap),
-		Vector2(column_left, row_top + row_gap * 2.0),
-		Vector2(column_right, row_top + row_gap * 2.0),
-		Vector2((column_left + column_right) * 0.5, row_top + row_gap * 3.0)
-	]
+	var icon_x := store_rect.position.x + STORE_TOWER_ICON_X_OFFSET
+	var row_top := store_rect.position.y + 144.0
+	var row_gap := STORE_TOWER_ROW_GAP
 
 	for index in range(store_items.size()):
 		var tower := store_items[index]["tower"] as Node2D
-		var home_position: Vector2 = layout_positions[min(index, layout_positions.size() - 1)]
+		var home_position := Vector2(icon_x, row_top + row_gap * float(index))
 		tower.global_position = home_position
 		_set_tower_store_home_position(tower, home_position)
 		_tower_store_home_positions[tower] = home_position
@@ -632,7 +626,7 @@ func _get_store_panel_global_rect(store_items: Array[Dictionary]) -> Rect2:
 	if _tower_store_background != null:
 		var existing_rect := _tower_store_background.get_global_rect()
 		if existing_rect.size.x > 64.0 and existing_rect.size.y > 64.0:
-			var width := maxf(existing_rect.size.x, 392.0)
+			var width := maxf(existing_rect.size.x, STORE_PANEL_MIN_WIDTH)
 			var height := maxf(existing_rect.size.y, 884.0)
 			return Rect2(Vector2(existing_rect.end.x - width, existing_rect.position.y), Vector2(width, height))
 
@@ -676,12 +670,16 @@ func _make_store_label(label_text: String, font_size: int, font_color: Color) ->
 	var label := Label.new()
 	label.text = label_text
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.z_as_relative = false
+	label.z_index = 210
 	label.add_theme_font_override("font", _get_store_font())
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", font_color)
 	label.add_theme_color_override("font_outline_color", Color(0.0, 0.02, 0.05, 0.94))
 	label.add_theme_constant_override("outline_size", 3)
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	return label
 
 
@@ -700,9 +698,9 @@ func _position_tower_store_labels(slide_offset := 0.0) -> void:
 
 	var store_rect := _tower_store_base_rect
 	if _tower_store_title_label != null:
-		_position_store_label(_tower_store_title_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 28.0), store_rect.size.x - 34.0)
+		_position_store_label(_tower_store_title_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 28.0), Vector2(store_rect.size.x - 34.0, 34.0))
 	if _tower_store_hint_label != null:
-		_position_store_label(_tower_store_hint_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 66.0), store_rect.size.x - 34.0)
+		_position_store_label(_tower_store_hint_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 66.0), Vector2(store_rect.size.x - 34.0, 34.0))
 
 	for tower in _tower_store_item_labels.keys():
 		var tower_node := tower as Node2D
@@ -710,12 +708,13 @@ func _position_tower_store_labels(slide_offset := 0.0) -> void:
 		if tower_node == null or label == null:
 			continue
 
-		_position_store_label(label, tower_node.global_position + STORE_TOWER_LABEL_OFFSET + Vector2(slide_offset, 0), 146.0)
+		var label_center := Vector2(store_rect.position.x + STORE_TOWER_LABEL_X_OFFSET + slide_offset, tower_node.global_position.y - STORE_TOWER_LABEL_SIZE.y * 0.5)
+		_position_store_label(label, label_center, STORE_TOWER_LABEL_SIZE)
 
 
-func _position_store_label(label: Label, center_position: Vector2, width: float) -> void:
-	label.size = Vector2(width, 32.0)
-	label.global_position = center_position - Vector2(width * 0.5, 0)
+func _position_store_label(label: Label, center_position: Vector2, size: Vector2) -> void:
+	label.size = size
+	label.global_position = center_position - Vector2(size.x * 0.5, 0)
 
 
 func _create_tower_store_toggle_button() -> void:
