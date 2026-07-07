@@ -1,0 +1,50 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://bmx77uvas13ml"]
+
+[ext_resource type="Texture2D" uid="uid://mygb13vtk2l2" path="res://Assets/Towers/IDS_Scanner/Modes/IDS_Camo_Scanner.png" id="1_camo"]
+[ext_resource type="Texture2D" uid="uid://cw724221uxq13" path="res://Assets/Towers/IDS_Scanner/Modes/IDS_Burner_Scanner.png" id="2_burner"]
+[ext_resource type="Texture2D" uid="uid://cwy1rg7l71yje" path="res://Assets/Towers/IDS_Scanner/Modes/IDS_Bounty_Scanner.png" id="3_bounty"]
+[ext_resource type="Texture2D" uid="uid://de8rk6dmegkss" path="res://Assets/Towers/IDS_Scanner/Modes/IDS_Quarantine_Scanner.png" id="4_quarantine"]
+[ext_resource type="Texture2D" uid="uid://b6iddf3w8a1ic" path="res://Assets/Towers/IDS_Scanner/Modes/IDS_Nullifier_Scanner.png" id="5_nullifier"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_bounty")
+}],
+"loop": true,
+"name": &"bounty",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_burner")
+}],
+"loop": true,
+"name": &"burner",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_camo")
+}],
+"loop": true,
+"name": &"camo",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_nullifier")
+}],
+"loop": true,
+"name": &"nullifier",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_quarantine")
+}],
+"loop": true,
+"name": &"quarantine",
+"speed": 1.0
+}]

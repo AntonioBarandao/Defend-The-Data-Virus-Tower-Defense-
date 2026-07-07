@@ -1,0 +1,241 @@
+[gd_scene format=3 uid="uid://w84lgguasvp7"]
+
+[ext_resource type="Script" uid="uid://cx10pf1srbnq7" path="res://Scripts/UI/tower_upgrade_hud.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://80e8xosb7uq1" path="res://Assets/UI/Cutscene/Cyberguardian_Mascot.png" id="2_lydoq"]
+[ext_resource type="Texture2D" uid="uid://c8mbr1sur5jts" path="res://Assets/UI/CyberBucks.png" id="3_bucks"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_guardian"]
+bg_color = Color(0.035, 0.047, 0.07, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.18, 0.82, 0.42, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="TowerUpgradeHUD" type="CanvasLayer" unique_id=1108907542]
+layer = 80
+script = ExtResource("1_script")
+
+[node name="Root" type="Control" parent="." unique_id=887390544]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="MenuPanel" type="PanelContainer" parent="Root" unique_id=270677731]
+custom_minimum_size = Vector2(390, 520)
+layout_mode = 1
+offset_right = 571.0
+offset_bottom = 1079.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_guardian")
+
+[node name="Margin" type="MarginContainer" parent="Root/MenuPanel" unique_id=1625132570]
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 18
+
+[node name="Content" type="VBoxContainer" parent="Root/MenuPanel/Margin" unique_id=1990516415]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Root/MenuPanel/Margin/Content" unique_id=1163988959]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 28
+text = "Cyber Guardian"
+
+[node name="PortraitRow" type="CenterContainer" parent="Root/MenuPanel/Margin/Content" unique_id=1293956152]
+layout_mode = 2
+
+[node name="Portrait" type="TextureRect" parent="Root/MenuPanel/Margin/Content/PortraitRow" unique_id=137176428]
+custom_minimum_size = Vector2(132, 132)
+layout_mode = 2
+texture = ExtResource("2_lydoq")
+expand_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Root/MenuPanel/Margin/Content" unique_id=529572547]
+layout_mode = 2
+
+[node name="UpgradeSectionLabel" type="Label" parent="Root/MenuPanel/Margin/Content/VBoxContainer" unique_id=50852522]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.84, 0.92, 1)
+theme_override_font_sizes/font_size = 18
+text = "Guardian Mode"
+
+[node name="ButtonPath" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer" unique_id=1683431771]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+focus_mode = 0
+text = "Defender Mode"
+
+[node name="ButtonPath2" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer" unique_id=2082994082]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+focus_mode = 0
+text = "Signal Boost Mode"
+
+[node name="ButtonPath3" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer" unique_id=1118276636]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+focus_mode = 0
+text = "Firewall Mode"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Root/MenuPanel/Margin/Content" unique_id=736891973]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="UpgradePath" type="Label" parent="Root/MenuPanel/Margin/Content/VBoxContainer2" unique_id=1471320868]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.84, 0.92, 1)
+theme_override_font_sizes/font_size = 18
+text = "Upgrade Path"
+
+[node name="LevelLabel" type="Label" parent="Root/MenuPanel/Margin/Content/VBoxContainer2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.9)
+theme_override_font_sizes/font_size = 18
+text = "Level 1 / 5"
+
+[node name="PowerLabel" type="Label" parent="Root/MenuPanel/Margin/Content/VBoxContainer2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.74, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "Power: 1"
+
+[node name="RangeLabel" type="Label" parent="Root/MenuPanel/Margin/Content/VBoxContainer2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.74, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "Range: 260 px"
+
+[node name="SIEMDispatchSection" type="VBoxContainer" parent="Root/MenuPanel/Margin/Content/VBoxContainer2"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DispatchLabel" type="Label" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/SIEMDispatchSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.84, 0.92, 1)
+theme_override_font_sizes/font_size = 18
+text = "Hawk Dispatch"
+
+[node name="DispatchButton" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/SIEMDispatchSection"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+focus_mode = 0
+text = "Dispatch Hawk"
+
+[node name="LandButton" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/SIEMDispatchSection"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+text = "Land to Headquarters"
+
+[node name="BankedKnowledgeLabel" type="Label" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/SIEMDispatchSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.42, 0.78, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "Banked Knowledge: 0"
+
+[node name="ScannerModeSection" type="VBoxContainer" parent="Root/MenuPanel/Margin/Content/VBoxContainer2"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ModeLabel" type="Label" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/ScannerModeSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.84, 0.92, 1)
+theme_override_font_sizes/font_size = 18
+text = "Scanner Modes"
+
+[node name="ModeNotice" type="Label" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/ScannerModeSection"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.78, 0.22, 1)
+theme_override_font_sizes/font_size = 15
+text = "Cannot change mode while a virus is in the IDS scan."
+autowrap_mode = 3
+
+[node name="ModeGrid" type="GridContainer" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/ScannerModeSection"]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="CamoModeButton" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/ScannerModeSection/ModeGrid"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+focus_mode = 0
+text = "Camo Active"
+
+[node name="BurnerModeButton" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/ScannerModeSection/ModeGrid"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+focus_mode = 0
+text = "Burner Locked"
+
+[node name="BountyModeButton" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/ScannerModeSection/ModeGrid"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+focus_mode = 0
+text = "Bounty Locked"
+
+[node name="QuarantineModeButton" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/ScannerModeSection/ModeGrid"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+focus_mode = 0
+text = "Quarantine Locked"
+
+[node name="NullifierModeButton" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/ScannerModeSection/ModeGrid"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+focus_mode = 0
+text = "Nullifier Locked"
+
+[node name="CostRow" type="HBoxContainer" parent="Root/MenuPanel/Margin/Content/VBoxContainer2"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="CyberBuckIcon" type="TextureRect" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/CostRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+texture = ExtResource("3_bucks")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CostAmount" type="Label" parent="Root/MenuPanel/Margin/Content/VBoxContainer2/CostRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.25, 1)
+theme_override_font_sizes/font_size = 20
+text = "500"
+
+[node name="ButtonPath4" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer2" unique_id=1067904363]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+focus_mode = 0
+text = "Upgrade"
+
+[node name="ButtonPath5" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer2" unique_id=115214901]
+visible = false
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+focus_mode = 0
+text = "Signal Range"
+
+[node name="ButtonPath6" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer2" unique_id=518371308]
+visible = false
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+focus_mode = 0
+text = "Signal Boost Guardian"

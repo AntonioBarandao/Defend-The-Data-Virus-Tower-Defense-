@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="SpriteFrames" path="res://Assets/Towers/EDR_Hunter/EDRHunterSpriteFrames.tres" id="1_frames"]
+[ext_resource type="Script" path="res://Scripts/Towers/edr_hunter.gd" id="2_script"]
+
+[node name="EDR_Hunter" type="AnimatedSprite2D" groups=["Defender", "OFFENSE_TOWER"]]
+scale = Vector2(0.11188765, 0.11188765)
+sprite_frames = ExtResource("1_frames")
+animation = &"idle"
+autoplay = "idle"
+script = ExtResource("2_script")
+show_attack_range_preview = false

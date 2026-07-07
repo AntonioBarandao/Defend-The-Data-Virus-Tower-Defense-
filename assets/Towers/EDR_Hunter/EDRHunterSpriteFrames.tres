@@ -1,0 +1,31 @@
+[gd_resource type="SpriteFrames" load_steps=4 format=3]
+
+[ext_resource type="Texture2D" path="res://Assets/Towers/EDR_Hunter/EDR_Hunter_LV1_idle.png" id="1_idle"]
+[ext_resource type="Texture2D" path="res://Assets/Towers/EDR_Hunter/EDR_Hunter_LV1_shoot.png" id="2_shoot"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_idle")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_idle")
+}],
+"loop": false,
+"name": &"SummonAnim",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_shoot")
+}],
+"loop": false,
+"name": &"ShootAnim",
+"speed": 1.0
+}]

@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://bttc6spxk8xfs"]
+
+[ext_resource type="Texture2D" uid="uid://byelimcwserlu" path="res://Assets/Enemies/ZombieNode/ZombieNode.png" id="1_texture"]
+[ext_resource type="Script" path="res://Scripts/Enemies/zombie_node.gd" id="2_script"]
+[ext_resource type="Script" path="res://Scripts/UI/trojan_horse_progress_bar.gd" id="3_progress_bar_script"]
+[ext_resource type="Texture2D" uid="uid://d1m6smrk3mokq" path="res://Assets/Enemies/TrojanHorse/HealthBar/trojan_health_under.png" id="4_health_under"]
+[ext_resource type="Texture2D" uid="uid://cmndpa34uosxj" path="res://Assets/Enemies/TrojanHorse/HealthBar/trojan_health_progress.png" id="5_health_progress"]
+[ext_resource type="Texture2D" uid="uid://b4o5co2e3jx86" path="res://Assets/Enemies/TrojanHorse/HealthBar/trojan_health_over.png" id="6_health_over"]
+
+[node name="ZombieNode" type="Node2D" unique_id=974413049]
+z_index = 70
+script = ExtResource("2_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1933182677]
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("1_texture")
+
+[node name="MinibossHealthBar" type="Node2D" parent="." unique_id=801046962]
+z_index = 700
+position = Vector2(0, -165)
+scale = Vector2(1.25, 1.25)
+script = ExtResource("3_progress_bar_script")
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="MinibossHealthBar" unique_id=412368538]
+visible = false
+offset_left = -130.0
+offset_top = -21.0
+offset_right = 130.0
+offset_bottom = 21.0
+mouse_filter = 2
+value = 100.0
+nine_patch_stretch = true
+stretch_margin_left = 24
+stretch_margin_top = 12
+stretch_margin_right = 24
+stretch_margin_bottom = 12
+texture_under = ExtResource("4_health_under")
+texture_over = ExtResource("6_health_over")
+texture_progress = ExtResource("5_health_progress")

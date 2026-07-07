@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="SpriteFrames" path="res://Assets/Towers/Honeypot_Production/HoneypotProductionSpriteFrames.tres" id="1_frames"]
+[ext_resource type="Script" path="res://Scripts/Towers/honeypot_production.gd" id="2_script"]
+[ext_resource type="FontFile" path="res://Assets/Fonts/naked_power/Naked Power Bd.otf" id="3_font"]
+
+[node name="Honeypot_Production" type="AnimatedSprite2D" groups=["Defender", "SUPPORT_TOWER"]]
+scale = Vector2(0.11188765, 0.11188765)
+sprite_frames = ExtResource("1_frames")
+animation = &"idle"
+autoplay = "idle"
+script = ExtResource("2_script")
+range_preview_fill_color = Color(0.04, 1, 0.72, 0.13)
+range_preview_outline_color = Color(0.42, 1, 0.78, 0.78)
+
+[node name="ProductionEffect" type="Node2D" parent="."]
+visible = false
+z_index = -1
+
+[node name="EffectFill" type="Polygon2D" parent="ProductionEffect"]
+color = Color(0, 0.95, 0.62, 0.13)
+
+[node name="EffectRing" type="Line2D" parent="ProductionEffect"]
+width = 5.0
+default_color = Color(0.5, 1, 0.78, 0.9)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="ProductionPotLabel" type="Label" parent="."]
+visible = false
+offset_left = -112.0
+offset_top = -158.0
+offset_right = 112.0
+offset_bottom = -72.0
+theme_override_colors/font_color = Color(0.64, 0.9, 1, 1)
+theme_override_colors/font_outline_color = Color(0.01, 0.02, 0.04, 1)
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 18
+text = "Production Pot
+0/100"
+horizontal_alignment = 1
+vertical_alignment = 1
