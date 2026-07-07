@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://da4s186a72uym"]
 
 [ext_resource type="Script" uid="uid://d2io4vonxvbux" path="res://Scripts/UI/progress_hud.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://c8mbr1sur5jts" path="res://assets/UI/CyberBucks.png" id="2_bucks"]
-[ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="3_font"]
+[ext_resource type="Texture2D" uid="uid://c8mbr1sur5jts" path="res://Assets/UI/CyberBucks.png" id="2_bucks"]
+[ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://Assets/Fonts/naked_power/Naked Power Bd.otf" id="3_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_counter"]
 bg_color = Color(0.025, 0.032, 0.05, 0.88)

@@ -126,6 +126,7 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
 text = "Add 100"
 
 [node name="MainMenuButton" type="Button" parent="Root" unique_id=1814937485]
+visible = false
 custom_minimum_size = Vector2(56, 48)
 layout_mode = 1
 anchors_preset = 1

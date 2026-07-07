@@ -2,27 +2,27 @@
 
 [ext_resource type="Script" uid="uid://cg642h3m1khds" path="res://Scripts/Gameplay/game.gd" id="1_on2he"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/IDS_Scanner.tscn" id="4_pc5c2"]
-[ext_resource type="FontFile" uid="uid://cc0f3h2ru1hiv" path="res://assets/Fonts/space-armor/SPACE ARMOR.otf" id="5_1l26u"]
-[ext_resource type="Texture2D" uid="uid://tnwsqd5ntads" path="res://assets/Backgrounds/NewMap.png" id="6_agy0f"]
+[ext_resource type="FontFile" uid="uid://cc0f3h2ru1hiv" path="res://Assets/Fonts/space-armor/SPACE ARMOR.otf" id="5_1l26u"]
+[ext_resource type="Texture2D" uid="uid://tnwsqd5ntads" path="res://Assets/Backgrounds/NewMap.png" id="6_agy0f"]
 [ext_resource type="PackedScene" uid="uid://cddp8ilcjadua" path="res://Scenes/Towers/CyberGuardian.tscn" id="6_cyber"]
 [ext_resource type="PackedScene" uid="uid://b658jrcj1ke3f" path="res://Scenes/Towers/LaserTurret.tscn" id="8_laser"]
 [ext_resource type="PackedScene" uid="uid://calhrslp08s80" path="res://Scenes/Enemies/RedVirus.tscn" id="9_redvirus"]
 [ext_resource type="PackedScene" uid="uid://c7b5taf2pji8r" path="res://Scenes/Enemies/TrojanHorse.tscn" id="10_trojan"]
-[ext_resource type="PackedScene" uid="uid://eg7rvsm4gmsf" path="res://Scenes/UI/CyberQuestionHUD.tscn" id="11_qhud"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/PerformanceHUD.tscn" id="12_perf"]
-[ext_resource type="PackedScene" uid="uid://61tajh7kof5b" path="res://Scenes/UI/GameControlsHUD.tscn" id="13_controls"]
-[ext_resource type="PackedScene" uid="uid://dfmkdge7ll4f2" path="res://Scenes/UI/TowerUpgradeHUD.tscn" id="14_upgrades"]
+[ext_resource type="PackedScene" uid="uid://eg7rvsm4gmsf" path="res://Scenes/UI/CyberQuestionHud.tscn" id="11_qhud"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/PerformanceHud.tscn" id="12_perf"]
+[ext_resource type="PackedScene" uid="uid://61tajh7kof5b" path="res://Scenes/UI/GameControlsHud.tscn" id="13_controls"]
+[ext_resource type="PackedScene" uid="uid://dfmkdge7ll4f2" path="res://Scenes/UI/TowerUpgradeHud.tscn" id="14_upgrades"]
 [ext_resource type="Script" uid="uid://d1ugiseg13u06" path="res://Scripts/Gameplay/tower_placement_area.gd" id="15_place"]
-[ext_resource type="FontFile" uid="uid://2u6nbvofsl5k" path="res://assets/Fonts/Cyber Crown/Cyber Crown.ttf" id="15_wq1r8"]
+[ext_resource type="FontFile" uid="uid://2u6nbvofsl5k" path="res://Assets/Fonts/Cyber Crown/Cyber Crown.ttf" id="15_wq1r8"]
 [ext_resource type="PackedScene" uid="uid://fet10k45d4t6" path="res://Scenes/UI/UtilityOverlayHUD.tscn" id="16_demo_overlay"]
 [ext_resource type="Texture2D" uid="uid://bys5vnsudc4iq" path="res://tools/Cutscene.png" id="16_m0vd8"]
-[ext_resource type="AudioStream" uid="uid://bpts0mu1imbfp" path="res://assets/soundtrack/Virtual Business.wav" id="17_soundtrack"]
+[ext_resource type="AudioStream" uid="uid://bpts0mu1imbfp" path="res://Assets/soundtrack/Virtual Business.wav" id="17_soundtrack"]
 [ext_resource type="PackedScene" uid="uid://bthmcxcu7ao8p" path="res://Scenes/UI/TextCutsceneHUD.tscn" id="18_cutscene"]
 [ext_resource type="PackedScene" uid="uid://bttc6spxk8xfs" path="res://Scenes/Enemies/ZombieNode.tscn" id="19_zombie_node"]
 [ext_resource type="Script" uid="uid://bl4stwlf88ctn" path="res://Scripts/Gameplay/cutscene_demo_director.gd" id="20_director"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/CutsceneDemoMenuHUD.tscn" id="21_demo_menu"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/AnnounceTextHUD.tscn" id="22_announce"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/CutsceneSkipHUD.tscn" id="23_skip"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/CutsceneSkipHud.tscn" id="23_skip"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/EDR_Hunter.tscn" id="24_edr"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/SIEM_Hawk.tscn" id="25_siem"]
 [ext_resource type="PackedScene" uid="uid://da4s186a72uym" path="res://Scenes/UI/ProgressHUD.tscn" id="26_knowledge"]
@@ -198,9 +198,7 @@ scale = Vector2(1.2522548, 1.2522548)
 [node name="CutsceneDemoMenuHUD" parent="." unique_id=29047704 instance=ExtResource("21_demo_menu")]
 
 [node name="HamburgerButton" parent="CutsceneDemoMenuHUD/Root" index="0"]
-offset_left = -100.0
-offset_right = 39.0
-text = "Menu"
+visible = false
 
 [node name="WaveSetPanel" parent="CutsceneDemoMenuHUD/Root" index="3"]
 offset_left = -725.0
@@ -318,11 +316,12 @@ mouse_filter = 2
 color = Color(1, 0.1, 0.08, 0.45)
 
 [node name="Otherground_Cutscene" type="ColorRect" parent="." unique_id=716042366]
+visible = false
 offset_left = -1611.0
 offset_top = 2.0
 offset_right = -1.0
 offset_bottom = 1083.0
-color = Color(0.69358075, 0.8433318, 0.48097503, 1)
+color = Color(0.69358075, 0.8433318, 0.48097503, 0)
 
 [node name="CutsceneBack" type="Sprite2D" parent="Otherground_Cutscene" unique_id=2884933]
 position = Vector2(801.96924, 564)

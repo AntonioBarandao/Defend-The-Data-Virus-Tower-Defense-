@@ -19,6 +19,13 @@ const GameControlsHUDScript := preload("res://Scripts/UI/game_controls_hud.gd")
 const TowerUpgradeHUDScript := preload("res://Scripts/UI/tower_upgrade_hud.gd")
 const ProgressHUDScript := preload("res://Scripts/UI/progress_hud.gd")
 const UtilityOverlayHUDScript := preload("res://Scripts/UI/utility_overlay_hud.gd")
+const CyberGuardianScene := preload("res://Scenes/Towers/CyberGuardian.tscn")
+const LaserTurretScene := preload("res://Scenes/Towers/LaserTurret.tscn")
+const IDSScannerScene := preload("res://Scenes/Towers/IDS_Scanner.tscn")
+const EDRHunterScene := preload("res://Scenes/Towers/EDR_Hunter.tscn")
+const SIEMHawkScene := preload("res://Scenes/Towers/SIEM_Hawk.tscn")
+const IPSIntrusionScene := preload("res://Scenes/Towers/IPS_Intrusion.tscn")
+const HoneypotProductionScene := preload("res://Scenes/Towers/Honeypot_Production.tscn")
 const TARGET_FPS := 60
 const FPS_UPDATE_INTERVAL := 0.25
 const VIRUS_BATCH_SPACING := 10.0
@@ -32,6 +39,12 @@ const GUARDIAN_CYBERBUCK_REWARD := 5
 const LASER_TURRET_CYBERBUCK_REWARD := 5
 const DEFAULT_VIRUS_SPAWN_SCALE := Vector2(0.2, 0.2)
 const DEFAULT_TROJAN_HORSE_SPAWN_SCALE := Vector2(0.4, 0.4)
+const STORE_TOGGLE_SIZE := Vector2(132, 46)
+const STORE_PANEL_PADDING := Vector2(28, 28)
+const STORE_PANEL_EXTRA_BOTTOM := 34.0
+const STORE_PANEL_SLIDE_DISTANCE := 360.0
+const STORE_PANEL_ANIM_SECONDS := 0.22
+const STORE_TOWER_LABEL_OFFSET := Vector2(0, 96)
 
 @export var guardian_path: NodePath = ^"Sprites/Cybersec Guardian"
 @export var laser_turret_path: NodePath = ^"Sprites/Laser Turret"
@@ -53,6 +66,8 @@ const DEFAULT_TROJAN_HORSE_SPAWN_SCALE := Vector2(0.4, 0.4)
 @export var wave_label_path: NodePath = ^"WavesLabel"
 @export var text_cutscene_hud_path: NodePath = ^"TextCutsceneHUD"
 @export var cutscene_skip_hud_path: NodePath = ^"CutsceneSkipHUD"
+@export var tower_store_panel_path: NodePath = ^"TestDrag"
+@export var tower_store_background_path: NodePath = ^"TestDrag/TowerTrayBackground"
 @export var demo_spawn_buttons_ignore_question_lock := false
 @export_group("Path Guide")
 @export var show_path_guide := true
@@ -71,6 +86,20 @@ var _edr_hunter: EDRHunterTowerScript
 var _siem_hawk: SIEMHawkTowerScript
 var _ips_intrusion: IPSIntrusionTowerScript
 var _honeypot_production: HoneypotProductionTowerScript
+var _guardian_store: CyberGuardianTowerScript
+var _laser_turret_store: LaserTurretScript
+var _ids_scanner_store: IDSScannerTowerScript
+var _edr_hunter_store: EDRHunterTowerScript
+var _siem_hawk_store: SIEMHawkTowerScript
+var _ips_intrusion_store: IPSIntrusionTowerScript
+var _honeypot_production_store: HoneypotProductionTowerScript
+var _guardians: Array[CyberGuardianTowerScript] = []
+var _laser_turrets: Array[LaserTurretScript] = []
+var _ids_scanners: Array[IDSScannerTowerScript] = []
+var _edr_hunters: Array[EDRHunterTowerScript] = []
+var _siem_hawks: Array[SIEMHawkTowerScript] = []
+var _ips_intrusions: Array[IPSIntrusionTowerScript] = []
+var _honeypot_productions: Array[HoneypotProductionTowerScript] = []
 var _virus_template: RedVirusScript
 var _virus_templates: Array[RedVirusScript] = []
 var _virus_path: Path2D
@@ -85,6 +114,17 @@ var _wave_label: Label
 var _text_cutscene_hud: Node
 var _cutscene_skip_hud: Node
 var _path_guide_container: Node2D
+var _tower_store_panel: Control
+var _tower_store_background: ColorRect
+var _tower_store_toggle_button: Button
+var _tower_store_canvas: CanvasLayer
+var _tower_store_title_label: Label
+var _tower_store_hint_label: Label
+var _tower_store_item_labels: Dictionary = {}
+var _tower_store_home_positions: Dictionary = {}
+var _tower_store_base_rect := Rect2()
+var _tower_store_open := true
+var _tower_store_tween: Tween
 var _active_viruses: Array[PathFollow2D] = []
 var _current_wave := 0
 var _wave_in_progress := false
@@ -104,6 +144,13 @@ func _ready() -> void:
 	_siem_hawk = get_node_or_null(siem_hawk_path) as SIEMHawkTowerScript
 	_ips_intrusion = get_node_or_null(ips_intrusion_path) as IPSIntrusionTowerScript
 	_honeypot_production = get_node_or_null(honeypot_production_path) as HoneypotProductionTowerScript
+	_guardian_store = _guardian
+	_laser_turret_store = _laser_turret
+	_ids_scanner_store = _ids_scanner
+	_edr_hunter_store = _edr_hunter
+	_siem_hawk_store = _siem_hawk
+	_ips_intrusion_store = _ips_intrusion
+	_honeypot_production_store = _honeypot_production
 	_virus_template = get_node_or_null(virus_template_path) as RedVirusScript
 	_collect_virus_templates()
 	_virus_path = get_node_or_null(virus_path_path) as Path2D
@@ -117,10 +164,14 @@ func _ready() -> void:
 	_wave_label = get_node_or_null(wave_label_path) as Label
 	_text_cutscene_hud = get_node_or_null(text_cutscene_hud_path)
 	_cutscene_skip_hud = get_node_or_null(cutscene_skip_hud_path)
+	_tower_store_panel = get_node_or_null(tower_store_panel_path) as Control
+	_tower_store_background = get_node_or_null(tower_store_background_path) as ColorRect
 	if _virus_spawn == null:
 		_virus_spawn = get_node_or_null(^"VirusElements/Spawn2D") as Node2D
 
-	if _guardian == null:
+	_setup_tower_store()
+
+	if _guardian_store == null:
 		push_warning("Cybersec Guardian drag target was not found.")
 	if _laser_turret == null:
 		push_warning("Laser Turret drag target was not found.")
@@ -174,6 +225,7 @@ func _ready() -> void:
 		_ids_scanner.bounty_awarded.connect(Callable(self, "_on_scanner_bounty_awarded"))
 	if _ips_intrusion != null:
 		_ips_intrusion.spike_damage_requested.connect(Callable(self, "_on_ips_spike_damage_requested"))
+	_connect_store_prototypes()
 	_create_path_guide()
 	if _utility_overlay_hud != null:
 		_utility_overlay_hud.guardian_upgrade_requested.connect(Callable(self, "_upgrade_guardian"))
@@ -269,62 +321,66 @@ func _input(event: InputEvent) -> void:
 			if _handle_honeypot_production_press(pointer_position, mouse_button.position):
 				return
 
-			if _ips_intrusion != null and not _ips_intrusion.is_placed() and _ips_intrusion.try_start_drag(pointer_position):
-				return
-
-			if _honeypot_production != null and not _honeypot_production.is_placed() and _honeypot_production.try_start_drag(pointer_position):
-				return
-
-			if _edr_hunter != null and not _edr_hunter.is_placed() and _edr_hunter.try_start_drag(pointer_position):
-				return
-
-			if _siem_hawk != null and not _siem_hawk.is_placed() and _siem_hawk.try_start_drag(pointer_position):
-				return
-
-			if _guardian == null:
-				return
-
-			if _guardian.is_placed():
+			if _find_tower_at_point(_guardians, pointer_position) != null:
 				_handle_placed_tower_press(pointer_position, mouse_button.position)
-			else:
-				_guardian.try_start_drag(pointer_position)
+				return
+
+			if _tower_store_open and _ips_intrusion_store != null and not _ips_intrusion_store.is_placed() and _ips_intrusion_store.try_start_drag(pointer_position):
+				return
+
+			if _tower_store_open and _honeypot_production_store != null and not _honeypot_production_store.is_placed() and _honeypot_production_store.try_start_drag(pointer_position):
+				return
+
+			if _tower_store_open and _edr_hunter_store != null and not _edr_hunter_store.is_placed() and _edr_hunter_store.try_start_drag(pointer_position):
+				return
+
+			if _tower_store_open and _siem_hawk_store != null and not _siem_hawk_store.is_placed() and _siem_hawk_store.try_start_drag(pointer_position):
+				return
+
+			if _guardian_store == null:
+				return
+
+			if _guardian_store.is_placed():
+				_handle_placed_tower_press(pointer_position, mouse_button.position)
+			elif _tower_store_open:
+				_guardian_store.try_start_drag(pointer_position)
 		elif _demo_upgrade_button_has_point(mouse_button.position):
 			return
-		elif _siem_hawk != null and _siem_hawk.is_dragging():
-			_siem_hawk.finish_drag()
-		elif _honeypot_production != null and _honeypot_production.is_dragging():
-			_honeypot_production.finish_drag()
-		elif _ips_intrusion != null and _ips_intrusion.is_dragging():
-			_ips_intrusion.finish_drag()
-		elif _edr_hunter != null and _edr_hunter.is_dragging():
-			_edr_hunter.finish_drag()
-		elif _guardian != null and _guardian.is_dragging():
-			_guardian.finish_drag()
+		elif _siem_hawk_store != null and _siem_hawk_store.is_dragging():
+			_siem_hawk_store.finish_drag()
+		elif _honeypot_production_store != null and _honeypot_production_store.is_dragging():
+			_honeypot_production_store.finish_drag()
+		elif _ips_intrusion_store != null and _ips_intrusion_store.is_dragging():
+			_ips_intrusion_store.finish_drag()
+		elif _edr_hunter_store != null and _edr_hunter_store.is_dragging():
+			_edr_hunter_store.finish_drag()
+		elif _guardian_store != null and _guardian_store.is_dragging():
+			_guardian_store.finish_drag()
 		return
 
-	if _edr_hunter != null and not _edr_hunter.is_placed() and event is InputEventMouseMotion and _edr_hunter.is_dragging():
+	if _edr_hunter_store != null and not _edr_hunter_store.is_placed() and event is InputEventMouseMotion and _edr_hunter_store.is_dragging():
 		var edr_mouse_motion := event as InputEventMouseMotion
-		_edr_hunter.update_drag(_screen_to_canvas_position(edr_mouse_motion.position))
+		_edr_hunter_store.update_drag(_screen_to_canvas_position(edr_mouse_motion.position))
 		return
 
-	if _siem_hawk != null and not _siem_hawk.is_placed() and event is InputEventMouseMotion and _siem_hawk.is_dragging():
+	if _siem_hawk_store != null and not _siem_hawk_store.is_placed() and event is InputEventMouseMotion and _siem_hawk_store.is_dragging():
 		var siem_mouse_motion := event as InputEventMouseMotion
-		_siem_hawk.update_drag(_screen_to_canvas_position(siem_mouse_motion.position))
+		_siem_hawk_store.update_drag(_screen_to_canvas_position(siem_mouse_motion.position))
 		return
 
-	if _ips_intrusion != null and not _ips_intrusion.is_placed() and event is InputEventMouseMotion and _ips_intrusion.is_dragging():
+	if _ips_intrusion_store != null and not _ips_intrusion_store.is_placed() and event is InputEventMouseMotion and _ips_intrusion_store.is_dragging():
 		var ips_mouse_motion := event as InputEventMouseMotion
-		_ips_intrusion.update_drag(_screen_to_canvas_position(ips_mouse_motion.position))
+		_ips_intrusion_store.update_drag(_screen_to_canvas_position(ips_mouse_motion.position))
 		return
 
-	if _honeypot_production != null and not _honeypot_production.is_placed() and event is InputEventMouseMotion and _honeypot_production.is_dragging():
+	if _honeypot_production_store != null and not _honeypot_production_store.is_placed() and event is InputEventMouseMotion and _honeypot_production_store.is_dragging():
 		var honeypot_mouse_motion := event as InputEventMouseMotion
-		_honeypot_production.update_drag(_screen_to_canvas_position(honeypot_mouse_motion.position))
+		_honeypot_production_store.update_drag(_screen_to_canvas_position(honeypot_mouse_motion.position))
 		return
 
-	if _guardian != null and not _guardian.is_placed() and event is InputEventMouseMotion and _guardian.is_dragging():
+	if _guardian_store != null and not _guardian_store.is_placed() and event is InputEventMouseMotion and _guardian_store.is_dragging():
 		var mouse_motion := event as InputEventMouseMotion
-		_guardian.update_drag(_screen_to_canvas_position(mouse_motion.position))
+		_guardian_store.update_drag(_screen_to_canvas_position(mouse_motion.position))
 		return
 
 	if event is InputEventScreenTouch:
@@ -356,69 +412,79 @@ func _input(event: InputEvent) -> void:
 			if _handle_honeypot_production_press(pointer_position, screen_touch.position):
 				return
 
-			if _ips_intrusion != null and not _ips_intrusion.is_placed() and _ips_intrusion.try_start_drag(pointer_position):
-				return
-
-			if _honeypot_production != null and not _honeypot_production.is_placed() and _honeypot_production.try_start_drag(pointer_position):
-				return
-
-			if _edr_hunter != null and not _edr_hunter.is_placed() and _edr_hunter.try_start_drag(pointer_position):
-				return
-
-			if _siem_hawk != null and not _siem_hawk.is_placed() and _siem_hawk.try_start_drag(pointer_position):
-				return
-
-			if _guardian == null:
-				return
-
-			if _guardian.is_placed():
+			if _find_tower_at_point(_guardians, pointer_position) != null:
 				_handle_placed_tower_press(pointer_position, screen_touch.position)
-			else:
-				_guardian.try_start_drag(pointer_position)
+				return
+
+			if _tower_store_open and _ips_intrusion_store != null and not _ips_intrusion_store.is_placed() and _ips_intrusion_store.try_start_drag(pointer_position):
+				return
+
+			if _tower_store_open and _honeypot_production_store != null and not _honeypot_production_store.is_placed() and _honeypot_production_store.try_start_drag(pointer_position):
+				return
+
+			if _tower_store_open and _edr_hunter_store != null and not _edr_hunter_store.is_placed() and _edr_hunter_store.try_start_drag(pointer_position):
+				return
+
+			if _tower_store_open and _siem_hawk_store != null and not _siem_hawk_store.is_placed() and _siem_hawk_store.try_start_drag(pointer_position):
+				return
+
+			if _guardian_store == null:
+				return
+
+			if _guardian_store.is_placed():
+				_handle_placed_tower_press(pointer_position, screen_touch.position)
+			elif _tower_store_open:
+				_guardian_store.try_start_drag(pointer_position)
 		elif _demo_upgrade_button_has_point(screen_touch.position):
 			return
-		elif _siem_hawk != null and _siem_hawk.is_dragging():
-			_siem_hawk.finish_drag()
-		elif _honeypot_production != null and _honeypot_production.is_dragging():
-			_honeypot_production.finish_drag()
-		elif _ips_intrusion != null and _ips_intrusion.is_dragging():
-			_ips_intrusion.finish_drag()
-		elif _edr_hunter != null and _edr_hunter.is_dragging():
-			_edr_hunter.finish_drag()
-		elif _guardian != null and _guardian.is_dragging():
-			_guardian.finish_drag()
+		elif _siem_hawk_store != null and _siem_hawk_store.is_dragging():
+			_siem_hawk_store.finish_drag()
+		elif _honeypot_production_store != null and _honeypot_production_store.is_dragging():
+			_honeypot_production_store.finish_drag()
+		elif _ips_intrusion_store != null and _ips_intrusion_store.is_dragging():
+			_ips_intrusion_store.finish_drag()
+		elif _edr_hunter_store != null and _edr_hunter_store.is_dragging():
+			_edr_hunter_store.finish_drag()
+		elif _guardian_store != null and _guardian_store.is_dragging():
+			_guardian_store.finish_drag()
 		return
 
-	if _edr_hunter != null and not _edr_hunter.is_placed() and event is InputEventScreenDrag and _edr_hunter.is_dragging():
+	if _edr_hunter_store != null and not _edr_hunter_store.is_placed() and event is InputEventScreenDrag and _edr_hunter_store.is_dragging():
 		var edr_screen_drag := event as InputEventScreenDrag
-		_edr_hunter.update_drag(_screen_to_canvas_position(edr_screen_drag.position))
+		_edr_hunter_store.update_drag(_screen_to_canvas_position(edr_screen_drag.position))
 		return
 
-	if _siem_hawk != null and not _siem_hawk.is_placed() and event is InputEventScreenDrag and _siem_hawk.is_dragging():
+	if _siem_hawk_store != null and not _siem_hawk_store.is_placed() and event is InputEventScreenDrag and _siem_hawk_store.is_dragging():
 		var siem_screen_drag := event as InputEventScreenDrag
-		_siem_hawk.update_drag(_screen_to_canvas_position(siem_screen_drag.position))
+		_siem_hawk_store.update_drag(_screen_to_canvas_position(siem_screen_drag.position))
 		return
 
-	if _ips_intrusion != null and not _ips_intrusion.is_placed() and event is InputEventScreenDrag and _ips_intrusion.is_dragging():
+	if _ips_intrusion_store != null and not _ips_intrusion_store.is_placed() and event is InputEventScreenDrag and _ips_intrusion_store.is_dragging():
 		var ips_screen_drag := event as InputEventScreenDrag
-		_ips_intrusion.update_drag(_screen_to_canvas_position(ips_screen_drag.position))
+		_ips_intrusion_store.update_drag(_screen_to_canvas_position(ips_screen_drag.position))
 		return
 
-	if _honeypot_production != null and not _honeypot_production.is_placed() and event is InputEventScreenDrag and _honeypot_production.is_dragging():
+	if _honeypot_production_store != null and not _honeypot_production_store.is_placed() and event is InputEventScreenDrag and _honeypot_production_store.is_dragging():
 		var honeypot_screen_drag := event as InputEventScreenDrag
-		_honeypot_production.update_drag(_screen_to_canvas_position(honeypot_screen_drag.position))
+		_honeypot_production_store.update_drag(_screen_to_canvas_position(honeypot_screen_drag.position))
 		return
 
-	if _guardian != null and not _guardian.is_placed() and event is InputEventScreenDrag and _guardian.is_dragging():
+	if _guardian_store != null and not _guardian_store.is_placed() and event is InputEventScreenDrag and _guardian_store.is_dragging():
 		var screen_drag := event as InputEventScreenDrag
-		_guardian.update_drag(_screen_to_canvas_position(screen_drag.position))
+		_guardian_store.update_drag(_screen_to_canvas_position(screen_drag.position))
 
 
 func _process(delta: float) -> void:
 	if _is_act_input_locked():
+		if _tower_store_canvas != null:
+			_tower_store_canvas.hide()
 		_update_fps_timer(delta)
 		return
 
+	if _tower_store_canvas != null:
+		_tower_store_canvas.show()
+	if _tower_store_tween == null:
+		_sync_tower_store_items(false)
 	_update_wave_spawner(delta)
 	_update_active_viruses(delta)
 	_update_support_tower_scans(delta)
@@ -460,11 +526,561 @@ func _update_fps_label() -> void:
 	_performance_hud.set_fps(current_fps, TARGET_FPS)
 
 
+func _setup_tower_store() -> void:
+	var store_items := _get_tower_store_items()
+	if store_items.is_empty():
+		return
+
+	if _tower_store_panel == null:
+		_tower_store_panel = Control.new()
+		_tower_store_panel.name = "TowerStorePanel"
+		add_child(_tower_store_panel)
+
+	_hide_legacy_store_title()
+	_layout_tower_store_items(store_items)
+	_style_tower_store_panel(store_items)
+	_create_tower_store_labels(store_items)
+	_create_tower_store_toggle_button()
+	_sync_tower_store_items(true)
+
+
+func _get_tower_store_items() -> Array[Dictionary]:
+	var items: Array[Dictionary] = []
+	_add_tower_store_item(items, _guardian_store, "Cyber Guardian")
+	_add_tower_store_item(items, _laser_turret_store, "Laser Turret")
+	_add_tower_store_item(items, _ids_scanner_store, "IDS Scanner")
+	_add_tower_store_item(items, _edr_hunter_store, "EDR Hunter")
+	_add_tower_store_item(items, _siem_hawk_store, "SIEM Hawk")
+	_add_tower_store_item(items, _ips_intrusion_store, "IPS Spike")
+	_add_tower_store_item(items, _honeypot_production_store, "Honeypot")
+	return items
+
+
+func _add_tower_store_item(items: Array[Dictionary], tower: Node2D, label_text: String) -> void:
+	if tower == null:
+		return
+
+	items.append({
+		"tower": tower,
+		"label": label_text
+	})
+
+
+func _layout_tower_store_items(store_items: Array[Dictionary]) -> void:
+	var store_rect := _get_store_panel_global_rect(store_items)
+	var column_left := store_rect.position.x + 108.0
+	var column_right := store_rect.end.x - 108.0
+	var row_top := store_rect.position.y + 178.0
+	var row_gap := 168.0
+	var layout_positions := [
+		Vector2(column_left, row_top),
+		Vector2(column_right, row_top),
+		Vector2(column_left, row_top + row_gap),
+		Vector2(column_right, row_top + row_gap),
+		Vector2(column_left, row_top + row_gap * 2.0),
+		Vector2(column_right, row_top + row_gap * 2.0),
+		Vector2((column_left + column_right) * 0.5, row_top + row_gap * 3.0)
+	]
+
+	for index in range(store_items.size()):
+		var tower := store_items[index]["tower"] as Node2D
+		var home_position: Vector2 = layout_positions[min(index, layout_positions.size() - 1)]
+		tower.global_position = home_position
+		_set_tower_store_home_position(tower, home_position)
+		_tower_store_home_positions[tower] = home_position
+
+
+func _style_tower_store_panel(store_items: Array[Dictionary]) -> void:
+	var store_rect := _get_store_panel_global_rect(store_items)
+	_tower_store_base_rect = store_rect
+	if _tower_store_background == null:
+		_tower_store_background = ColorRect.new()
+		_tower_store_background.name = "TowerTrayBackground"
+		_tower_store_panel.add_child(_tower_store_background)
+
+	_tower_store_background.global_position = store_rect.position
+	_tower_store_background.size = store_rect.size
+	_tower_store_background.color = Color(0.012, 0.021, 0.041, 0.86)
+	_tower_store_background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _get_store_panel_global_rect(store_items: Array[Dictionary]) -> Rect2:
+	if _tower_store_background != null:
+		var existing_rect := _tower_store_background.get_global_rect()
+		if existing_rect.size.x > 64.0 and existing_rect.size.y > 64.0:
+			var width := maxf(existing_rect.size.x, 392.0)
+			var height := maxf(existing_rect.size.y, 884.0)
+			return Rect2(Vector2(existing_rect.end.x - width, existing_rect.position.y), Vector2(width, height))
+
+	var item_rect := Rect2()
+	var found_item := false
+	for item in store_items:
+		var tower := item["tower"] as Node2D
+		if not found_item:
+			item_rect = Rect2(tower.global_position, Vector2.ZERO)
+			found_item = true
+		else:
+			item_rect = item_rect.expand(tower.global_position)
+
+	if found_item:
+		return item_rect.grow_individual(
+			STORE_PANEL_PADDING.x + 80.0,
+			STORE_PANEL_PADDING.y + 132.0,
+			STORE_PANEL_PADDING.x + 80.0,
+			STORE_PANEL_PADDING.y + STORE_PANEL_EXTRA_BOTTOM
+		)
+
+	return Rect2(Vector2(1528, 108), Vector2(392, 884))
+
+
+func _create_tower_store_labels(store_items: Array[Dictionary]) -> void:
+	_tower_store_title_label = _make_store_label("TOWER STORE", 28, Color(0.74, 0.93, 1.0, 1.0))
+	_tower_store_hint_label = _make_store_label("Drag a tower onto a platform", 18, Color(0.52, 0.68, 0.82, 1.0))
+	add_child(_tower_store_title_label)
+	add_child(_tower_store_hint_label)
+
+	for item in store_items:
+		var tower := item["tower"] as Node2D
+		var label := _make_store_label(String(item["label"]), 17, Color(0.86, 0.94, 1.0, 1.0))
+		add_child(label)
+		_tower_store_item_labels[tower] = label
+
+	_position_tower_store_labels()
+
+
+func _make_store_label(label_text: String, font_size: int, font_color: Color) -> Label:
+	var label := Label.new()
+	label.text = label_text
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.add_theme_font_override("font", _get_store_font())
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", font_color)
+	label.add_theme_color_override("font_outline_color", Color(0.0, 0.02, 0.05, 0.94))
+	label.add_theme_constant_override("outline_size", 3)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	return label
+
+
+func _get_store_font() -> Font:
+	if _utility_overlay_hud != null:
+		var font_value = _utility_overlay_hud.get("naked_power_font")
+		if font_value is Font:
+			return font_value
+
+	return null
+
+
+func _position_tower_store_labels(slide_offset := 0.0) -> void:
+	if _tower_store_base_rect.size == Vector2.ZERO:
+		return
+
+	var store_rect := _tower_store_base_rect
+	if _tower_store_title_label != null:
+		_position_store_label(_tower_store_title_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 28.0), store_rect.size.x - 34.0)
+	if _tower_store_hint_label != null:
+		_position_store_label(_tower_store_hint_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 66.0), store_rect.size.x - 34.0)
+
+	for tower in _tower_store_item_labels.keys():
+		var tower_node := tower as Node2D
+		var label := _tower_store_item_labels[tower] as Label
+		if tower_node == null or label == null:
+			continue
+
+		_position_store_label(label, tower_node.global_position + STORE_TOWER_LABEL_OFFSET + Vector2(slide_offset, 0), 146.0)
+
+
+func _position_store_label(label: Label, center_position: Vector2, width: float) -> void:
+	label.size = Vector2(width, 32.0)
+	label.global_position = center_position - Vector2(width * 0.5, 0)
+
+
+func _create_tower_store_toggle_button() -> void:
+	_tower_store_canvas = CanvasLayer.new()
+	_tower_store_canvas.name = "TowerStoreControls"
+	_tower_store_canvas.layer = 160
+	add_child(_tower_store_canvas)
+
+	_tower_store_toggle_button = Button.new()
+	_tower_store_toggle_button.name = "TowerStoreToggleButton"
+	_tower_store_toggle_button.custom_minimum_size = STORE_TOGGLE_SIZE
+	_tower_store_toggle_button.focus_mode = Control.FOCUS_NONE
+	_tower_store_toggle_button.text = "Hide Store"
+	_tower_store_toggle_button.tooltip_text = "Show or hide the tower store."
+	_tower_store_toggle_button.add_theme_font_override("font", _get_store_font())
+	_tower_store_toggle_button.add_theme_font_size_override("font_size", 18)
+	_tower_store_toggle_button.add_theme_stylebox_override("normal", _make_store_button_style(Color(0.035, 0.075, 0.145, 0.94), Color(0.34, 0.74, 1.0, 0.95)))
+	_tower_store_toggle_button.add_theme_stylebox_override("hover", _make_store_button_style(Color(0.07, 0.14, 0.24, 0.98), Color(0.64, 0.92, 1.0, 1.0)))
+	_tower_store_toggle_button.add_theme_stylebox_override("pressed", _make_store_button_style(Color(0.02, 0.045, 0.09, 1.0), Color(0.96, 0.82, 0.24, 1.0)))
+	_tower_store_toggle_button.pressed.connect(_toggle_tower_store)
+	_tower_store_canvas.add_child(_tower_store_toggle_button)
+	_position_tower_store_toggle_button()
+
+
+func _make_store_button_style(bg_color: Color, border_color: Color) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = bg_color
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.border_color = border_color
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_right = 8
+	style.corner_radius_bottom_left = 8
+	style.shadow_color = Color(0, 0, 0, 0.38)
+	style.shadow_size = 8
+	return style
+
+
+func _position_tower_store_toggle_button() -> void:
+	if _tower_store_toggle_button == null or _tower_store_base_rect.size == Vector2.ZERO:
+		return
+
+	var store_rect := _tower_store_base_rect
+	var screen_position := _world_to_screen_position(Vector2(store_rect.end.x - STORE_TOGGLE_SIZE.x - 24.0, store_rect.position.y + 18.0))
+	_tower_store_toggle_button.position = screen_position
+	_tower_store_toggle_button.size = STORE_TOGGLE_SIZE
+
+
+func _toggle_tower_store() -> void:
+	_set_tower_store_open(not _tower_store_open)
+
+
+func _set_tower_store_open(is_open: bool) -> void:
+	if _tower_store_open == is_open:
+		return
+
+	_tower_store_open = is_open
+	if _tower_store_toggle_button != null:
+		_tower_store_toggle_button.text = "Hide Store" if _tower_store_open else "Show Store"
+
+	if _tower_store_tween != null:
+		_tower_store_tween.kill()
+
+	var start_offset := STORE_PANEL_SLIDE_DISTANCE if _tower_store_open else 0.0
+	var end_offset := 0.0 if _tower_store_open else STORE_PANEL_SLIDE_DISTANCE
+	_prepare_tower_store_animation(start_offset)
+	_tower_store_tween = create_tween()
+	_tower_store_tween.set_parallel(true)
+	_tower_store_tween.tween_method(_apply_tower_store_slide, start_offset, end_offset, STORE_PANEL_ANIM_SECONDS).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_tower_store_tween.set_parallel(false)
+	_tower_store_tween.tween_callback(func() -> void:
+		_tower_store_tween = null
+		_sync_tower_store_items(true)
+	)
+
+
+func _prepare_tower_store_animation(slide_offset: float) -> void:
+	if _tower_store_background != null:
+		_tower_store_background.show()
+	for node in _get_store_visual_nodes():
+		if node != null:
+			node.show()
+	_apply_tower_store_slide(slide_offset)
+
+
+func _apply_tower_store_slide(slide_offset: float) -> void:
+	if _tower_store_background != null:
+		_tower_store_background.global_position = _tower_store_base_rect.position + Vector2(slide_offset, 0)
+	if _tower_store_title_label != null:
+		_tower_store_title_label.modulate.a = 1.0 - clampf(slide_offset / STORE_PANEL_SLIDE_DISTANCE, 0.0, 1.0)
+	if _tower_store_hint_label != null:
+		_tower_store_hint_label.modulate.a = 1.0 - clampf(slide_offset / STORE_PANEL_SLIDE_DISTANCE, 0.0, 1.0)
+
+	for tower in _tower_store_home_positions.keys():
+		var tower_node := tower as Node2D
+		if tower_node == null or not _is_tower_available_in_store(tower_node):
+			continue
+
+		tower_node.global_position = _tower_store_home_positions[tower] + Vector2(slide_offset, 0)
+		tower_node.modulate.a = 1.0 - clampf(slide_offset / STORE_PANEL_SLIDE_DISTANCE, 0.0, 1.0)
+
+		var label := _tower_store_item_labels.get(tower_node) as Label
+		if label != null:
+			label.modulate.a = tower_node.modulate.a
+
+	_position_tower_store_labels(slide_offset)
+
+
+func _sync_tower_store_items(force_positions: bool) -> void:
+	for tower in _tower_store_home_positions.keys():
+		var tower_node := tower as Node2D
+		if tower_node == null:
+			continue
+
+		var in_store := _is_tower_available_in_store(tower_node)
+		var visible_in_store := _tower_store_open and in_store
+		tower_node.visible = visible_in_store or not in_store
+		tower_node.set_process_input(visible_in_store or not in_store)
+		if visible_in_store and force_positions:
+			tower_node.global_position = _tower_store_home_positions[tower_node]
+			tower_node.modulate.a = 1.0
+
+		var label := _tower_store_item_labels.get(tower_node) as Label
+		if label != null:
+			label.visible = visible_in_store
+			label.modulate.a = 1.0
+
+	if _tower_store_background != null:
+		_tower_store_background.visible = _tower_store_open
+		if _tower_store_open and force_positions:
+			_tower_store_background.global_position = _tower_store_base_rect.position
+
+	if _tower_store_title_label != null:
+		_tower_store_title_label.visible = _tower_store_open
+	if _tower_store_hint_label != null:
+		_tower_store_hint_label.visible = _tower_store_open
+
+	if _tower_store_open and force_positions:
+		_position_tower_store_labels()
+		_position_tower_store_toggle_button()
+
+
+func _is_tower_available_in_store(tower: Node) -> bool:
+	if tower == _ids_scanner_store and tower.has_method("is_deployed"):
+		return not bool(tower.call("is_deployed"))
+	if tower.has_method("is_placed"):
+		return not bool(tower.call("is_placed"))
+
+	return tower.visible
+
+
+func _get_store_visual_nodes() -> Array[CanvasItem]:
+	var visual_nodes: Array[CanvasItem] = []
+	if _tower_store_background != null:
+		visual_nodes.append(_tower_store_background)
+	if _tower_store_title_label != null:
+		visual_nodes.append(_tower_store_title_label)
+	if _tower_store_hint_label != null:
+		visual_nodes.append(_tower_store_hint_label)
+	for label in _tower_store_item_labels.values():
+		if label is CanvasItem:
+			visual_nodes.append(label)
+	for tower in _tower_store_home_positions.keys():
+		if tower is CanvasItem:
+			visual_nodes.append(tower)
+	return visual_nodes
+
+
+func _set_tower_store_home_position(tower: Node2D, home_position: Vector2) -> void:
+	tower.set("_home_position", home_position)
+	tower.set("_drag_start_position", home_position)
+	if tower.has_method("_sync_base_sprite"):
+		tower.call_deferred("_sync_base_sprite")
+
+
+func _hide_legacy_store_title() -> void:
+	var legacy_title := get_node_or_null(^"Blue Towers") as CanvasItem
+	if legacy_title != null:
+		legacy_title.hide()
+
+
+func _connect_store_prototypes() -> void:
+	_connect_guardian_store_prototype(_guardian_store)
+	_connect_laser_store_prototype(_laser_turret_store)
+	_connect_scanner_store_prototype(_ids_scanner_store)
+	_connect_edr_store_prototype(_edr_hunter_store)
+	_connect_siem_store_prototype(_siem_hawk_store)
+	_connect_ips_store_prototype(_ips_intrusion_store)
+	_connect_honeypot_store_prototype(_honeypot_production_store)
+
+
+func _connect_guardian_store_prototype(tower: CyberGuardianTowerScript) -> void:
+	if tower == null:
+		return
+	if not tower.placed.is_connected(_on_guardian_store_tower_placed):
+		tower.placed.connect(_on_guardian_store_tower_placed)
+
+
+func _connect_laser_store_prototype(tower: LaserTurretScript) -> void:
+	if tower == null:
+		return
+	if not tower.placed.is_connected(_on_laser_store_tower_placed):
+		tower.placed.connect(_on_laser_store_tower_placed)
+
+
+func _connect_scanner_store_prototype(tower: IDSScannerTowerScript) -> void:
+	if tower == null:
+		return
+	if not tower.placed.is_connected(_on_scanner_store_tower_placed):
+		tower.placed.connect(_on_scanner_store_tower_placed)
+
+
+func _connect_edr_store_prototype(tower: EDRHunterTowerScript) -> void:
+	if tower == null:
+		return
+	if not tower.placed.is_connected(_on_edr_store_tower_placed):
+		tower.placed.connect(_on_edr_store_tower_placed)
+
+
+func _connect_siem_store_prototype(tower: SIEMHawkTowerScript) -> void:
+	if tower == null:
+		return
+	if not tower.placed.is_connected(_on_siem_store_tower_placed):
+		tower.placed.connect(_on_siem_store_tower_placed)
+
+
+func _connect_ips_store_prototype(tower: IPSIntrusionTowerScript) -> void:
+	if tower == null:
+		return
+	if not tower.placed.is_connected(_on_ips_store_tower_placed):
+		tower.placed.connect(_on_ips_store_tower_placed)
+
+
+func _connect_honeypot_store_prototype(tower: HoneypotProductionTowerScript) -> void:
+	if tower == null:
+		return
+	if not tower.placed.is_connected(_on_honeypot_store_tower_placed):
+		tower.placed.connect(_on_honeypot_store_tower_placed)
+
+
+func _on_guardian_store_tower_placed(tower: CyberGuardianTowerScript) -> void:
+	_guardians.append(tower)
+	_guardian = tower
+	_spawn_replacement_guardian()
+	_update_demo_upgrade_buttons()
+
+
+func _on_laser_store_tower_placed(tower: LaserTurretScript) -> void:
+	_laser_turrets.append(tower)
+	_laser_turret = tower
+	_spawn_replacement_laser()
+	_update_demo_upgrade_buttons()
+
+
+func _on_scanner_store_tower_placed(tower: IDSScannerTowerScript) -> void:
+	_ids_scanners.append(tower)
+	_ids_scanner = tower
+	_connect_placed_scanner(tower)
+	_spawn_replacement_scanner()
+	_update_demo_upgrade_buttons()
+
+
+func _on_edr_store_tower_placed(tower: EDRHunterTowerScript) -> void:
+	_edr_hunters.append(tower)
+	_edr_hunter = tower
+	_spawn_replacement_edr()
+	_update_demo_upgrade_buttons()
+
+
+func _on_siem_store_tower_placed(tower: SIEMHawkTowerScript) -> void:
+	_siem_hawks.append(tower)
+	_siem_hawk = tower
+	_connect_placed_siem(tower)
+	_spawn_replacement_siem()
+	_update_demo_upgrade_buttons()
+
+
+func _on_ips_store_tower_placed(tower: IPSIntrusionTowerScript) -> void:
+	_ips_intrusions.append(tower)
+	_ips_intrusion = tower
+	_connect_placed_ips(tower)
+	_spawn_replacement_ips()
+	_update_demo_upgrade_buttons()
+
+
+func _on_honeypot_store_tower_placed(tower: HoneypotProductionTowerScript) -> void:
+	_honeypot_productions.append(tower)
+	_honeypot_production = tower
+	_spawn_replacement_honeypot()
+	_update_demo_upgrade_buttons()
+
+
+func _spawn_replacement_guardian() -> void:
+	_guardian_store = _spawn_store_replacement(CyberGuardianScene, _guardian_store, "Cybersec Guardian") as CyberGuardianTowerScript
+	_connect_guardian_store_prototype(_guardian_store)
+
+
+func _spawn_replacement_laser() -> void:
+	_laser_turret_store = _spawn_store_replacement(LaserTurretScene, _laser_turret_store, "Laser Turret") as LaserTurretScript
+	_connect_laser_store_prototype(_laser_turret_store)
+
+
+func _spawn_replacement_scanner() -> void:
+	_ids_scanner_store = _spawn_store_replacement(IDSScannerScene, _ids_scanner_store, "IDS_Scanner") as IDSScannerTowerScript
+	_connect_scanner_store_prototype(_ids_scanner_store)
+
+
+func _spawn_replacement_edr() -> void:
+	_edr_hunter_store = _spawn_store_replacement(EDRHunterScene, _edr_hunter_store, "EDR_Hunter") as EDRHunterTowerScript
+	_connect_edr_store_prototype(_edr_hunter_store)
+
+
+func _spawn_replacement_siem() -> void:
+	_siem_hawk_store = _spawn_store_replacement(SIEMHawkScene, _siem_hawk_store, "SIEM_Hawk") as SIEMHawkTowerScript
+	_connect_siem_store_prototype(_siem_hawk_store)
+
+
+func _spawn_replacement_ips() -> void:
+	_ips_intrusion_store = _spawn_store_replacement(IPSIntrusionScene, _ips_intrusion_store, "IPS_Intrusion") as IPSIntrusionTowerScript
+	_connect_ips_store_prototype(_ips_intrusion_store)
+
+
+func _spawn_replacement_honeypot() -> void:
+	_honeypot_production_store = _spawn_store_replacement(HoneypotProductionScene, _honeypot_production_store, "Honeypot_Production") as HoneypotProductionTowerScript
+	_connect_honeypot_store_prototype(_honeypot_production_store)
+
+
+func _spawn_store_replacement(scene: PackedScene, placed_tower: Node2D, node_name: String) -> Node2D:
+	if scene == null or placed_tower == null:
+		return null
+
+	var home_position: Vector2 = _tower_store_home_positions.get(placed_tower, placed_tower.global_position)
+	var parent := placed_tower.get_parent()
+	var replacement := scene.instantiate() as Node2D
+	if replacement == null:
+		return null
+
+	replacement.name = node_name
+	parent.add_child(replacement)
+	replacement.global_position = home_position
+	_set_tower_store_home_position(replacement, home_position)
+	_tower_store_home_positions.erase(placed_tower)
+	_tower_store_home_positions[replacement] = home_position
+
+	var label := _tower_store_item_labels.get(placed_tower) as Label
+	if label != null:
+		_tower_store_item_labels.erase(placed_tower)
+		_tower_store_item_labels[replacement] = label
+	_sync_tower_store_items(true)
+	return replacement
+
+
+func _connect_placed_scanner(tower: IDSScannerTowerScript) -> void:
+	if tower == null:
+		return
+	if not tower.virus_damage_requested.is_connected(_on_scanner_virus_damage_requested):
+		tower.virus_damage_requested.connect(_on_scanner_virus_damage_requested)
+	if not tower.bounty_awarded.is_connected(_on_scanner_bounty_awarded):
+		tower.bounty_awarded.connect(_on_scanner_bounty_awarded)
+
+
+func _connect_placed_siem(tower: SIEMHawkTowerScript) -> void:
+	if tower == null:
+		return
+	if not tower.dispatch_mode_changed.is_connected(_on_siem_hawk_dispatch_mode_changed):
+		tower.dispatch_mode_changed.connect(_on_siem_hawk_dispatch_mode_changed)
+	if not tower.knowledge_extracted.is_connected(_on_siem_hawk_knowledge_extracted):
+		tower.knowledge_extracted.connect(_on_siem_hawk_knowledge_extracted)
+	if not tower.knowledge_bank_changed.is_connected(_on_siem_hawk_knowledge_bank_changed):
+		tower.knowledge_bank_changed.connect(_on_siem_hawk_knowledge_bank_changed)
+
+
+func _connect_placed_ips(tower: IPSIntrusionTowerScript) -> void:
+	if tower == null:
+		return
+	if not tower.spike_damage_requested.is_connected(_on_ips_spike_damage_requested):
+		tower.spike_damage_requested.connect(_on_ips_spike_damage_requested)
+
+
 func _handle_placed_tower_press(pointer_position: Vector2, screen_position: Vector2) -> void:
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.guardian_panel_has_point(screen_position):
 		return
 
-	if _guardian != null and _guardian.contains_global_point(pointer_position):
+	var guardian := _find_tower_at_point(_guardians, pointer_position) as CyberGuardianTowerScript
+	if guardian != null:
+		_guardian = guardian
 		_show_upgrade_panel()
 		get_viewport().set_input_as_handled()
 	elif _tower_upgrade_hud != null and _tower_upgrade_hud.is_guardian_panel_visible():
@@ -475,7 +1091,9 @@ func _handle_laser_turret_press(pointer_position: Vector2, screen_position: Vect
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.laser_panel_has_point(screen_position):
 		return true
 
-	if _laser_turret != null and _laser_turret.is_placed() and _laser_turret.contains_global_point(pointer_position):
+	var laser_turret := _find_tower_at_point(_laser_turrets, pointer_position) as LaserTurretScript
+	if laser_turret != null:
+		_laser_turret = laser_turret
 		_show_laser_upgrade_panel()
 		get_viewport().set_input_as_handled()
 		return true
@@ -490,7 +1108,9 @@ func _handle_ids_scanner_press(pointer_position: Vector2, screen_position: Vecto
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.scanner_panel_has_point(screen_position):
 		return true
 
-	if _ids_scanner != null and _ids_scanner.is_deployed() and _ids_scanner.contains_global_point(pointer_position):
+	var ids_scanner := _find_tower_at_point(_ids_scanners, pointer_position) as IDSScannerTowerScript
+	if ids_scanner != null:
+		_ids_scanner = ids_scanner
 		_show_scanner_upgrade_panel()
 		get_viewport().set_input_as_handled()
 		return true
@@ -505,7 +1125,9 @@ func _handle_edr_hunter_press(pointer_position: Vector2, screen_position: Vector
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.edr_panel_has_point(screen_position):
 		return true
 
-	if _edr_hunter != null and _edr_hunter.is_placed() and _edr_hunter.contains_global_point(pointer_position):
+	var edr_hunter := _find_tower_at_point(_edr_hunters, pointer_position) as EDRHunterTowerScript
+	if edr_hunter != null:
+		_edr_hunter = edr_hunter
 		_show_edr_upgrade_panel()
 		get_viewport().set_input_as_handled()
 		return true
@@ -520,7 +1142,9 @@ func _handle_siem_hawk_press(pointer_position: Vector2, screen_position: Vector2
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.siem_panel_has_point(screen_position):
 		return true
 
-	if _siem_hawk != null and _siem_hawk.is_placed() and _siem_hawk.contains_global_point(pointer_position):
+	var siem_hawk := _find_tower_at_point(_siem_hawks, pointer_position) as SIEMHawkTowerScript
+	if siem_hawk != null:
+		_siem_hawk = siem_hawk
 		_show_siem_upgrade_panel()
 		get_viewport().set_input_as_handled()
 		return true
@@ -535,7 +1159,9 @@ func _handle_ips_intrusion_press(pointer_position: Vector2, screen_position: Vec
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.ips_panel_has_point(screen_position):
 		return true
 
-	if _ips_intrusion != null and _ips_intrusion.is_placed() and _ips_intrusion.contains_global_point(pointer_position):
+	var ips_intrusion := _find_tower_at_point(_ips_intrusions, pointer_position) as IPSIntrusionTowerScript
+	if ips_intrusion != null:
+		_ips_intrusion = ips_intrusion
 		_show_ips_upgrade_panel()
 		get_viewport().set_input_as_handled()
 		return true
@@ -550,15 +1176,13 @@ func _handle_honeypot_production_press(pointer_position: Vector2, screen_positio
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.honeypot_panel_has_point(screen_position):
 		return true
 
-	if _honeypot_production == null or not _honeypot_production.is_placed():
-		if _tower_upgrade_hud != null and _tower_upgrade_hud.is_honeypot_panel_visible():
-			_hide_honeypot_upgrade_panel()
-		return false
-	if not _honeypot_production.contains_global_point(pointer_position):
+	var honeypot_production := _find_tower_at_point(_honeypot_productions, pointer_position) as HoneypotProductionTowerScript
+	if honeypot_production == null:
 		if _tower_upgrade_hud != null and _tower_upgrade_hud.is_honeypot_panel_visible():
 			_hide_honeypot_upgrade_panel()
 		return false
 
+	_honeypot_production = honeypot_production
 	var collected := _honeypot_production.collect_production()
 	if collected > 0 and _question_hud != null:
 		_question_hud.add_cyberbucks(collected)
@@ -575,33 +1199,70 @@ func _handle_honeypot_production_press(pointer_position: Vector2, screen_positio
 	return true
 
 
+func _find_tower_at_point(towers: Array, pointer_position: Vector2) -> Node:
+	for index in range(towers.size() - 1, -1, -1):
+		var tower := towers[index] as Node
+		if not is_instance_valid(tower):
+			towers.remove_at(index)
+			continue
+		if tower.has_method("contains_global_point") and bool(tower.call("contains_global_point", pointer_position)):
+			return tower
+
+	return null
+
+
 func _reset_tower() -> void:
 	if _is_act_input_locked():
 		return
 
-	if _guardian != null:
-		_guardian.reset_tower()
-	if _laser_turret != null:
-		_laser_turret.reset_tower()
-	if _edr_hunter != null:
-		_edr_hunter.reset_tower()
-	if _siem_hawk != null:
-		_siem_hawk.reset_tower()
-	if _ips_intrusion != null:
-		_ips_intrusion.reset_tower()
-	if _honeypot_production != null:
-		_honeypot_production.reset_tower()
+	if _guardian_store != null:
+		_guardian_store.reset_tower()
+	if _laser_turret_store != null:
+		_laser_turret_store.reset_tower()
+	if _ids_scanner_store != null:
+		_ids_scanner_store.reset_tower()
+	if _edr_hunter_store != null:
+		_edr_hunter_store.reset_tower()
+	if _siem_hawk_store != null:
+		_siem_hawk_store.reset_tower()
+	if _ips_intrusion_store != null:
+		_ips_intrusion_store.reset_tower()
+	if _honeypot_production_store != null:
+		_honeypot_production_store.reset_tower()
 	for node in get_tree().get_nodes_in_group("Defender"):
-		if node == _guardian or node == _laser_turret or node == _edr_hunter or node == _siem_hawk or node == _ips_intrusion or node == _honeypot_production or not is_instance_valid(node):
+		if _is_store_prototype(node) or not is_instance_valid(node):
 			continue
-		if node.has_method("reset_tower"):
-			node.call("reset_tower")
+		node.queue_free()
+	_guardians.clear()
+	_laser_turrets.clear()
+	_ids_scanners.clear()
+	_edr_hunters.clear()
+	_siem_hawks.clear()
+	_ips_intrusions.clear()
+	_honeypot_productions.clear()
+	_guardian = _guardian_store
+	_laser_turret = _laser_turret_store
+	_ids_scanner = _ids_scanner_store
+	_edr_hunter = _edr_hunter_store
+	_siem_hawk = _siem_hawk_store
+	_ips_intrusion = _ips_intrusion_store
+	_honeypot_production = _honeypot_production_store
 	if _tower_upgrade_hud != null:
 		_tower_upgrade_hud.hide_all()
 	if _progress_hud != null:
 		_progress_hud.reset_knowledge()
 	_set_tower_menu_radius_previews(false, false, false, false, false)
 	_update_demo_upgrade_buttons()
+
+
+func _is_store_prototype(node: Node) -> bool:
+	return node == _guardian_store \
+		or node == _laser_turret_store \
+		or node == _ids_scanner_store \
+		or node == _edr_hunter_store \
+		or node == _siem_hawk_store \
+		or node == _ips_intrusion_store \
+		or node == _honeypot_production_store
 
 
 func _upgrade_guardian() -> void:
@@ -1392,62 +2053,52 @@ func _update_active_viruses(delta: float) -> void:
 
 
 func _update_tower_attack(delta: float) -> void:
-	if _guardian == null:
-		return
-
-	var target := _guardian.update_attack(delta, _active_viruses)
-	if target == null:
-		return
-
-	_shoot_virus(target)
+	for guardian in _guardians:
+		if not is_instance_valid(guardian):
+			continue
+		var target := guardian.update_attack(delta, _active_viruses)
+		if target != null:
+			_shoot_virus(guardian, target)
 
 
 func _update_laser_turret_attack(delta: float) -> void:
-	if _laser_turret == null:
-		return
-
-	var targets := _laser_turret.update_attack(delta, _active_viruses)
-	if targets.is_empty():
-		return
-
-	_shoot_laser_turret_targets(targets)
+	for laser_turret in _laser_turrets:
+		if not is_instance_valid(laser_turret):
+			continue
+		var targets := laser_turret.update_attack(delta, _active_viruses)
+		if not targets.is_empty():
+			_shoot_laser_turret_targets(laser_turret, targets)
 
 
 func _update_siem_hawk_knowledge(delta: float) -> void:
-	if _siem_hawk == null:
-		return
-
 	var mouse_world_position := _screen_to_canvas_position(get_viewport().get_mouse_position())
-	_siem_hawk.update_knowledge_scan(delta, mouse_world_position, _active_viruses)
+	for siem_hawk in _siem_hawks:
+		if is_instance_valid(siem_hawk):
+			siem_hawk.update_knowledge_scan(delta, mouse_world_position, _active_viruses)
 
 
 func _update_ips_intrusion_spikes(delta: float) -> void:
-	if _ips_intrusion == null:
-		return
-
-	_ips_intrusion.update_spike_factory(delta, _active_viruses)
+	for ips_intrusion in _ips_intrusions:
+		if is_instance_valid(ips_intrusion):
+			ips_intrusion.update_spike_factory(delta, _active_viruses)
 
 
 func _update_edr_hunter_attack(delta: float) -> void:
-	if _edr_hunter == null:
-		return
-
-	var target := _edr_hunter.update_attack(delta, _active_viruses)
-	if target == null:
-		return
-
-	_shoot_edr_hunter_target(target)
+	for edr_hunter in _edr_hunters:
+		if not is_instance_valid(edr_hunter):
+			continue
+		var target := edr_hunter.update_attack(delta, _active_viruses)
+		if target != null:
+			_shoot_edr_hunter_target(edr_hunter, target)
 
 
 func _update_siem_hawk_attack(delta: float) -> void:
-	if _siem_hawk == null:
-		return
-
-	var target := _siem_hawk.update_attack(delta, _active_viruses)
-	if target == null:
-		return
-
-	_shoot_siem_hawk_target(target)
+	for siem_hawk in _siem_hawks:
+		if not is_instance_valid(siem_hawk):
+			continue
+		var target := siem_hawk.update_attack(delta, _active_viruses)
+		if target != null:
+			_shoot_siem_hawk_target(siem_hawk, target)
 
 
 func _update_support_tower_scans(delta: float) -> void:
@@ -1460,20 +2111,20 @@ func _update_support_tower_scans(delta: float) -> void:
 		node.call("update_support_scan", _active_viruses, delta)
 
 
-func _shoot_virus(target: PathFollow2D) -> void:
+func _shoot_virus(guardian: CyberGuardianTowerScript, target: PathFollow2D) -> void:
 	if not is_instance_valid(target):
 		return
 
 	var target_position := _get_target_center(target)
-	_guardian.aim_at(target_position)
-	_guardian.play_shoot()
-	_spawn_colored_laser(_guardian.global_position, target_position, Color(0.1, 0.55, 1.0, 1.0), _guardian.get_laser_width())
-	var destroyed := _damage_virus(target, _guardian.get_shot_power())
+	guardian.aim_at(target_position)
+	guardian.play_shoot()
+	_spawn_colored_laser(guardian.global_position, target_position, Color(0.1, 0.55, 1.0, 1.0), guardian.get_laser_width())
+	var destroyed := _damage_virus(target, guardian.get_shot_power())
 	if destroyed and _utility_overlay_hud != null:
 		_utility_overlay_hud.show_guardian_destroy_popup(
-			_world_to_screen_position(_guardian.global_position),
-			_guardian.get_shot_power(),
-			_guardian.get_shot_cooldown()
+			_world_to_screen_position(guardian.global_position),
+			guardian.get_shot_power(),
+			guardian.get_shot_cooldown()
 		)
 		if _question_hud != null:
 			_question_hud.add_cyberbucks(GUARDIAN_CYBERBUCK_REWARD)
@@ -1483,44 +2134,44 @@ func _shoot_virus(target: PathFollow2D) -> void:
 			_sync_siem_upgrade_panel()
 
 
-func _shoot_edr_hunter_target(target: PathFollow2D) -> void:
-	if _edr_hunter == null or not is_instance_valid(target):
+func _shoot_edr_hunter_target(edr_hunter: EDRHunterTowerScript, target: PathFollow2D) -> void:
+	if edr_hunter == null or not is_instance_valid(target):
 		return
 
 	var target_position := _get_target_center(target)
-	_edr_hunter.aim_at(target_position)
-	_edr_hunter.play_shoot()
-	_spawn_colored_laser(_edr_hunter.global_position, target_position, Color(0.12, 0.95, 1.0, 1.0), _edr_hunter.get_laser_width())
-	_damage_virus(target, _edr_hunter.get_shot_power())
+	edr_hunter.aim_at(target_position)
+	edr_hunter.play_shoot()
+	_spawn_colored_laser(edr_hunter.global_position, target_position, Color(0.12, 0.95, 1.0, 1.0), edr_hunter.get_laser_width())
+	_damage_virus(target, edr_hunter.get_shot_power())
 
 
-func _shoot_siem_hawk_target(target: PathFollow2D) -> void:
-	if _siem_hawk == null or not is_instance_valid(target):
+func _shoot_siem_hawk_target(siem_hawk: SIEMHawkTowerScript, target: PathFollow2D) -> void:
+	if siem_hawk == null or not is_instance_valid(target):
 		return
 
 	var target_position := _get_target_center(target)
-	_siem_hawk.aim_at(target_position)
-	_siem_hawk.play_shoot()
-	_spawn_colored_laser(_siem_hawk.global_position, target_position, Color(0.2, 0.74, 1.0, 1.0), _siem_hawk.get_laser_width())
-	_damage_virus(target, _siem_hawk.get_shot_power())
+	siem_hawk.aim_at(target_position)
+	siem_hawk.play_shoot()
+	_spawn_colored_laser(siem_hawk.global_position, target_position, Color(0.2, 0.74, 1.0, 1.0), siem_hawk.get_laser_width())
+	_damage_virus(target, siem_hawk.get_shot_power())
 
 
-func _shoot_laser_turret_targets(targets: Array[PathFollow2D]) -> void:
-	if _laser_turret == null:
+func _shoot_laser_turret_targets(laser_turret: LaserTurretScript, targets: Array[PathFollow2D]) -> void:
+	if laser_turret == null:
 		return
 
-	var origin_position := _laser_turret.global_position
-	var laser_width := _laser_turret.get_laser_width()
-	var laser_color := _laser_turret.get_laser_color()
+	var origin_position := laser_turret.global_position
+	var laser_width := laser_turret.get_laser_width()
+	var laser_color := laser_turret.get_laser_color()
 	var destroyed_count := 0
 	for target in targets:
 		if not is_instance_valid(target):
 			continue
 
 		var target_position := _get_target_center(target)
-		_laser_turret.aim_at(target_position)
-		if _should_use_demo_laser_turret_beam_fx():
-			if not _laser_turret.spawn_beam_fx(target_position, self):
+		laser_turret.aim_at(target_position)
+		if _should_use_demo_laser_turret_beam_fx(laser_turret):
+			if not laser_turret.spawn_beam_fx(target_position, self):
 				_spawn_colored_laser(origin_position, target_position, laser_color, laser_width)
 		else:
 			_spawn_colored_laser(origin_position, target_position, laser_color, laser_width)
@@ -1531,10 +2182,10 @@ func _shoot_laser_turret_targets(targets: Array[PathFollow2D]) -> void:
 		if _utility_overlay_hud != null:
 			var reward := destroyed_count * LASER_TURRET_CYBERBUCK_REWARD
 			_utility_overlay_hud.show_tower_destroy_popup(
-				_world_to_screen_position(_laser_turret.global_position),
+				_world_to_screen_position(laser_turret.global_position),
 				reward,
-				_laser_turret.get_shot_power(),
-				_laser_turret.get_shot_cooldown()
+				laser_turret.get_shot_power(),
+				laser_turret.get_shot_cooldown()
 			)
 			if _question_hud != null:
 				_question_hud.add_cyberbucks(reward)
@@ -1542,14 +2193,14 @@ func _shoot_laser_turret_targets(targets: Array[PathFollow2D]) -> void:
 				_sync_scanner_upgrade_panel()
 				_sync_edr_upgrade_panel()
 				_sync_siem_upgrade_panel()
-		_laser_turret.mark_shot_fired()
+		laser_turret.mark_shot_fired()
 		_update_virus_count_label()
 
 
-func _should_use_demo_laser_turret_beam_fx() -> bool:
+func _should_use_demo_laser_turret_beam_fx(laser_turret: LaserTurretScript) -> bool:
 	return _utility_overlay_hud != null \
-		and _laser_turret != null \
-		and _laser_turret.has_beam_fx()
+		and laser_turret != null \
+		and laser_turret.has_beam_fx()
 
 
 func _spawn_colored_laser(start_position: Vector2, end_position: Vector2, color: Color, width: float) -> void:

@@ -30,7 +30,8 @@ func _ready() -> void:
 	if _menu_panel != null:
 		_menu_panel.hide()
 	if _menu_button != null:
-		_menu_button.pressed.connect(toggle_menu)
+		_menu_button.hide()
+		_menu_button.disabled = true
 	if _continue_button != null:
 		_continue_button.pressed.connect(hide_menu)
 	if _settings_button != null:
