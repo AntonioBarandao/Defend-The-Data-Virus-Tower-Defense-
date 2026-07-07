@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://bthmcxcu7ao8p"]
 
 [ext_resource type="Script" uid="uid://cjk54qf6xwl1a" path="res://Scripts/UI/text_cutscene_hud.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://80e8xosb7uq1" path="res://assets/UI/Cutscene/Cyberguardian_Mascot.png" id="2_mascot"]
-[ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="3_dialogue_font"]
-[ext_resource type="FontFile" uid="uid://cc0f3h2ru1hiv" path="res://assets/Fonts/space-armor/SPACE ARMOR.otf" id="4_speaker_font"]
+[ext_resource type="Texture2D" uid="uid://80e8xosb7uq1" path="res://Assets/UI/Cutscene/Cyberguardian_Mascot.png" id="2_mascot"]
+[ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://Assets/Fonts/naked_power/Naked Power Bd.otf" id="3_dialogue_font"]
+[ext_resource type="FontFile" uid="uid://cc0f3h2ru1hiv" path="res://Assets/Fonts/space-armor/SPACE ARMOR.otf" id="4_speaker_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dialogue_panel"]
 bg_color = Color(0.025, 0.031, 0.052, 0.96)

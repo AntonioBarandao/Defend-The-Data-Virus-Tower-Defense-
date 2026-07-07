@@ -1,7 +1,7 @@
 [gd_resource type="SpriteFrames" load_steps=4 format=3]
 
-[ext_resource type="Texture2D" path="res://assets/Towers/EDR_Hunter/EDR_Hunter_LV1_idle.png" id="1_idle"]
-[ext_resource type="Texture2D" path="res://assets/Towers/EDR_Hunter/EDR_Hunter_LV1_shoot.png" id="2_shoot"]
+[ext_resource type="Texture2D" path="res://Assets/Towers/EDR_Hunter/EDR_Hunter_LV1_idle.png" id="1_idle"]
+[ext_resource type="Texture2D" path="res://Assets/Towers/EDR_Hunter/EDR_Hunter_LV1_shoot.png" id="2_shoot"]
 
 [resource]
 animations = [{

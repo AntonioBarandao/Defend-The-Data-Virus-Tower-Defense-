@@ -1,6 +1,8 @@
 class_name UtilityOverlayHUD
 extends CanvasLayer
 
+const TowerTooltips := preload("res://Scripts/UI/tower_tooltip_data.gd")
+
 signal laser_upgrade_requested
 signal guardian_upgrade_requested
 signal scanner_upgrade_requested
@@ -51,6 +53,13 @@ func _ready() -> void:
 	_ips_upgrade_cost_label = _get_upgrade_cost_label(_ips_upgrade_button)
 	_honeypot_upgrade_button = _create_extra_upgrade_button("HoneypotUpgradeButton")
 	_honeypot_upgrade_cost_label = _get_upgrade_cost_label(_honeypot_upgrade_button)
+	_set_upgrade_button_copy(_guardian_upgrade_button, &"guardian")
+	_set_upgrade_button_copy(_laser_upgrade_button, &"laser")
+	_set_upgrade_button_copy(_scanner_upgrade_button, &"scanner")
+	_set_upgrade_button_copy(_edr_upgrade_button, &"edr")
+	_set_upgrade_button_copy(_siem_upgrade_button, &"siem")
+	_set_upgrade_button_copy(_ips_upgrade_button, &"ips")
+	_set_upgrade_button_copy(_honeypot_upgrade_button, &"honeypot")
 	_guardian_upgrade_button.pressed.connect(func() -> void: guardian_upgrade_requested.emit())
 	_laser_upgrade_button.pressed.connect(func() -> void: laser_upgrade_requested.emit())
 	_scanner_upgrade_button.pressed.connect(func() -> void: scanner_upgrade_requested.emit())
@@ -312,6 +321,14 @@ func _create_extra_upgrade_button(button_name: String) -> Button:
 
 func _get_upgrade_cost_label(button: Button) -> Label:
 	return button.get_node(^"Content/CostRow/Amount") as Label
+
+
+func _set_upgrade_button_copy(button: Button, tower_id: StringName) -> void:
+	var label := button.get_node_or_null(^"Content/UpgradeLabel") as Label
+	if label != null:
+		label.text = "Upgrade"
+
+	button.tooltip_text = TowerTooltips.tower_tooltip(tower_id) + "\n\n" + TowerTooltips.tower_upgrade_tooltip(tower_id)
 
 
 func _set_upgrade_button_state(

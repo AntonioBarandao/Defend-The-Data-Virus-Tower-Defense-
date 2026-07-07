@@ -13,7 +13,7 @@ const PHASE_TWO := &"phase_2"
 const PHASE_THREE := &"phase_3"
 const PHASE_FOUR := &"phase_4"
 const PHASE_END := &"phase_end"
-const PHASE_ONE_DESTROY_SFX := preload("res://assets/sfx/virus_destroy.wav")
+const PHASE_ONE_DESTROY_SFX := preload("res://Assets/sfx/virus_destroy.wav")
 
 @export var play_on_ready := true
 @export var dialogue_lines: PackedStringArray = [
@@ -95,6 +95,7 @@ var _phase_one_initial_positions := {}
 var _phase_one_initial_modulates := {}
 var _phase_one_destroy_sfx_players: Array[AudioStreamPlayer] = []
 var _wave5_preview_trojan: TrojanHorse
+var _phase_one_target_visible_before_cutscene := true
 var _last_handled_cutscene_input_event_id := 0
 var _skip_requested := false
 var _cutscene_finished_emitted := false
@@ -108,6 +109,7 @@ func _ready() -> void:
 	_speaker_label.text = "CYBER GUARDIAN"
 	_cutscene_camera = get_node_or_null(cutscene_camera_path) as Camera2D
 	_capture_cutscene_camera_start()
+	_set_phase_one_target_visible(false, false)
 	_root.visible = false
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if play_on_ready:
@@ -129,6 +131,7 @@ func start_cutscene() -> void:
 	_dialogue_completes_cutscene = true
 	_dialogue_phase_done = false
 	act_started.emit(current_act)
+	_set_phase_one_target_visible(true)
 	_root.visible = true
 	_root.modulate = Color.WHITE
 	_root.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -156,6 +159,7 @@ func start_wave5_cutscene() -> void:
 	current_phase = &""
 	_current_phase_finished = false
 	act_started.emit(current_act)
+	_set_phase_one_target_visible(true)
 	_root.visible = true
 	_root.modulate = Color.WHITE
 	_root.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -206,6 +210,7 @@ func _run_act_one_phase_one() -> void:
 	if _skip_requested or not _running:
 		return
 
+	_set_phase_one_target_visible(false)
 	_alert_overlay.hide()
 	_finish_phase(PHASE_ONE)
 
@@ -374,6 +379,7 @@ func skip_cutscene() -> void:
 	_stop_phase_one_virus_hover()
 	_cleanup_wave5_preview_trojan()
 	_restore_cutscene_camera_to_start()
+	_set_phase_one_target_visible(false)
 	_dialogue_panel.global_position = _panel_final_global_position
 	_mascot.global_position = _mascot_final_global_position
 	_prepare_all_overlays_hidden()
@@ -434,6 +440,7 @@ func _finish_cutscene() -> void:
 	_dialogue_panel.global_position = _panel_final_global_position
 	_mascot.global_position = _mascot_final_global_position
 	_prepare_all_overlays_hidden()
+	_set_phase_one_target_visible(false)
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.hide()
 	_running = false
@@ -465,11 +472,13 @@ func _run_wave5_phase_one() -> void:
 	if _skip_requested or not _running:
 		return
 
+	_set_phase_one_target_visible(false)
 	_finish_phase(PHASE_ONE)
 
 
 func _run_wave5_phase_three() -> void:
 	_start_phase(PHASE_THREE)
+	_set_phase_one_target_visible(true)
 	_dialogue_panel.hide()
 	_mascot.hide()
 	_dim_overlay.hide()
@@ -480,6 +489,7 @@ func _run_wave5_phase_three() -> void:
 	if _skip_requested or not _running:
 		return
 
+	_set_phase_one_target_visible(false)
 	_finish_phase(PHASE_THREE)
 
 
@@ -586,6 +596,22 @@ func _get_phase_one_target_center() -> Vector2:
 		return (target as CanvasItem).global_position
 
 	return _camera_start_global_position
+
+
+func _set_phase_one_target_visible(is_visible: bool, remember_current := true) -> void:
+	var target := get_node_or_null(phase_one_target_path) as CanvasItem
+	if target == null:
+		return
+
+	if remember_current and is_visible:
+		_phase_one_target_visible_before_cutscene = target.visible
+
+	if is_visible:
+		target.visible = true
+	elif remember_current:
+		target.visible = _phase_one_target_visible_before_cutscene
+	else:
+		target.visible = false
 
 
 func _get_phase_one_visual_children() -> Array[CanvasItem]:
