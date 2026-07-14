@@ -2513,24 +2513,6 @@ func _sell_selected_tower() -> void:
 	_update_demo_upgrade_buttons()
 
 
-func _get_deployed_tower_cost(tower_id: StringName) -> int:
-	match tower_id:
-		&"laser":
-			return LASER_TURRET_DEPLOY_COST
-		&"scanner":
-			return IDS_SCANNER_DEPLOY_COST
-		&"edr":
-			return EDR_HUNTER_DEPLOY_COST
-		&"siem":
-			return SIEM_HAWK_DEPLOY_COST
-		&"ips":
-			return IPS_INTRUSION_DEPLOY_COST
-		&"honeypot":
-			return HONEYPOT_PRODUCTION_DEPLOY_COST
-		_:
-			return CYBER_GUARDIAN_DEPLOY_COST
-
-
 func _get_selected_tower() -> Node2D:
 	if _tower_upgrade_hud.is_guardian_panel_visible():
 		return _guardian

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d26s2ivyd1ttd"
-path="res://.godot/imported/TowerStoreArrowHex.svg-1400f580591bc4e3714cf38d6a6006c8.ctex"
+path="res://.godot/imported/TowerStoreArrowHex.svg-034b24aaa6b20f0006c0e26440d29177.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/UI/TowerStoreArrowHex.svg"
-dest_files=["res://.godot/imported/TowerStoreArrowHex.svg-1400f580591bc4e3714cf38d6a6006c8.ctex"]
+source_file="res://Assets/UI/TowerStoreArrowHex.svg"
+dest_files=["res://.godot/imported/TowerStoreArrowHex.svg-034b24aaa6b20f0006c0e26440d29177.ctex"]
 
 [params]
 
