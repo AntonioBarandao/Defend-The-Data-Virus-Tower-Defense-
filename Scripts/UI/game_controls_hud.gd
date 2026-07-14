@@ -11,6 +11,8 @@ signal add_hundred_pressed
 signal virus_batch_requested(count: int)
 signal exit_pressed
 
+@export var show_menu_button := true
+
 @onready var _reset_button: Button = $Root/BottomRightControls/ResetTowerButton
 @onready var _wave_button: Button = $Root/BottomRightControls/StartWaveButton
 @onready var _add_ten_button: Button = $Root/VirusBatchControls/AddTenVirusesButton
@@ -33,9 +35,10 @@ func _ready() -> void:
 	if _menu_panel != null:
 		_menu_panel.hide()
 	if _menu_button != null:
-		_menu_button.show()
-		_menu_button.disabled = false
-		_menu_button.pressed.connect(toggle_menu)
+		_menu_button.visible = show_menu_button
+		_menu_button.disabled = not show_menu_button
+		if show_menu_button:
+			_menu_button.pressed.connect(toggle_menu)
 	if _continue_button != null:
 		_continue_button.pressed.connect(hide_menu)
 	if _settings_button != null:
@@ -53,6 +56,12 @@ func set_wave_button(text: String, disabled: bool) -> void:
 func set_spawn_buttons_disabled(disabled: bool) -> void:
 	_add_ten_button.disabled = disabled
 	_add_hundred_button.disabled = disabled
+
+
+func set_admin_mode(enabled: bool) -> void:
+	$Root/VirusBatchControls.visible = enabled
+	_reset_button.visible = enabled
+	_wave_button.visible = true
 
 
 func _request_ten_viruses() -> void:

@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://c7b5taf2pji8r"]
 
-[ext_resource type="SpriteFrames" uid="uid://bg8dbtfkujtwk" path="res://Assets/Enemies/TrojanHorse/TrojanHorseSpriteFrames.res" id="1_frames"]
+[ext_resource type="SpriteFrames" uid="uid://bg8dbtfkujtwk" path="res://assets/Enemies/TrojanHorse/TrojanHorseSpriteFrames.res" id="1_frames"]
 [ext_resource type="Script" uid="uid://bsu87durcxo18" path="res://Scripts/Enemies/trojan_horse.gd" id="2_script"]
 [ext_resource type="Script" path="res://Scripts/UI/trojan_horse_progress_bar.gd" id="3_progress_bar_script"]
-[ext_resource type="Texture2D" uid="uid://d1m6smrk3mokq" path="res://Assets/Enemies/TrojanHorse/HealthBar/trojan_health_under.png" id="4_health_under"]
-[ext_resource type="Texture2D" uid="uid://cmndpa34uosxj" path="res://Assets/Enemies/TrojanHorse/HealthBar/trojan_health_progress.png" id="5_health_progress"]
-[ext_resource type="Texture2D" uid="uid://b4o5co2e3jx86" path="res://Assets/Enemies/TrojanHorse/HealthBar/trojan_health_over.png" id="6_health_over"]
-[ext_resource type="AudioStream" uid="uid://bfshg7mdbonis" path="res://Assets/sfx/trojan_horse_enter.wav" id="7_enter_sfx"]
-[ext_resource type="AudioStream" uid="uid://bqlqgvivmaqt1" path="res://Assets/sfx/trojan_horse_transform.wav" id="8_transform_sfx"]
+[ext_resource type="Texture2D" uid="uid://d1m6smrk3mokq" path="res://assets/Enemies/TrojanHorse/HealthBar/trojan_health_under.png" id="4_health_under"]
+[ext_resource type="Texture2D" uid="uid://cmndpa34uosxj" path="res://assets/Enemies/TrojanHorse/HealthBar/trojan_health_progress.png" id="5_health_progress"]
+[ext_resource type="Texture2D" uid="uid://b4o5co2e3jx86" path="res://assets/Enemies/TrojanHorse/HealthBar/trojan_health_over.png" id="6_health_over"]
+[ext_resource type="AudioStream" uid="uid://bfshg7mdbonis" path="res://assets/sfx/trojan_horse_enter.wav" id="7_enter_sfx"]
+[ext_resource type="AudioStream" uid="uid://bqlqgvivmaqt1" path="res://assets/sfx/trojan_horse_transform.wav" id="8_transform_sfx"]
 
 [node name="TrojanHorse" type="AnimatedSprite2D" unique_id=1878623079]
 sprite_frames = ExtResource("1_frames")

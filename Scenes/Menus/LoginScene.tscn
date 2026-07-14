@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dgv71rsjbysiq"]
 
 [ext_resource type="Script" uid="uid://6kisicsvqkfd" path="res://Scripts/Menus/LoginScene.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://b06j3hqub4kmp" path="res://Assets/Backgrounds/BackgroundMainMenu.png" id="2_1hy16"]
+[ext_resource type="Texture2D" uid="uid://b06j3hqub4kmp" path="res://assets/Backgrounds/BackgroundMainMenu.png" id="2_1hy16"]
 
 [node name="LoginScene" type="Control" unique_id=1924834631]
 layout_mode = 3

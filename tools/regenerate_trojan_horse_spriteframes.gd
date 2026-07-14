@@ -1,6 +1,6 @@
 extends SceneTree
 
-const OUTPUT_PATH := "res://Assets/Enemies/TrojanHorse/TrojanHorseSpriteFrames.res"
+const OUTPUT_PATH := "res://assets/Enemies/TrojanHorse/TrojanHorseSpriteFrames.res"
 const FRAME_SIZE := Vector2i(720, 720)
 const FRAME_COUNT := 91
 const COLUMNS := 10
@@ -9,27 +9,27 @@ const FPS := 30.0
 const ANIMATIONS := [
 	{
 		"name": &"Horse_Move",
-		"atlas": "res://Assets/Enemies/TrojanHorse/Horse_Move/Horse_Move_atlas_30fps.png",
+		"atlas": "res://assets/Enemies/TrojanHorse/Horse_Move/Horse_Move_atlas_30fps.png",
 		"loop": true
 	},
 	{
 		"name": &"Horse_Transform",
-		"atlas": "res://Assets/Enemies/TrojanHorse/Horse_Transform/Horse_Transform_atlas_30fps.png",
+		"atlas": "res://assets/Enemies/TrojanHorse/Horse_Transform/Horse_Transform_atlas_30fps.png",
 		"loop": false
 	},
 	{
 		"name": &"Horse_De-Camo_Transform",
-		"atlas": "res://Assets/Enemies/TrojanHorse/Horse_De-Camo_Transform/Horse_De-Camo_Transform_atlas_30fps.png",
+		"atlas": "res://assets/Enemies/TrojanHorse/Horse_De-Camo_Transform/Horse_De-Camo_Transform_atlas_30fps.png",
 		"loop": false
 	},
 	{
 		"name": &"Cloaked_Horse_Move",
-		"atlas": "res://Assets/Enemies/TrojanHorse/Cloaked_Horse_Move/Cloaked_Horse_Move_atlas_30fps.png",
+		"atlas": "res://assets/Enemies/TrojanHorse/Cloaked_Horse_Move/Cloaked_Horse_Move_atlas_30fps.png",
 		"loop": true
 	},
 	{
 		"name": &"Horse_Destroy",
-		"atlas": "res://Assets/Enemies/TrojanHorse/Horse_Destroy/Horse_Destroy_atlas_30fps.png",
+		"atlas": "res://assets/Enemies/TrojanHorse/Horse_Destroy/Horse_Destroy_atlas_30fps.png",
 		"loop": false
 	}
 ]
