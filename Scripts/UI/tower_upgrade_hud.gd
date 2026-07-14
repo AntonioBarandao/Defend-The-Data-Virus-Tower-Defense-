@@ -287,6 +287,10 @@ func guardian_panel_has_point(screen_position: Vector2) -> bool:
 	return is_guardian_panel_visible() and _menu_panel.get_global_rect().has_point(screen_position)
 
 
+func panel_has_point(screen_position: Vector2) -> bool:
+	return _menu_panel.visible and _menu_panel.get_global_rect().has_point(screen_position)
+
+
 func show_laser_panel() -> void:
 	_current_mode = MenuMode.LASER
 	_title_label.text = TowerTooltips.tower_name(&"laser")

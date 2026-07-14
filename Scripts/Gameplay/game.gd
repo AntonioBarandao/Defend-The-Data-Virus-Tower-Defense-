@@ -336,6 +336,9 @@ func _input(event: InputEvent) -> void:
 
 		var pointer_position := _screen_to_canvas_position(mouse_button.position)
 		if mouse_button.pressed:
+			if _tower_upgrade_hud != null and _tower_upgrade_hud.panel_has_point(mouse_button.position):
+				return
+
 			if _demo_upgrade_button_has_point(mouse_button.position):
 				return
 
@@ -377,13 +380,15 @@ func _input(event: InputEvent) -> void:
 			if _tower_store_open and _siem_hawk_store != null and not _siem_hawk_store.is_placed() and _siem_hawk_store.try_start_drag(pointer_position):
 				return
 
-			if _guardian_store == null:
+			if _guardian_store != null and _guardian_store.is_placed():
+				_handle_placed_tower_press(pointer_position, mouse_button.position)
+				return
+			elif _guardian_store != null and _tower_store_open and _guardian_store.try_start_drag(pointer_position):
 				return
 
-			if _guardian_store.is_placed():
-				_handle_placed_tower_press(pointer_position, mouse_button.position)
-			elif _tower_store_open:
-				_guardian_store.try_start_drag(pointer_position)
+			if _tower_upgrade_hud != null:
+				_tower_upgrade_hud.hide_all()
+				_set_tower_menu_radius_previews(false, false, false, false, false, false, false)
 		elif _demo_upgrade_button_has_point(mouse_button.position):
 			return
 		elif _siem_hawk_store != null and _siem_hawk_store.is_dragging():
@@ -429,6 +434,9 @@ func _input(event: InputEvent) -> void:
 		var screen_touch := event as InputEventScreenTouch
 		var pointer_position := _screen_to_canvas_position(screen_touch.position)
 		if screen_touch.pressed:
+			if _tower_upgrade_hud != null and _tower_upgrade_hud.panel_has_point(screen_touch.position):
+				return
+
 			if _demo_upgrade_button_has_point(screen_touch.position):
 				return
 
@@ -470,13 +478,15 @@ func _input(event: InputEvent) -> void:
 			if _tower_store_open and _siem_hawk_store != null and not _siem_hawk_store.is_placed() and _siem_hawk_store.try_start_drag(pointer_position):
 				return
 
-			if _guardian_store == null:
+			if _guardian_store != null and _guardian_store.is_placed():
+				_handle_placed_tower_press(pointer_position, screen_touch.position)
+				return
+			elif _guardian_store != null and _tower_store_open and _guardian_store.try_start_drag(pointer_position):
 				return
 
-			if _guardian_store.is_placed():
-				_handle_placed_tower_press(pointer_position, screen_touch.position)
-			elif _tower_store_open:
-				_guardian_store.try_start_drag(pointer_position)
+			if _tower_upgrade_hud != null:
+				_tower_upgrade_hud.hide_all()
+				_set_tower_menu_radius_previews(false, false, false, false, false, false, false)
 		elif _demo_upgrade_button_has_point(screen_touch.position):
 			return
 		elif _siem_hawk_store != null and _siem_hawk_store.is_dragging():
