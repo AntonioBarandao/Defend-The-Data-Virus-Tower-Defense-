@@ -8,7 +8,7 @@
 script = ExtResource("1_script")
 tower_id = &"ips_intrusion"
 display_name = "IPS Intrusion"
-deploy_cost = 1700
+deploy_cost = 200
 display_texture = ExtResource("2_texture")
 tower_scene = ExtResource("3_scene")
 info_header = "IPS Intrusion"

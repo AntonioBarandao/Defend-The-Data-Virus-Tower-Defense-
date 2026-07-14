@@ -8,6 +8,7 @@
 script = ExtResource("1_script")
 tower_id = &"ids_scanner"
 display_name = "IDS Scanner"
+deploy_cost = 150
 display_texture = ExtResource("2_texture")
 tower_scene = ExtResource("3_scene")
 info_header = "IDS Scanner"

@@ -20,6 +20,7 @@ signal exit_pressed
 @onready var _continue_button: Button = get_node_or_null(^"Root/MainMenuPanel/Margin/Options/ContinueButton") as Button
 @onready var _settings_button: Button = get_node_or_null(^"Root/MainMenuPanel/Margin/Options/SettingsButton") as Button
 @onready var _exit_button: Button = get_node_or_null(^"Root/MainMenuPanel/Margin/Options/ExitButton") as Button
+@onready var _lives_label: Label = get_node_or_null(^"Root/LivesPanel/LivesLabel") as Label
 
 var _was_tree_paused := false
 
@@ -53,6 +54,34 @@ func set_wave_button(text: String, disabled: bool) -> void:
 func set_spawn_buttons_disabled(disabled: bool) -> void:
 	_add_ten_button.disabled = disabled
 	_add_hundred_button.disabled = disabled
+
+
+func set_lives(current_lives: int, maximum_lives: int) -> void:
+	if _lives_label == null:
+		return
+	_lives_label.text = "LIVES  %d / %d" % [maxi(0, current_lives), maxi(1, maximum_lives)]
+
+
+func set_admin_mode(enabled: bool) -> void:
+	$Root/VirusBatchControls.visible = enabled
+	_reset_button.visible = enabled
+	_wave_button.visible = true
+
+
+func has_gameplay_control_at_screen_position(screen_position: Vector2) -> bool:
+	var controls: Array[Control] = [
+		_wave_button,
+		_reset_button,
+		_add_ten_button,
+		_add_hundred_button,
+		_menu_button,
+		_menu_panel
+	]
+	for control in controls:
+		if control != null and control.visible and control.get_global_rect().has_point(screen_position):
+			return true
+
+	return false
 
 
 func _request_ten_viruses() -> void:

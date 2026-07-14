@@ -8,7 +8,7 @@
 script = ExtResource("1_script")
 tower_id = &"honeypot_production"
 display_name = "Honeypot Production"
-deploy_cost = 1500
+deploy_cost = 250
 display_texture = ExtResource("2_texture")
 tower_scene = ExtResource("3_scene")
 info_header = "Honeypot Production"
