@@ -1205,11 +1205,11 @@ func _apply_guardian_mode_visual() -> void:
 	if _current_mode == MODE_DEFENDER:
 		self_modulate = _base_self_modulate
 		if _defender_sprite_frames != null:
-			sprite_frames = _defender_sprite_frames
+			_assign_sprite_frames_to_mode(MODE_DEFENDER, _defender_sprite_frames, true)
 	else:
 		var mode_frames := _static_mode_sprite_frames.get(_current_mode) as SpriteFrames
 		if mode_frames != null:
-			sprite_frames = mode_frames
+			_assign_sprite_frames_to_mode(_current_mode, mode_frames)
 
 	var visual := _get_visual_for_animation(IDLE_ANIMATION)
 	if visual != null and _has_required_animations(visual.sprite_frames):
