@@ -1,6 +1,8 @@
 class_name CutsceneSkipHUD
 extends CanvasLayer
 
+const MAX_INPUT_LAYER := 4095
+
 @export var text_cutscene_hud_path: NodePath = ^"../TextCutsceneHUD"
 @export var announce_text_hud_path: NodePath = ^"../AnnounceTextHUD"
 
@@ -11,12 +13,20 @@ var _announce_text_hud: AnnounceTextHUD
 
 
 func _ready() -> void:
+	layer = maxi(layer, MAX_INPUT_LAYER)
 	_text_cutscene_hud = get_node_or_null(text_cutscene_hud_path)
 	_announce_text_hud = get_node_or_null(announce_text_hud_path) as AnnounceTextHUD
 	_skip_button.pressed.connect(_on_skip_pressed)
+	_skip_button.gui_input.connect(_on_skip_button_gui_input)
+	_skip_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	_skip_button.disabled = true
 	hide()
 	set_process(true)
+
+
+func _input(event: InputEvent) -> void:
+	if handle_cutscene_skip_input(event):
+		get_viewport().set_input_as_handled()
 
 
 func _process(_delta: float) -> void:
@@ -26,15 +36,20 @@ func _process(_delta: float) -> void:
 
 
 func handle_cutscene_skip_input(event: InputEvent) -> bool:
-	if not visible or not _is_primary_press(event):
-		return false
-
-	var press_position := _get_press_position(event)
-	if not _skip_button.get_global_rect().has_point(press_position):
+	if not event_targets_skip_button(event):
 		return false
 
 	_on_skip_pressed()
 	return true
+
+
+func event_targets_skip_button(event: InputEvent) -> bool:
+	if not _is_cutscene_running() or not _is_primary_press(event):
+		return false
+	if not is_instance_valid(_skip_button) or _skip_button.disabled:
+		return false
+
+	return _skip_button.get_global_rect().has_point(_get_press_position(event))
 
 
 func _on_skip_pressed() -> void:
@@ -46,6 +61,15 @@ func _on_skip_pressed() -> void:
 
 	if _announce_text_hud != null:
 		_announce_text_hud.show_message("Cutscene Skipped", 3.0)
+
+
+func _on_skip_button_gui_input(event: InputEvent) -> void:
+	if not event_targets_skip_button(event):
+		return
+
+	_skip_button.accept_event()
+	get_viewport().set_input_as_handled()
+	_on_skip_pressed()
 
 
 func _is_cutscene_running() -> bool:

@@ -8,12 +8,18 @@ signal guardian_upgrade_requested
 signal scanner_upgrade_requested
 signal edr_upgrade_requested
 signal siem_upgrade_requested
+signal siem_hawk_freeze_requested
+signal siem_hawk_land_requested
 signal ips_upgrade_requested
 signal honeypot_upgrade_requested
 
 const POPUP_DURATION := 1.45
 const BUCKS_ICON_SIZE := Vector2(38, 38)
 const UPGRADE_BUTTON_OFFSET := Vector2(0, -114)
+const UPGRADE_BUTTON_FALLBACK_OFFSET := Vector2(0, 114)
+const SIEM_HAWK_ACTION_OFFSET := Vector2(132, -34)
+const SIEM_HAWK_ACTION_FALLBACK_OFFSET := Vector2(132, 116)
+const VIEWPORT_EDGE_PADDING := Vector2(12, 12)
 const SPARKLE_DOT_COUNT := 22
 const SPARKLE_RADIUS_MIN := 20.0
 const SPARKLE_RADIUS_MAX := 118.0
@@ -35,6 +41,9 @@ var _edr_upgrade_button: Button
 var _edr_upgrade_cost_label: Label
 var _siem_upgrade_button: Button
 var _siem_upgrade_cost_label: Label
+var _siem_hawk_action_panel: PanelContainer
+var _siem_hawk_land_button: Button
+var _siem_hawk_freeze_button: Button
 var _ips_upgrade_button: Button
 var _ips_upgrade_cost_label: Label
 var _honeypot_upgrade_button: Button
@@ -49,6 +58,7 @@ func _ready() -> void:
 	_edr_upgrade_cost_label = _get_upgrade_cost_label(_edr_upgrade_button)
 	_siem_upgrade_button = _create_extra_upgrade_button("SIEMUpgradeButton")
 	_siem_upgrade_cost_label = _get_upgrade_cost_label(_siem_upgrade_button)
+	_create_siem_hawk_action_panel()
 	_ips_upgrade_button = _create_extra_upgrade_button("IPSUpgradeButton")
 	_ips_upgrade_cost_label = _get_upgrade_cost_label(_ips_upgrade_button)
 	_honeypot_upgrade_button = _create_extra_upgrade_button("HoneypotUpgradeButton")
@@ -65,6 +75,8 @@ func _ready() -> void:
 	_scanner_upgrade_button.pressed.connect(func() -> void: scanner_upgrade_requested.emit())
 	_edr_upgrade_button.pressed.connect(func() -> void: edr_upgrade_requested.emit())
 	_siem_upgrade_button.pressed.connect(func() -> void: siem_upgrade_requested.emit())
+	_siem_hawk_land_button.pressed.connect(func() -> void: siem_hawk_land_requested.emit())
+	_siem_hawk_freeze_button.pressed.connect(func() -> void: siem_hawk_freeze_requested.emit())
 	_ips_upgrade_button.pressed.connect(func() -> void: ips_upgrade_requested.emit())
 	_honeypot_upgrade_button.pressed.connect(func() -> void: honeypot_upgrade_requested.emit())
 
@@ -74,7 +86,7 @@ func show_guardian_destroy_popup(
 	damage_points: int,
 	damage_cooldown: float
 ) -> void:
-	show_tower_destroy_popup(guardian_position, 5, damage_points, damage_cooldown)
+	return
 
 
 func show_tower_destroy_popup(
@@ -83,34 +95,7 @@ func show_tower_destroy_popup(
 	damage_points: int,
 	damage_cooldown: float
 ) -> void:
-	var left_popup := HBoxContainer.new()
-	left_popup.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	left_popup.modulate = Color(1, 1, 1, 0)
-	left_popup.scale = Vector2(0.84, 0.84)
-	left_popup.add_theme_constant_override("separation", 8)
-
-	var icon := TextureRect.new()
-	icon.custom_minimum_size = BUCKS_ICON_SIZE
-	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.texture = cyber_bucks_texture
-	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	left_popup.add_child(icon)
-
-	var bucks_label := _make_popup_label("+%d Cyber Bucks" % cyberbuck_reward, 28, Color(1.0, 0.88, 0.26, 1.0))
-	left_popup.add_child(bucks_label)
-	_world_popups.add_child(left_popup)
-	_position_popup(left_popup, tower_position + Vector2(-150, -58), Vector2(1.0, 0.5))
-	_animate_popup(left_popup, Vector2(-14, -70))
-
-	var stats_label := _make_popup_label(
-		"Damage: %d point\nCooldown: %.1fs" % [damage_points, damage_cooldown],
-		24,
-		Color(0.84, 0.92, 1.0, 1.0)
-	)
-	_world_popups.add_child(stats_label)
-	_position_popup(stats_label, tower_position + Vector2(142, -54), Vector2(0.0, 0.5))
-	_animate_popup(stats_label, Vector2(16, -64))
+	return
 
 
 func set_guardian_upgrade_button_state(
@@ -213,6 +198,33 @@ func set_siem_upgrade_button_state(
 	)
 
 
+func set_siem_hawk_action_state(
+	hawk_screen_position: Vector2,
+	deployed: bool,
+	hovered: bool,
+	dispatched: bool,
+	landing_to_headquarters: bool,
+	can_land: bool
+) -> void:
+	if _siem_hawk_action_panel == null:
+		return
+
+	_siem_hawk_action_panel.visible = deployed and hovered
+	if not _siem_hawk_action_panel.visible:
+		return
+
+	_siem_hawk_land_button.disabled = landing_to_headquarters or not can_land
+	_siem_hawk_land_button.text = "Landing..." if landing_to_headquarters else "Land to Headquarters"
+	_siem_hawk_freeze_button.disabled = landing_to_headquarters
+	_siem_hawk_freeze_button.text = "Freeze Mode" if dispatched else "Follow Mode"
+	_position_hover_control(
+		_siem_hawk_action_panel,
+		hawk_screen_position,
+		SIEM_HAWK_ACTION_OFFSET,
+		SIEM_HAWK_ACTION_FALLBACK_OFFSET
+	)
+
+
 func set_ips_upgrade_button_state(
 	ips_screen_position: Vector2,
 	deployed: bool,
@@ -273,6 +285,12 @@ func siem_upgrade_button_has_point(screen_position: Vector2) -> bool:
 	return _button_has_point(_siem_upgrade_button, screen_position)
 
 
+func siem_hawk_action_buttons_has_point(screen_position: Vector2) -> bool:
+	return _siem_hawk_action_panel != null \
+		and _siem_hawk_action_panel.is_visible_in_tree() \
+		and _siem_hawk_action_panel.get_global_rect().has_point(screen_position)
+
+
 func ips_upgrade_button_has_point(screen_position: Vector2) -> bool:
 	return _button_has_point(_ips_upgrade_button, screen_position)
 
@@ -287,6 +305,7 @@ func upgrade_button_has_point(screen_position: Vector2) -> bool:
 		or scanner_upgrade_button_has_point(screen_position) \
 		or edr_upgrade_button_has_point(screen_position) \
 		or siem_upgrade_button_has_point(screen_position) \
+		or siem_hawk_action_buttons_has_point(screen_position) \
 		or ips_upgrade_button_has_point(screen_position) \
 		or honeypot_upgrade_button_has_point(screen_position)
 
@@ -323,6 +342,89 @@ func _get_upgrade_cost_label(button: Button) -> Label:
 	return button.get_node(^"Content/CostRow/Amount") as Label
 
 
+func _create_siem_hawk_action_panel() -> void:
+	_siem_hawk_action_panel = PanelContainer.new()
+	_siem_hawk_action_panel.name = "SIEMHawkActionPanel"
+	_siem_hawk_action_panel.visible = false
+	_siem_hawk_action_panel.z_as_relative = false
+	_siem_hawk_action_panel.z_index = 1000
+	_siem_hawk_action_panel.mouse_filter = Control.MOUSE_FILTER_PASS
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.028, 0.054, 0.12, 0.94)
+	panel_style.border_width_left = 2
+	panel_style.border_width_top = 2
+	panel_style.border_width_right = 2
+	panel_style.border_width_bottom = 2
+	panel_style.border_color = Color(0.42, 0.78, 1.0, 0.96)
+	panel_style.corner_radius_top_left = 8
+	panel_style.corner_radius_top_right = 8
+	panel_style.corner_radius_bottom_right = 8
+	panel_style.corner_radius_bottom_left = 8
+	panel_style.shadow_color = Color(0.08, 0.3, 0.95, 0.42)
+	panel_style.shadow_size = 10
+	_siem_hawk_action_panel.add_theme_stylebox_override("panel", panel_style)
+
+	var margin := MarginContainer.new()
+	margin.name = "Margin"
+	margin.add_theme_constant_override("margin_left", 8)
+	margin.add_theme_constant_override("margin_top", 8)
+	margin.add_theme_constant_override("margin_right", 8)
+	margin.add_theme_constant_override("margin_bottom", 8)
+	_siem_hawk_action_panel.add_child(margin)
+
+	var content := VBoxContainer.new()
+	content.name = "Content"
+	content.add_theme_constant_override("separation", 8)
+	margin.add_child(content)
+
+	_siem_hawk_land_button = _create_siem_hawk_action_button("Land to Headquarters")
+	_siem_hawk_freeze_button = _create_siem_hawk_action_button("Freeze Mode")
+	content.add_child(_siem_hawk_land_button)
+	content.add_child(_siem_hawk_freeze_button)
+	$Root.add_child(_siem_hawk_action_panel)
+
+
+func _create_siem_hawk_action_button(button_text: String) -> Button:
+	var button := Button.new()
+	button.text = button_text
+	button.custom_minimum_size = Vector2(196, 42)
+	button.focus_mode = Control.FOCUS_NONE
+	button.add_theme_font_override("font", naked_power_font)
+	button.add_theme_font_size_override("font_size", 17)
+	button.add_theme_color_override("font_color", Color(0.72, 0.9, 1.0, 1.0))
+	button.add_theme_color_override("font_hover_color", Color(1.0, 0.92, 0.35, 1.0))
+	button.add_theme_color_override("font_pressed_color", Color(1.0, 1.0, 1.0, 1.0))
+	button.add_theme_color_override("font_disabled_color", Color(0.46, 0.55, 0.68, 0.8))
+	button.add_theme_color_override("font_outline_color", Color(0.02, 0.04, 0.16, 1.0))
+	button.add_theme_constant_override("outline_size", 3)
+
+	var normal_style := StyleBoxFlat.new()
+	normal_style.bg_color = Color(0.045, 0.088, 0.19, 0.96)
+	normal_style.border_width_left = 1
+	normal_style.border_width_top = 1
+	normal_style.border_width_right = 1
+	normal_style.border_width_bottom = 1
+	normal_style.border_color = Color(0.34, 0.72, 1.0, 0.86)
+	normal_style.corner_radius_top_left = 6
+	normal_style.corner_radius_top_right = 6
+	normal_style.corner_radius_bottom_right = 6
+	normal_style.corner_radius_bottom_left = 6
+
+	var hover_style := normal_style.duplicate() as StyleBoxFlat
+	hover_style.bg_color = Color(0.08, 0.15, 0.31, 0.98)
+	hover_style.border_color = Color(1.0, 0.86, 0.24, 1.0)
+
+	var disabled_style := normal_style.duplicate() as StyleBoxFlat
+	disabled_style.bg_color = Color(0.035, 0.047, 0.072, 0.88)
+	disabled_style.border_color = Color(0.28, 0.34, 0.44, 0.86)
+
+	button.add_theme_stylebox_override("normal", normal_style)
+	button.add_theme_stylebox_override("hover", hover_style)
+	button.add_theme_stylebox_override("pressed", hover_style)
+	button.add_theme_stylebox_override("disabled", disabled_style)
+	return button
+
+
 func _set_upgrade_button_copy(button: Button, tower_id: StringName) -> void:
 	var label := button.get_node_or_null(^"Content/UpgradeLabel") as Label
 	if label != null:
@@ -348,12 +450,35 @@ func _set_upgrade_button_state(
 	button.disabled = not affordable
 	cost_label.text = str(maxi(0, cost))
 	cost_label.add_theme_color_override("font_color", COST_READY_COLOR if affordable else COST_LOCKED_COLOR)
-	button.reset_size()
-	button.global_position = screen_position + UPGRADE_BUTTON_OFFSET - button.size * 0.5
+	_position_hover_control(button, screen_position, UPGRADE_BUTTON_OFFSET, UPGRADE_BUTTON_FALLBACK_OFFSET)
 
 
 func _button_has_point(button: Button, screen_position: Vector2) -> bool:
 	return button.is_visible_in_tree() and button.get_global_rect().has_point(screen_position)
+
+
+func _position_hover_control(
+	control: Control,
+	screen_position: Vector2,
+	preferred_offset: Vector2,
+	fallback_offset: Vector2
+) -> void:
+	control.reset_size()
+	var control_size := control.size
+	if control_size == Vector2.ZERO:
+		control_size = control.get_combined_minimum_size()
+		control.size = control_size
+
+	var candidate := screen_position + preferred_offset - control_size * 0.5
+	if candidate.y < VIEWPORT_EDGE_PADDING.y:
+		candidate = screen_position + fallback_offset - control_size * 0.5
+
+	var viewport_size := get_viewport().get_visible_rect().size
+	var max_position := viewport_size - control_size - VIEWPORT_EDGE_PADDING
+	control.global_position = Vector2(
+		clampf(candidate.x, VIEWPORT_EDGE_PADDING.x, maxf(VIEWPORT_EDGE_PADDING.x, max_position.x)),
+		clampf(candidate.y, VIEWPORT_EDGE_PADDING.y, maxf(VIEWPORT_EDGE_PADDING.y, max_position.y))
+	)
 
 
 func _make_popup_label(text: String, font_size: int, color: Color) -> Label:

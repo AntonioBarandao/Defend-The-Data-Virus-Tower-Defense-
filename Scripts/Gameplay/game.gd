@@ -14,12 +14,24 @@ const RedVirusScript := preload("res://Scripts/Enemies/red_virus.gd")
 const RedVirusScene := preload("res://Scenes/Enemies/RedVirus.tscn")
 const TrojanHorseScene := preload("res://Scenes/Enemies/TrojanHorse.tscn")
 const AdwareScene := preload("res://Scenes/Enemies/Adware.tscn")
+const SpywareScript := preload("res://Scripts/Enemies/spyware.gd")
+const SpywareScene := preload("res://Scenes/Enemies/Spyware.tscn")
+const ArmoredVirusScene := preload("res://Scenes/Enemies/ArmoredVirus.tscn")
+const MutantVirusScene := preload("res://Scenes/Enemies/MutantVirus.tscn")
 const CyberQuestionHUDScript := preload("res://Scripts/UI/cyber_question_hud.gd")
 const PerformanceHUDScript := preload("res://Scripts/UI/performance_hud.gd")
 const GameControlsHUDScript := preload("res://Scripts/UI/game_controls_hud.gd")
 const TowerUpgradeHUDScript := preload("res://Scripts/UI/tower_upgrade_hud.gd")
 const ProgressHUDScript := preload("res://Scripts/UI/progress_hud.gd")
 const UtilityOverlayHUDScript := preload("res://Scripts/UI/utility_overlay_hud.gd")
+const TowerShopCardScene := preload("res://Scenes/UI/TowerShopCard.tscn")
+const CyberGuardianCardResource := preload("res://Resources/TowerShopCards/CyberGuardianCard.tres")
+const LaserTurretCardResource := preload("res://Resources/TowerShopCards/LaserTurretCard.tres")
+const IDSScannerCardResource := preload("res://Resources/TowerShopCards/IDSScannerCard.tres")
+const EDRHunterCardResource := preload("res://Resources/TowerShopCards/EDRHunterCard.tres")
+const SIEMHawkCardResource := preload("res://Resources/TowerShopCards/SIEMHawkCard.tres")
+const IPSIntrusionCardResource := preload("res://Resources/TowerShopCards/IPSIntrusionCard.tres")
+const HoneypotProductionCardResource := preload("res://Resources/TowerShopCards/HoneypotProductionCard.tres")
 const CyberGuardianScene := preload("res://Scenes/Towers/CyberGuardian.tscn")
 const LaserTurretScene := preload("res://Scenes/Towers/LaserTurret.tscn")
 const IDSScannerScene := preload("res://Scenes/Towers/IDS_Scanner.tscn")
@@ -36,28 +48,95 @@ const WAVE_SPAWN_INTERVAL := 0.6
 const WAVE_MAX_COUNT := 20
 const WAVE_FIVE_CUTSCENE_WAVE := 5
 const ADWARE_WAVE := 11
-const ADWARE_POPUP_COUNT := 20
-const ADWARE_VARIATION_COUNT := 10
+const SPYWARE_TEST_WAVE := 8
+const SPYWARE_MAX_ACTIVE := 2
+const ARMORED_VIRUS_TEST_WAVE := 7
+const MUTANT_VIRUS_TEST_WAVE := 13
+const ADWARE_POPUP_COUNT := 5
+const ADWARE_VARIATION_COUNT := 25
 const ADWARE_POPUP_INTERVAL := 0.5
 const LASER_DURATION := 0.24
 const GUARDIAN_CYBERBUCK_REWARD := 5
 const LASER_TURRET_CYBERBUCK_REWARD := 5
+const CYBER_GUARDIAN_DEPLOY_COST := 0
+const LASER_TURRET_DEPLOY_COST := 450
+const EDR_HUNTER_DEPLOY_COST := 900
+const HONEYPOT_PRODUCTION_DEPLOY_COST := 1500
+const IPS_INTRUSION_DEPLOY_COST := 1700
+const SIEM_HAWK_DEPLOY_COST := 2500
+const TOWER_ID_CYBER_GUARDIAN := &"cyber_guardian"
+const TOWER_ID_LASER_TURRET := &"laser_turret"
+const TOWER_ID_IDS_SCANNER := &"ids_scanner"
+const TOWER_ID_EDR_HUNTER := &"edr_hunter"
+const TOWER_ID_SIEM_HAWK := &"siem_hawk"
+const TOWER_ID_IPS_INTRUSION := &"ips_intrusion"
+const TOWER_ID_HONEYPOT_PRODUCTION := &"honeypot_production"
+const DEFAULT_TOWER_CARD_RESOURCES := {
+	TOWER_ID_CYBER_GUARDIAN: CyberGuardianCardResource,
+	TOWER_ID_LASER_TURRET: LaserTurretCardResource,
+	TOWER_ID_IDS_SCANNER: IDSScannerCardResource,
+	TOWER_ID_EDR_HUNTER: EDRHunterCardResource,
+	TOWER_ID_SIEM_HAWK: SIEMHawkCardResource,
+	TOWER_ID_IPS_INTRUSION: IPSIntrusionCardResource,
+	TOWER_ID_HONEYPOT_PRODUCTION: HoneypotProductionCardResource
+}
+const GUARDIAN_MODE_DEFENDER := &"defender"
 const GUARDIAN_MODE_SIGNAL_BOOST := &"signal_boost"
+const GUARDIAN_MODE_FIREWALL := &"firewall"
+const SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL := 3
+const SIGNAL_BOOST_RANGE_BASE_BONUS := 0.10
+const SIGNAL_BOOST_COOLDOWN_BASE_REDUCTION := 0.10
+const SIGNAL_BOOST_HAWK_SPEED_BASE_BONUS := 0.20
+const SIGNAL_BOOST_STEP_BONUS := 0.05
+const SIGNAL_BOOST_STEP_LEVELS := [4, 6, 7, 9, 10]
+const FIREWALL_UNLOCK_KNOWLEDGE_LEVEL := 5
+const FIREWALL_BURN_DURATION_SECONDS := 5.0
+const FIREWALL_BALANCE_BY_MIN_KNOWLEDGE_LEVEL := [
+	{
+		"level": 5,
+		"hit_damage": 1,
+		"burn_damage": 1,
+		"burn_tick_seconds": 1.0
+	},
+	{
+		"level": 6,
+		"hit_damage": 2,
+		"burn_damage": 1,
+		"burn_tick_seconds": 0.5
+	},
+	{
+		"level": 8,
+		"hit_damage": 4,
+		"burn_damage": 5,
+		"burn_tick_seconds": 1.0
+	},
+	{
+		"level": 10,
+		"hit_damage": 20,
+		"burn_damage": 10,
+		"burn_tick_seconds": 1.0
+	}
+]
 const DEFAULT_VIRUS_SPAWN_SCALE := Vector2(0.2, 0.2)
+const DEFAULT_EVOLVED_VIRUS_SPAWN_SCALE := Vector2(0.11, 0.11)
 const DEFAULT_TROJAN_HORSE_SPAWN_SCALE := Vector2(0.4, 0.4)
-const STORE_TOGGLE_SIZE := Vector2(132, 46)
+const DEFAULT_ADWARE_SPAWN_SCALE := Vector2(0.18, 0.18)
+const STORE_TOGGLE_ICON := preload("res://assets/UI/TowerStoreArrowHex.svg")
+const STORE_TOGGLE_SIZE := Vector2(64, 80)
+const STORE_TOGGLE_SCREEN_INSET := 8.0
 const STORE_PANEL_PADDING := Vector2(28, 28)
 const STORE_PANEL_EXTRA_BOTTOM := 34.0
-const STORE_PANEL_MIN_WIDTH := 376.0
+const STORE_PANEL_MIN_WIDTH := 430.0
 const STORE_PANEL_SLIDE_DISTANCE := 360.0
 const STORE_PANEL_ANIM_SECONDS := 0.22
-const STORE_TOWER_ICON_X_OFFSET := 92.0
-const STORE_TOWER_LABEL_X_OFFSET := 258.0
-const STORE_TOWER_LABEL_SIZE := Vector2(188, 36)
-const STORE_TOWER_ROW_TOP_OFFSET := 132.0
-const STORE_TOWER_ROW_GAP := 104.0
+const STORE_CARD_COLUMNS := 2
+const STORE_CARD_SIZE := Vector2(158, 166)
+const STORE_CARD_GAP := Vector2(18, 18)
+const STORE_CARD_GRID_TOP_OFFSET := 122.0
 const STORE_TOWER_DISPLAY_SCALE_MULTIPLIER := 0.72
-const STORE_TOGGLE_BELOW_LAST_TOWER_OFFSET := 58.0
+const STORE_PANEL_Z_INDEX := 205
+const STORE_LABEL_Z_INDEX := 210
+const STORE_DRAG_START_THRESHOLD := 12.0
 
 @export var guardian_path: NodePath = ^"Sprites/Cybersec Guardian"
 @export var laser_turret_path: NodePath = ^"Sprites/Laser Turret"
@@ -79,8 +158,22 @@ const STORE_TOGGLE_BELOW_LAST_TOWER_OFFSET := 58.0
 @export var wave_label_path: NodePath = ^"WavesLabel"
 @export var text_cutscene_hud_path: NodePath = ^"TextCutsceneHUD"
 @export var cutscene_skip_hud_path: NodePath = ^"CutsceneSkipHUD"
+@export var cutscene_demo_menu_hud_path: NodePath = ^"CutsceneDemoMenuHUD"
 @export var tower_store_panel_path: NodePath = ^"TestDrag"
 @export var tower_store_background_path: NodePath = ^"TestDrag/TowerTrayBackground"
+@export var tower_store_title_label_path: NodePath = ^"TestDrag/TowerShopTitle"
+@export var tower_store_hint_label_path: NodePath = ^"TestDrag/TowerShopHint"
+@export var tower_store_toggle_button_path: NodePath = ^"TestDrag/TowerStoreToggleButton"
+@export_group("Tower Store Cards")
+@export var cyber_guardian_card_resource: TowerShopCardResource = CyberGuardianCardResource
+@export var laser_turret_card_resource: TowerShopCardResource = LaserTurretCardResource
+@export var ids_scanner_card_resource: TowerShopCardResource = IDSScannerCardResource
+@export var edr_hunter_card_resource: TowerShopCardResource = EDRHunterCardResource
+@export var siem_hawk_card_resource: TowerShopCardResource = SIEMHawkCardResource
+@export var ips_intrusion_card_resource: TowerShopCardResource = IPSIntrusionCardResource
+@export var honeypot_production_card_resource: TowerShopCardResource = HoneypotProductionCardResource
+@export var tower_store_card_resources: Array[Resource] = []
+@export_group("")
 @export var demo_spawn_buttons_ignore_question_lock := false
 @export_group("Path Guide")
 @export var show_path_guide := true
@@ -126,6 +219,7 @@ var _utility_overlay_hud: UtilityOverlayHUDScript
 var _wave_label: Label
 var _text_cutscene_hud: Node
 var _cutscene_skip_hud: Node
+var _cutscene_demo_menu_hud: Node
 var _path_guide_container: Node2D
 var _tower_store_panel: Control
 var _tower_store_background: ColorRect
@@ -133,12 +227,26 @@ var _tower_store_toggle_button: Button
 var _tower_store_canvas: CanvasLayer
 var _tower_store_title_label: Label
 var _tower_store_hint_label: Label
-var _tower_store_item_labels: Dictionary = {}
+var _tower_store_item_cards: Dictionary = {}
+var _tower_store_card_base_rects: Dictionary = {}
+var _tower_store_use_authored_card_layout := false
+var _tower_store_background_authored := false
+var _tower_store_title_label_authored := false
+var _tower_store_hint_label_authored := false
+var _tower_store_toggle_button_authored := false
+var _tower_store_toggle_open_position := Vector2.ZERO
+var _tower_store_toggle_open_position_cached := false
 var _tower_store_home_positions: Dictionary = {}
 var _tower_store_placed_scales: Dictionary = {}
 var _tower_store_base_rect := Rect2()
 var _tower_store_open := true
 var _tower_store_tween: Tween
+var _wave_label_store_rest_position := Vector2.ZERO
+var _wave_label_store_position_cached := false
+var _pending_store_drag_tower: Node2D
+var _pending_store_drag_start_position := Vector2.ZERO
+var _restore_tower_store_after_upgrade_panel := false
+var _tower_store_restore_after_upgrade_waiting := false
 var _active_viruses: Array[PathFollow2D] = []
 var _current_wave := 0
 var _wave_in_progress := false
@@ -185,12 +293,21 @@ func _ready() -> void:
 	_wave_label = get_node_or_null(wave_label_path) as Label
 	_text_cutscene_hud = get_node_or_null(text_cutscene_hud_path)
 	_cutscene_skip_hud = get_node_or_null(cutscene_skip_hud_path)
+	_cutscene_demo_menu_hud = get_node_or_null(cutscene_demo_menu_hud_path)
 	_tower_store_panel = get_node_or_null(tower_store_panel_path) as Control
 	_tower_store_background = get_node_or_null(tower_store_background_path) as ColorRect
+	_tower_store_title_label = get_node_or_null(tower_store_title_label_path) as Label
+	_tower_store_hint_label = get_node_or_null(tower_store_hint_label_path) as Label
+	_tower_store_toggle_button = get_node_or_null(tower_store_toggle_button_path) as Button
+	_tower_store_background_authored = _tower_store_background != null
+	_tower_store_title_label_authored = _tower_store_title_label != null
+	_tower_store_hint_label_authored = _tower_store_hint_label != null
+	_tower_store_toggle_button_authored = _tower_store_toggle_button != null
 	if _virus_spawn == null:
 		_virus_spawn = get_node_or_null(^"VirusElements/Spawn2D") as Node2D
 
 	_setup_tower_store()
+	_cache_store_companion_ui_positions()
 
 	if _guardian_store == null:
 		push_warning("Cybersec Guardian drag target was not found.")
@@ -216,6 +333,7 @@ func _ready() -> void:
 		_question_hud.cyberbucks_changed.connect(Callable(self, "_on_cyberbucks_changed"))
 		_on_cyberbucks_changed(_question_hud.get_cyberbucks())
 		_question_hud.question_solved.connect(Callable(self, "_on_wave_question_solved"))
+		_question_hud.phishing_decoy_selected.connect(Callable(self, "_on_phishing_decoy_selected"))
 	if _performance_hud == null:
 		push_warning("PerformanceHUD was not found.")
 	if _game_controls_hud == null:
@@ -239,7 +357,7 @@ func _ready() -> void:
 		_tower_upgrade_hud.ips_upgrade_pressed.connect(Callable(self, "_upgrade_ips_intrusion"))
 		_tower_upgrade_hud.honeypot_upgrade_pressed.connect(Callable(self, "_upgrade_honeypot_production"))
 	if _guardian != null:
-		_guardian.mode_changed.connect(Callable(self, "_on_guardian_mode_changed"))
+		_connect_placed_guardian(_guardian)
 	if _siem_hawk != null:
 		_siem_hawk.dispatch_mode_changed.connect(Callable(self, "_on_siem_hawk_dispatch_mode_changed"))
 		_siem_hawk.knowledge_extracted.connect(Callable(self, "_on_siem_hawk_knowledge_extracted"))
@@ -257,6 +375,8 @@ func _ready() -> void:
 		_utility_overlay_hud.scanner_upgrade_requested.connect(Callable(self, "_upgrade_ids_scanner"))
 		_utility_overlay_hud.edr_upgrade_requested.connect(Callable(self, "_upgrade_edr_hunter"))
 		_utility_overlay_hud.siem_upgrade_requested.connect(Callable(self, "_upgrade_siem_hawk"))
+		_utility_overlay_hud.siem_hawk_freeze_requested.connect(Callable(self, "_toggle_siem_hawk_dispatch"))
+		_utility_overlay_hud.siem_hawk_land_requested.connect(Callable(self, "_land_siem_hawk_to_headquarters"))
 		_utility_overlay_hud.ips_upgrade_requested.connect(Callable(self, "_upgrade_ips_intrusion"))
 		_utility_overlay_hud.honeypot_upgrade_requested.connect(Callable(self, "_upgrade_honeypot_production"))
 
@@ -321,7 +441,31 @@ func _input(event: InputEvent) -> void:
 
 		var pointer_position := _screen_to_canvas_position(mouse_button.position)
 		if mouse_button.pressed:
+			if _handle_tower_upgrade_sidebar_modal_press(mouse_button.position):
+				return
+
+			if _tower_store_toggle_has_point(mouse_button.position):
+				return
+
+			if _game_controls_have_point(mouse_button.position):
+				return
+
+			if _try_handle_store_card_information_press(pointer_position):
+				get_viewport().set_input_as_handled()
+				return
+
+			if _try_begin_any_store_tower_drag(pointer_position):
+				get_viewport().set_input_as_handled()
+				return
+
+			if _tower_store_blocks_point(pointer_position):
+				get_viewport().set_input_as_handled()
+				return
+
 			if _demo_upgrade_button_has_point(mouse_button.position):
+				return
+
+			if _handle_adware_popup_press(pointer_position):
 				return
 
 			if _try_spawn_virus_from_press(pointer_position):
@@ -349,72 +493,100 @@ func _input(event: InputEvent) -> void:
 			if _find_tower_at_point(_guardians, pointer_position) != null:
 				_handle_placed_tower_press(pointer_position, mouse_button.position)
 				return
-
-			if _tower_store_open and _ips_intrusion_store != null and not _ips_intrusion_store.is_placed() and _ips_intrusion_store.try_start_drag(pointer_position):
-				return
-
-			if _tower_store_open and _honeypot_production_store != null and not _honeypot_production_store.is_placed() and _honeypot_production_store.try_start_drag(pointer_position):
-				return
-
-			if _tower_store_open and _edr_hunter_store != null and not _edr_hunter_store.is_placed() and _edr_hunter_store.try_start_drag(pointer_position):
-				return
-
-			if _tower_store_open and _siem_hawk_store != null and not _siem_hawk_store.is_placed() and _siem_hawk_store.try_start_drag(pointer_position):
-				return
-
-			if _guardian_store == null:
-				return
-
-			if _guardian_store.is_placed():
-				_handle_placed_tower_press(pointer_position, mouse_button.position)
-			elif _tower_store_open:
-				_guardian_store.try_start_drag(pointer_position)
+		elif _pending_store_drag_tower != null:
+			_clear_pending_store_tower_drag()
+			get_viewport().set_input_as_handled()
+			return
 		elif _demo_upgrade_button_has_point(mouse_button.position):
 			return
-		elif _siem_hawk_store != null and _siem_hawk_store.is_dragging():
-			_siem_hawk_store.finish_drag()
-		elif _honeypot_production_store != null and _honeypot_production_store.is_dragging():
-			_honeypot_production_store.finish_drag()
-		elif _ips_intrusion_store != null and _ips_intrusion_store.is_dragging():
-			_ips_intrusion_store.finish_drag()
-		elif _edr_hunter_store != null and _edr_hunter_store.is_dragging():
-			_edr_hunter_store.finish_drag()
-		elif _guardian_store != null and _guardian_store.is_dragging():
-			if _guardian_store.finish_drag():
+		elif _is_store_tower_dragging(_siem_hawk_store):
+			_finish_store_tower_drag(_siem_hawk_store)
+		elif _is_store_tower_dragging(_honeypot_production_store):
+			_finish_store_tower_drag(_honeypot_production_store)
+		elif _is_store_tower_dragging(_ips_intrusion_store):
+			_finish_store_tower_drag(_ips_intrusion_store)
+		elif _is_store_tower_dragging(_edr_hunter_store):
+			_finish_store_tower_drag(_edr_hunter_store)
+		elif _is_store_tower_dragging(_ids_scanner_store):
+			_finish_store_tower_drag(_ids_scanner_store)
+		elif _is_store_tower_dragging(_laser_turret_store):
+			_finish_store_tower_drag(_laser_turret_store)
+		elif _is_store_tower_dragging(_guardian_store):
+			if _finish_store_tower_drag(_guardian_store):
 				_apply_guardian_signal_boost_state()
 				_sync_guardian_upgrade_panel()
 		return
 
-	if _edr_hunter_store != null and not _edr_hunter_store.is_placed() and event is InputEventMouseMotion and _edr_hunter_store.is_dragging():
+	if event is InputEventMouseMotion:
+		var pending_mouse_motion := event as InputEventMouseMotion
+		if _update_pending_store_tower_drag(_screen_to_canvas_position(pending_mouse_motion.position)):
+			get_viewport().set_input_as_handled()
+			return
+
+	if _is_store_tower_dragging(_edr_hunter_store) and event is InputEventMouseMotion:
 		var edr_mouse_motion := event as InputEventMouseMotion
-		_edr_hunter_store.update_drag(_screen_to_canvas_position(edr_mouse_motion.position))
+		_update_store_tower_drag(_edr_hunter_store, _screen_to_canvas_position(edr_mouse_motion.position))
 		return
 
-	if _siem_hawk_store != null and not _siem_hawk_store.is_placed() and event is InputEventMouseMotion and _siem_hawk_store.is_dragging():
+	if _is_store_tower_dragging(_siem_hawk_store) and event is InputEventMouseMotion:
 		var siem_mouse_motion := event as InputEventMouseMotion
-		_siem_hawk_store.update_drag(_screen_to_canvas_position(siem_mouse_motion.position))
+		_update_store_tower_drag(_siem_hawk_store, _screen_to_canvas_position(siem_mouse_motion.position))
 		return
 
-	if _ips_intrusion_store != null and not _ips_intrusion_store.is_placed() and event is InputEventMouseMotion and _ips_intrusion_store.is_dragging():
+	if _is_store_tower_dragging(_ips_intrusion_store) and event is InputEventMouseMotion:
 		var ips_mouse_motion := event as InputEventMouseMotion
-		_ips_intrusion_store.update_drag(_screen_to_canvas_position(ips_mouse_motion.position))
+		_update_store_tower_drag(_ips_intrusion_store, _screen_to_canvas_position(ips_mouse_motion.position))
 		return
 
-	if _honeypot_production_store != null and not _honeypot_production_store.is_placed() and event is InputEventMouseMotion and _honeypot_production_store.is_dragging():
+	if _is_store_tower_dragging(_honeypot_production_store) and event is InputEventMouseMotion:
 		var honeypot_mouse_motion := event as InputEventMouseMotion
-		_honeypot_production_store.update_drag(_screen_to_canvas_position(honeypot_mouse_motion.position))
+		_update_store_tower_drag(_honeypot_production_store, _screen_to_canvas_position(honeypot_mouse_motion.position))
 		return
 
-	if _guardian_store != null and not _guardian_store.is_placed() and event is InputEventMouseMotion and _guardian_store.is_dragging():
+	if _is_store_tower_dragging(_ids_scanner_store) and event is InputEventMouseMotion:
+		var ids_mouse_motion := event as InputEventMouseMotion
+		_update_store_tower_drag(_ids_scanner_store, _screen_to_canvas_position(ids_mouse_motion.position))
+		return
+
+	if _is_store_tower_dragging(_laser_turret_store) and event is InputEventMouseMotion:
+		var laser_mouse_motion := event as InputEventMouseMotion
+		_update_store_tower_drag(_laser_turret_store, _screen_to_canvas_position(laser_mouse_motion.position))
+		return
+
+	if _is_store_tower_dragging(_guardian_store) and event is InputEventMouseMotion:
 		var mouse_motion := event as InputEventMouseMotion
-		_guardian_store.update_drag(_screen_to_canvas_position(mouse_motion.position))
+		_update_store_tower_drag(_guardian_store, _screen_to_canvas_position(mouse_motion.position))
 		return
 
 	if event is InputEventScreenTouch:
 		var screen_touch := event as InputEventScreenTouch
 		var pointer_position := _screen_to_canvas_position(screen_touch.position)
 		if screen_touch.pressed:
+			if _handle_tower_upgrade_sidebar_modal_press(screen_touch.position):
+				return
+
+			if _tower_store_toggle_has_point(screen_touch.position):
+				return
+
+			if _game_controls_have_point(screen_touch.position):
+				return
+
+			if _try_handle_store_card_information_press(pointer_position):
+				get_viewport().set_input_as_handled()
+				return
+
+			if _try_begin_any_store_tower_drag(pointer_position):
+				get_viewport().set_input_as_handled()
+				return
+
+			if _tower_store_blocks_point(pointer_position):
+				get_viewport().set_input_as_handled()
+				return
+
 			if _demo_upgrade_button_has_point(screen_touch.position):
+				return
+
+			if _handle_adware_popup_press(pointer_position):
 				return
 
 			if _try_spawn_virus_from_press(pointer_position):
@@ -442,81 +614,91 @@ func _input(event: InputEvent) -> void:
 			if _find_tower_at_point(_guardians, pointer_position) != null:
 				_handle_placed_tower_press(pointer_position, screen_touch.position)
 				return
-
-			if _tower_store_open and _ips_intrusion_store != null and not _ips_intrusion_store.is_placed() and _ips_intrusion_store.try_start_drag(pointer_position):
-				return
-
-			if _tower_store_open and _honeypot_production_store != null and not _honeypot_production_store.is_placed() and _honeypot_production_store.try_start_drag(pointer_position):
-				return
-
-			if _tower_store_open and _edr_hunter_store != null and not _edr_hunter_store.is_placed() and _edr_hunter_store.try_start_drag(pointer_position):
-				return
-
-			if _tower_store_open and _siem_hawk_store != null and not _siem_hawk_store.is_placed() and _siem_hawk_store.try_start_drag(pointer_position):
-				return
-
-			if _guardian_store == null:
-				return
-
-			if _guardian_store.is_placed():
-				_handle_placed_tower_press(pointer_position, screen_touch.position)
-			elif _tower_store_open:
-				_guardian_store.try_start_drag(pointer_position)
+		elif _pending_store_drag_tower != null:
+			_clear_pending_store_tower_drag()
+			get_viewport().set_input_as_handled()
+			return
 		elif _demo_upgrade_button_has_point(screen_touch.position):
 			return
-		elif _siem_hawk_store != null and _siem_hawk_store.is_dragging():
-			_siem_hawk_store.finish_drag()
-		elif _honeypot_production_store != null and _honeypot_production_store.is_dragging():
-			_honeypot_production_store.finish_drag()
-		elif _ips_intrusion_store != null and _ips_intrusion_store.is_dragging():
-			_ips_intrusion_store.finish_drag()
-		elif _edr_hunter_store != null and _edr_hunter_store.is_dragging():
-			_edr_hunter_store.finish_drag()
-		elif _guardian_store != null and _guardian_store.is_dragging():
-			if _guardian_store.finish_drag():
+		elif _is_store_tower_dragging(_siem_hawk_store):
+			_finish_store_tower_drag(_siem_hawk_store)
+		elif _is_store_tower_dragging(_honeypot_production_store):
+			_finish_store_tower_drag(_honeypot_production_store)
+		elif _is_store_tower_dragging(_ips_intrusion_store):
+			_finish_store_tower_drag(_ips_intrusion_store)
+		elif _is_store_tower_dragging(_edr_hunter_store):
+			_finish_store_tower_drag(_edr_hunter_store)
+		elif _is_store_tower_dragging(_ids_scanner_store):
+			_finish_store_tower_drag(_ids_scanner_store)
+		elif _is_store_tower_dragging(_laser_turret_store):
+			_finish_store_tower_drag(_laser_turret_store)
+		elif _is_store_tower_dragging(_guardian_store):
+			if _finish_store_tower_drag(_guardian_store):
 				_apply_guardian_signal_boost_state()
 				_sync_guardian_upgrade_panel()
 		return
 
-	if _edr_hunter_store != null and not _edr_hunter_store.is_placed() and event is InputEventScreenDrag and _edr_hunter_store.is_dragging():
+	if event is InputEventScreenDrag:
+		var pending_screen_drag := event as InputEventScreenDrag
+		if _update_pending_store_tower_drag(_screen_to_canvas_position(pending_screen_drag.position)):
+			get_viewport().set_input_as_handled()
+			return
+
+	if _is_store_tower_dragging(_edr_hunter_store) and event is InputEventScreenDrag:
 		var edr_screen_drag := event as InputEventScreenDrag
-		_edr_hunter_store.update_drag(_screen_to_canvas_position(edr_screen_drag.position))
+		_update_store_tower_drag(_edr_hunter_store, _screen_to_canvas_position(edr_screen_drag.position))
 		return
 
-	if _siem_hawk_store != null and not _siem_hawk_store.is_placed() and event is InputEventScreenDrag and _siem_hawk_store.is_dragging():
+	if _is_store_tower_dragging(_siem_hawk_store) and event is InputEventScreenDrag:
 		var siem_screen_drag := event as InputEventScreenDrag
-		_siem_hawk_store.update_drag(_screen_to_canvas_position(siem_screen_drag.position))
+		_update_store_tower_drag(_siem_hawk_store, _screen_to_canvas_position(siem_screen_drag.position))
 		return
 
-	if _ips_intrusion_store != null and not _ips_intrusion_store.is_placed() and event is InputEventScreenDrag and _ips_intrusion_store.is_dragging():
+	if _is_store_tower_dragging(_ips_intrusion_store) and event is InputEventScreenDrag:
 		var ips_screen_drag := event as InputEventScreenDrag
-		_ips_intrusion_store.update_drag(_screen_to_canvas_position(ips_screen_drag.position))
+		_update_store_tower_drag(_ips_intrusion_store, _screen_to_canvas_position(ips_screen_drag.position))
 		return
 
-	if _honeypot_production_store != null and not _honeypot_production_store.is_placed() and event is InputEventScreenDrag and _honeypot_production_store.is_dragging():
+	if _is_store_tower_dragging(_honeypot_production_store) and event is InputEventScreenDrag:
 		var honeypot_screen_drag := event as InputEventScreenDrag
-		_honeypot_production_store.update_drag(_screen_to_canvas_position(honeypot_screen_drag.position))
+		_update_store_tower_drag(_honeypot_production_store, _screen_to_canvas_position(honeypot_screen_drag.position))
 		return
 
-	if _guardian_store != null and not _guardian_store.is_placed() and event is InputEventScreenDrag and _guardian_store.is_dragging():
+	if _is_store_tower_dragging(_ids_scanner_store) and event is InputEventScreenDrag:
+		var ids_screen_drag := event as InputEventScreenDrag
+		_update_store_tower_drag(_ids_scanner_store, _screen_to_canvas_position(ids_screen_drag.position))
+		return
+
+	if _is_store_tower_dragging(_laser_turret_store) and event is InputEventScreenDrag:
+		var laser_screen_drag := event as InputEventScreenDrag
+		_update_store_tower_drag(_laser_turret_store, _screen_to_canvas_position(laser_screen_drag.position))
+		return
+
+	if _is_store_tower_dragging(_guardian_store) and event is InputEventScreenDrag:
 		var screen_drag := event as InputEventScreenDrag
-		_guardian_store.update_drag(_screen_to_canvas_position(screen_drag.position))
+		_update_store_tower_drag(_guardian_store, _screen_to_canvas_position(screen_drag.position))
 
 
 func _process(delta: float) -> void:
 	if _is_act_input_locked():
 		if _tower_store_canvas != null:
 			_tower_store_canvas.hide()
+		if _tower_store_toggle_button_authored and _tower_store_toggle_button != null:
+			_tower_store_toggle_button.hide()
 		_update_fps_timer(delta)
 		return
 
 	if _tower_store_canvas != null:
 		_tower_store_canvas.show()
+	if _tower_store_toggle_button_authored and _tower_store_toggle_button != null:
+		_tower_store_toggle_button.show()
 	if _tower_store_tween == null:
 		_sync_tower_store_items(false)
+		_position_tower_store_toggle_button(0.0 if _tower_store_open else STORE_PANEL_SLIDE_DISTANCE)
 	_update_wave_spawner(delta)
 	_update_adware_spawner(delta)
 	_update_active_viruses(delta)
+	_update_spyware_invasions(delta)
 	_update_support_tower_scans(delta)
 	_update_siem_hawk_knowledge(delta)
 	_update_ips_intrusion_spikes(delta)
@@ -569,44 +751,92 @@ func _setup_tower_store() -> void:
 		add_child(_tower_store_panel)
 
 	_hide_legacy_store_title()
-	_layout_tower_store_items(store_items)
 	_style_tower_store_panel(store_items)
-	_create_tower_store_labels(store_items)
+	_create_tower_store_cards(store_items)
+	_layout_tower_store_items(store_items)
 	_create_tower_store_toggle_button()
 	_sync_tower_store_items(true)
 
 
 func _get_tower_store_items() -> Array[Dictionary]:
 	var items: Array[Dictionary] = []
-	_add_tower_store_item(items, _guardian_store, "Cyber Guardian")
-	_add_tower_store_item(items, _laser_turret_store, "Laser Turret")
-	_add_tower_store_item(items, _ids_scanner_store, "IDS Scanner")
-	_add_tower_store_item(items, _edr_hunter_store, "EDR Hunter")
-	_add_tower_store_item(items, _siem_hawk_store, "SIEM Hawk")
-	_add_tower_store_item(items, _ips_intrusion_store, "IPS Spike")
-	_add_tower_store_item(items, _honeypot_production_store, "Honeypot")
+	_add_tower_store_item(items, _guardian_store, TOWER_ID_CYBER_GUARDIAN, "Cyber Guardian")
+	_add_tower_store_item(items, _laser_turret_store, TOWER_ID_LASER_TURRET, "Laser Turret")
+	_add_tower_store_item(items, _ids_scanner_store, TOWER_ID_IDS_SCANNER, "IDS Scanner")
+	_add_tower_store_item(items, _edr_hunter_store, TOWER_ID_EDR_HUNTER, "EDR Hunter")
+	_add_tower_store_item(items, _siem_hawk_store, TOWER_ID_SIEM_HAWK, "SIEM Hawk")
+	_add_tower_store_item(items, _ips_intrusion_store, TOWER_ID_IPS_INTRUSION, "IPS Spike")
+	_add_tower_store_item(items, _honeypot_production_store, TOWER_ID_HONEYPOT_PRODUCTION, "Honeypot")
 	return items
 
 
-func _add_tower_store_item(items: Array[Dictionary], tower: Node2D, label_text: String) -> void:
+func _add_tower_store_item(items: Array[Dictionary], tower: Node2D, tower_id: StringName, label_text: String) -> void:
 	if tower == null:
 		return
 
+	var card_resource := _get_tower_card_resource_for_id(tower_id)
 	items.append({
 		"tower": tower,
-		"label": label_text
+		"tower_id": tower_id,
+		"label": card_resource.display_name if card_resource != null else label_text,
+		"resource": card_resource
 	})
+
+
+func _get_tower_card_resource_for_id(tower_id: StringName) -> TowerShopCardResource:
+	var configured_resource := _get_configured_tower_card_resource_for_id(tower_id)
+	if configured_resource != null:
+		return configured_resource
+
+	for resource in tower_store_card_resources:
+		var card_resource := resource as TowerShopCardResource
+		if card_resource != null and card_resource.tower_id == tower_id:
+			return card_resource
+
+	return DEFAULT_TOWER_CARD_RESOURCES.get(tower_id) as TowerShopCardResource
+
+
+func _get_configured_tower_card_resource_for_id(tower_id: StringName) -> TowerShopCardResource:
+	match tower_id:
+		TOWER_ID_CYBER_GUARDIAN:
+			return cyber_guardian_card_resource
+		TOWER_ID_LASER_TURRET:
+			return laser_turret_card_resource
+		TOWER_ID_IDS_SCANNER:
+			return ids_scanner_card_resource
+		TOWER_ID_EDR_HUNTER:
+			return edr_hunter_card_resource
+		TOWER_ID_SIEM_HAWK:
+			return siem_hawk_card_resource
+		TOWER_ID_IPS_INTRUSION:
+			return ips_intrusion_card_resource
+		TOWER_ID_HONEYPOT_PRODUCTION:
+			return honeypot_production_card_resource
+		_:
+			return null
 
 
 func _layout_tower_store_items(store_items: Array[Dictionary]) -> void:
 	var store_rect := _get_store_panel_global_rect(store_items)
-	var icon_x := store_rect.position.x + STORE_TOWER_ICON_X_OFFSET
-	var row_top := store_rect.position.y + STORE_TOWER_ROW_TOP_OFFSET
-	var row_gap := STORE_TOWER_ROW_GAP
+	var grid_width := STORE_CARD_SIZE.x * float(STORE_CARD_COLUMNS) + STORE_CARD_GAP.x * float(STORE_CARD_COLUMNS - 1)
+	var grid_left := store_rect.position.x + (store_rect.size.x - grid_width) * 0.5
+	var grid_top := store_rect.position.y + STORE_CARD_GRID_TOP_OFFSET
 
 	for index in range(store_items.size()):
 		var tower := store_items[index]["tower"] as Node2D
-		var home_position := Vector2(icon_x, row_top + row_gap * float(index))
+		var card := _tower_store_item_cards.get(tower) as Control
+		var home_position := Vector2.ZERO
+		if card != null:
+			home_position = card.get_global_rect().get_center()
+		else:
+			var column := index % STORE_CARD_COLUMNS
+			var row := index / STORE_CARD_COLUMNS
+			var card_top_left := Vector2(
+				grid_left + float(column) * (STORE_CARD_SIZE.x + STORE_CARD_GAP.x),
+				grid_top + float(row) * (STORE_CARD_SIZE.y + STORE_CARD_GAP.y)
+			)
+			home_position = card_top_left + STORE_CARD_SIZE * 0.5
+
 		_cache_tower_placed_scale(tower)
 		_apply_store_display_scale(tower)
 		tower.global_position = home_position
@@ -621,20 +851,53 @@ func _style_tower_store_panel(store_items: Array[Dictionary]) -> void:
 		_tower_store_background = ColorRect.new()
 		_tower_store_background.name = "TowerTrayBackground"
 		_tower_store_panel.add_child(_tower_store_background)
+		_tower_store_background.global_position = store_rect.position
+		_tower_store_background.size = store_rect.size
+		_tower_store_background.color = Color(0.012, 0.021, 0.041, 0.86)
+		_tower_store_background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_tower_store_background.z_as_relative = false
+		_tower_store_background.z_index = STORE_PANEL_Z_INDEX
+		return
 
-	_tower_store_background.global_position = store_rect.position
-	_tower_store_background.size = store_rect.size
-	_tower_store_background.color = Color(0.012, 0.021, 0.041, 0.86)
-	_tower_store_background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if not _tower_store_background_authored:
+		_tower_store_background.global_position = store_rect.position
+		_tower_store_background.size = store_rect.size
+		_tower_store_background.color = Color(0.012, 0.021, 0.041, 0.86)
+		_tower_store_background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_tower_store_background.z_as_relative = false
+		_tower_store_background.z_index = STORE_PANEL_Z_INDEX
 
 
 func _get_store_panel_global_rect(store_items: Array[Dictionary]) -> Rect2:
 	if _tower_store_background != null:
 		var existing_rect := _tower_store_background.get_global_rect()
 		if existing_rect.size.x > 64.0 and existing_rect.size.y > 64.0:
-			var width := maxf(existing_rect.size.x, STORE_PANEL_MIN_WIDTH)
-			var height := maxf(existing_rect.size.y, 884.0)
-			return Rect2(Vector2(existing_rect.end.x - width, existing_rect.position.y), Vector2(width, height))
+			return existing_rect
+
+	var authored_card_rect := Rect2()
+	var found_authored_card := false
+	if _tower_store_panel != null:
+		for child in _tower_store_panel.get_children():
+			var card := child as TowerShopCard
+			if card == null:
+				continue
+
+			var card_rect := card.get_global_rect()
+			if card_rect.size == Vector2.ZERO:
+				continue
+			if not found_authored_card:
+				authored_card_rect = card_rect
+				found_authored_card = true
+			else:
+				authored_card_rect = authored_card_rect.merge(card_rect)
+
+	if found_authored_card:
+		return authored_card_rect.grow_individual(
+			STORE_PANEL_PADDING.x,
+			STORE_PANEL_PADDING.y,
+			STORE_PANEL_PADDING.x,
+			STORE_PANEL_PADDING.y
+		)
 
 	var item_rect := Rect2()
 	var found_item := false
@@ -657,22 +920,97 @@ func _get_store_panel_global_rect(store_items: Array[Dictionary]) -> Rect2:
 	return Rect2(Vector2(1528, 108), Vector2(392, 884))
 
 
-func _create_tower_store_labels(store_items: Array[Dictionary]) -> void:
-	_tower_store_title_label = _make_store_label("TOWER SHOP", 28, Color(0.74, 0.93, 1.0, 1.0))
-	_tower_store_hint_label = _make_store_label("Drag a tower onto a platform", 18, Color(0.52, 0.68, 0.82, 1.0))
-	add_child(_tower_store_title_label)
-	add_child(_tower_store_hint_label)
+func _create_tower_store_cards(store_items: Array[Dictionary]) -> void:
+	if _tower_store_title_label == null:
+		_tower_store_title_label = _make_store_label("TOWER SHOP", 28, Color(0.74, 0.93, 1.0, 1.0))
+		add_child(_tower_store_title_label)
+	if _tower_store_hint_label == null:
+		_tower_store_hint_label = _make_store_label("Drag a tower onto a platform", 18, Color(0.52, 0.68, 0.82, 1.0))
+		add_child(_tower_store_hint_label)
 
 	for item in store_items:
 		var tower := item["tower"] as Node2D
-		var label := _make_store_label(String(item["label"]), 15, Color(0.86, 0.94, 1.0, 1.0))
-		label.autowrap_mode = TextServer.AUTOWRAP_OFF
-		label.clip_text = true
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		add_child(label)
-		_tower_store_item_labels[tower] = label
+		var tower_id := item["tower_id"] as StringName
+		var card_resource := item.get("resource") as TowerShopCardResource
+		var card := _get_or_create_tower_store_card(tower, tower_id, String(item["label"]))
+		if card_resource != null:
+			card.card_resource = card_resource
+		card.configure(String(item["label"]), _get_default_tower_deploy_cost(tower))
+		_cache_tower_store_card_layout(card)
+		_tower_store_item_cards[tower] = card
 
-	_position_tower_store_labels()
+	_position_tower_store_cards()
+
+
+func _get_or_create_tower_store_card(tower: Node2D, tower_id: StringName, label_text: String) -> TowerShopCard:
+	var resource_matched_card := _find_authored_tower_store_card_for_id(tower_id)
+	if resource_matched_card != null:
+		_prepare_authored_tower_store_card(resource_matched_card)
+		return resource_matched_card
+
+	var card_name := _get_tower_store_card_name(tower, label_text)
+	var existing_card := _tower_store_panel.get_node_or_null(NodePath(card_name)) as TowerShopCard
+	if existing_card != null:
+		_prepare_authored_tower_store_card(existing_card)
+		return existing_card
+
+	var card := TowerShopCardScene.instantiate() as TowerShopCard
+	card.name = card_name
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.z_as_relative = false
+	card.z_index = STORE_LABEL_Z_INDEX
+	card.set_meta("authored_store_card", false)
+	_tower_store_panel.add_child(card)
+	return card
+
+
+func _find_authored_tower_store_card_for_id(tower_id: StringName) -> TowerShopCard:
+	if _tower_store_panel == null:
+		return null
+
+	for child in _tower_store_panel.get_children():
+		var card := child as TowerShopCard
+		if card == null or card.card_resource == null:
+			continue
+		if card.card_resource.tower_id == tower_id:
+			return card
+
+	return null
+
+
+func _prepare_authored_tower_store_card(card: TowerShopCard) -> void:
+	card.set_meta("authored_store_card", true)
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.z_as_relative = false
+	card.z_index = STORE_LABEL_Z_INDEX
+	card.use_default_information_popup_paths()
+
+
+func _cache_tower_store_card_layout(card: TowerShopCard) -> void:
+	if card == null:
+		return
+	if bool(card.get_meta("authored_store_card", false)):
+		_tower_store_use_authored_card_layout = true
+	_tower_store_card_base_rects[card] = card.get_global_rect()
+
+
+func _get_tower_store_card_name(tower: Node2D, fallback_name: String) -> String:
+	if tower == _guardian_store:
+		return "CyberGuardianCard"
+	if tower == _laser_turret_store:
+		return "LaserTurretCard"
+	if tower == _ids_scanner_store:
+		return "IDSScannerCard"
+	if tower == _edr_hunter_store:
+		return "EDRHunterCard"
+	if tower == _siem_hawk_store:
+		return "SIEMHawkCard"
+	if tower == _ips_intrusion_store:
+		return "IPSIntrusionCard"
+	if tower == _honeypot_production_store:
+		return "HoneypotProductionCard"
+
+	return fallback_name.replace(" ", "") + "Card"
 
 
 func _make_store_label(label_text: String, font_size: int, font_color: Color) -> Label:
@@ -680,7 +1018,7 @@ func _make_store_label(label_text: String, font_size: int, font_color: Color) ->
 	label.text = label_text
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.z_as_relative = false
-	label.z_index = 210
+	label.z_index = STORE_LABEL_Z_INDEX
 	label.add_theme_font_override("font", _get_store_font())
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", font_color)
@@ -701,32 +1039,45 @@ func _get_store_font() -> Font:
 	return null
 
 
-func _position_tower_store_labels(slide_offset := 0.0) -> void:
+func _position_tower_store_cards(slide_offset := 0.0) -> void:
 	if _tower_store_base_rect.size == Vector2.ZERO:
 		return
 
 	var store_rect := _tower_store_base_rect
-	if _tower_store_title_label != null:
+	if _tower_store_title_label != null and not _tower_store_title_label_authored:
 		_position_store_label(_tower_store_title_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 16.0), Vector2(store_rect.size.x - 34.0, 40.0))
-	if _tower_store_hint_label != null:
+	if _tower_store_hint_label != null and not _tower_store_hint_label_authored:
 		_position_store_label(_tower_store_hint_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 58.0), Vector2(store_rect.size.x - 34.0, 30.0))
 
-	for tower in _tower_store_item_labels.keys():
-		var tower_node := tower as Node2D
-		var label := _tower_store_item_labels[tower] as Label
-		if tower_node == null or label == null:
+	var grid_width := STORE_CARD_SIZE.x * float(STORE_CARD_COLUMNS) + STORE_CARD_GAP.x * float(STORE_CARD_COLUMNS - 1)
+	var grid_left := store_rect.position.x + (store_rect.size.x - grid_width) * 0.5 + slide_offset
+	var grid_top := store_rect.position.y + STORE_CARD_GRID_TOP_OFFSET
+	var index := 0
+	for item in _get_tower_store_items():
+		var tower_node := item["tower"] as Node2D
+		var card := _tower_store_item_cards.get(tower_node) as TowerShopCard
+		if tower_node == null or card == null:
 			continue
 
-		var label_top_left := Vector2(
-			store_rect.position.x + STORE_TOWER_LABEL_X_OFFSET - STORE_TOWER_LABEL_SIZE.x * 0.5 + slide_offset,
-			tower_node.global_position.y - STORE_TOWER_LABEL_SIZE.y * 0.5
+		if _tower_store_use_authored_card_layout and _tower_store_card_base_rects.has(card):
+			var authored_rect := _tower_store_card_base_rects[card] as Rect2
+			_position_store_card(card, authored_rect.position + Vector2(slide_offset, 0), authored_rect.size)
+			index += 1
+			continue
+
+		var column := index % STORE_CARD_COLUMNS
+		var row := index / STORE_CARD_COLUMNS
+		var card_top_left := Vector2(
+			grid_left + float(column) * (STORE_CARD_SIZE.x + STORE_CARD_GAP.x),
+			grid_top + float(row) * (STORE_CARD_SIZE.y + STORE_CARD_GAP.y)
 		)
-		_position_store_label_top_left(label, label_top_left, STORE_TOWER_LABEL_SIZE)
+		_position_store_card(card, card_top_left, STORE_CARD_SIZE)
+		index += 1
 
 
 func _position_store_label(label: Label, center_position: Vector2, size: Vector2) -> void:
 	label.size = size
-	label.global_position = center_position - Vector2(size.x * 0.5, 0)
+	label.global_position = center_position - size * 0.5
 
 
 func _position_store_label_top_left(label: Label, top_left: Vector2, size: Vector2) -> void:
@@ -734,7 +1085,20 @@ func _position_store_label_top_left(label: Label, top_left: Vector2, size: Vecto
 	label.global_position = top_left
 
 
+func _position_store_card(card: Control, top_left: Vector2, size: Vector2) -> void:
+	card.size = size
+	card.global_position = top_left
+
+
 func _create_tower_store_toggle_button() -> void:
+	if _tower_store_toggle_button != null:
+		_configure_tower_store_toggle_button()
+		_cache_tower_store_toggle_open_position()
+		if not _tower_store_toggle_button.pressed.is_connected(_toggle_tower_store):
+			_tower_store_toggle_button.pressed.connect(_toggle_tower_store)
+		_position_tower_store_toggle_button(0.0 if _tower_store_open else STORE_PANEL_SLIDE_DISTANCE)
+		return
+
 	_tower_store_canvas = CanvasLayer.new()
 	_tower_store_canvas.name = "TowerStoreControls"
 	_tower_store_canvas.layer = 160
@@ -742,18 +1106,57 @@ func _create_tower_store_toggle_button() -> void:
 
 	_tower_store_toggle_button = Button.new()
 	_tower_store_toggle_button.name = "TowerStoreToggleButton"
-	_tower_store_toggle_button.custom_minimum_size = STORE_TOGGLE_SIZE
-	_tower_store_toggle_button.focus_mode = Control.FOCUS_NONE
-	_tower_store_toggle_button.text = "Hide Store"
-	_tower_store_toggle_button.tooltip_text = "Show or hide the tower store."
-	_tower_store_toggle_button.add_theme_font_override("font", _get_store_font())
-	_tower_store_toggle_button.add_theme_font_size_override("font_size", 18)
-	_tower_store_toggle_button.add_theme_stylebox_override("normal", _make_store_button_style(Color(0.035, 0.075, 0.145, 0.94), Color(0.34, 0.74, 1.0, 0.95)))
-	_tower_store_toggle_button.add_theme_stylebox_override("hover", _make_store_button_style(Color(0.07, 0.14, 0.24, 0.98), Color(0.64, 0.92, 1.0, 1.0)))
-	_tower_store_toggle_button.add_theme_stylebox_override("pressed", _make_store_button_style(Color(0.02, 0.045, 0.09, 1.0), Color(0.96, 0.82, 0.24, 1.0)))
+	_configure_tower_store_toggle_button()
 	_tower_store_toggle_button.pressed.connect(_toggle_tower_store)
 	_tower_store_canvas.add_child(_tower_store_toggle_button)
-	_position_tower_store_toggle_button()
+	_cache_tower_store_toggle_open_position()
+	_position_tower_store_toggle_button(0.0 if _tower_store_open else STORE_PANEL_SLIDE_DISTANCE)
+
+
+func _configure_tower_store_toggle_button() -> void:
+	if _tower_store_toggle_button == null:
+		return
+
+	_tower_store_toggle_button.custom_minimum_size = STORE_TOGGLE_SIZE
+	_tower_store_toggle_button.size = STORE_TOGGLE_SIZE
+	_tower_store_toggle_button.focus_mode = Control.FOCUS_NONE
+	_tower_store_toggle_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	_tower_store_toggle_button.text = ""
+	_tower_store_toggle_button.icon = STORE_TOGGLE_ICON
+	_tower_store_toggle_button.expand_icon = true
+	_tower_store_toggle_button.add_theme_color_override("icon_normal_color", Color(0.35, 0.8, 1.0, 1.0))
+	_tower_store_toggle_button.add_theme_color_override("icon_hover_color", Color(1.0, 0.84, 0.22, 1.0))
+	_tower_store_toggle_button.add_theme_color_override("icon_pressed_color", Color(0.98, 0.95, 0.76, 1.0))
+	_tower_store_toggle_button.add_theme_color_override("icon_focus_color", Color(0.35, 0.8, 1.0, 1.0))
+	var empty_style := StyleBoxEmpty.new()
+	_tower_store_toggle_button.add_theme_stylebox_override("normal", empty_style)
+	_tower_store_toggle_button.add_theme_stylebox_override("hover", empty_style)
+	_tower_store_toggle_button.add_theme_stylebox_override("pressed", empty_style)
+	_tower_store_toggle_button.add_theme_stylebox_override("focus", empty_style)
+	_update_tower_store_toggle_visual()
+
+
+func _update_tower_store_toggle_visual() -> void:
+	if _tower_store_toggle_button == null:
+		return
+
+	_tower_store_toggle_button.tooltip_text = \
+		"Hide tower shop" if _tower_store_open else "Show tower shop"
+
+
+func _cache_tower_store_toggle_open_position() -> void:
+	if _tower_store_toggle_button == null or _tower_store_toggle_open_position_cached:
+		return
+
+	if _tower_store_toggle_button_authored:
+		_tower_store_toggle_open_position = _tower_store_toggle_button.global_position
+	else:
+		var open_world_position := Vector2(
+			_tower_store_base_rect.position.x - STORE_TOGGLE_SIZE.x * 0.5,
+			_tower_store_base_rect.get_center().y - STORE_TOGGLE_SIZE.y * 0.5
+		)
+		_tower_store_toggle_open_position = _world_to_screen_position(open_world_position)
+	_tower_store_toggle_open_position_cached = true
 
 
 func _make_store_button_style(bg_color: Color, border_color: Color) -> StyleBoxFlat:
@@ -773,29 +1176,34 @@ func _make_store_button_style(bg_color: Color, border_color: Color) -> StyleBoxF
 	return style
 
 
-func _position_tower_store_toggle_button() -> void:
+func _position_tower_store_toggle_button(slide_offset := -1.0) -> void:
 	if _tower_store_toggle_button == null or _tower_store_base_rect.size == Vector2.ZERO:
 		return
+	_cache_tower_store_toggle_open_position()
+	if not _tower_store_toggle_open_position_cached:
+		return
 
-	var store_rect := _tower_store_base_rect
-	var toggle_world_position := Vector2(
-		store_rect.position.x + store_rect.size.x * 0.5 - STORE_TOGGLE_SIZE.x * 0.5,
-		_get_tower_store_toggle_world_y(store_rect)
-	)
-	var screen_position := _world_to_screen_position(toggle_world_position)
-	_tower_store_toggle_button.position = screen_position
+	var resolved_offset := slide_offset
+	if resolved_offset < 0.0:
+		resolved_offset = 0.0 if _tower_store_open else STORE_PANEL_SLIDE_DISTANCE
+	var slide_ratio := clampf(resolved_offset / STORE_PANEL_SLIDE_DISTANCE, 0.0, 1.0)
+	var closed_position := _get_tower_store_toggle_closed_position()
+	_tower_store_toggle_button.global_position = _tower_store_toggle_open_position.lerp(closed_position, slide_ratio)
 	_tower_store_toggle_button.size = STORE_TOGGLE_SIZE
 
 
-func _get_tower_store_toggle_world_y(store_rect: Rect2) -> float:
-	var last_row_y := store_rect.position.y + STORE_TOWER_ROW_TOP_OFFSET + STORE_TOWER_ROW_GAP * 6.0
-	for tower in _tower_store_home_positions.keys():
-		var home_position: Vector2 = _tower_store_home_positions[tower]
-		last_row_y = maxf(last_row_y, home_position.y)
+func _get_tower_store_toggle_closed_position() -> Vector2:
+	var viewport_size := get_viewport().get_visible_rect().size
+	var closed_screen_position := Vector2(
+		viewport_size.x - STORE_TOGGLE_SIZE.x - STORE_TOGGLE_SCREEN_INSET,
+		_tower_store_toggle_open_position.y
+	)
+	if not _tower_store_toggle_button_authored:
+		return closed_screen_position
 
-	var desired_y := last_row_y + STORE_TOGGLE_BELOW_LAST_TOWER_OFFSET
-	var panel_limit_y := store_rect.end.y - STORE_TOGGLE_SIZE.y - 18.0
-	return minf(desired_y, panel_limit_y)
+	var open_screen_position := _world_to_screen_position(_tower_store_toggle_open_position)
+	closed_screen_position.y = open_screen_position.y
+	return _screen_to_canvas_position(closed_screen_position)
 
 
 func _toggle_tower_store() -> void:
@@ -807,8 +1215,9 @@ func _set_tower_store_open(is_open: bool) -> void:
 		return
 
 	_tower_store_open = is_open
-	if _tower_store_toggle_button != null:
-		_tower_store_toggle_button.text = "Hide Store" if _tower_store_open else "Show Store"
+	_update_tower_store_toggle_visual()
+	if not _tower_store_open:
+		_hide_all_store_card_information()
 
 	if _tower_store_tween != null:
 		_tower_store_tween.kill()
@@ -835,6 +1244,24 @@ func _prepare_tower_store_animation(slide_offset: float) -> void:
 	_apply_tower_store_slide(slide_offset)
 
 
+func _cache_store_companion_ui_positions() -> void:
+	if not _wave_label_store_position_cached and _wave_label != null:
+		_wave_label_store_rest_position = _wave_label.global_position
+		_wave_label_store_position_cached = true
+
+	if _cutscene_demo_menu_hud != null and _cutscene_demo_menu_hud.has_method("cache_store_companion_ui_positions"):
+		_cutscene_demo_menu_hud.call("cache_store_companion_ui_positions")
+
+
+func _apply_store_companion_ui_slide(slide_offset: float) -> void:
+	_cache_store_companion_ui_positions()
+	if _wave_label != null and _wave_label_store_position_cached:
+		_wave_label.global_position = _wave_label_store_rest_position + Vector2(slide_offset, 0.0)
+
+	if _cutscene_demo_menu_hud != null and _cutscene_demo_menu_hud.has_method("apply_store_companion_slide"):
+		_cutscene_demo_menu_hud.call("apply_store_companion_slide", slide_offset)
+
+
 func _apply_tower_store_slide(slide_offset: float) -> void:
 	if _tower_store_background != null:
 		_tower_store_background.global_position = _tower_store_base_rect.position + Vector2(slide_offset, 0)
@@ -845,17 +1272,26 @@ func _apply_tower_store_slide(slide_offset: float) -> void:
 
 	for tower in _tower_store_home_positions.keys():
 		var tower_node := tower as Node2D
-		if tower_node == null or not _is_tower_available_in_store(tower_node):
+		if tower_node == null:
 			continue
 
-		tower_node.global_position = _tower_store_home_positions[tower] + Vector2(slide_offset, 0)
-		tower_node.modulate.a = 1.0 - clampf(slide_offset / STORE_PANEL_SLIDE_DISTANCE, 0.0, 1.0)
+		var in_store := _is_tower_available_in_store(tower_node)
+		var deployed_card := _is_store_card_deployed(tower_node)
+		if not in_store and not deployed_card:
+			continue
 
-		var label := _tower_store_item_labels.get(tower_node) as Label
-		if label != null:
-			label.modulate.a = tower_node.modulate.a
+		var alpha := 1.0 - clampf(slide_offset / STORE_PANEL_SLIDE_DISTANCE, 0.0, 1.0)
+		if in_store and not _is_store_tower_dragging(tower_node):
+			tower_node.global_position = _tower_store_home_positions[tower] + Vector2(slide_offset, 0)
+			tower_node.modulate.a = alpha
 
-	_position_tower_store_labels(slide_offset)
+		var card := _tower_store_item_cards.get(tower_node) as Control
+		if card != null:
+			card.modulate.a = alpha
+
+	_position_tower_store_cards(slide_offset)
+	_position_tower_store_toggle_button(slide_offset)
+	_apply_store_companion_ui_slide(slide_offset)
 
 
 func _sync_tower_store_items(force_positions: bool) -> void:
@@ -865,17 +1301,20 @@ func _sync_tower_store_items(force_positions: bool) -> void:
 			continue
 
 		var in_store := _is_tower_available_in_store(tower_node)
-		var visible_in_store := _tower_store_open and in_store
-		tower_node.visible = visible_in_store or not in_store
-		tower_node.set_process_input(visible_in_store or not in_store)
-		if visible_in_store and force_positions:
+		var is_dragging := _is_store_tower_dragging(tower_node)
+		var deployed_card := _is_store_card_deployed(tower_node)
+		var visible_label := _tower_store_open and (in_store or deployed_card)
+		tower_node.visible = is_dragging or not in_store
+		tower_node.set_process_input(tower_node.visible)
+		if in_store and not is_dragging and force_positions:
 			tower_node.global_position = _tower_store_home_positions[tower_node]
 			tower_node.modulate.a = 1.0
 
-		var label := _tower_store_item_labels.get(tower_node) as Label
-		if label != null:
-			label.visible = visible_in_store
-			label.modulate.a = 1.0
+		var card := _tower_store_item_cards.get(tower_node) as TowerShopCard
+		if card != null:
+			card.visible = visible_label
+			card.modulate.a = 1.0
+			card.set_store_state(_can_afford_store_tower(tower_node), deployed_card)
 
 	if _tower_store_background != null:
 		_tower_store_background.visible = _tower_store_open
@@ -888,8 +1327,25 @@ func _sync_tower_store_items(force_positions: bool) -> void:
 		_tower_store_hint_label.visible = _tower_store_open
 
 	if _tower_store_open and force_positions:
-		_position_tower_store_labels()
-		_position_tower_store_toggle_button()
+		_position_tower_store_cards()
+
+	if force_positions:
+		_position_tower_store_toggle_button(0.0 if _tower_store_open else STORE_PANEL_SLIDE_DISTANCE)
+		_apply_store_companion_ui_slide(0.0 if _tower_store_open else STORE_PANEL_SLIDE_DISTANCE)
+
+
+func _hide_available_store_tower_previews() -> void:
+	for tower in _tower_store_home_positions.keys():
+		var tower_node := tower as Node2D
+		if tower_node == null:
+			continue
+		if not _is_tower_available_in_store(tower_node):
+			continue
+		if _is_store_tower_dragging(tower_node):
+			continue
+
+		tower_node.visible = false
+		tower_node.modulate.a = 0.0
 
 
 func _is_tower_available_in_store(tower: Node) -> bool:
@@ -901,6 +1357,31 @@ func _is_tower_available_in_store(tower: Node) -> bool:
 	return tower.visible
 
 
+func _is_store_card_deployed(tower: Node2D) -> bool:
+	return tower == _guardian_store \
+		and tower != null \
+		and tower.has_method("is_placed") \
+		and bool(tower.call("is_placed"))
+
+
+func _can_afford_store_tower(tower: Node2D) -> bool:
+	var deploy_cost := _get_tower_deploy_cost(tower)
+	if deploy_cost <= 0:
+		return true
+
+	return _question_hud != null and _question_hud.can_spend_cyberbucks(deploy_cost)
+
+
+func _sync_tower_store_card_states() -> void:
+	for tower in _tower_store_item_cards.keys():
+		var tower_node := tower as Node2D
+		var card := _tower_store_item_cards.get(tower_node) as TowerShopCard
+		if tower_node == null or card == null:
+			continue
+
+		card.set_store_state(_can_afford_store_tower(tower_node), _is_store_card_deployed(tower_node))
+
+
 func _get_store_visual_nodes() -> Array[CanvasItem]:
 	var visual_nodes: Array[CanvasItem] = []
 	if _tower_store_background != null:
@@ -909,12 +1390,9 @@ func _get_store_visual_nodes() -> Array[CanvasItem]:
 		visual_nodes.append(_tower_store_title_label)
 	if _tower_store_hint_label != null:
 		visual_nodes.append(_tower_store_hint_label)
-	for label in _tower_store_item_labels.values():
-		if label is CanvasItem:
-			visual_nodes.append(label)
-	for tower in _tower_store_home_positions.keys():
-		if tower is CanvasItem:
-			visual_nodes.append(tower)
+	for card in _tower_store_item_cards.values():
+		if card is CanvasItem:
+			visual_nodes.append(card)
 	return visual_nodes
 
 
@@ -947,6 +1425,358 @@ func _restore_placed_tower_scale(tower: Node2D) -> void:
 	var placed_scale: Vector2 = _tower_store_placed_scales.get(tower, tower.scale)
 	tower.scale = placed_scale
 	_sync_tower_scale_dependent_visuals(tower)
+
+
+func _try_handle_store_card_information_press(pointer_position: Vector2) -> bool:
+	if not _tower_store_open:
+		return false
+
+	for tower in _get_store_drag_order():
+		var tower_node := tower as Node2D
+		var card := _tower_store_item_cards.get(tower_node) as TowerShopCard
+		if card == null or not card.visible:
+			continue
+		if not card.information_button_has_point(pointer_position):
+			continue
+
+		card.toggle_information_popup()
+		_hide_other_store_card_information(card)
+		return true
+
+	for tower in _get_store_drag_order():
+		var tower_node := tower as Node2D
+		var card := _tower_store_item_cards.get(tower_node) as TowerShopCard
+		if card != null and card.visible and card.information_popup_has_point(pointer_position):
+			return true
+
+	return false
+
+
+func _try_begin_any_store_tower_drag(pointer_position: Vector2) -> bool:
+	for tower in _get_store_drag_order():
+		if _try_begin_store_tower_drag(tower as Node2D, pointer_position):
+			return true
+
+	return false
+
+
+func _try_begin_store_tower_drag(tower: Node2D, pointer_position: Vector2) -> bool:
+	if not _tower_store_open or tower == null:
+		return false
+
+	var card := _tower_store_item_cards.get(tower) as TowerShopCard
+	if card == null or not card.visible:
+		return false
+	if not card.get_global_rect().grow(8.0).has_point(pointer_position):
+		return false
+
+	_hide_all_store_card_information()
+	if not _is_tower_available_in_store(tower):
+		return true
+	if not tower.has_method("try_start_drag"):
+		return true
+	if not _can_afford_store_tower(tower):
+		_sync_tower_store_card_states()
+		return true
+
+	_pending_store_drag_tower = tower
+	_pending_store_drag_start_position = pointer_position
+	return true
+
+
+func _update_pending_store_tower_drag(pointer_position: Vector2) -> bool:
+	if _pending_store_drag_tower == null:
+		return false
+	if pointer_position.distance_to(_pending_store_drag_start_position) < STORE_DRAG_START_THRESHOLD:
+		return true
+
+	var tower := _pending_store_drag_tower
+	_clear_pending_store_tower_drag()
+	if _try_start_store_tower_drag(tower, pointer_position):
+		_set_store_card_drag_highlight(tower, true)
+	return true
+
+
+func _clear_pending_store_tower_drag() -> void:
+	_pending_store_drag_tower = null
+	_pending_store_drag_start_position = Vector2.ZERO
+
+
+func _get_store_drag_order() -> Array:
+	return [
+		_ips_intrusion_store,
+		_honeypot_production_store,
+		_edr_hunter_store,
+		_siem_hawk_store,
+		_ids_scanner_store,
+		_laser_turret_store,
+		_guardian_store
+	]
+
+
+func _set_store_card_drag_highlight(tower: Node2D, active: bool) -> void:
+	var card := _tower_store_item_cards.get(tower) as TowerShopCard
+	if card != null:
+		card.set_drag_highlight(active)
+
+
+func _clear_all_store_card_drag_highlights() -> void:
+	for card_value in _tower_store_item_cards.values():
+		var card := card_value as TowerShopCard
+		if card != null:
+			card.set_drag_highlight(false)
+
+
+func _hide_all_store_card_information() -> void:
+	for card_value in _tower_store_item_cards.values():
+		var card := card_value as TowerShopCard
+		if card != null:
+			card.set_information_popup_visible(false)
+
+
+func _hide_other_store_card_information(active_card: TowerShopCard) -> void:
+	for card_value in _tower_store_item_cards.values():
+		var card := card_value as TowerShopCard
+		if card != null and card != active_card:
+			card.set_information_popup_visible(false)
+
+
+func _tower_store_blocks_point(pointer_position: Vector2) -> bool:
+	if not _tower_store_open:
+		return false
+	if _tower_store_background != null \
+			and _tower_store_background.visible \
+			and _tower_store_background.get_global_rect().has_point(pointer_position):
+		return true
+
+	return _tower_store_base_rect.has_point(pointer_position)
+
+
+func _game_controls_have_point(screen_position: Vector2) -> bool:
+	return _game_controls_hud != null \
+		and _game_controls_hud.visible \
+		and _game_controls_hud.has_method("has_gameplay_control_at_screen_position") \
+		and bool(_game_controls_hud.call("has_gameplay_control_at_screen_position", screen_position))
+
+
+func _handle_tower_upgrade_sidebar_modal_press(screen_position: Vector2) -> bool:
+	if not _tower_upgrade_sidebar_visible():
+		return false
+	if _tower_upgrade_hud.menu_panel_has_point(screen_position):
+		return true
+
+	_close_tower_upgrade_sidebar()
+	get_viewport().set_input_as_handled()
+	return true
+
+
+func _tower_upgrade_sidebar_visible() -> bool:
+	return _tower_upgrade_hud != null \
+		and _tower_upgrade_hud.has_method("is_any_panel_visible") \
+		and bool(_tower_upgrade_hud.call("is_any_panel_visible"))
+
+
+func _prepare_tower_upgrade_sidebar_open() -> void:
+	if _tower_upgrade_sidebar_visible():
+		if _tower_store_open or _tower_store_tween != null:
+			_restore_tower_store_after_upgrade_panel = _restore_tower_store_after_upgrade_panel or _tower_store_open
+			_hide_tower_store_for_upgrade_sidebar()
+		return
+
+	_restore_tower_store_after_upgrade_panel = _tower_store_open
+	if _tower_store_open or _tower_store_tween != null:
+		_hide_tower_store_for_upgrade_sidebar()
+	else:
+		_hide_available_store_tower_previews()
+
+
+func _hide_tower_store_for_upgrade_sidebar() -> void:
+	_tower_store_open = false
+	_update_tower_store_toggle_visual()
+	_hide_all_store_card_information()
+	if _tower_store_tween != null:
+		_tower_store_tween.kill()
+		_tower_store_tween = null
+
+	_apply_tower_store_slide(STORE_PANEL_SLIDE_DISTANCE)
+	_sync_tower_store_items(true)
+	_hide_available_store_tower_previews()
+
+
+func _restore_tower_store_after_upgrade_sidebar_closed() -> void:
+	if _tower_upgrade_sidebar_visible():
+		return
+
+	if not _restore_tower_store_after_upgrade_panel:
+		return
+
+	if _tower_upgrade_sidebar_drawer_visible():
+		if _tower_store_restore_after_upgrade_waiting:
+			return
+
+		_tower_store_restore_after_upgrade_waiting = true
+		await get_tree().create_timer(_get_tower_upgrade_sidebar_restore_delay(), true).timeout
+		_tower_store_restore_after_upgrade_waiting = false
+		if _tower_upgrade_sidebar_visible():
+			return
+
+	if _restore_tower_store_after_upgrade_panel:
+		_set_tower_store_open(true)
+	_restore_tower_store_after_upgrade_panel = false
+
+
+func _tower_upgrade_sidebar_drawer_visible() -> bool:
+	if _tower_upgrade_hud == null:
+		return false
+
+	var menu_panel := _tower_upgrade_hud.get_node_or_null(^"Root/MenuPanel") as Control
+	return menu_panel != null and menu_panel.visible
+
+
+func _get_tower_upgrade_sidebar_restore_delay() -> float:
+	if _tower_upgrade_hud == null:
+		return 0.24
+
+	var slide_seconds = _tower_upgrade_hud.get("slide_seconds")
+	if typeof(slide_seconds) == TYPE_FLOAT or typeof(slide_seconds) == TYPE_INT:
+		return maxf(0.01, float(slide_seconds) * 0.86 + 0.03)
+
+	return 0.24
+
+
+func _close_tower_upgrade_sidebar() -> void:
+	if _tower_upgrade_hud == null:
+		return
+
+	_tower_upgrade_hud.hide_all()
+	_set_tower_menu_radius_previews(false, false, false, false, false, false, false)
+	_restore_tower_store_after_upgrade_sidebar_closed()
+
+
+func _tower_store_toggle_has_point(screen_position: Vector2) -> bool:
+	var test_position := _screen_to_canvas_position(screen_position) if _tower_store_toggle_button_authored else screen_position
+	return _tower_store_toggle_button != null \
+		and _tower_store_toggle_button.visible \
+		and _tower_store_toggle_button.get_global_rect().has_point(test_position)
+
+
+func _try_start_store_tower_drag(tower: Node2D, pointer_position: Vector2) -> bool:
+	if not _tower_store_open or tower == null:
+		return false
+	if not _is_tower_available_in_store(tower):
+		return false
+	if not tower.has_method("try_start_drag"):
+		return false
+	if not _can_afford_store_tower(tower):
+		_sync_tower_store_card_states()
+		return false
+
+	var home_position: Vector2 = _tower_store_home_positions.get(tower, tower.global_position)
+	_restore_placed_tower_scale(tower)
+	tower.global_position = pointer_position
+	tower.visible = true
+	tower.modulate.a = 1.0
+	_sync_tower_scale_dependent_visuals(tower)
+	if not bool(tower.call("try_start_drag", pointer_position)):
+		_restore_store_tower_preview(tower)
+		_set_store_card_drag_highlight(tower, false)
+		return false
+
+	tower.set("_drag_start_position", home_position)
+	_set_store_card_drag_highlight(tower, true)
+	_update_store_tower_drag(tower, pointer_position)
+	return true
+
+
+func _store_tower_card_has_point(tower: Node2D, pointer_position: Vector2) -> bool:
+	var card := _tower_store_item_cards.get(tower) as Control
+	return card != null \
+		and card.visible \
+		and card.get_global_rect().grow(8.0).has_point(pointer_position)
+
+
+func _restore_store_tower_preview(tower: Node2D) -> void:
+	if tower == null:
+		return
+
+	if _tower_store_home_positions.has(tower):
+		tower.global_position = _tower_store_home_positions[tower]
+	_apply_store_display_scale(tower)
+	if _is_tower_available_in_store(tower):
+		tower.visible = false
+
+
+func _is_store_tower_dragging(tower: Node2D) -> bool:
+	return tower != null \
+		and tower.has_method("is_dragging") \
+		and bool(tower.call("is_dragging"))
+
+
+func _update_store_tower_drag(tower: Node2D, pointer_position: Vector2) -> void:
+	if tower == null or not tower.has_method("update_drag"):
+		return
+
+	_restore_placed_tower_scale(tower)
+	tower.call("update_drag", pointer_position)
+	if _tower_store_open and not _tower_store_base_rect.has_point(pointer_position):
+		_set_tower_store_open(false)
+
+
+func _finish_store_tower_drag(tower: Node2D) -> bool:
+	if tower == null or not tower.has_method("finish_drag"):
+		return false
+
+	var deploy_cost := _get_tower_deploy_cost(tower)
+	var drop_was_valid := bool(tower.get("_drag_is_valid"))
+	var deploy_cost_spent := false
+	if drop_was_valid:
+		if _spend_deploy_cost(deploy_cost):
+			deploy_cost_spent = deploy_cost > 0
+		else:
+			tower.set("_drag_is_valid", false)
+
+	var was_placed := bool(tower.call("finish_drag"))
+	if deploy_cost_spent and not was_placed and _question_hud != null:
+		_question_hud.add_cyberbucks(deploy_cost)
+	if was_placed:
+		_restore_placed_tower_scale(tower)
+	else:
+		_restore_store_tower_preview(tower)
+	_set_store_card_drag_highlight(tower, false)
+
+	return was_placed
+
+
+func _get_tower_deploy_cost(tower: Node2D) -> int:
+	var card := _tower_store_item_cards.get(tower) as TowerShopCard
+	if card != null and card.has_card_resource():
+		return card.get_deploy_cost()
+
+	return _get_default_tower_deploy_cost(tower)
+
+
+func _get_default_tower_deploy_cost(tower: Node2D) -> int:
+	if tower == _laser_turret_store:
+		return LASER_TURRET_DEPLOY_COST
+	if tower == _edr_hunter_store:
+		return EDR_HUNTER_DEPLOY_COST
+	if tower == _honeypot_production_store:
+		return HONEYPOT_PRODUCTION_DEPLOY_COST
+	if tower == _ips_intrusion_store:
+		return IPS_INTRUSION_DEPLOY_COST
+	if tower == _siem_hawk_store:
+		return SIEM_HAWK_DEPLOY_COST
+
+	return CYBER_GUARDIAN_DEPLOY_COST
+
+
+func _spend_deploy_cost(cost: int) -> bool:
+	if cost <= 0:
+		return true
+	if _question_hud == null:
+		return false
+
+	return _question_hud.spend_cyberbucks(cost)
 
 
 func _sync_tower_scale_dependent_visuals(tower: Node2D) -> void:
@@ -986,6 +1816,7 @@ func _connect_guardian_store_prototype(tower: CyberGuardianTowerScript) -> void:
 		return
 	if not tower.placed.is_connected(_on_guardian_store_tower_placed):
 		tower.placed.connect(_on_guardian_store_tower_placed)
+	_connect_placed_guardian(tower)
 
 
 func _connect_laser_store_prototype(tower: LaserTurretScript) -> void:
@@ -1034,7 +1865,9 @@ func _on_guardian_store_tower_placed(tower: CyberGuardianTowerScript) -> void:
 	_restore_placed_tower_scale(tower)
 	_guardians.append(tower)
 	_guardian = tower
-	_spawn_replacement_guardian()
+	_connect_placed_guardian(tower)
+	_apply_guardian_signal_boost_state()
+	_sync_tower_store_items(true)
 	_update_demo_upgrade_buttons()
 
 
@@ -1135,6 +1968,7 @@ func _spawn_store_replacement(scene: PackedScene, placed_tower: Node2D, node_nam
 		return null
 
 	replacement.name = node_name
+	replacement.visible = false
 	parent.add_child(replacement)
 	var placed_scale: Vector2 = _tower_store_placed_scales.get(placed_tower, placed_tower.scale)
 	replacement.scale = placed_scale
@@ -1146,10 +1980,10 @@ func _spawn_store_replacement(scene: PackedScene, placed_tower: Node2D, node_nam
 	_tower_store_home_positions.erase(placed_tower)
 	_tower_store_home_positions[replacement] = home_position
 
-	var label := _tower_store_item_labels.get(placed_tower) as Label
-	if label != null:
-		_tower_store_item_labels.erase(placed_tower)
-		_tower_store_item_labels[replacement] = label
+	var card := _tower_store_item_cards.get(placed_tower) as Control
+	if card != null:
+		_tower_store_item_cards.erase(placed_tower)
+		_tower_store_item_cards[replacement] = card
 	_sync_tower_store_items(true)
 	return replacement
 
@@ -1161,6 +1995,16 @@ func _connect_placed_scanner(tower: IDSScannerTowerScript) -> void:
 		tower.virus_damage_requested.connect(_on_scanner_virus_damage_requested)
 	if not tower.bounty_awarded.is_connected(_on_scanner_bounty_awarded):
 		tower.bounty_awarded.connect(_on_scanner_bounty_awarded)
+
+
+func _connect_placed_guardian(tower: CyberGuardianTowerScript) -> void:
+	if tower == null:
+		return
+	if not tower.mode_changed.is_connected(_on_guardian_mode_changed):
+		tower.mode_changed.connect(_on_guardian_mode_changed)
+	if tower.has_signal("firewall_damage_requested") \
+			and not tower.firewall_damage_requested.is_connected(_on_guardian_firewall_damage_requested):
+		tower.firewall_damage_requested.connect(_on_guardian_firewall_damage_requested)
 
 
 func _connect_placed_siem(tower: SIEMHawkTowerScript) -> void:
@@ -1249,10 +2093,16 @@ func _handle_siem_hawk_press(pointer_position: Vector2, screen_position: Vector2
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.siem_panel_has_point(screen_position):
 		return true
 
-	var siem_hawk := _find_tower_at_point(_siem_hawks, pointer_position) as SIEMHawkTowerScript
+	var siem_hawk := _find_siem_headquarters_at_point(pointer_position)
 	if siem_hawk != null:
 		_siem_hawk = siem_hawk
 		_show_siem_upgrade_panel()
+		get_viewport().set_input_as_handled()
+		return true
+
+	siem_hawk = _find_siem_hawk_body_at_point(pointer_position)
+	if siem_hawk != null:
+		_siem_hawk = siem_hawk
 		get_viewport().set_input_as_handled()
 		return true
 
@@ -1318,6 +2168,32 @@ func _find_tower_at_point(towers: Array, pointer_position: Vector2) -> Node:
 	return null
 
 
+func _find_siem_headquarters_at_point(pointer_position: Vector2) -> SIEMHawkTowerScript:
+	for index in range(_siem_hawks.size() - 1, -1, -1):
+		var tower := _siem_hawks[index]
+		if not is_instance_valid(tower):
+			_siem_hawks.remove_at(index)
+			continue
+		if tower.has_method("contains_headquarters_point") \
+				and bool(tower.call("contains_headquarters_point", pointer_position)):
+			return tower
+
+	return null
+
+
+func _find_siem_hawk_body_at_point(pointer_position: Vector2) -> SIEMHawkTowerScript:
+	for index in range(_siem_hawks.size() - 1, -1, -1):
+		var tower := _siem_hawks[index]
+		if not is_instance_valid(tower):
+			_siem_hawks.remove_at(index)
+			continue
+		if tower.has_method("contains_hawk_point") \
+				and bool(tower.call("contains_hawk_point", pointer_position)):
+			return tower
+
+	return null
+
+
 func _reset_tower() -> void:
 	if _is_act_input_locked():
 		return
@@ -1359,8 +2235,13 @@ func _reset_tower() -> void:
 		_tower_upgrade_hud.hide_all()
 	if _progress_hud != null:
 		_progress_hud.reset_knowledge()
+	if _question_hud != null:
+		_question_hud.reset_cyberbucks()
 	_apply_guardian_signal_boost_state()
 	_set_tower_menu_radius_previews(false, false, false, false, false)
+	_clear_pending_store_tower_drag()
+	_clear_all_store_card_drag_highlights()
+	_sync_tower_store_items(true)
 	_update_demo_upgrade_buttons()
 
 
@@ -1602,6 +2483,10 @@ func _on_scanner_virus_damage_requested(follow: PathFollow2D, amount: int) -> vo
 	_damage_virus(follow, amount)
 
 
+func _on_guardian_firewall_damage_requested(follow: PathFollow2D, amount: int) -> void:
+	_damage_virus(follow, amount)
+
+
 func _on_ips_spike_damage_requested(follow: PathFollow2D, amount: int) -> void:
 	_damage_virus(follow, amount)
 
@@ -1621,6 +2506,7 @@ func _on_scanner_bounty_awarded(amount: int) -> void:
 func _on_cyberbucks_changed(amount: int) -> void:
 	if _progress_hud != null:
 		_progress_hud.set_cyberbucks(amount)
+	_sync_tower_store_card_states()
 
 
 func _on_siem_hawk_knowledge_extracted(amount: int) -> void:
@@ -1628,12 +2514,13 @@ func _on_siem_hawk_knowledge_extracted(amount: int) -> void:
 		return
 
 	_progress_hud.add_knowledge_points(amount)
-	_sync_guardian_upgrade_panel()
+	_apply_guardian_signal_boost_state()
+	_sync_all_tower_upgrade_panels()
 
 
 func _on_guardian_mode_changed(_mode_id: StringName) -> void:
 	_apply_guardian_signal_boost_state()
-	_sync_guardian_upgrade_panel()
+	_sync_all_tower_upgrade_panels()
 
 
 func _on_siem_hawk_dispatch_mode_changed(_dispatched: bool) -> void:
@@ -1688,15 +2575,29 @@ func _update_demo_upgrade_buttons() -> void:
 		_can_afford_upgrade(edr_cost)
 	)
 
+	var siem_action_target := _get_demo_siem_hawk_action_target()
+	if siem_action_target != null:
+		_siem_hawk = siem_action_target
+
 	var siem_cost := _siem_hawk.get_upgrade_cost() if _siem_hawk != null else 0
 	_utility_overlay_hud.set_siem_upgrade_button_state(
-		_world_to_screen_position(_siem_hawk.global_position) if _siem_hawk != null else Vector2.ZERO,
+		_get_siem_headquarters_screen_position(_siem_hawk),
 		_siem_hawk != null and _siem_hawk.is_placed(),
 		_siem_hawk != null and _siem_hawk.can_upgrade(),
 		_is_demo_siem_upgrade_hovered(),
 		siem_cost,
 		_can_afford_upgrade(siem_cost)
 	)
+	if _utility_overlay_hud.has_method("set_siem_hawk_action_state"):
+		_utility_overlay_hud.call(
+			"set_siem_hawk_action_state",
+			_world_to_screen_position(_siem_hawk.global_position) if _siem_hawk != null else Vector2.ZERO,
+			_siem_hawk != null and _siem_hawk.is_placed(),
+			siem_action_target != null,
+			_siem_hawk != null and _siem_hawk.is_dispatched(),
+			_siem_hawk != null and _siem_hawk.is_landing_to_headquarters(),
+			_siem_hawk != null and _siem_hawk.can_land_to_headquarters()
+		)
 
 	var ips_cost := _ips_intrusion.get_upgrade_cost() if _ips_intrusion != null else 0
 	_utility_overlay_hud.set_ips_upgrade_button_state(
@@ -1740,15 +2641,102 @@ func _get_current_knowledge_level() -> int:
 
 
 func _apply_guardian_signal_boost_state() -> void:
+	var knowledge_level := _get_current_knowledge_level()
+	var signal_boost_profile := _get_signal_boost_profile(knowledge_level)
+	var firewall_profile := _get_firewall_profile(knowledge_level)
 	var boost_active := _guardian != null \
 		and _guardian.is_placed() \
-		and _guardian.get_current_mode_id() == GUARDIAN_MODE_SIGNAL_BOOST
+		and _guardian.get_current_mode_id() == GUARDIAN_MODE_SIGNAL_BOOST \
+		and knowledge_level >= SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL
 
 	for node in get_tree().get_nodes_in_group("Defender"):
 		if not is_instance_valid(node) or not is_ancestor_of(node):
 			continue
-		if node.has_method("set_signal_boost_active"):
+		if node.has_method("set_signal_boost_profile"):
+			node.call(
+				"set_signal_boost_profile",
+				boost_active,
+				float(signal_boost_profile["range_multiplier"]),
+				float(signal_boost_profile["cooldown_multiplier"]),
+				float(signal_boost_profile["hawk_speed_multiplier"])
+			)
+		elif node.has_method("set_signal_boost_active"):
 			node.call("set_signal_boost_active", boost_active)
+		if node.has_method("set_firewall_profile"):
+			node.call(
+				"set_firewall_profile",
+				int(firewall_profile["hit_damage"]),
+				int(firewall_profile["burn_damage"]),
+				float(firewall_profile["burn_tick_seconds"]),
+				float(firewall_profile["burn_duration"])
+			)
+
+
+func _get_signal_boost_profile(knowledge_level: int) -> Dictionary:
+	var step_count := 0
+	for threshold in SIGNAL_BOOST_STEP_LEVELS:
+		if knowledge_level >= int(threshold):
+			step_count += 1
+
+	var range_bonus := SIGNAL_BOOST_RANGE_BASE_BONUS + float(step_count) * SIGNAL_BOOST_STEP_BONUS
+	var cooldown_reduction := SIGNAL_BOOST_COOLDOWN_BASE_REDUCTION + float(step_count) * SIGNAL_BOOST_STEP_BONUS
+	var hawk_speed_bonus := SIGNAL_BOOST_HAWK_SPEED_BASE_BONUS + float(step_count) * SIGNAL_BOOST_STEP_BONUS
+	return {
+		"range_bonus": range_bonus,
+		"cooldown_reduction": cooldown_reduction,
+		"hawk_speed_bonus": hawk_speed_bonus,
+		"range_multiplier": 1.0 + range_bonus,
+		"cooldown_multiplier": maxf(0.05, 1.0 - cooldown_reduction),
+		"hawk_speed_multiplier": 1.0 + hawk_speed_bonus
+	}
+
+
+func _get_firewall_profile(knowledge_level: int) -> Dictionary:
+	var selected_profile: Dictionary = FIREWALL_BALANCE_BY_MIN_KNOWLEDGE_LEVEL[0]
+	for profile_value in FIREWALL_BALANCE_BY_MIN_KNOWLEDGE_LEVEL:
+		var profile := profile_value as Dictionary
+		if knowledge_level >= int(profile["level"]):
+			selected_profile = profile
+
+	return {
+		"hit_damage": int(selected_profile["hit_damage"]),
+		"burn_damage": int(selected_profile["burn_damage"]),
+		"burn_tick_seconds": float(selected_profile["burn_tick_seconds"]),
+		"burn_duration": FIREWALL_BURN_DURATION_SECONDS
+	}
+
+
+func _get_guardian_sidebar_status_text(knowledge_level: int) -> String:
+	if _guardian == null:
+		return ""
+
+	var mode_id := _guardian.get_current_mode_id()
+	if mode_id == GUARDIAN_MODE_SIGNAL_BOOST:
+		var profile := _get_signal_boost_profile(knowledge_level)
+		return "Signal Boost Active\nKnowledge LV %d\nAll tower range: +%s\nAll tower cooldown: -%s\nSIEM Hawk speed: +%s" % [
+			knowledge_level,
+			_format_percent(float(profile["range_bonus"])),
+			_format_percent(float(profile["cooldown_reduction"])),
+			_format_percent(float(profile["hawk_speed_bonus"]))
+		]
+	if mode_id == GUARDIAN_MODE_FIREWALL:
+		var firewall_profile := _get_firewall_profile(knowledge_level)
+		return "Firewall Active\nKnowledge LV %d\nFirewall hit: %d damage\nBurn: %d damage every %.1fs for %.0fs" % [
+			knowledge_level,
+			int(firewall_profile["hit_damage"]),
+			int(firewall_profile["burn_damage"]),
+			float(firewall_profile["burn_tick_seconds"]),
+			float(firewall_profile["burn_duration"])
+		]
+
+	return "Defender Mode\nOffensive guardian fire is active.\nSignal Boost unlocks at Knowledge LV%d.\nFirewall unlocks at Knowledge LV%d." % [
+		SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL,
+		FIREWALL_UNLOCK_KNOWLEDGE_LEVEL
+	]
+
+
+func _format_percent(value: float) -> String:
+	return "%d%%" % roundi(value * 100.0)
 
 
 func _sync_all_tower_upgrade_panels() -> void:
@@ -1770,7 +2758,8 @@ func _sync_guardian_upgrade_panel() -> void:
 		_guardian.get_current_mode_id(),
 		_guardian.get_unlocked_mode_ids(knowledge_level),
 		knowledge_level,
-		_guardian.get_mode_unlock_levels()
+		_guardian.get_mode_unlock_levels(),
+		_get_guardian_sidebar_status_text(knowledge_level)
 	)
 
 
@@ -1948,8 +2937,14 @@ func _start_next_wave() -> void:
 	wave_started.emit(_current_wave)
 	if _current_wave == WAVE_FIVE_CUTSCENE_WAVE:
 		_spawn_cloaked_trojan_horse()
+	if _current_wave == ARMORED_VIRUS_TEST_WAVE:
+		_spawn_evolved_virus(ArmoredVirusScene, "ArmoredVirus", DEFAULT_EVOLVED_VIRUS_SPAWN_SCALE)
+	if _current_wave == SPYWARE_TEST_WAVE:
+		_spawn_spyware()
 	if _current_wave == ADWARE_WAVE:
 		_begin_adware_wave_spawn()
+	if _current_wave == MUTANT_VIRUS_TEST_WAVE:
+		_spawn_evolved_virus(MutantVirusScene, "MutantVirus", DEFAULT_EVOLVED_VIRUS_SPAWN_SCALE)
 
 
 func _should_play_wave_five_cutscene() -> bool:
@@ -2012,10 +3007,11 @@ func _update_wave_spawner(delta: float) -> void:
 
 
 func _begin_adware_wave_spawn() -> void:
-	_adware_spawns_remaining = ADWARE_POPUP_COUNT
+	_adware_spawns_remaining = 0
 	_adware_spawn_cooldown_remaining = 0.0
 	_adware_spawned_count = 0
 	_rebuild_adware_variation_deck()
+	_spawn_adware_miniboss()
 
 
 func _update_adware_spawner(delta: float) -> void:
@@ -2027,7 +3023,7 @@ func _update_adware_spawner(delta: float) -> void:
 	if _adware_spawn_cooldown_remaining > 0.0:
 		return
 
-	_spawn_adware_popup()
+	_spawn_adware_miniboss()
 	_adware_spawns_remaining -= 1
 	_adware_spawned_count += 1
 	_adware_spawn_cooldown_remaining = ADWARE_POPUP_INTERVAL
@@ -2089,6 +3085,10 @@ func _on_wave_question_solved(_reward: int) -> void:
 	_sync_scanner_upgrade_panel()
 	_sync_edr_upgrade_panel()
 	_sync_siem_upgrade_panel()
+
+
+func _on_phishing_decoy_selected() -> void:
+	spawn_virus_batch(100)
 
 
 func _exit_game() -> void:
@@ -2173,20 +3173,136 @@ func _spawn_cloaked_trojan_horse() -> void:
 	_update_virus_count_label()
 
 
-func _spawn_adware_popup() -> void:
+func _spawn_evolved_virus(scene: PackedScene, virus_name: String, spawn_scale: Vector2) -> void:
+	if _virus_path == null or _virus_path.curve == null:
+		push_warning("Cannot spawn %s because VirusElements/Path2D is missing a curve." % virus_name)
+		return
+	if scene == null:
+		push_warning("Cannot spawn %s because the configured scene is missing." % virus_name)
+		return
+
+	var virus := scene.instantiate() as RedVirusScript
+	if virus == null:
+		push_warning("Cannot spawn %s because the configured scene is invalid." % virus_name)
+		return
+
+	var follow := PathFollow2D.new()
+	follow.name = "Spawned%sFollow" % virus_name
+	follow.loop = false
+	follow.progress = _get_virus_spawn_progress()
+	_virus_path.add_child(follow)
+
+	virus.name = "Spawned%s" % virus_name
+	virus.position = Vector2.ZERO
+	follow.add_child(virus)
+	virus.global_scale = spawn_scale
+	virus.reset_for_spawn()
+
+	_active_viruses.append(follow)
+	_update_virus_count_label()
+
+
+func _spawn_adware_miniboss() -> void:
+	if _virus_path == null or _virus_path.curve == null:
+		push_warning("Cannot spawn Adware because VirusElements/Path2D is missing a curve.")
+		return
+
 	var adware := AdwareScene.instantiate() as Adware
 	if adware == null:
 		push_warning("Cannot spawn adware because the configured scene is invalid.")
 		return
 
-	adware.setup(_get_next_adware_variation_index())
+	var follow := PathFollow2D.new()
+	follow.name = "SpawnedAdwareFollow"
+	follow.loop = false
+	follow.progress = _get_virus_spawn_progress()
+	_virus_path.add_child(follow)
 
-	add_child(adware)
-	adware.global_position = _screen_to_canvas_position(
-		adware.get_spawn_screen_position(_adware_spawned_count, get_viewport_rect().size, _adware_rng)
+	adware.name = "SpawnedAdware"
+	adware.position = Vector2.ZERO
+	follow.add_child(adware)
+	adware.global_scale = DEFAULT_ADWARE_SPAWN_SCALE
+	adware.reset_for_spawn()
+	adware.start_popup_burst(
+		_adware_variation_deck.duplicate(),
+		ADWARE_POPUP_COUNT,
+		ADWARE_POPUP_INTERVAL,
+		_get_adware_popup_anchor_candidates()
 	)
-	adware.z_index = 95 + (_adware_spawned_count % ADWARE_POPUP_COUNT)
-	_active_adware_popups.append(adware)
+
+	_active_viruses.append(follow)
+	_update_virus_count_label()
+
+
+func _spawn_spyware() -> void:
+	if _virus_path == null or _virus_path.curve == null:
+		push_warning("Cannot spawn Spyware because VirusElements/Path2D is missing a curve.")
+		return
+	if _get_active_spyware_count() >= SPYWARE_MAX_ACTIVE:
+		return
+
+	var spyware := SpywareScene.instantiate() as SpywareScript
+	if spyware == null:
+		push_warning("Cannot spawn Spyware because the configured scene is invalid.")
+		return
+
+	var follow := PathFollow2D.new()
+	follow.name = "SpawnedSpywareFollow"
+	follow.loop = false
+	follow.progress = _get_virus_spawn_progress()
+	_virus_path.add_child(follow)
+
+	spyware.name = "SpawnedSpyware"
+	spyware.position = Vector2.ZERO
+	follow.add_child(spyware)
+	spyware.reset_for_spawn()
+	_connect_spyware(spyware)
+
+	_active_viruses.append(follow)
+	_update_virus_count_label()
+
+
+func _get_active_spyware_count() -> int:
+	var active_count := 0
+	for follow in _active_viruses:
+		if not is_instance_valid(follow):
+			continue
+		if _get_red_virus(follow) is SpywareScript:
+			active_count += 1
+	return active_count
+
+
+func _connect_spyware(spyware: SpywareScript) -> void:
+	if spyware == null:
+		return
+	if not spyware.knowledge_steal_requested.is_connected(_on_spyware_knowledge_steal_requested):
+		spyware.knowledge_steal_requested.connect(_on_spyware_knowledge_steal_requested)
+	if not spyware.knowledge_recovery_requested.is_connected(_on_spyware_knowledge_recovery_requested):
+		spyware.knowledge_recovery_requested.connect(_on_spyware_knowledge_recovery_requested)
+	if not spyware.knowledge_exfiltrated.is_connected(_on_spyware_knowledge_exfiltrated):
+		spyware.knowledge_exfiltrated.connect(_on_spyware_knowledge_exfiltrated)
+
+
+func _on_spyware_knowledge_steal_requested(spyware: SpywareScript, amount: int) -> void:
+	if not is_instance_valid(spyware) or _progress_hud == null:
+		return
+
+	var stolen_amount := _progress_hud.steal_knowledge_points(amount)
+	spyware.accept_stolen_knowledge(stolen_amount)
+
+
+func _on_spyware_knowledge_recovery_requested(_spyware: SpywareScript, amount: int) -> void:
+	if _progress_hud == null or amount <= 0:
+		return
+
+	_progress_hud.restore_knowledge_points(amount)
+	_apply_guardian_signal_boost_state()
+	_sync_all_tower_upgrade_panels()
+
+
+func _on_spyware_knowledge_exfiltrated(_spyware: SpywareScript, amount: int) -> void:
+	if amount > 0:
+		print("Spyware exfiltrated %d Knowledge Points." % amount)
 
 
 func _clear_adware_popups() -> void:
@@ -2206,12 +3322,56 @@ func _prune_adware_popups() -> void:
 			_active_adware_popups.remove_at(index)
 
 
+func _handle_adware_popup_press(pointer_position: Vector2) -> bool:
+	for index in range(_active_viruses.size() - 1, -1, -1):
+		var follow := _active_viruses[index]
+		if not is_instance_valid(follow):
+			continue
+
+		var adware := _get_red_virus(follow) as Adware
+		if adware == null:
+			continue
+		if not adware.try_press_popup_close_at(pointer_position):
+			continue
+
+		get_viewport().set_input_as_handled()
+		return true
+
+	return false
+
+
+func _get_adware_popup_anchor_candidates() -> Array[Node2D]:
+	var candidates: Array[Node2D] = []
+	_append_adware_popup_anchor_candidates(candidates, _guardians)
+	_append_adware_popup_anchor_candidates(candidates, _laser_turrets)
+	_append_adware_popup_anchor_candidates(candidates, _ids_scanners)
+	_append_adware_popup_anchor_candidates(candidates, _edr_hunters)
+	_append_adware_popup_anchor_candidates(candidates, _siem_hawks)
+	_append_adware_popup_anchor_candidates(candidates, _ips_intrusions)
+	_append_adware_popup_anchor_candidates(candidates, _honeypot_productions)
+	return candidates
+
+
+func _append_adware_popup_anchor_candidates(candidates: Array[Node2D], towers: Array) -> void:
+	for tower_value in towers:
+		var tower := tower_value as Node2D
+		if not is_instance_valid(tower):
+			continue
+		if tower.has_method("is_placed") and not bool(tower.call("is_placed")):
+			continue
+		if tower.has_method("is_deployed") and not bool(tower.call("is_deployed")):
+			continue
+
+		candidates.append(tower)
+
+
 func _rebuild_adware_variation_deck() -> void:
 	_adware_variation_deck.clear()
-	while _adware_variation_deck.size() < ADWARE_POPUP_COUNT:
+	var target_deck_size := maxi(ADWARE_POPUP_COUNT, ADWARE_VARIATION_COUNT)
+	while _adware_variation_deck.size() < target_deck_size:
 		for variation_index in range(ADWARE_VARIATION_COUNT):
 			_adware_variation_deck.append(variation_index)
-			if _adware_variation_deck.size() >= ADWARE_POPUP_COUNT:
+			if _adware_variation_deck.size() >= target_deck_size:
 				break
 
 	for index in range(_adware_variation_deck.size() - 1, 0, -1):
@@ -2294,8 +3454,17 @@ func _update_active_viruses(delta: float) -> void:
 			count_changed = true
 			continue
 
+		var virus := _get_red_virus(follow)
+		if virus != null \
+				and virus.has_method("uses_path_movement") \
+				and not bool(virus.call("uses_path_movement")):
+			continue
+
 		follow.progress += _get_virus_speed(follow) * delta
 		if follow.progress >= path_length:
+			var escaping_virus := _get_red_virus(follow)
+			if escaping_virus != null and escaping_virus.has_method("on_path_escaped"):
+				escaping_virus.call("on_path_escaped")
 			_despawn_virus(follow, false)
 			count_changed = true
 
@@ -2303,10 +3472,41 @@ func _update_active_viruses(delta: float) -> void:
 		_update_virus_count_label()
 
 
+func _update_spyware_invasions(delta: float) -> void:
+	var eligible_towers := _get_spyware_invasion_targets()
+	for follow in _active_viruses:
+		if not is_instance_valid(follow):
+			continue
+		var spyware := _get_red_virus(follow) as SpywareScript
+		if spyware != null:
+			spyware.update_invasion(delta, eligible_towers)
+
+
+func _get_spyware_invasion_targets() -> Array[Node2D]:
+	var eligible_towers: Array[Node2D] = []
+	_append_placed_spyware_targets(eligible_towers, _laser_turrets)
+	_append_placed_spyware_targets(eligible_towers, _siem_hawks)
+	_append_placed_spyware_targets(eligible_towers, _ips_intrusions)
+	_append_placed_spyware_targets(eligible_towers, _honeypot_productions)
+	return eligible_towers
+
+
+func _append_placed_spyware_targets(targets: Array[Node2D], towers: Array) -> void:
+	for tower_value in towers:
+		var tower := tower_value as Node2D
+		if not is_instance_valid(tower):
+			continue
+		if not tower.has_method("is_placed") or not bool(tower.call("is_placed")):
+			continue
+		targets.append(tower)
+
+
 func _update_tower_attack(delta: float) -> void:
 	for guardian in _guardians:
 		if not is_instance_valid(guardian):
 			continue
+		if guardian.has_method("update_firewall"):
+			guardian.call("update_firewall", delta, _active_viruses)
 		var target := guardian.update_attack(delta, _active_viruses)
 		if target != null:
 			_shoot_virus(guardian, target)
@@ -2377,12 +3577,6 @@ func _shoot_virus(guardian: CyberGuardianTowerScript, target: PathFollow2D) -> v
 			guardian.get_shot_power(),
 			guardian.get_shot_cooldown()
 		)
-		if _question_hud != null:
-			_question_hud.add_cyberbucks(GUARDIAN_CYBERBUCK_REWARD)
-			_sync_laser_upgrade_panel()
-			_sync_scanner_upgrade_panel()
-			_sync_edr_upgrade_panel()
-			_sync_siem_upgrade_panel()
 
 
 func _shoot_edr_hunter_target(edr_hunter: EDRHunterTowerScript, target: PathFollow2D) -> void:
@@ -2415,11 +3609,13 @@ func _shoot_laser_turret_targets(laser_turret: LaserTurretScript, targets: Array
 	var laser_width := laser_turret.get_laser_width()
 	var laser_color := laser_turret.get_laser_color()
 	var destroyed_count := 0
+	var destroyed_reward := 0
 	for target in targets:
 		if not is_instance_valid(target):
 			continue
 
 		var target_position := _get_target_center(target)
+		var target_reward := _get_virus_destroy_reward(_get_red_virus(target))
 		laser_turret.aim_at(target_position)
 		if _should_use_demo_laser_turret_beam_fx(laser_turret):
 			if not laser_turret.spawn_beam_fx(target_position, self):
@@ -2428,22 +3624,16 @@ func _shoot_laser_turret_targets(laser_turret: LaserTurretScript, targets: Array
 			_spawn_colored_laser(origin_position, target_position, laser_color, laser_width)
 		if _damage_virus(target, _laser_turret.get_shot_power(), false):
 			destroyed_count += 1
+			destroyed_reward += target_reward
 
 	if destroyed_count > 0:
 		if _utility_overlay_hud != null:
-			var reward := destroyed_count * LASER_TURRET_CYBERBUCK_REWARD
 			_utility_overlay_hud.show_tower_destroy_popup(
 				_world_to_screen_position(laser_turret.global_position),
-				reward,
+				destroyed_reward,
 				laser_turret.get_shot_power(),
 				laser_turret.get_shot_cooldown()
 			)
-			if _question_hud != null:
-				_question_hud.add_cyberbucks(reward)
-				_sync_laser_upgrade_panel()
-				_sync_scanner_upgrade_panel()
-				_sync_edr_upgrade_panel()
-				_sync_siem_upgrade_panel()
 		laser_turret.mark_shot_fired()
 		_update_virus_count_label()
 
@@ -2502,6 +3692,34 @@ func _damage_virus(follow: PathFollow2D, amount: int, update_count: bool = true)
 	return true
 
 
+func _get_virus_destroy_reward(virus: RedVirusScript) -> int:
+	if virus == null:
+		return 0
+	if virus.has_method("get_cyberbuck_reward"):
+		return int(virus.call("get_cyberbuck_reward"))
+
+	return maxi(0, virus.cyberbuck_reward)
+
+
+func _award_virus_destroy_reward(virus: RedVirusScript) -> int:
+	var reward := _get_virus_destroy_reward(virus)
+	if reward <= 0 or _question_hud == null:
+		return 0
+
+	_question_hud.add_cyberbucks(reward)
+	_sync_economy_upgrade_panels()
+	return reward
+
+
+func _sync_economy_upgrade_panels() -> void:
+	_sync_laser_upgrade_panel()
+	_sync_scanner_upgrade_panel()
+	_sync_edr_upgrade_panel()
+	_sync_siem_upgrade_panel()
+	_sync_ips_upgrade_panel()
+	_sync_honeypot_upgrade_panel()
+
+
 func _begin_virus_destroy(follow: PathFollow2D, update_count: bool = true) -> void:
 	if not is_instance_valid(follow):
 		return
@@ -2514,6 +3732,7 @@ func _begin_virus_destroy(follow: PathFollow2D, update_count: bool = true) -> vo
 			_active_viruses.remove_at(index)
 
 	if virus != null:
+		_award_virus_destroy_reward(virus)
 		virus.play_destroy_and_queue_owner(follow)
 	else:
 		follow.queue_free()
@@ -2664,6 +3883,15 @@ func _world_to_screen_position(world_position: Vector2) -> Vector2:
 	return get_canvas_transform() * world_position
 
 
+func _get_siem_headquarters_screen_position(siem_hawk: SIEMHawkTowerScript) -> Vector2:
+	if siem_hawk == null:
+		return Vector2.ZERO
+	if siem_hawk.has_method("get_headquarters_position"):
+		return _world_to_screen_position(siem_hawk.call("get_headquarters_position") as Vector2)
+
+	return _world_to_screen_position(siem_hawk.global_position)
+
+
 func _is_act_input_locked() -> bool:
 	return _text_cutscene_hud != null \
 		and _text_cutscene_hud.has_method("is_cutscene_running") \
@@ -2698,6 +3926,12 @@ func _demo_edr_upgrade_button_has_point(screen_position: Vector2) -> bool:
 func _demo_siem_upgrade_button_has_point(screen_position: Vector2) -> bool:
 	return _utility_overlay_hud != null \
 		and _utility_overlay_hud.siem_upgrade_button_has_point(screen_position)
+
+
+func _demo_siem_hawk_action_buttons_has_point(screen_position: Vector2) -> bool:
+	return _utility_overlay_hud != null \
+		and _utility_overlay_hud.has_method("siem_hawk_action_buttons_has_point") \
+		and bool(_utility_overlay_hud.call("siem_hawk_action_buttons_has_point", screen_position))
 
 
 func _demo_ips_upgrade_button_has_point(screen_position: Vector2) -> bool:
@@ -2756,8 +3990,24 @@ func _is_demo_siem_upgrade_hovered() -> bool:
 
 	var mouse_screen_position := get_viewport().get_mouse_position()
 	var mouse_world_position := _screen_to_canvas_position(mouse_screen_position)
-	return _siem_hawk.contains_global_point(mouse_world_position) \
+	return _siem_hawk.contains_headquarters_point(mouse_world_position) \
 		or _demo_siem_upgrade_button_has_point(mouse_screen_position)
+
+
+func _get_demo_siem_hawk_action_target() -> SIEMHawkTowerScript:
+	var mouse_screen_position := get_viewport().get_mouse_position()
+	if _siem_hawk != null \
+			and _siem_hawk.is_placed() \
+			and _siem_hawk.is_airborne_control_available() \
+			and _demo_siem_hawk_action_buttons_has_point(mouse_screen_position):
+		return _siem_hawk
+
+	var mouse_world_position := _screen_to_canvas_position(mouse_screen_position)
+	var hovered_hawk := _find_siem_hawk_body_at_point(mouse_world_position)
+	if hovered_hawk != null and hovered_hawk.is_airborne_control_available():
+		return hovered_hawk
+
+	return null
 
 
 func _is_demo_ips_upgrade_hovered() -> bool:
@@ -2784,6 +4034,7 @@ func _show_upgrade_panel() -> void:
 	if _tower_upgrade_hud == null:
 		return
 
+	_prepare_tower_upgrade_sidebar_open()
 	_set_tower_menu_radius_previews(true, false, false, false, false)
 	_tower_upgrade_hud.show_guardian_panel()
 	_sync_guardian_upgrade_panel()
@@ -2796,12 +4047,14 @@ func _hide_upgrade_panel() -> void:
 	_tower_upgrade_hud.hide_guardian_panel()
 	if not _tower_upgrade_hud.is_guardian_panel_visible():
 		_set_tower_menu_radius_previews(false, _tower_upgrade_hud.is_laser_panel_visible(), _tower_upgrade_hud.is_scanner_panel_visible(), _tower_upgrade_hud.is_edr_panel_visible(), _tower_upgrade_hud.is_siem_panel_visible())
+	_restore_tower_store_after_upgrade_sidebar_closed()
 
 
 func _show_laser_upgrade_panel() -> void:
 	if _tower_upgrade_hud == null or _laser_turret == null:
 		return
 
+	_prepare_tower_upgrade_sidebar_open()
 	_sync_laser_upgrade_panel()
 	_set_tower_menu_radius_previews(false, true, false, false, false)
 	_tower_upgrade_hud.show_laser_panel()
@@ -2814,12 +4067,14 @@ func _hide_laser_upgrade_panel() -> void:
 	_tower_upgrade_hud.hide_laser_panel()
 	if not _tower_upgrade_hud.is_laser_panel_visible():
 		_set_tower_menu_radius_previews(_tower_upgrade_hud.is_guardian_panel_visible(), false, _tower_upgrade_hud.is_scanner_panel_visible(), _tower_upgrade_hud.is_edr_panel_visible(), _tower_upgrade_hud.is_siem_panel_visible())
+	_restore_tower_store_after_upgrade_sidebar_closed()
 
 
 func _show_scanner_upgrade_panel() -> void:
 	if _tower_upgrade_hud == null or _ids_scanner == null:
 		return
 
+	_prepare_tower_upgrade_sidebar_open()
 	_sync_scanner_upgrade_panel()
 	_set_tower_menu_radius_previews(false, false, true, false, false)
 	_tower_upgrade_hud.show_scanner_panel()
@@ -2832,12 +4087,14 @@ func _hide_scanner_upgrade_panel() -> void:
 	_tower_upgrade_hud.hide_scanner_panel()
 	if not _tower_upgrade_hud.is_scanner_panel_visible():
 		_set_tower_menu_radius_previews(_tower_upgrade_hud.is_guardian_panel_visible(), _tower_upgrade_hud.is_laser_panel_visible(), false, _tower_upgrade_hud.is_edr_panel_visible(), _tower_upgrade_hud.is_siem_panel_visible())
+	_restore_tower_store_after_upgrade_sidebar_closed()
 
 
 func _show_edr_upgrade_panel() -> void:
 	if _tower_upgrade_hud == null or _edr_hunter == null:
 		return
 
+	_prepare_tower_upgrade_sidebar_open()
 	_set_tower_menu_radius_previews(false, false, false, true, false)
 	_tower_upgrade_hud.show_edr_panel()
 	_sync_edr_upgrade_panel()
@@ -2850,12 +4107,14 @@ func _hide_edr_upgrade_panel() -> void:
 	_tower_upgrade_hud.hide_edr_panel()
 	if not _tower_upgrade_hud.is_edr_panel_visible():
 		_set_tower_menu_radius_previews(_tower_upgrade_hud.is_guardian_panel_visible(), _tower_upgrade_hud.is_laser_panel_visible(), _tower_upgrade_hud.is_scanner_panel_visible(), false, _tower_upgrade_hud.is_siem_panel_visible())
+	_restore_tower_store_after_upgrade_sidebar_closed()
 
 
 func _show_siem_upgrade_panel() -> void:
 	if _tower_upgrade_hud == null or _siem_hawk == null:
 		return
 
+	_prepare_tower_upgrade_sidebar_open()
 	_set_tower_menu_radius_previews(false, false, false, false, true)
 	_tower_upgrade_hud.show_siem_panel()
 	_sync_siem_upgrade_panel()
@@ -2868,12 +4127,14 @@ func _hide_siem_upgrade_panel() -> void:
 	_tower_upgrade_hud.hide_siem_panel()
 	if not _tower_upgrade_hud.is_siem_panel_visible():
 		_set_tower_menu_radius_previews(_tower_upgrade_hud.is_guardian_panel_visible(), _tower_upgrade_hud.is_laser_panel_visible(), _tower_upgrade_hud.is_scanner_panel_visible(), _tower_upgrade_hud.is_edr_panel_visible(), false)
+	_restore_tower_store_after_upgrade_sidebar_closed()
 
 
 func _show_ips_upgrade_panel() -> void:
 	if _tower_upgrade_hud == null or _ips_intrusion == null:
 		return
 
+	_prepare_tower_upgrade_sidebar_open()
 	_set_tower_menu_radius_previews(false, false, false, false, false, true, false)
 	_tower_upgrade_hud.show_ips_panel()
 	_sync_ips_upgrade_panel()
@@ -2894,12 +4155,14 @@ func _hide_ips_upgrade_panel() -> void:
 			false,
 			_tower_upgrade_hud.is_honeypot_panel_visible()
 		)
+	_restore_tower_store_after_upgrade_sidebar_closed()
 
 
 func _show_honeypot_upgrade_panel() -> void:
 	if _tower_upgrade_hud == null or _honeypot_production == null:
 		return
 
+	_prepare_tower_upgrade_sidebar_open()
 	_set_tower_menu_radius_previews(false, false, false, false, false, false, true)
 	_tower_upgrade_hud.show_honeypot_panel()
 	_sync_honeypot_upgrade_panel()
@@ -2920,6 +4183,7 @@ func _hide_honeypot_upgrade_panel() -> void:
 			_tower_upgrade_hud.is_ips_panel_visible(),
 			false
 		)
+	_restore_tower_store_after_upgrade_sidebar_closed()
 
 
 func _set_tower_menu_radius_previews(

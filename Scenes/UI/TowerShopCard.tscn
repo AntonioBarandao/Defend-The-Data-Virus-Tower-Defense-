@@ -1,0 +1,341 @@
+[gd_scene format=3 uid="uid://c5wlti2knr5s8"]
+
+[ext_resource type="Script" uid="uid://1hxvtyv2h673" path="res://Scripts/UI/tower_shop_card.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="2_font"]
+[ext_resource type="Script" uid="uid://et8vs33f5uou" path="res://Scripts/UI/tower_shop_card_resource.gd" id="2_oviki"]
+
+[sub_resource type="Resource" id="Resource_l53pi"]
+script = ExtResource("2_oviki")
+metadata/_custom_type_script = "uid://et8vs33f5uou"
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oviki"]
+bg_color = Color(0.017, 0.031, 0.055, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.78, 1, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.46)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_image"]
+bg_color = Color(0.026, 0.047, 0.075, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.12, 0.42, 0.62, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_info_button"]
+bg_color = Color(0.02, 0.045, 0.08, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.36, 0.78, 1, 0.95)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_info_button_pressed"]
+bg_color = Color(0.01, 0.024, 0.045, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.67, 0.1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_info_button_hover"]
+bg_color = Color(0.06, 0.11, 0.16, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.84, 0.18, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_popup"]
+bg_color = Color(0.012, 0.025, 0.045, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.34, 0.78, 1, 0.95)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.48)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exit_button"]
+bg_color = Color(0.18, 0.035, 0.045, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.28, 0.22, 0.95)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exit_button_hover"]
+bg_color = Color(0.32, 0.06, 0.07, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.82, 0.24, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_popup_image"]
+bg_color = Color(0.02, 0.045, 0.078, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.14, 0.44, 0.66, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="TowerShopCard" type="Control" unique_id=944222030]
+process_mode = 3
+z_index = 12
+custom_minimum_size = Vector2(158, 166)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 158.0
+offset_bottom = 166.0
+mouse_filter = 2
+script = ExtResource("1_script")
+card_resource = SubResource("Resource_l53pi")
+
+[node name="CardPanel" type="Panel" parent="." unique_id=1171323138]
+z_index = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_oviki")
+
+[node name="DisplayImageContainer" type="Panel" parent="." unique_id=113385319]
+z_index = 2
+layout_mode = 0
+offset_left = 10.0
+offset_top = 28.0
+offset_right = 148.0
+offset_bottom = 158.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_image")
+
+[node name="DisplaySprite" type="Sprite2D" parent="DisplayImageContainer" unique_id=590825140]
+position = Vector2(69, 39)
+scale = Vector2(0.18, 0.18)
+
+[node name="NameLabel" type="Label" parent="." unique_id=1393031364]
+z_index = 3
+layout_mode = 0
+offset_left = 10.0
+offset_top = 7.0
+offset_right = 148.0
+offset_bottom = 26.0
+theme_override_colors/font_color = Color(0.88, 0.96, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0.02, 0.05, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 15
+text = "Tower"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="CostLabel" type="Label" parent="." unique_id=1790508198]
+z_index = 3
+layout_mode = 0
+offset_left = 10.0
+offset_top = 132.0
+offset_right = 148.0
+offset_bottom = 158.0
+theme_override_colors/font_color = Color(1, 0.86, 0.24, 1)
+theme_override_colors/font_outline_color = Color(0, 0.02, 0.05, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 19
+text = "FREE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InformationButton" type="Button" parent="." unique_id=1541750067]
+z_index = 8
+layout_mode = 0
+offset_left = 126.0
+offset_top = 6.0
+offset_right = 150.0
+offset_bottom = 30.0
+focus_mode = 0
+theme_override_colors/font_color = Color(0.82, 0.94, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 0.9, 0.25, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_info_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_info_button_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_info_button_hover")
+text = "i"
+
+[node name="InformationPopup" type="Control" parent="." unique_id=2022084967]
+process_mode = 3
+top_level = true
+z_index = 4096
+z_as_relative = false
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="DimOverlay" type="ColorRect" parent="InformationPopup" unique_id=878724179]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.68)
+
+[node name="PopupCard" type="Panel" parent="InformationPopup" unique_id=121860296]
+custom_minimum_size = Vector2(860, 560)
+layout_mode = 0
+offset_left = 267.0
+offset_top = 253.0
+offset_right = 1560.0
+offset_bottom = 813.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_popup")
+
+[node name="ExitButton" type="Button" parent="InformationPopup/PopupCard" unique_id=186228202]
+z_index = 4
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -58.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = 58.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.88, 0.82, 1)
+theme_override_colors/font_hover_color = Color(1, 0.92, 0.24, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_exit_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_exit_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_exit_button_hover")
+text = "X"
+
+[node name="ImagePanel" type="Panel" parent="InformationPopup/PopupCard" unique_id=1733699289]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.04
+anchor_top = 0.17
+anchor_right = 0.36
+anchor_bottom = 0.84
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_popup_image")
+
+[node name="PopupSprite" type="Sprite2D" parent="InformationPopup/PopupCard/ImagePanel" unique_id=522427816]
+position = Vector2(138, 180)
+scale = Vector2(0.42, 0.42)
+
+[node name="HeaderLabel" type="Label" parent="InformationPopup/PopupCard" unique_id=2139453158]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.4
+anchor_top = 0.12
+anchor_right = 0.92
+anchor_bottom = 0.22
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.88, 0.97, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0.015, 0.03, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 32
+text = "Tower"
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="TypeLabel" type="Label" parent="InformationPopup/PopupCard" unique_id=425439478]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.4
+anchor_top = 0.24
+anchor_right = 0.92
+anchor_bottom = 0.3
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.24, 1)
+theme_override_colors/font_outline_color = Color(0, 0.015, 0.03, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 21
+text = "Type: Tower"
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="DescriptionLabel" type="Label" parent="InformationPopup/PopupCard" unique_id=98793242]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.4
+anchor_top = 0.33
+anchor_right = 0.92
+anchor_bottom = 0.73
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.74, 0.9, 0.98, 1)
+theme_override_colors/font_outline_color = Color(0, 0.015, 0.03, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 15
+text = "No tower information configured yet."
+autowrap_mode = 3
+
+[node name="UpgradeCostsLabel" type="Label" parent="InformationPopup/PopupCard" unique_id=273487641]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.4
+anchor_top = 0.77
+anchor_right = 0.92
+anchor_bottom = 0.92
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.88, 0.96, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0.015, 0.03, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 16
+text = "Deploy: FREE"
+autowrap_mode = 3

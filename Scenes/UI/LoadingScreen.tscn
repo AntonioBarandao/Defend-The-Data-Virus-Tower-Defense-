@@ -1,0 +1,251 @@
+[gd_scene format=3 uid="uid://b2udv71h77wy"]
+
+[ext_resource type="Script" uid="uid://dpmf1dkd50w8d" path="res://Scripts/UI/loading_screen.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="2_font"]
+[ext_resource type="Texture2D" uid="uid://b76rb6qhdusai" path="res://assets/LoadingScreen/Adware.png" id="3_adware"]
+[ext_resource type="Texture2D" uid="uid://dedy2o45g6qn0" path="res://assets/LoadingScreen/ArmoredVirus.png" id="4_armored"]
+[ext_resource type="Texture2D" uid="uid://clrcy35hxtg2" path="res://assets/LoadingScreen/Botnet.png" id="5_botnet"]
+[ext_resource type="Texture2D" uid="uid://6e1c4jpkv25l" path="res://assets/LoadingScreen/CyberGuardian.png" id="6_guardian"]
+[ext_resource type="Texture2D" uid="uid://beiibkjxo74kj" path="res://assets/LoadingScreen/EDR_Hunter.png" id="7_edr"]
+[ext_resource type="Texture2D" uid="uid://c5p38l4m4w5fk" path="res://assets/LoadingScreen/HoneypotFactory.png" id="8_honeypot"]
+[ext_resource type="Texture2D" uid="uid://bm6812ek60efy" path="res://assets/LoadingScreen/Kernal_Bob.png" id="9_bob"]
+[ext_resource type="Texture2D" uid="uid://ck7laya0fj0q4" path="res://assets/LoadingScreen/Mech.png" id="10_mech"]
+[ext_resource type="Texture2D" uid="uid://c163un21qmujq" path="res://assets/LoadingScreen/MutantVirus.png" id="11_mutant"]
+[ext_resource type="Texture2D" uid="uid://dc8lak5yodm7w" path="res://assets/LoadingScreen/RedVirus.png" id="12_red_virus"]
+[ext_resource type="Texture2D" uid="uid://cdm1t6og20f6g" path="res://assets/LoadingScreen/NewSprites/SIEM_Hawk.png" id="13_hawk"]
+[ext_resource type="Texture2D" uid="uid://ce7b1b007y36i" path="res://assets/LoadingScreen/Spyware.png" id="14_spyware"]
+[ext_resource type="Texture2D" uid="uid://dhhdvefco7kgs" path="res://assets/LoadingScreen/NewSprites/IDS_Scanner.png" id="15_ids_scanner"]
+[ext_resource type="Texture2D" uid="uid://jelbl5xe6682" path="res://assets/LoadingScreen/NewSprites/IPS_Intrusion.png" id="16_ips_intrusion"]
+[ext_resource type="Texture2D" uid="uid://313bfarhqaiq" path="res://assets/LoadingScreen/NewSprites/SIEM_Scraper.png" id="17_siem_scraper"]
+[ext_resource type="Texture2D" uid="uid://ce7q1xaulctaq" path="res://assets/LoadingScreen/NewSprites/Zombie_Node.png" id="18_zombie_node"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.012, 0.018, 0.03, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.28, 0.88, 1, 0.95)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.65)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_background"]
+bg_color = Color(0.025, 0.06, 0.095, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.16, 0.38, 0.55, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_fill"]
+bg_color = Color(0.1, 0.66, 1, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="LoadingScreen" type="Control" unique_id=736336346]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="." unique_id=561142664]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.46591002, 0.43440607, 0.3412065, 1)
+
+[node name="ArtworkLayer" type="Node2D" parent="." unique_id=489353484]
+
+[node name="Viruses" type="Node2D" parent="ArtworkLayer" unique_id=485711266]
+
+[node name="ZombieNode" type="Sprite2D" parent="ArtworkLayer/Viruses" unique_id=24133590]
+position = Vector2(478.45538, 249)
+scale = Vector2(0.42468086, 0.42468083)
+texture = ExtResource("18_zombie_node")
+flip_h = true
+
+[node name="Botnet" type="Sprite2D" parent="ArtworkLayer/Viruses" unique_id=538059085]
+position = Vector2(281.45538, 581)
+scale = Vector2(0.70545596, 0.70545596)
+texture = ExtResource("5_botnet")
+
+[node name="ArmoredVirus" type="Sprite2D" parent="ArtworkLayer/Viruses" unique_id=1238985283]
+position = Vector2(173.33041, 137.28764)
+scale = Vector2(0.25553188, 0.25553185)
+texture = ExtResource("4_armored")
+
+[node name="Spyware" type="Sprite2D" parent="ArtworkLayer/Viruses" unique_id=1598139525]
+position = Vector2(710.5625, 310)
+scale = Vector2(0.2202128, 0.22021279)
+texture = ExtResource("14_spyware")
+
+[node name="Adware" type="Sprite2D" parent="ArtworkLayer/Viruses" unique_id=512235187]
+position = Vector2(614.5625, 488)
+scale = Vector2(0.3277659, 0.3277659)
+texture = ExtResource("3_adware")
+
+[node name="MutantVirus" type="Sprite2D" parent="ArtworkLayer/Viruses" unique_id=1280499747]
+position = Vector2(696.5624, 758.99994)
+scale = Vector2(0.3265957, 0.3265957)
+texture = ExtResource("11_mutant")
+
+[node name="RedVirus" type="Sprite2D" parent="ArtworkLayer/Viruses" unique_id=509298295]
+position = Vector2(668.56244, 105)
+scale = Vector2(0.1838298, 0.18382977)
+texture = ExtResource("12_red_virus")
+
+[node name="Towers" type="Node2D" parent="ArtworkLayer" unique_id=128103656]
+
+[node name="IDSScanner" type="Sprite2D" parent="ArtworkLayer/Towers" unique_id=1159449117]
+position = Vector2(1079.5, 264)
+scale = Vector2(0.18978722, 0.18978722)
+texture = ExtResource("15_ids_scanner")
+
+[node name="SIEMScraper" type="Sprite2D" parent="ArtworkLayer/Towers" unique_id=955553929]
+position = Vector2(1597.3125, 172)
+scale = Vector2(0.2575532, 0.25755316)
+texture = ExtResource("17_siem_scraper")
+
+[node name="IPSIntrusion" type="Sprite2D" parent="ArtworkLayer/Towers" unique_id=202474116]
+position = Vector2(1819.3124, 256)
+scale = Vector2(0.3542553, 0.35425523)
+texture = ExtResource("16_ips_intrusion")
+flip_h = true
+
+[node name="HoneypotFactory" type="Sprite2D" parent="ArtworkLayer/Towers" unique_id=50456842]
+position = Vector2(1857.3125, 585)
+scale = Vector2(0.51313853, 0.51313853)
+texture = ExtResource("8_honeypot")
+
+[node name="EDRHunter" type="Sprite2D" parent="ArtworkLayer/Towers" unique_id=2128913162]
+position = Vector2(1156.4999, 303)
+scale = Vector2(0.22872354, 0.22872356)
+texture = ExtResource("7_edr")
+
+[node name="Mech" type="Sprite2D" parent="ArtworkLayer/Towers" unique_id=642712675]
+position = Vector2(1412.5, 337.99997)
+scale = Vector2(0.51659566, 0.51659554)
+texture = ExtResource("10_mech")
+
+[node name="KernalBob" type="Sprite2D" parent="ArtworkLayer/Towers" unique_id=328885227]
+position = Vector2(1270.5, 564)
+scale = Vector2(0.23989359, 0.23989359)
+texture = ExtResource("9_bob")
+
+[node name="SIEMHawk" type="Sprite2D" parent="ArtworkLayer/Towers" unique_id=1756606139]
+position = Vector2(1180.5, 109)
+scale = Vector2(0.25127652, 0.25127652)
+texture = ExtResource("13_hawk")
+flip_h = true
+
+[node name="CyberGuardian" type="Sprite2D" parent="ArtworkLayer/Towers" unique_id=1252971264]
+position = Vector2(1458.4999, 646)
+scale = Vector2(0.44000006, 0.44000003)
+texture = ExtResource("6_guardian")
+
+[node name="TopAccent" type="ColorRect" parent="." unique_id=2117537331]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 2.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.08, 0.62, 1, 0.72)
+
+[node name="BottomAccent" type="ColorRect" parent="." unique_id=266542794]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -2.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+color = Color(0.08, 0.62, 1, 0.46)
+
+[node name="LoadingPanel" type="PanelContainer" parent="." unique_id=1501579378]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -954.0
+offset_top = 361.0
+offset_right = 954.0
+offset_bottom = 524.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="LoadingPanel" unique_id=1958963398]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 42
+theme_override_constants/margin_top = 34
+theme_override_constants/margin_right = 42
+theme_override_constants/margin_bottom = 34
+
+[node name="Content" type="VBoxContainer" parent="LoadingPanel/Margin" unique_id=666871804]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="LoadingLabel" type="Label" parent="LoadingPanel/Margin/Content" unique_id=304484603]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.97, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0.08, 0.14, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 34
+text = "Loading Game... 0%"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ProgressWrap" type="Control" parent="LoadingPanel/Margin/Content" unique_id=1886411691]
+custom_minimum_size = Vector2(660, 13)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="LoadingPanel/Margin/Content/ProgressWrap" unique_id=711246244]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_background")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bar_fill")
+show_percentage = false
+
+[node name="ProgressPulse" type="ColorRect" parent="LoadingPanel/Margin/Content/ProgressWrap" unique_id=848807213]
+visible = false
+custom_minimum_size = Vector2(72, 13)
+layout_mode = 1
+offset_right = 72.0
+offset_bottom = 13.0
+mouse_filter = 2
+color = Color(0.74, 0.95, 1, 0.82)

@@ -1,5 +1,5 @@
 class_name EDRHunterTower
-extends CyberGuardianTower
+extends "res://Scripts/Towers/cyber_guardian_idle_sprite.gd"
 
 const EDR_MAX_LEVEL := 5
 const EDR_DAMAGE := 10

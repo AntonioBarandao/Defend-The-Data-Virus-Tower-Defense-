@@ -16,6 +16,7 @@ const PHASE_END := &"phase_end"
 const PHASE_ONE_DESTROY_SFX := preload("res://Assets/sfx/virus_destroy.wav")
 
 @export var play_on_ready := true
+@export var cutscene_skip_hud_path: NodePath = ^"../CutsceneSkipHUD"
 @export var dialogue_lines: PackedStringArray = [
 	"Our hardware is being under attack! Help us defeat the viruses and save our cpu!",
 	"Deploy cybersecurity towers onto safe platforms and stop the viruses before they breach the system.",
@@ -85,6 +86,7 @@ var _cutscene_camera: Camera2D
 var _camera_start_global_position := Vector2.ZERO
 var _camera_start_zoom := Vector2.ONE
 var _camera_tween: Tween
+var _cutscene_skip_hud: Node
 var _phase_one_attack_tween: Tween
 var _phase_two_intro_tween: Tween
 var _phase_end_tween: Tween
@@ -107,6 +109,7 @@ func _ready() -> void:
 	_root.gui_input.connect(_on_root_gui_input)
 	_ensure_continue_button_styles()
 	_speaker_label.text = "CYBER GUARDIAN"
+	_cutscene_skip_hud = get_node_or_null(cutscene_skip_hud_path)
 	_cutscene_camera = get_node_or_null(cutscene_camera_path) as Camera2D
 	_capture_cutscene_camera_start()
 	_set_phase_one_target_visible(false, false)
@@ -290,6 +293,8 @@ func _input(event: InputEvent) -> void:
 func handle_cutscene_advance_input(event: InputEvent) -> bool:
 	if not _running or not _is_dialogue_phase():
 		return false
+	if _event_targets_skip_hud(event):
+		return false
 	if not _is_enter_press(event) and not _is_primary_press(event):
 		return false
 	var event_id := event.get_instance_id()
@@ -308,6 +313,8 @@ func handle_cutscene_advance_input(event: InputEvent) -> bool:
 
 
 func _on_root_gui_input(event: InputEvent) -> void:
+	if _event_targets_skip_hud(event):
+		return
 	if handle_cutscene_advance_input(event):
 		_root.accept_event()
 
@@ -320,6 +327,15 @@ func _is_enter_press(event: InputEvent) -> bool:
 			and (key_event.keycode == KEY_ENTER or key_event.keycode == KEY_KP_ENTER)
 
 	return false
+
+
+func _event_targets_skip_hud(event: InputEvent) -> bool:
+	if _cutscene_skip_hud == null:
+		_cutscene_skip_hud = get_node_or_null(cutscene_skip_hud_path)
+	if _cutscene_skip_hud == null or not _cutscene_skip_hud.has_method("event_targets_skip_button"):
+		return false
+
+	return bool(_cutscene_skip_hud.call("event_targets_skip_button", event))
 
 
 func _is_primary_press(event: InputEvent) -> bool:

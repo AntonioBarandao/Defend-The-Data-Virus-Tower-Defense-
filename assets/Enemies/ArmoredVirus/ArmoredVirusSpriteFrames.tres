@@ -1,0 +1,1035 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://cuog0fhyrk0x6"]
+
+[ext_resource type="Texture2D" uid="uid://bhvyq3armvrd" path="res://assets/Enemies/ArmoredVirus/ArmoredVirus_Sprite.png" id="1_idle"]
+[ext_resource type="Texture2D" uid="uid://de2lrwg0f4l7r" path="res://assets/Enemies/ArmoredVirus/ArmorDestroy/Armored_Virus_ArmorDestroy_atlas_24fps.png" id="2_atlas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_000"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 0, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_001"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 0, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_002"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 0, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_003"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 0, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_004"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 0, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_005"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 0, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_006"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 0, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_007"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 0, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_008"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 0, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_009"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 0, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_010"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 720, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_011"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 720, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_012"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 720, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_013"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 720, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_014"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 720, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_015"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 720, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_016"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 720, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_017"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 720, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_018"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 720, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_019"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 720, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_020"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 1440, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_021"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 1440, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_022"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 1440, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_023"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 1440, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_024"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 1440, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_025"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 1440, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_026"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 1440, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_027"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 1440, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_028"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 1440, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_029"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 1440, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_030"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 2160, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_031"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 2160, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_032"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 2160, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_033"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 2160, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_034"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 2160, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_035"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 2160, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_036"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 2160, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_037"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 2160, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_038"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 2160, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_039"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 2160, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_040"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 2880, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_041"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 2880, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_042"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 2880, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_043"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 2880, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_044"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 2880, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_045"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 2880, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_046"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 2880, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_047"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 2880, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_048"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 2880, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_049"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 2880, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_050"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 3600, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_051"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 3600, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_052"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 3600, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_053"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 3600, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_054"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 3600, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_055"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 3600, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_056"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 3600, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_057"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 3600, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_058"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 3600, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_059"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 3600, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_060"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 4320, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_061"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 4320, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_062"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 4320, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_063"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 4320, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_064"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 4320, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_065"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 4320, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_066"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 4320, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_067"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 4320, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_068"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 4320, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_069"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 4320, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_070"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 5040, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_071"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 5040, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_072"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 5040, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_073"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 5040, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_074"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 5040, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_075"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 5040, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_076"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 5040, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_077"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 5040, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_078"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 5040, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_079"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 5040, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_080"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 5760, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_081"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 5760, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_082"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 5760, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_083"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 5760, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_084"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 5760, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_085"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 5760, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_086"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 5760, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_087"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 5760, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_088"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 5760, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_089"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 5760, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_090"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 6480, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_091"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 6480, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_092"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 6480, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_093"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 6480, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_094"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 6480, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_095"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 6480, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_096"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 6480, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_097"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 6480, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_098"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 6480, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_099"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 6480, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_100"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 7200, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_101"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 7200, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_102"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 7200, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_103"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 7200, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_104"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 7200, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_105"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 7200, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_106"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 7200, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_107"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 7200, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_108"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 7200, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_109"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 7200, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_110"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 7920, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_111"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 7920, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_112"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 7920, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_113"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 7920, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_114"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 7920, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_115"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 7920, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_116"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 7920, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_117"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 7920, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_118"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 7920, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_119"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 7920, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_120"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 8640, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_121"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 8640, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_122"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 8640, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_123"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 8640, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_124"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 8640, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_125"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 8640, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_126"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 8640, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_127"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 8640, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_128"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 8640, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_129"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 8640, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_130"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 9360, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_131"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 9360, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_132"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 9360, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_133"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 9360, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_134"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 9360, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_135"]
+atlas = ExtResource("2_atlas")
+region = Rect2(3600, 9360, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_136"]
+atlas = ExtResource("2_atlas")
+region = Rect2(4320, 9360, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_137"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5040, 9360, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_138"]
+atlas = ExtResource("2_atlas")
+region = Rect2(5760, 9360, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_139"]
+atlas = ExtResource("2_atlas")
+region = Rect2(6480, 9360, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_140"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 10080, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_141"]
+atlas = ExtResource("2_atlas")
+region = Rect2(720, 10080, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_142"]
+atlas = ExtResource("2_atlas")
+region = Rect2(1440, 10080, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_143"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2160, 10080, 720, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_144"]
+atlas = ExtResource("2_atlas")
+region = Rect2(2880, 10080, 720, 720)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_000")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_001")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_002")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_003")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_004")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_005")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_006")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_007")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_008")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_009")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_010")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_011")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_012")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_013")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_014")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_015")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_016")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_017")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_018")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_019")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_020")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_021")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_022")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_023")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_024")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_025")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_026")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_027")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_028")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_029")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_030")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_031")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_032")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_033")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_034")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_035")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_036")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_037")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_038")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_039")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_040")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_041")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_042")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_043")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_044")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_045")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_046")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_047")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_048")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_049")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_050")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_051")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_052")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_053")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_054")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_055")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_056")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_057")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_058")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_059")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_060")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_061")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_062")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_063")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_064")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_065")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_066")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_067")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_068")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_069")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_070")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_071")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_072")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_073")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_074")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_075")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_076")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_077")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_078")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_079")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_080")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_081")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_082")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_083")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_084")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_085")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_086")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_087")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_088")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_089")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_090")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_091")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_092")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_093")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_094")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_095")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_096")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_097")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_098")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_099")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_100")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_101")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_102")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_103")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_104")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_105")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_106")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_107")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_108")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_109")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_110")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_111")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_112")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_113")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_114")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_115")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_116")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_117")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_118")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_119")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_120")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_121")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_122")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_123")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_124")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_125")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_126")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_127")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_128")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_129")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_130")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_131")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_132")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_133")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_134")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_135")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_136")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_137")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_138")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_139")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_140")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_141")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_142")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_143")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_armor_destroy_144")
+}],
+"loop": 0,
+"name": &"armor_destroy",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_idle")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 1.0
+}]

@@ -451,13 +451,9 @@ color = Color(1, 0.1, 0.08, 0.45)
 [node name="Sprites" type="Node2D" parent="." unique_id=1360860051]
 position = Vector2(0, -124.00006)
 
-[node name="Cybersec Guardian" type="AnimatedSprite2D" parent="Sprites" unique_id=1828353461 groups=["Defender", "OFFENSE_TOWER"] instance=ExtResource("6_cyber")]
+[node name="Cybersec Guardian" parent="Sprites" unique_id=1828353461 instance=ExtResource("6_cyber")]
 position = Vector2(125, 1099)
 scale = Vector2(0.3, 0.3)
-sprite_frames = ExtResource("15_rf5io")
-animation = &"idle"
-autoplay = "idle"
-script = ExtResource("16_q5t1k")
 
 [node name="Laser Turret" parent="Sprites" unique_id=646211365 instance=ExtResource("8_laser")]
 position = Vector2(360, 1099)

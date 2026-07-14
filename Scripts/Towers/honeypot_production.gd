@@ -1,5 +1,5 @@
 class_name HoneypotProductionTower
-extends CyberGuardianTower
+extends "res://Scripts/Towers/cyber_guardian_idle_sprite.gd"
 
 signal production_collected(amount: int)
 

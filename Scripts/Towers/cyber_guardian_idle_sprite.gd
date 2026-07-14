@@ -1,8 +1,9 @@
 class_name CyberGuardianTower
-extends AnimatedSprite2D
+extends Node2D
 
 signal placed(tower: CyberGuardianTower)
 signal mode_changed(mode_id: StringName)
+signal firewall_damage_requested(follow: PathFollow2D, amount: int)
 
 const TowerSummonEffectScript := preload("res://Scripts/Effects/tower_summon_effect.gd")
 const SIGNAL_BOOST_TEXTURE := preload("res://assets/Towers/CyberGuardian/Modes/Cyber_Guardian_SignalBoost_Sprite.png")
@@ -10,6 +11,11 @@ const FIREWALL_TEXTURE := preload("res://assets/Towers/CyberGuardian/Modes/Cyber
 const IDLE_ANIMATION := &"idle"
 const SUMMON_ANIMATION := &"SummonAnim"
 const SHOOT_ANIMATION := &"ShootAnim"
+const TRACK_ANIMATIONS := [
+	IDLE_ANIMATION,
+	SUMMON_ANIMATION,
+	SHOOT_ANIMATION
+]
 const MODE_DEFENDER := &"defender"
 const MODE_SIGNAL_BOOST := &"signal_boost"
 const MODE_FIREWALL := &"firewall"
@@ -23,8 +29,8 @@ const MODE_DISPLAY_NAMES := {
 	MODE_SIGNAL_BOOST: "Signal Boost Mode",
 	MODE_FIREWALL: "Firewall Mode"
 }
-const SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL := 1
-const FIREWALL_UNLOCK_KNOWLEDGE_LEVEL := 1
+const SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL := 3
+const FIREWALL_UNLOCK_KNOWLEDGE_LEVEL := 5
 const MODE_UNLOCK_LEVELS := {
 	MODE_DEFENDER: 1,
 	MODE_SIGNAL_BOOST: SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL,
@@ -33,6 +39,10 @@ const MODE_UNLOCK_LEVELS := {
 const SIGNAL_BOOST_RANGE_MULTIPLIER := 1.1
 const SIGNAL_BOOST_COOLDOWN_MULTIPLIER := 0.9
 const SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER := 1.2
+const GROUP_OFFENSE_TOWER := "OFFENSE_TOWER"
+const GROUP_SUPPORT_TOWER := "SUPPORT_TOWER"
+const FIREWALL_FIELD_NAME := "GuardianFirewallField"
+const FIREWALL_SAMPLE_DISTANCE := 16.0
 const GRAB_SIZE := Vector2(240, 180)
 const PLACEMENT_HIGHLIGHT_SIZE := Vector2(180, 120)
 const PLACEMENT_SLOT_PREFIX := "placementslot"
@@ -60,9 +70,25 @@ const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
 @export var show_attack_range_preview := true
 @export var range_preview_fill_color := RANGE_PREVIEW_FILL_COLOR
 @export var range_preview_outline_color := RANGE_PREVIEW_OUTLINE_COLOR
+@export_group("Track Visuals")
+@export var defender_idle_visual_path: NodePath = ^"Visuals/DefenderIdle"
+@export var defender_summon_visual_path: NodePath = ^"Visuals/DefenderSummon"
+@export var defender_shoot_visual_path: NodePath = ^"Visuals/DefenderShoot"
+@export var signal_boost_idle_visual_path: NodePath = ^"Visuals/SignalBoostIdle"
+@export var signal_boost_summon_visual_path: NodePath = ^"Visuals/SignalBoostSummon"
+@export var signal_boost_shoot_visual_path: NodePath = ^"Visuals/SignalBoostShoot"
+@export var firewall_idle_visual_path: NodePath = ^"Visuals/FirewallIdle"
+@export var firewall_summon_visual_path: NodePath = ^"Visuals/FirewallSummon"
+@export var firewall_shoot_visual_path: NodePath = ^"Visuals/FirewallShoot"
 @export_group("Mode Sprites")
 @export var signal_boost_sprite_path: NodePath = ^"ModeSprites/SignalBoostSprite"
 @export var firewall_sprite_path: NodePath = ^"ModeSprites/FirewallSprite"
+@export_group("Firewall")
+@export var virus_path_path: NodePath = ^"../../VirusElements/Path2D"
+@export var firewall_size := Vector2(240.0, 54.0)
+@export var firewall_color := Color(1.0, 0.08, 0.04, 0.42)
+@export var firewall_outline_color := Color(1.0, 0.38, 0.26, 0.86)
+@export var firewall_z_index := 58
 @export_group("Audio")
 @export var summon_sfx_path: NodePath = ^"Audio/SummonSfx"
 @export_group("")
@@ -92,6 +118,24 @@ var _firewall_sprite: Sprite2D
 var _defender_sprite_frames: SpriteFrames
 var _static_mode_sprite_frames := {}
 var _signal_boost_active := false
+var _signal_boost_range_multiplier := SIGNAL_BOOST_RANGE_MULTIPLIER
+var _signal_boost_cooldown_multiplier := SIGNAL_BOOST_COOLDOWN_MULTIPLIER
+var _signal_boost_hawk_speed_multiplier := SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER
+var _virus_path: Path2D
+var _firewall_area: Area2D
+var _firewall_collision_shape: CollisionShape2D
+var _firewall_visual: Polygon2D
+var _firewall_outline: Line2D
+var _firewall_contact_ids := {}
+var _firewall_burn_states := {}
+var _firewall_hit_damage := 1
+var _firewall_burn_damage := 1
+var _firewall_burn_tick_seconds := 1.0
+var _firewall_burn_duration := 5.0
+var _root_visual: AnimatedSprite2D
+var _active_visual: AnimatedSprite2D
+var _current_animation: StringName = IDLE_ANIMATION
+var _visuals_by_mode_animation := {}
 
 
 func _ready() -> void:
@@ -103,6 +147,8 @@ func _ready() -> void:
 	_base_modulate = modulate
 	z_index = maxi(z_index, TOWER_VISUAL_Z_INDEX)
 	z_as_relative = false
+	_resolve_virus_path()
+	_configure_animation_visuals()
 	_platform_highlight = get_node_or_null(platform_highlight_path) as ColorRect
 	_signal_boost_sprite = get_node_or_null(signal_boost_sprite_path) as Sprite2D
 	_firewall_sprite = get_node_or_null(firewall_sprite_path) as Sprite2D
@@ -110,13 +156,14 @@ func _ready() -> void:
 	_hide_mode_sprite_source_nodes()
 	if _platform_highlight != null:
 		_platform_highlight.hide()
+	_sync_mode_groups()
+	_sync_firewall_field()
 
-	if not animation_finished.is_connected(_return_to_idle):
-		animation_finished.connect(_return_to_idle)
-
-	if _has_required_animations(sprite_frames):
-		_capture_defender_sprite_frames(sprite_frames)
+	var available_frames := _get_defender_sprite_frames()
+	if _has_required_animations(available_frames):
+		_capture_defender_sprite_frames(available_frames)
 		_prepare_static_mode_sprite_frames()
+		_assign_sprite_frames_to_mode(MODE_DEFENDER, available_frames, true)
 		play_animation(IDLE_ANIMATION)
 		return
 
@@ -208,6 +255,8 @@ func reset_tower() -> void:
 	_drag_offset = Vector2.ZERO
 	_drag_start_position = _home_position
 	_current_placement_shape = null
+	_clear_firewall_effects()
+	_sync_firewall_field()
 	_clear_drag_feedback()
 	_shot_cooldown_remaining = 0.0
 	_shot_pose_active = false
@@ -279,6 +328,8 @@ func set_guardian_mode(mode_id: StringName) -> bool:
 
 	_current_mode = normalized_mode
 	_apply_guardian_mode_visual()
+	_sync_mode_groups()
+	_sync_firewall_field()
 	mode_changed.emit(_current_mode)
 	return true
 
@@ -314,10 +365,32 @@ func get_unlocked_mode_ids(knowledge_level: int) -> Array[StringName]:
 
 
 func set_signal_boost_active(active: bool) -> void:
+	set_signal_boost_profile(
+		active,
+		SIGNAL_BOOST_RANGE_MULTIPLIER,
+		SIGNAL_BOOST_COOLDOWN_MULTIPLIER,
+		SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER
+	)
+
+
+func set_signal_boost_profile(
+	active: bool,
+	range_multiplier: float,
+	cooldown_multiplier: float,
+	hawk_speed_multiplier: float = SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER
+) -> void:
 	if _signal_boost_active == active:
+		_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
+		_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
+		_signal_boost_hawk_speed_multiplier = maxf(0.0, hawk_speed_multiplier)
+		_range_preview_radius = -1.0
+		_update_attack_range_preview()
 		return
 
 	_signal_boost_active = active
+	_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
+	_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
+	_signal_boost_hawk_speed_multiplier = maxf(0.0, hawk_speed_multiplier)
 	_range_preview_radius = -1.0
 	_update_attack_range_preview()
 
@@ -327,19 +400,29 @@ func is_signal_boost_active() -> bool:
 
 
 func get_signal_boost_range_multiplier() -> float:
-	return SIGNAL_BOOST_RANGE_MULTIPLIER if _signal_boost_active else 1.0
+	return _signal_boost_range_multiplier if _signal_boost_active else 1.0
 
 
 func get_signal_boost_cooldown_multiplier() -> float:
-	return SIGNAL_BOOST_COOLDOWN_MULTIPLIER if _signal_boost_active else 1.0
+	return _signal_boost_cooldown_multiplier if _signal_boost_active else 1.0
 
 
 func get_signal_boost_hawk_speed_multiplier() -> float:
-	return SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER if _signal_boost_active else 1.0
+	return _signal_boost_hawk_speed_multiplier if _signal_boost_active else 1.0
+
+
+func set_firewall_profile(hit_damage: int, burn_damage: int, burn_tick_seconds: float, burn_duration: float) -> void:
+	_firewall_hit_damage = maxi(0, hit_damage)
+	_firewall_burn_damage = maxi(0, burn_damage)
+	_firewall_burn_tick_seconds = maxf(0.05, burn_tick_seconds)
+	_firewall_burn_duration = maxf(0.0, burn_duration)
 
 
 func update_attack(delta: float, active_viruses: Array[PathFollow2D]) -> PathFollow2D:
 	if not _placed:
+		_return_to_rest_state_if_not_shooting()
+		return null
+	if _current_mode != MODE_DEFENDER:
 		_return_to_rest_state_if_not_shooting()
 		return null
 
@@ -357,24 +440,135 @@ func update_attack(delta: float, active_viruses: Array[PathFollow2D]) -> PathFol
 	return target
 
 
+func update_firewall(delta: float, active_viruses: Array[PathFollow2D]) -> void:
+	_update_firewall_burns(delta)
+	if not _placed or _current_mode != MODE_FIREWALL:
+		_sync_firewall_field()
+		return
+
+	_sync_firewall_field()
+	if _firewall_area == null:
+		return
+
+	for follow in active_viruses:
+		if not _is_firewall_follow_damageable(follow):
+			continue
+
+		var follow_id := follow.get_instance_id()
+		var inside_firewall := _firewall_contains_follow(follow)
+		if not inside_firewall:
+			_firewall_contact_ids.erase(follow_id)
+			continue
+		if _firewall_contact_ids.has(follow_id):
+			continue
+
+		_firewall_contact_ids[follow_id] = true
+		_apply_firewall_burn(follow)
+		if _firewall_hit_damage > 0:
+			firewall_damage_requested.emit(follow, _firewall_hit_damage)
+
+
+func _configure_animation_visuals() -> void:
+	var root_node: Node = self
+	_root_visual = root_node as AnimatedSprite2D
+	_visuals_by_mode_animation.clear()
+	_register_track_visual(MODE_DEFENDER, IDLE_ANIMATION, defender_idle_visual_path)
+	_register_track_visual(MODE_DEFENDER, SUMMON_ANIMATION, defender_summon_visual_path)
+	_register_track_visual(MODE_DEFENDER, SHOOT_ANIMATION, defender_shoot_visual_path)
+	_register_track_visual(MODE_SIGNAL_BOOST, IDLE_ANIMATION, signal_boost_idle_visual_path)
+	_register_track_visual(MODE_SIGNAL_BOOST, SUMMON_ANIMATION, signal_boost_summon_visual_path)
+	_register_track_visual(MODE_SIGNAL_BOOST, SHOOT_ANIMATION, signal_boost_shoot_visual_path)
+	_register_track_visual(MODE_FIREWALL, IDLE_ANIMATION, firewall_idle_visual_path)
+	_register_track_visual(MODE_FIREWALL, SUMMON_ANIMATION, firewall_summon_visual_path)
+	_register_track_visual(MODE_FIREWALL, SHOOT_ANIMATION, firewall_shoot_visual_path)
+
+	if _visuals_by_mode_animation.is_empty() and _root_visual != null:
+		for animation_name in TRACK_ANIMATIONS:
+			_visuals_by_mode_animation[_visual_key(MODE_DEFENDER, animation_name)] = _root_visual
+
+	for visual in _get_unique_animation_visuals():
+		if visual == null:
+			continue
+		var callback := Callable(self, "_on_track_visual_animation_finished").bind(visual)
+		if not visual.animation_finished.is_connected(callback):
+			visual.animation_finished.connect(callback)
+		if visual != _root_visual:
+			visual.hide()
+
+	_active_visual = _get_visual_for_animation(IDLE_ANIMATION)
+	_show_only_visual(_active_visual)
+
+
+func _register_track_visual(mode_id: StringName, animation_name: StringName, visual_path: NodePath) -> void:
+	var visual := get_node_or_null(visual_path) as AnimatedSprite2D
+	if visual == null:
+		return
+
+	_visuals_by_mode_animation[_visual_key(mode_id, animation_name)] = visual
+
+
+func _visual_key(mode_id: StringName, animation_name: StringName) -> String:
+	return "%s/%s" % [String(mode_id), String(animation_name)]
+
+
+func _get_visual_for_animation(animation_name: StringName) -> AnimatedSprite2D:
+	var visual := _visuals_by_mode_animation.get(_visual_key(_current_mode, animation_name)) as AnimatedSprite2D
+	if visual != null:
+		return visual
+
+	visual = _visuals_by_mode_animation.get(_visual_key(MODE_DEFENDER, animation_name)) as AnimatedSprite2D
+	if visual != null:
+		return visual
+
+	return _root_visual
+
+
+func _get_unique_animation_visuals() -> Array[AnimatedSprite2D]:
+	var visuals: Array[AnimatedSprite2D] = []
+	for visual_value in _visuals_by_mode_animation.values():
+		var visual := visual_value as AnimatedSprite2D
+		if visual != null and not visuals.has(visual):
+			visuals.append(visual)
+
+	if _root_visual != null and not visuals.has(_root_visual):
+		visuals.append(_root_visual)
+
+	return visuals
+
+
+func _show_only_visual(visual_to_show: AnimatedSprite2D) -> void:
+	for visual in _get_unique_animation_visuals():
+		if visual == null:
+			continue
+		visual.visible = visual == visual_to_show
+
+
+func _on_track_visual_animation_finished(visual: AnimatedSprite2D) -> void:
+	if visual == _active_visual:
+		_return_to_idle()
+
+
 func contains_global_point(pointer_position: Vector2) -> bool:
 	return get_tower_rect().has_point(pointer_position)
 
 
 func get_tower_rect() -> Rect2:
 	var size := PLACEMENT_HIGHLIGHT_SIZE
-	if sprite_frames != null and sprite_frames.has_animation(animation):
-		var texture := sprite_frames.get_frame_texture(animation, frame)
+	var visual := _active_visual if _active_visual != null else _get_visual_for_animation(IDLE_ANIMATION)
+	var rect_position := global_position
+	if visual != null and visual.sprite_frames != null and visual.sprite_frames.has_animation(visual.animation):
+		var texture := visual.sprite_frames.get_frame_texture(visual.animation, visual.frame)
 		if texture != null:
-			var current_scale := global_scale
+			var current_scale := visual.global_scale
 			size = texture.get_size() * Vector2(abs(current_scale.x), abs(current_scale.y))
+			rect_position = visual.global_position
 
 	size.x = max(size.x, GRAB_SIZE.x)
 	size.y = max(size.y, GRAB_SIZE.y)
 
-	var top_left := global_position - size * 0.5
-	if not centered:
-		top_left = global_position
+	var top_left := rect_position - size * 0.5
+	if visual != null and not visual.centered:
+		top_left = rect_position
 
 	return Rect2(top_left, size)
 
@@ -386,13 +580,17 @@ func aim_at(target_position: Vector2) -> void:
 
 
 func play_animation(animation_name: StringName) -> void:
-	if sprite_frames == null or not sprite_frames.has_animation(animation_name):
+	var visual := _get_visual_for_animation(animation_name)
+	if visual == null or visual.sprite_frames == null or not visual.sprite_frames.has_animation(animation_name):
 		return
 
-	animation = animation_name
-	frame = 0
-	frame_progress = 0.0
-	play()
+	_active_visual = visual
+	_current_animation = animation_name
+	_show_only_visual(visual)
+	visual.animation = animation_name
+	visual.frame = 0
+	visual.frame_progress = 0.0
+	visual.play()
 
 
 func play_summon() -> void:
@@ -689,6 +887,224 @@ func _spawn_summon_effect() -> void:
 	effect.z_as_relative = false
 
 
+func _sync_mode_groups() -> void:
+	if _current_mode == MODE_SIGNAL_BOOST:
+		remove_from_group(GROUP_OFFENSE_TOWER)
+		add_to_group(GROUP_SUPPORT_TOWER)
+	else:
+		add_to_group(GROUP_OFFENSE_TOWER)
+		remove_from_group(GROUP_SUPPORT_TOWER)
+
+
+func _sync_firewall_field() -> void:
+	var active := _placed and _current_mode == MODE_FIREWALL
+	if not active:
+		_set_firewall_field_visible(false)
+		_firewall_contact_ids.clear()
+		return
+
+	_ensure_firewall_field()
+	if _firewall_area == null:
+		return
+
+	var placement := _get_firewall_path_placement()
+	if not bool(placement["valid"]):
+		_set_firewall_field_visible(false)
+		return
+
+	_firewall_area.global_position = placement["position"]
+	_firewall_area.global_rotation = float(placement["rotation"])
+	_set_firewall_field_visible(true)
+
+
+func _ensure_firewall_field() -> void:
+	if is_instance_valid(_firewall_area) \
+			and is_instance_valid(_firewall_collision_shape) \
+			and is_instance_valid(_firewall_visual) \
+			and is_instance_valid(_firewall_outline):
+		return
+
+	var game_root := _get_game_root()
+	if game_root == null:
+		return
+
+	_firewall_area = Area2D.new()
+	_firewall_area.name = FIREWALL_FIELD_NAME
+	_firewall_area.collision_layer = 0
+	_firewall_area.collision_mask = 0
+	_firewall_area.monitoring = false
+	_firewall_area.monitorable = false
+	_firewall_area.z_index = firewall_z_index
+	_firewall_area.z_as_relative = false
+	game_root.add_child(_firewall_area)
+
+	_firewall_visual = Polygon2D.new()
+	_firewall_visual.name = "FirewallVisual"
+	_firewall_visual.color = firewall_color
+	_firewall_visual.z_index = firewall_z_index
+	_firewall_visual.z_as_relative = false
+	_firewall_area.add_child(_firewall_visual)
+
+	_firewall_outline = Line2D.new()
+	_firewall_outline.name = "FirewallOutline"
+	_firewall_outline.width = 4.0
+	_firewall_outline.default_color = firewall_outline_color
+	_firewall_outline.joint_mode = Line2D.LINE_JOINT_ROUND
+	_firewall_outline.begin_cap_mode = Line2D.LINE_CAP_ROUND
+	_firewall_outline.end_cap_mode = Line2D.LINE_CAP_ROUND
+	_firewall_outline.z_index = firewall_z_index + 1
+	_firewall_outline.z_as_relative = false
+	_firewall_area.add_child(_firewall_outline)
+
+	_firewall_collision_shape = CollisionShape2D.new()
+	_firewall_collision_shape.name = "FirewallCollisionShape"
+	_firewall_collision_shape.debug_color = firewall_outline_color
+	var shape := RectangleShape2D.new()
+	shape.size = firewall_size
+	_firewall_collision_shape.shape = shape
+	_firewall_area.add_child(_firewall_collision_shape)
+
+	_rebuild_firewall_geometry()
+	_set_firewall_field_visible(false)
+
+
+func _rebuild_firewall_geometry() -> void:
+	if _firewall_visual != null:
+		var half_size := firewall_size * 0.5
+		_firewall_visual.polygon = PackedVector2Array([
+			Vector2(-half_size.x, -half_size.y),
+			Vector2(half_size.x, -half_size.y),
+			Vector2(half_size.x, half_size.y),
+			Vector2(-half_size.x, half_size.y)
+		])
+
+	if _firewall_outline != null:
+		var half_size := firewall_size * 0.5
+		_firewall_outline.points = PackedVector2Array([
+			Vector2(-half_size.x, -half_size.y),
+			Vector2(half_size.x, -half_size.y),
+			Vector2(half_size.x, half_size.y),
+			Vector2(-half_size.x, half_size.y),
+			Vector2(-half_size.x, -half_size.y)
+		])
+
+	if _firewall_collision_shape != null:
+		var shape := _firewall_collision_shape.shape as RectangleShape2D
+		if shape != null:
+			shape.size = firewall_size
+		_firewall_collision_shape.debug_color = firewall_outline_color
+
+
+func _set_firewall_field_visible(value: bool) -> void:
+	if _firewall_area != null:
+		_firewall_area.visible = value
+	if _firewall_collision_shape != null:
+		_firewall_collision_shape.disabled = not value
+
+
+func _clear_firewall_effects() -> void:
+	_firewall_contact_ids.clear()
+	_firewall_burn_states.clear()
+	_set_firewall_field_visible(false)
+
+
+func _resolve_virus_path() -> void:
+	_virus_path = get_node_or_null(virus_path_path) as Path2D
+	if _virus_path != null:
+		return
+
+	var game_root := _get_game_root()
+	if game_root != null:
+		_virus_path = game_root.get_node_or_null(^"VirusElements/Path2D") as Path2D
+
+
+func _get_firewall_path_placement() -> Dictionary:
+	var empty_result := {
+		"valid": false,
+		"position": global_position,
+		"rotation": rotation
+	}
+	if _virus_path == null or _virus_path.curve == null:
+		_resolve_virus_path()
+	if _virus_path == null or _virus_path.curve == null:
+		return empty_result
+
+	var path_length := _virus_path.curve.get_baked_length()
+	if path_length <= 0.0:
+		return empty_result
+
+	var local_position := _virus_path.to_local(global_position)
+	var offset := _virus_path.curve.get_closest_offset(local_position)
+	var path_position := _virus_path.to_global(_virus_path.curve.sample_baked(offset))
+	var previous_offset := maxf(0.0, offset - FIREWALL_SAMPLE_DISTANCE)
+	var next_offset := minf(path_length, offset + FIREWALL_SAMPLE_DISTANCE)
+	var previous_position := _virus_path.to_global(_virus_path.curve.sample_baked(previous_offset))
+	var next_position := _virus_path.to_global(_virus_path.curve.sample_baked(next_offset))
+	var tangent := next_position - previous_position
+	if tangent.length_squared() <= 0.001:
+		tangent = Vector2.RIGHT
+
+	return {
+		"valid": true,
+		"position": path_position,
+		"rotation": tangent.angle() + PI * 0.5
+	}
+
+
+func _firewall_contains_follow(follow: PathFollow2D) -> bool:
+	if _firewall_area == null or not _firewall_area.visible:
+		return false
+
+	var target_position := _get_follow_target_position(follow)
+	var local_position := _firewall_area.global_transform.affine_inverse() * target_position
+	return Rect2(-firewall_size * 0.5, firewall_size).has_point(local_position)
+
+
+func _apply_firewall_burn(follow: PathFollow2D) -> void:
+	if follow == null or _firewall_burn_duration <= 0.0 or _firewall_burn_damage <= 0:
+		return
+
+	_firewall_burn_states[follow.get_instance_id()] = {
+		"follow": follow,
+		"remaining": _firewall_burn_duration,
+		"tick_elapsed": 0.0
+	}
+
+
+func _update_firewall_burns(delta: float) -> void:
+	for follow_id in _firewall_burn_states.keys().duplicate():
+		var state := _firewall_burn_states[follow_id] as Dictionary
+		var follow := state.get("follow") as PathFollow2D
+		if not _is_firewall_follow_damageable(follow):
+			_firewall_burn_states.erase(follow_id)
+			_firewall_contact_ids.erase(follow_id)
+			continue
+
+		var remaining := maxf(0.0, float(state.get("remaining", 0.0)) - delta)
+		var tick_elapsed := float(state.get("tick_elapsed", 0.0)) + delta
+		while tick_elapsed >= _firewall_burn_tick_seconds and _firewall_burn_damage > 0:
+			tick_elapsed -= _firewall_burn_tick_seconds
+			firewall_damage_requested.emit(follow, _firewall_burn_damage)
+			if not _is_firewall_follow_damageable(follow):
+				break
+
+		if remaining <= 0.0 or not _is_firewall_follow_damageable(follow):
+			_firewall_burn_states.erase(follow_id)
+			continue
+
+		state["remaining"] = remaining
+		state["tick_elapsed"] = tick_elapsed
+		_firewall_burn_states[follow_id] = state
+
+
+func _is_firewall_follow_damageable(follow: PathFollow2D) -> bool:
+	if not is_instance_valid(follow):
+		return false
+
+	var virus := _get_follow_virus(follow)
+	return virus == null or not virus.is_destroying()
+
+
 func _get_game_root() -> Node:
 	var current_scene := get_tree().current_scene
 	return current_scene if current_scene != null else get_tree().root
@@ -697,7 +1113,7 @@ func _get_game_root() -> Node:
 func _apply_sprite_frames(frames: SpriteFrames) -> void:
 	_capture_defender_sprite_frames(frames)
 	_prepare_static_mode_sprite_frames()
-	sprite_frames = frames
+	_assign_sprite_frames_to_mode(MODE_DEFENDER, frames, true)
 	play_animation(IDLE_ANIMATION)
 
 
@@ -713,10 +1129,37 @@ func _capture_defender_sprite_frames(frames: SpriteFrames) -> void:
 		_defender_sprite_frames = frames
 
 
+func _get_defender_sprite_frames() -> SpriteFrames:
+	if _defender_sprite_frames != null:
+		return _defender_sprite_frames
+
+	var defender_idle := _visuals_by_mode_animation.get(_visual_key(MODE_DEFENDER, IDLE_ANIMATION)) as AnimatedSprite2D
+	if defender_idle != null and defender_idle.sprite_frames != null:
+		return defender_idle.sprite_frames
+	if _root_visual != null:
+		return _root_visual.sprite_frames
+
+	return null
+
+
+func _assign_sprite_frames_to_mode(mode_id: StringName, frames: SpriteFrames, overwrite := false) -> void:
+	if frames == null:
+		return
+
+	for animation_name in TRACK_ANIMATIONS:
+		var visual := _visuals_by_mode_animation.get(_visual_key(mode_id, animation_name)) as AnimatedSprite2D
+		if visual == null:
+			continue
+		if overwrite or visual.sprite_frames == null:
+			visual.sprite_frames = frames
+
+
 func _prepare_static_mode_sprite_frames() -> void:
 	if _static_mode_sprite_frames.is_empty():
 		_static_mode_sprite_frames[MODE_SIGNAL_BOOST] = _build_static_mode_sprite_frames(_get_signal_boost_texture())
 		_static_mode_sprite_frames[MODE_FIREWALL] = _build_static_mode_sprite_frames(_get_firewall_texture())
+	_assign_sprite_frames_to_mode(MODE_SIGNAL_BOOST, _static_mode_sprite_frames.get(MODE_SIGNAL_BOOST) as SpriteFrames)
+	_assign_sprite_frames_to_mode(MODE_FIREWALL, _static_mode_sprite_frames.get(MODE_FIREWALL) as SpriteFrames)
 
 
 func _build_static_mode_sprite_frames(texture: Texture2D) -> SpriteFrames:
@@ -759,13 +1202,14 @@ func _apply_guardian_mode_visual() -> void:
 	_prepare_static_mode_sprite_frames()
 	if _current_mode == MODE_DEFENDER:
 		if _defender_sprite_frames != null:
-			sprite_frames = _defender_sprite_frames
+			_assign_sprite_frames_to_mode(MODE_DEFENDER, _defender_sprite_frames, true)
 	else:
 		var mode_frames := _static_mode_sprite_frames.get(_current_mode) as SpriteFrames
 		if mode_frames != null:
-			sprite_frames = mode_frames
+			_assign_sprite_frames_to_mode(_current_mode, mode_frames)
 
-	if _has_required_animations(sprite_frames):
+	var visual := _get_visual_for_animation(IDLE_ANIMATION)
+	if visual != null and _has_required_animations(visual.sprite_frames):
 		play_animation(IDLE_ANIMATION)
 
 
@@ -785,7 +1229,7 @@ func _get_signal_boost_cooldown_multiplier() -> float:
 
 
 func _return_to_idle() -> void:
-	if animation != IDLE_ANIMATION:
+	if _current_animation != IDLE_ANIMATION:
 		play_animation(IDLE_ANIMATION)
 
 
@@ -809,5 +1253,5 @@ func _return_to_rest_state_if_not_shooting() -> void:
 func _return_to_rest_state() -> void:
 	_shot_pose_active = false
 	rotation = _rest_rotation
-	if animation == SHOOT_ANIMATION:
+	if _current_animation == SHOOT_ANIMATION:
 		play_idle()

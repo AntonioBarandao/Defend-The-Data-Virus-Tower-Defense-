@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://ce0wxurfo32xk"]
+
+[node name="LoadingScreen" type="Node2D" unique_id=241767340]
+
+[node name="Models" type="Node2D" parent="." unique_id=1558807816]
+
+[node name="CyberGuardianSprite" type="Sprite2D" parent="Models" unique_id=76642734]

@@ -100,6 +100,10 @@ var _banked_knowledge_points := 0
 var _scanned_virus_ids := {}
 var _extraction_elapsed := 0.0
 var _scan_arc_phase := 0.0
+var _signal_boost_range_multiplier := SIGNAL_BOOST_RANGE_MULTIPLIER
+var _signal_boost_cooldown_multiplier := SIGNAL_BOOST_COOLDOWN_MULTIPLIER
+var _signal_boost_hawk_speed_multiplier := SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER
+var _last_visible_state := true
 
 
 func _ready() -> void:
@@ -126,14 +130,18 @@ func _ready() -> void:
 		_platform_highlight.hide()
 	_collect_level_visuals()
 	_configure_top_level_scanner_nodes()
-	_sync_level_visuals()
+	_sync_level_visuals(true)
 	play_idle()
+	_last_visible_state = visible
 	_sync_base_sprite()
 	_update_scan_arc_visual(0.0)
 	_sync_knowledge_label()
 
 
 func _process(delta: float) -> void:
+	if visible != _last_visible_state:
+		_last_visible_state = visible
+		_sync_level_visuals()
 	_update_attack_range_preview()
 	_sync_base_sprite()
 	_update_scan_arc_visual(delta)
@@ -159,6 +167,7 @@ func try_start_drag(pointer_position: Vector2) -> bool:
 	_dragging = true
 	_drag_start_position = global_position
 	_drag_offset = global_position - pointer_position
+	_sync_level_visuals()
 	if _platform_highlight != null:
 		_platform_highlight.hide()
 	update_drag(pointer_position)
@@ -228,7 +237,7 @@ func reset_tower() -> void:
 	if _platform_highlight != null:
 		_platform_highlight.hide()
 	_set_range_preview_visible(false)
-	_sync_level_visuals()
+	_sync_level_visuals(true)
 	play_idle()
 	dispatch_mode_changed.emit(_dispatched)
 	knowledge_bank_changed.emit(_banked_knowledge_points)
@@ -260,6 +269,18 @@ func is_dispatched() -> bool:
 
 func is_landing_to_headquarters() -> bool:
 	return _landing_to_headquarters
+
+
+func is_at_headquarters() -> bool:
+	return _is_at_headquarters()
+
+
+func is_airborne_control_available() -> bool:
+	return is_placed() and (_dispatched or _landing_to_headquarters or not _is_at_headquarters())
+
+
+func get_headquarters_position() -> Vector2:
+	return _station_position if is_placed() else global_position
 
 
 func can_land_to_headquarters() -> bool:
@@ -368,7 +389,7 @@ func upgrade() -> bool:
 		return false
 
 	level += 1
-	_sync_level_visuals()
+	_sync_level_visuals(true)
 	play_idle()
 	return true
 
@@ -378,10 +399,32 @@ func can_scan_cloaked_viruses() -> bool:
 
 
 func set_signal_boost_active(active: bool) -> void:
+	set_signal_boost_profile(
+		active,
+		SIGNAL_BOOST_RANGE_MULTIPLIER,
+		SIGNAL_BOOST_COOLDOWN_MULTIPLIER,
+		SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER
+	)
+
+
+func set_signal_boost_profile(
+	active: bool,
+	range_multiplier: float,
+	cooldown_multiplier: float,
+	hawk_speed_multiplier: float = SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER
+) -> void:
 	if _signal_boost_active == active:
+		_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
+		_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
+		_signal_boost_hawk_speed_multiplier = maxf(0.0, hawk_speed_multiplier)
+		_range_preview_radius = -1.0
+		_update_attack_range_preview()
 		return
 
 	_signal_boost_active = active
+	_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
+	_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
+	_signal_boost_hawk_speed_multiplier = maxf(0.0, hawk_speed_multiplier)
 	_range_preview_radius = -1.0
 	_update_attack_range_preview()
 
@@ -391,15 +434,15 @@ func is_signal_boost_active() -> bool:
 
 
 func get_signal_boost_range_multiplier() -> float:
-	return SIGNAL_BOOST_RANGE_MULTIPLIER if _signal_boost_active else 1.0
+	return _signal_boost_range_multiplier if _signal_boost_active else 1.0
 
 
 func get_signal_boost_cooldown_multiplier() -> float:
-	return SIGNAL_BOOST_COOLDOWN_MULTIPLIER if _signal_boost_active else 1.0
+	return _signal_boost_cooldown_multiplier if _signal_boost_active else 1.0
 
 
 func get_signal_boost_hawk_speed_multiplier() -> float:
-	return SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER if _signal_boost_active else 1.0
+	return _signal_boost_hawk_speed_multiplier if _signal_boost_active else 1.0
 
 
 func update_attack(delta: float, active_viruses: Array[PathFollow2D]) -> PathFollow2D:
@@ -426,7 +469,15 @@ func update_attack(delta: float, active_viruses: Array[PathFollow2D]) -> PathFol
 
 
 func contains_global_point(pointer_position: Vector2) -> bool:
+	return contains_hawk_point(pointer_position) or contains_headquarters_point(pointer_position)
+
+
+func contains_hawk_point(pointer_position: Vector2) -> bool:
 	return get_tower_rect().has_point(pointer_position)
+
+
+func contains_headquarters_point(pointer_position: Vector2) -> bool:
+	return get_headquarters_rect().has_point(pointer_position)
 
 
 func get_tower_rect() -> Rect2:
@@ -447,6 +498,18 @@ func get_tower_rect() -> Rect2:
 		top_left = rect_position
 
 	return Rect2(top_left, size)
+
+
+func get_headquarters_rect() -> Rect2:
+	var size := PLACEMENT_HIGHLIGHT_SIZE
+	var rect_position := get_headquarters_position()
+	if _base_sprite != null and _base_sprite.texture != null:
+		size = _base_sprite.texture.get_size() * Vector2(abs(global_scale.x), abs(global_scale.y))
+		size.x = maxf(size.x, PLACEMENT_HIGHLIGHT_SIZE.x)
+		size.y = maxf(size.y, PLACEMENT_HIGHLIGHT_SIZE.y)
+		rect_position = get_headquarters_position()
+
+	return Rect2(rect_position - size * 0.5, size)
 
 
 func aim_at(target_position: Vector2) -> void:
@@ -499,7 +562,7 @@ func _collect_level_visuals() -> void:
 		visual.animation_finished.connect(_on_level_visual_animation_finished.bind(visual))
 
 
-func _sync_level_visuals() -> void:
+func _sync_level_visuals(force_idle := false) -> void:
 	for index in range(_level_visuals.size()):
 		var visual := _level_visuals[index]
 		if visual == null:
@@ -509,8 +572,10 @@ func _sync_level_visuals() -> void:
 		visual.visible = visible and visual_level == level
 		if visual.visible:
 			var idle_animation := _get_level_animation_name(IDLE_ANIMATION)
-			if visual.sprite_frames != null and visual.sprite_frames.has_animation(idle_animation):
+			if force_idle and visual.sprite_frames != null and visual.sprite_frames.has_animation(idle_animation):
 				visual.animation = idle_animation
+			if visual.sprite_frames != null and visual.sprite_frames.has_animation(visual.animation) and not visual.is_playing():
+				visual.play()
 		else:
 			visual.stop()
 
@@ -660,6 +725,8 @@ func _get_follow_virus(follow: PathFollow2D) -> RedVirus:
 
 
 func _get_virus_knowledge_value(virus: RedVirus) -> int:
+	if virus.has_method("get_siem_knowledge_value"):
+		return maxi(0, int(virus.call("get_siem_knowledge_value")))
 	if virus is TrojanHorse:
 		return TROJAN_HORSE_KNOWLEDGE_POINTS
 

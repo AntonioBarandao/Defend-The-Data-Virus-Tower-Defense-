@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TowerShopCardResource" format=3 uid="uid://cgyqvq1bgf1fb"]
+
+[ext_resource type="Script" uid="uid://et8vs33f5uou" path="res://Scripts/UI/tower_shop_card_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://boaiqtkopvk4n" path="res://assets/Towers/Laser-Turret/Plates/Laser_Turret_LV1_Plate.png" id="2_texture"]
+[ext_resource type="PackedScene" uid="uid://b658jrcj1ke3f" path="res://Scenes/Towers/LaserTurret.tscn" id="3_scene"]
+
+[resource]
+script = ExtResource("1_script")
+tower_id = &"laser_turret"
+display_name = "Laser Turret"
+deploy_cost = 450
+display_texture = ExtResource("2_texture")
+tower_scene = ExtResource("3_scene")
+info_header = "Laser Turret"
+info_description = "Offense tower with LV1-LV5 turret visuals and matching laser beam FX. Damage scales from 1 to 5, range scales from 260 to 800 px, and cooldown scales from 0.82 seconds down to 0.05 seconds. The turret rotates while shooting; the base plate stays fixed."
+tower_type = "Offense Tower"
+upgrade_costs = Array[int]([0, 0, 0, 0])

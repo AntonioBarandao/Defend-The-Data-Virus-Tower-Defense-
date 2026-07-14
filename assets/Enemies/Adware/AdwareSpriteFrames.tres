@@ -1,0 +1,14 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://cyh67f2aijren"]
+
+[ext_resource type="Texture2D" uid="uid://5xrddehgy3be" path="res://assets/Enemies/Adware/Adware_Sprite.png" id="1_adware_sprite"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_adware_sprite")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 1.0
+}]

@@ -29,6 +29,12 @@ const GUARDIAN_MODE_DEFENDER := &"defender"
 const GUARDIAN_MODE_SIGNAL_BOOST := &"signal_boost"
 const GUARDIAN_MODE_FIREWALL := &"firewall"
 
+@export_group("Drawer Animation")
+@export var right_margin := 0.0
+@export var slide_hidden_offset := 36.0
+@export var slide_seconds := 0.24
+@export_group("")
+
 @onready var _menu_panel: PanelContainer = $Root/MenuPanel
 @onready var _title_label: Label = $Root/MenuPanel/Margin/Content/Title
 @onready var _portrait_row: Control = $Root/MenuPanel/Margin/Content/PortraitRow
@@ -68,8 +74,8 @@ var _guardian_mode_names := {
 }
 var _guardian_mode_unlock_levels := {
 	GUARDIAN_MODE_DEFENDER: 1,
-	GUARDIAN_MODE_SIGNAL_BOOST: 1,
-	GUARDIAN_MODE_FIREWALL: 1
+	GUARDIAN_MODE_SIGNAL_BOOST: 3,
+	GUARDIAN_MODE_FIREWALL: 5
 }
 var _scanner_mode_names := {
 	&"camo": "Camo",
@@ -78,12 +84,18 @@ var _scanner_mode_names := {
 	&"quarantine": "Quarantine",
 	&"nullifier": "Nullifier"
 }
+var _menu_tween: Tween
+var _drawer_target_position := Vector2.ZERO
+var _drawer_hidden_position := Vector2.ZERO
 
 
 func _ready() -> void:
+	layer = maxi(layer, 240)
 	_menu_panel.hide()
 	_ensure_description_label()
 	_configure_static_tooltips()
+	_cache_drawer_positions()
+	_menu_panel.position = _drawer_hidden_position
 	_laser_upgrade_button.pressed.connect(Callable(self, "_on_upgrade_button_pressed"))
 	_siem_dispatch_button.pressed.connect(Callable(self, "_on_siem_dispatch_button_pressed"))
 	_siem_land_button.pressed.connect(Callable(self, "_on_siem_land_button_pressed"))
@@ -101,8 +113,13 @@ func set_guardian_modes(
 	current_mode: StringName,
 	unlocked_modes: Array[StringName],
 	knowledge_level: int,
-	unlock_levels: Dictionary = {}
+	unlock_levels: Dictionary = {},
+	status_text: String = ""
 ) -> void:
+	if _description_label != null:
+		var summary := TowerTooltips.tower_summary(&"guardian")
+		_description_label.text = summary if status_text.is_empty() else "%s\n\n%s" % [summary, status_text]
+
 	var unlocked_lookup := {}
 	for mode_id in unlocked_modes:
 		unlocked_lookup[mode_id] = true
@@ -268,7 +285,7 @@ func show_guardian_panel() -> void:
 	_upgrade_path_container.hide()
 	_scanner_mode_section.hide()
 	_siem_dispatch_section.hide()
-	_menu_panel.show()
+	_show_menu_panel_animated()
 
 
 func hide_guardian_panel() -> void:
@@ -284,6 +301,14 @@ func guardian_panel_has_point(screen_position: Vector2) -> bool:
 	return is_guardian_panel_visible() and _menu_panel.get_global_rect().has_point(screen_position)
 
 
+func is_any_panel_visible() -> bool:
+	return _menu_panel.visible and _current_mode != MenuMode.NONE
+
+
+func menu_panel_has_point(screen_position: Vector2) -> bool:
+	return _menu_panel.visible and _menu_panel.get_global_rect().has_point(screen_position)
+
+
 func show_laser_panel() -> void:
 	_current_mode = MenuMode.LASER
 	_title_label.text = TowerTooltips.tower_name(&"laser")
@@ -292,7 +317,7 @@ func show_laser_panel() -> void:
 	_upgrade_path_container.show()
 	_scanner_mode_section.hide()
 	_siem_dispatch_section.hide()
-	_menu_panel.show()
+	_show_menu_panel_animated()
 
 
 func show_scanner_panel() -> void:
@@ -303,7 +328,7 @@ func show_scanner_panel() -> void:
 	_upgrade_path_container.show()
 	_scanner_mode_section.show()
 	_siem_dispatch_section.hide()
-	_menu_panel.show()
+	_show_menu_panel_animated()
 
 
 func show_edr_panel() -> void:
@@ -314,7 +339,7 @@ func show_edr_panel() -> void:
 	_upgrade_path_container.show()
 	_scanner_mode_section.hide()
 	_siem_dispatch_section.hide()
-	_menu_panel.show()
+	_show_menu_panel_animated()
 
 
 func show_siem_panel() -> void:
@@ -325,7 +350,7 @@ func show_siem_panel() -> void:
 	_upgrade_path_container.show()
 	_scanner_mode_section.hide()
 	_siem_dispatch_section.show()
-	_menu_panel.show()
+	_show_menu_panel_animated()
 
 
 func show_ips_panel() -> void:
@@ -336,7 +361,7 @@ func show_ips_panel() -> void:
 	_upgrade_path_container.show()
 	_scanner_mode_section.hide()
 	_siem_dispatch_section.hide()
-	_menu_panel.show()
+	_show_menu_panel_animated()
 
 
 func show_honeypot_panel() -> void:
@@ -347,7 +372,7 @@ func show_honeypot_panel() -> void:
 	_upgrade_path_container.show()
 	_scanner_mode_section.hide()
 	_siem_dispatch_section.hide()
-	_menu_panel.show()
+	_show_menu_panel_animated()
 
 
 func hide_laser_panel() -> void:
@@ -438,7 +463,7 @@ func show_scanner_mode_notice(message: String) -> void:
 
 func hide_all() -> void:
 	_current_mode = MenuMode.NONE
-	_menu_panel.hide()
+	_hide_menu_panel_animated()
 
 
 func _on_upgrade_button_pressed() -> void:
@@ -568,3 +593,58 @@ func _set_upgrade_button_state(tower_id: StringName, at_max_level: bool, can_upg
 		_laser_cost_label.text = ""
 	else:
 		_laser_cost_label.text = str(maxi(0, upgrade_cost))
+
+
+func _cache_drawer_positions() -> void:
+	var viewport_size := get_viewport().get_visible_rect().size
+	var panel_size := _menu_panel.size
+	if panel_size.x <= 0.0 or panel_size.y <= 0.0:
+		panel_size = _menu_panel.custom_minimum_size
+		if panel_size.x <= 0.0:
+			panel_size.x = 390.0
+		if panel_size.y <= 0.0:
+			panel_size.y = viewport_size.y
+		_menu_panel.size = panel_size
+
+	_drawer_target_position = Vector2(maxf(0.0, viewport_size.x - panel_size.x - right_margin), _menu_panel.position.y)
+	_drawer_hidden_position = Vector2(viewport_size.x + slide_hidden_offset, _drawer_target_position.y)
+
+
+func _show_menu_panel_animated() -> void:
+	visible = true
+	_cache_drawer_positions()
+	if _menu_tween != null:
+		_menu_tween.kill()
+
+	if not _menu_panel.visible:
+		_menu_panel.position = _drawer_hidden_position
+		_menu_panel.modulate.a = 0.92
+		_menu_panel.show()
+
+	_menu_tween = create_tween()
+	_menu_tween.set_parallel(true)
+	_menu_tween.tween_property(_menu_panel, "position", _drawer_target_position, slide_seconds).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_menu_tween.tween_property(_menu_panel, "modulate:a", 1.0, slide_seconds * 0.75).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_menu_tween.set_parallel(false)
+	_menu_tween.tween_callback(func() -> void:
+		_menu_tween = null
+	)
+
+
+func _hide_menu_panel_animated() -> void:
+	if _menu_tween != null:
+		_menu_tween.kill()
+	if not _menu_panel.visible:
+		return
+
+	_cache_drawer_positions()
+	_menu_tween = create_tween()
+	_menu_tween.set_parallel(true)
+	_menu_tween.tween_property(_menu_panel, "position", _drawer_hidden_position, slide_seconds * 0.82).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	_menu_tween.tween_property(_menu_panel, "modulate:a", 0.0, slide_seconds * 0.7).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	_menu_tween.set_parallel(false)
+	_menu_tween.tween_callback(func() -> void:
+		_menu_panel.hide()
+		_menu_panel.modulate.a = 1.0
+		_menu_tween = null
+	)

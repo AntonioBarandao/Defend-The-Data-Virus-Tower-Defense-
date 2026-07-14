@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TowerShopCardResource" format=3 uid="uid://ciee7jdsbe0he"]
+
+[ext_resource type="Script" uid="uid://et8vs33f5uou" path="res://Scripts/UI/tower_shop_card_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://q8if1fggrajq" path="res://assets/Towers/Honeypot_Production/Honeypot_Production_LV1.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/Honeypot_Production.tscn" id="3_scene"]
+
+[resource]
+script = ExtResource("1_script")
+tower_id = &"honeypot_production"
+display_name = "Honeypot Production"
+deploy_cost = 1500
+display_texture = ExtResource("2_texture")
+tower_scene = ExtResource("3_scene")
+info_header = "Honeypot Production"
+info_description = "Economy scanner tower. If 1-9 viruses are inside its 250 px radius, it starts a 4 second production cycle and stores 10 Cyber Bucks per second. At 10 or more viruses it overloads, shuts down for 10 seconds, then recovers. The production pot caps at 100 Cyber Bucks and turns ready-to-collect when full; pressing the tower collects the stored Cyber Bucks."
+tower_type = "Economy Tower"
+upgrade_costs = Array[int]([0, 0, 0, 0])

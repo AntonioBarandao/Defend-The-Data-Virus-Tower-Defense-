@@ -11,7 +11,6 @@ script = ExtResource("2_script")
 [node name="LevelVisuals" type="Node2D" parent="." unique_id=1904474695]
 
 [node name="LV1Visual" type="AnimatedSprite2D" parent="LevelVisuals" unique_id=1229489492]
-visible = false
 sprite_frames = ExtResource("1_frames")
 animation = &"idle_lv1"
 autoplay = "idle_lv1"

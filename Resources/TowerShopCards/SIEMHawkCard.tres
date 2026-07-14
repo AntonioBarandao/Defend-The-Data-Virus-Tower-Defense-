@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TowerShopCardResource" format=3 uid="uid://61h1pey1r67d"]
+
+[ext_resource type="Script" uid="uid://et8vs33f5uou" path="res://Scripts/UI/tower_shop_card_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bqdusmrw3lfhu" path="res://assets/Towers/SIEM_Hawk/SIEM_Hawk_LV1.png" id="2_texture"]
+[ext_resource type="PackedScene" uid="uid://d1d2new0ebcw6" path="res://Scenes/Towers/SIEM_Hawk.tscn" id="3_scene"]
+
+[resource]
+script = ExtResource("1_script")
+tower_id = &"siem_hawk"
+display_name = "SIEM Hawk"
+deploy_cost = 2500
+display_texture = ExtResource("2_texture")
+tower_scene = ExtResource("3_scene")
+info_header = "SIEM Hawk"
+info_description = "Dispatchable knowledge tower. The hawk flies at 100 px per second, rotates toward the cursor while dispatched, and scans with a forward blue arc. Red viruses add 1 temporary knowledge point and Trojan Horses add 5. Temporary points deposit into the Progress HUD only when the hawk lands back on its headquarters pad, extracting 1 point every 3 seconds. LV1 does not attack while landed; LV2 and above can shoot only while dispatched."
+tower_type = "Knowledge Tower"
+upgrade_costs = Array[int]([0, 0, 0, 0])

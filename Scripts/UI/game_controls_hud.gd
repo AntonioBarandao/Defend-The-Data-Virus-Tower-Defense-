@@ -50,6 +50,23 @@ func set_spawn_buttons_disabled(disabled: bool) -> void:
 	_add_hundred_button.disabled = disabled
 
 
+func has_gameplay_control_at_screen_position(screen_position: Vector2) -> bool:
+	var controls: Array[Control] = [
+		_wave_button,
+		_reset_button,
+		_add_ten_button,
+		_add_hundred_button
+	]
+	for control in controls:
+		if control != null \
+				and control.visible \
+				and not control.disabled \
+				and control.get_global_rect().has_point(screen_position):
+			return true
+
+	return false
+
+
 func _request_ten_viruses() -> void:
 	add_ten_pressed.emit()
 	virus_batch_requested.emit(ADD_TEN_VIRUS_COUNT)

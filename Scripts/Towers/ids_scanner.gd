@@ -83,6 +83,7 @@ const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
 	set(value):
 		deployed = value
 		_sync_deployed_state()
+@export var autonomous_drag_input := false
 @export var platform_highlight_path: NodePath = ^"../../PlatformHighlight"
 @export_range(1, MAX_LEVEL, 1) var level := 1
 @export_range(32.0, 1200.0, 1.0) var scan_radius := CYBER_GUARDIAN_LEVEL_ONE_RADIUS:
@@ -117,6 +118,8 @@ var _burner_elapsed_by_virus := {}
 var _bounty_scanned_viruses := {}
 var _virus_in_scan_radius := false
 var _signal_boost_active := false
+var _signal_boost_range_multiplier := SIGNAL_BOOST_RANGE_MULTIPLIER
+var _signal_boost_cooldown_multiplier := SIGNAL_BOOST_COOLDOWN_MULTIPLIER
 
 
 func _ready() -> void:
@@ -145,6 +148,9 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if not autonomous_drag_input:
+		return
+
 	if deployed or _is_cutscene_input_locked():
 		return
 
@@ -193,6 +199,52 @@ func is_dragging() -> bool:
 	return _dragging
 
 
+func try_start_drag(pointer_position: Vector2) -> bool:
+	if deployed or not contains_global_point(pointer_position):
+		return false
+
+	_dragging = true
+	_drag_start_position = global_position
+	_drag_offset = global_position - pointer_position
+	if _platform_highlight != null:
+		_platform_highlight.hide()
+	update_drag(pointer_position)
+	get_viewport().set_input_as_handled()
+	return true
+
+
+func update_drag(pointer_position: Vector2) -> void:
+	if not _dragging:
+		return
+
+	global_position = pointer_position + _drag_offset
+	_update_platform_highlight()
+	get_viewport().set_input_as_handled()
+
+
+func finish_drag() -> bool:
+	if not _dragging:
+		return false
+
+	var was_deployed := false
+	if _drag_is_valid:
+		global_position = _get_placement_area_center()
+		deploy()
+		was_deployed = true
+		_clear_drag_feedback()
+		_spawn_summon_effect()
+		placed.emit(self)
+	else:
+		global_position = _drag_start_position
+		_clear_drag_feedback()
+
+	if _platform_highlight != null:
+		_platform_highlight.hide()
+	_dragging = false
+	get_viewport().set_input_as_handled()
+	return was_deployed
+
+
 func get_occupied_placement_shape() -> CollisionShape2D:
 	return _current_placement_shape if deployed else null
 
@@ -231,20 +283,30 @@ func get_attack_range() -> float:
 
 
 func set_signal_boost_active(active: bool) -> void:
+	set_signal_boost_profile(active, SIGNAL_BOOST_RANGE_MULTIPLIER, SIGNAL_BOOST_COOLDOWN_MULTIPLIER)
+
+
+func set_signal_boost_profile(active: bool, range_multiplier: float, cooldown_multiplier: float, _hawk_speed_multiplier: float = 1.0) -> void:
 	if _signal_boost_active == active:
+		_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
+		_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
+		_rebuild_radar_geometry()
+		_sync_deployed_state()
 		return
 
 	_signal_boost_active = active
+	_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
+	_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
 	_rebuild_radar_geometry()
 	_sync_deployed_state()
 
 
 func get_signal_boost_range_multiplier() -> float:
-	return SIGNAL_BOOST_RANGE_MULTIPLIER if _signal_boost_active else 1.0
+	return _signal_boost_range_multiplier if _signal_boost_active else 1.0
 
 
 func get_signal_boost_cooldown_multiplier() -> float:
-	return SIGNAL_BOOST_COOLDOWN_MULTIPLIER if _signal_boost_active else 1.0
+	return _signal_boost_cooldown_multiplier if _signal_boost_active else 1.0
 
 
 func _get_signal_boost_range_multiplier() -> float:
@@ -493,45 +555,15 @@ func _has_active_virus_in_scan_radius(active_viruses: Array[PathFollow2D]) -> bo
 
 
 func _try_start_drag(pointer_position: Vector2) -> void:
-	if not contains_global_point(pointer_position):
-		return
-
-	_dragging = true
-	_drag_start_position = global_position
-	_drag_offset = global_position - pointer_position
-	if _platform_highlight != null:
-		_platform_highlight.hide()
-	_update_drag(pointer_position)
-	get_viewport().set_input_as_handled()
+	try_start_drag(pointer_position)
 
 
 func _update_drag(pointer_position: Vector2) -> void:
-	if not _dragging:
-		return
-
-	global_position = pointer_position + _drag_offset
-	_update_platform_highlight()
-	get_viewport().set_input_as_handled()
+	update_drag(pointer_position)
 
 
-func _finish_drag() -> void:
-	if not _dragging:
-		return
-
-	if _drag_is_valid:
-		global_position = _get_placement_area_center()
-		deploy()
-		_clear_drag_feedback()
-		_spawn_summon_effect()
-		placed.emit(self)
-	else:
-		global_position = _drag_start_position
-		_clear_drag_feedback()
-
-	if _platform_highlight != null:
-		_platform_highlight.hide()
-	_dragging = false
-	get_viewport().set_input_as_handled()
+func _finish_drag() -> bool:
+	return finish_drag()
 
 
 func _ensure_radar_nodes() -> void:

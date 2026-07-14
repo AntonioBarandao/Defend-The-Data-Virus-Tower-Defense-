@@ -16,6 +16,7 @@ extends CanvasLayer
 @export var master_slider_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsPanel/Margin/Sliders/MasterRow/MasterSlider"
 @export var music_slider_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsPanel/Margin/Sliders/MusicRow/MusicSlider"
 @export var sound_slider_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsPanel/Margin/Sliders/SoundRow/SoundSlider"
+@export var wave_set_panel_path: NodePath = ^"Root/WaveSetPanel"
 @export var wave_input_path: NodePath = ^"Root/WaveSetPanel/Margin/Content/WaveInput"
 @export var wave_set_button_path: NodePath = ^"Root/WaveSetPanel/Margin/Content/SetWaveButton"
 @export_group("")
@@ -36,6 +37,7 @@ var _settings_panel: PanelContainer
 var _master_slider: HSlider
 var _music_slider: HSlider
 var _sound_slider: HSlider
+var _wave_set_panel: Control
 var _wave_input: LineEdit
 var _wave_set_button: Button
 
@@ -47,6 +49,8 @@ var _was_tree_paused_before_menu := false
 var _menu_rest_position := Vector2.ZERO
 var _menu_rest_modulate := Color.WHITE
 var _menu_tween: Tween
+var _wave_set_panel_store_rest_position := Vector2.ZERO
+var _wave_set_panel_store_position_cached := false
 
 
 func _ready() -> void:
@@ -55,6 +59,7 @@ func _ready() -> void:
 	_music_player = get_node_or_null(music_player_path) as AudioStreamPlayer
 	_text_cutscene_hud = get_node_or_null(text_cutscene_hud_path)
 	_resolve_ui_nodes()
+	cache_store_companion_ui_positions()
 	if _menu_panel != null:
 		_menu_rest_position = _menu_panel.position
 		_menu_rest_modulate = _menu_panel.modulate
@@ -96,8 +101,21 @@ func _resolve_ui_nodes() -> void:
 	_master_slider = get_node_or_null(master_slider_path) as HSlider
 	_music_slider = get_node_or_null(music_slider_path) as HSlider
 	_sound_slider = get_node_or_null(sound_slider_path) as HSlider
+	_wave_set_panel = get_node_or_null(wave_set_panel_path) as Control
 	_wave_input = get_node_or_null(wave_input_path) as LineEdit
 	_wave_set_button = get_node_or_null(wave_set_button_path) as Button
+
+
+func cache_store_companion_ui_positions() -> void:
+	if _wave_set_panel != null and not _wave_set_panel_store_position_cached:
+		_wave_set_panel_store_rest_position = _wave_set_panel.position
+		_wave_set_panel_store_position_cached = true
+
+
+func apply_store_companion_slide(slide_offset: float) -> void:
+	cache_store_companion_ui_positions()
+	if _wave_set_panel != null and _wave_set_panel_store_position_cached:
+		_wave_set_panel.position = _wave_set_panel_store_rest_position + Vector2(slide_offset, 0.0)
 
 
 func _toggle_menu() -> void:

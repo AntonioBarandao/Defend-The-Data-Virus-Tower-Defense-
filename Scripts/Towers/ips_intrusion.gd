@@ -1,5 +1,5 @@
 class_name IPSIntrusionTower
-extends CyberGuardianTower
+extends "res://Scripts/Towers/cyber_guardian_idle_sprite.gd"
 
 signal spike_damage_requested(follow: PathFollow2D, amount: int)
 
@@ -7,7 +7,6 @@ const IPS_ATTACK_RANGE := 360.0
 const IPS_MAX_LEVEL := 5
 const IPS_UPGRADE_COSTS := [0, 0, 0, 0, 0]
 
-@export var virus_path_path: NodePath = ^"../../VirusElements/Path2D"
 @export var spike_scene: PackedScene = preload("res://Scenes/Towers/IPS_Intrusion_Spike.tscn")
 @export_range(1, 12, 1) var max_spikes := 5
 @export_range(0.2, 10.0, 0.1) var spike_production_seconds := 2.0
@@ -15,7 +14,6 @@ const IPS_UPGRADE_COSTS := [0, 0, 0, 0, 0]
 @export_range(16.0, 180.0, 1.0) var spike_spacing := 66.0
 @export_range(0.05, 2.0, 0.05) var spike_move_seconds := 0.45
 
-var _virus_path: Path2D
 var _production_elapsed := 0.0
 var _spikes: Array[IPSIntrusionSpike] = []
 var _factory_pulse_tween: Tween

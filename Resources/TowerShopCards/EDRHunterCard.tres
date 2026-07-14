@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TowerShopCardResource" format=3 uid="uid://djlosswhcsvbg"]
+
+[ext_resource type="Script" uid="uid://et8vs33f5uou" path="res://Scripts/UI/tower_shop_card_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bwsgcf3yixwrq" path="res://assets/Towers/EDR_Hunter/Display_EDR_Hunter_LV1.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/EDR_Hunter.tscn" id="3_scene"]
+
+[resource]
+script = ExtResource("1_script")
+tower_id = &"edr_hunter"
+display_name = "EDR Hunter"
+deploy_cost = 900
+display_texture = ExtResource("2_texture")
+tower_scene = ExtResource("3_scene")
+info_header = "EDR Hunter"
+info_description = "Offense hunter with infinite map range. It can see camouflaged viruses without uncloaking them, deals 10 damage per shot, and fires once every 3 seconds. It has upgrade support in the sidebar, but all test upgrade costs are currently 0."
+tower_type = "Offense Tower"
+upgrade_costs = Array[int]([0, 0, 0, 0])

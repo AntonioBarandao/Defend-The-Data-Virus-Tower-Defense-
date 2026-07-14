@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TowerShopCardResource" format=3 uid="uid://boycvr3ro1wio"]
+
+[ext_resource type="Script" uid="uid://et8vs33f5uou" path="res://Scripts/UI/tower_shop_card_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://mygb13vtk2l2" path="res://assets/Towers/IDS_Scanner/Modes/IDS_Camo_Scanner.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/IDS_Scanner.tscn" id="3_scene"]
+
+[resource]
+script = ExtResource("1_script")
+tower_id = &"ids_scanner"
+display_name = "IDS Scanner"
+display_texture = ExtResource("2_texture")
+tower_scene = ExtResource("3_scene")
+info_header = "IDS Scanner"
+info_description = "Support scanner with Camo, Burner, Bounty, Quarantine, and Nullifier modes. Each upgrade unlocks the next mode and increases scan radius by 15%. Camo reveals cloaked Trojan Horses, Burner deals 1 damage every second, Bounty gives 5 Cyber Bucks once per scanned virus, Quarantine slows viruses by 50%, and Nullifier permanently removes virus abilities. Mode switching is blocked while a virus is inside this scanner radius."
+tower_type = "Support Tower"
+upgrade_costs = Array[int]([0, 0, 0, 0])

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TowerShopCardResource" format=3 uid="uid://cwd4nrntt1fxh"]
+
+[ext_resource type="Script" uid="uid://et8vs33f5uou" path="res://Scripts/UI/tower_shop_card_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ppmwosf12rw" path="res://assets/Towers/IPS_Intrusion/IPS_Intrusion_LV1.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/IPS_Intrusion.tscn" id="3_scene"]
+
+[resource]
+script = ExtResource("1_script")
+tower_id = &"ips_intrusion"
+display_name = "IPS Intrusion"
+deploy_cost = 1700
+display_texture = ExtResource("2_texture")
+tower_scene = ExtResource("3_scene")
+info_header = "IPS Intrusion"
+info_description = "Trap factory that plants pathway spikes inside a 360 px placement radius. It creates up to 5 spikes, produces a new spike every 2 seconds, and moves the spike from the factory to the nearest valid path slot. Spikes do 1 damage, avoid overlapping each other, and can hit camouflaged viruses."
+tower_type = "Trap Tower"
+upgrade_costs = Array[int]([0, 0, 0, 0])

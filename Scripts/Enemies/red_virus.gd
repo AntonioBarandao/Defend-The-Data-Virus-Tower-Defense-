@@ -15,6 +15,7 @@ static var _destroy_sfx_plays_in_window := 0
 
 @export var path_speed := 150.0
 @export var max_health := 1
+@export var cyberbuck_reward := 5
 @export var destroy_duration := 0.5
 @export var destroy_scale_multiplier := 1.35
 @export var preserve_path_visual_transform := true
@@ -48,6 +49,7 @@ func reset_for_spawn() -> void:
 	current_health = maxi(1, max_health)
 	_destroying = false
 	modulate = Color.WHITE
+	self_modulate = Color.WHITE
 	reset_status_effects()
 	_capture_base_visual_transform()
 	_preserve_visual_transform_on_path()
@@ -125,6 +127,10 @@ func should_remain_active_during_destroy() -> bool:
 
 func get_path_speed() -> float:
 	return path_speed * _get_active_speed_multiplier()
+
+
+func get_cyberbuck_reward() -> int:
+	return maxi(0, cyberbuck_reward)
 
 
 func apply_scanner_speed_multiplier(multiplier: float, duration_seconds: float = 0.25) -> void:

@@ -43,6 +43,7 @@ const LEVEL_PLATE_NODE_NAMES := [
 @export var forward_rotation_offset := PI * 0.5
 @export var has_scanner_ability := false
 @export var show_attack_range_preview := true
+@export var autonomous_drag_input := false
 @export var range_preview_fill_color := RANGE_PREVIEW_FILL_COLOR
 @export var range_preview_outline_color := RANGE_PREVIEW_OUTLINE_COLOR
 @export var rotation_pivot_path: NodePath = ^"RotatingVisual"
@@ -102,6 +103,8 @@ var _upgrade_lv5_sfx: AudioStreamPlayer
 var _shoot_sfx_players: Array[AudioStreamPlayer] = []
 var _base_modulate := Color.WHITE
 var _signal_boost_active := false
+var _signal_boost_range_multiplier := SIGNAL_BOOST_RANGE_MULTIPLIER
+var _signal_boost_cooldown_multiplier := SIGNAL_BOOST_COOLDOWN_MULTIPLIER
 
 
 func _ready() -> void:
@@ -142,6 +145,9 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if not autonomous_drag_input:
+		return
+
 	if _is_cutscene_input_locked():
 		return
 
@@ -181,6 +187,61 @@ func _input(event: InputEvent) -> void:
 
 func is_placed() -> bool:
 	return _placed
+
+
+func is_dragging() -> bool:
+	return _dragging
+
+
+func try_start_drag(pointer_position: Vector2) -> bool:
+	if _placed or not contains_global_point(pointer_position):
+		return false
+
+	_dragging = true
+	_drag_start_position = global_position
+	_drag_offset = global_position - pointer_position
+	if _platform_highlight != null:
+		_platform_highlight.hide()
+	update_drag(pointer_position)
+	get_viewport().set_input_as_handled()
+	return true
+
+
+func update_drag(pointer_position: Vector2) -> void:
+	if not _dragging:
+		return
+
+	global_position = pointer_position + _drag_offset
+	_sync_level_plates_transform()
+	_update_platform_highlight()
+	get_viewport().set_input_as_handled()
+
+
+func finish_drag() -> bool:
+	if not _dragging:
+		return false
+
+	var was_placed := false
+	if _drag_is_valid:
+		global_position = _get_placement_area_center()
+		_placed = true
+		was_placed = true
+		_apply_level_plate()
+		_sync_level_plates_transform()
+		_clear_drag_feedback()
+		_play_audio_player(_deploy_sfx)
+		_spawn_summon_effect()
+		placed.emit(self)
+	else:
+		global_position = _drag_start_position
+		_sync_level_plates_transform()
+		_clear_drag_feedback()
+
+	if _platform_highlight != null:
+		_platform_highlight.hide()
+	_dragging = false
+	get_viewport().set_input_as_handled()
+	return was_placed
 
 
 func get_occupied_placement_shape() -> CollisionShape2D:
@@ -261,20 +322,30 @@ func get_laser_color() -> Color:
 
 
 func set_signal_boost_active(active: bool) -> void:
+	set_signal_boost_profile(active, SIGNAL_BOOST_RANGE_MULTIPLIER, SIGNAL_BOOST_COOLDOWN_MULTIPLIER)
+
+
+func set_signal_boost_profile(active: bool, range_multiplier: float, cooldown_multiplier: float, _hawk_speed_multiplier: float = 1.0) -> void:
 	if _signal_boost_active == active:
+		_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
+		_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
+		_range_preview_radius = -1.0
+		_update_attack_range_preview()
 		return
 
 	_signal_boost_active = active
+	_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
+	_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
 	_range_preview_radius = -1.0
 	_update_attack_range_preview()
 
 
 func get_signal_boost_range_multiplier() -> float:
-	return SIGNAL_BOOST_RANGE_MULTIPLIER if _signal_boost_active else 1.0
+	return _signal_boost_range_multiplier if _signal_boost_active else 1.0
 
 
 func get_signal_boost_cooldown_multiplier() -> float:
-	return SIGNAL_BOOST_COOLDOWN_MULTIPLIER if _signal_boost_active else 1.0
+	return _signal_boost_cooldown_multiplier if _signal_boost_active else 1.0
 
 
 func _get_signal_boost_range_multiplier() -> float:
@@ -386,44 +457,15 @@ func mark_shot_fired() -> void:
 
 
 func _try_start_drag(pointer_position: Vector2) -> void:
-	if not contains_global_point(pointer_position):
-		return
-
-	_dragging = true
-	_drag_start_position = global_position
-	_drag_offset = global_position - pointer_position
-	if _platform_highlight != null:
-		_platform_highlight.hide()
-	_update_drag(pointer_position)
-	get_viewport().set_input_as_handled()
+	try_start_drag(pointer_position)
 
 
 func _update_drag(pointer_position: Vector2) -> void:
-	global_position = pointer_position + _drag_offset
-	_sync_level_plates_transform()
-	_update_platform_highlight()
-	get_viewport().set_input_as_handled()
+	update_drag(pointer_position)
 
 
-func _finish_drag() -> void:
-	if _drag_is_valid:
-		global_position = _get_placement_area_center()
-		_placed = true
-		_apply_level_plate()
-		_sync_level_plates_transform()
-		_clear_drag_feedback()
-		_play_audio_player(_deploy_sfx)
-		_spawn_summon_effect()
-		placed.emit(self)
-	else:
-		global_position = _drag_start_position
-		_sync_level_plates_transform()
-		_clear_drag_feedback()
-
-	if _platform_highlight != null:
-		_platform_highlight.hide()
-	_dragging = false
-	get_viewport().set_input_as_handled()
+func _finish_drag() -> bool:
+	return finish_drag()
 
 
 func _apply_level_animation() -> void:

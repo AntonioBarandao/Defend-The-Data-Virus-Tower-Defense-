@@ -1,68 +1,225 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene format=3 uid="uid://cttg13antl4cp"]
 
-[ext_resource type="Script" path="res://Scripts/Enemies/adware.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://Assets/Enemies/Adware/Popups/Adware_Popup_01.png" id="2_popup_01"]
-[ext_resource type="Texture2D" path="res://Assets/Enemies/Adware/Popups/Adware_Popup_02.png" id="3_popup_02"]
-[ext_resource type="Texture2D" path="res://Assets/Enemies/Adware/Popups/Adware_Popup_03.png" id="4_popup_03"]
-[ext_resource type="Texture2D" path="res://Assets/Enemies/Adware/Popups/Adware_Popup_04.png" id="5_popup_04"]
-[ext_resource type="Texture2D" path="res://Assets/Enemies/Adware/Popups/Adware_Popup_05.png" id="6_popup_05"]
-[ext_resource type="Texture2D" path="res://Assets/Enemies/Adware/Popups/Adware_Popup_06.png" id="7_popup_06"]
-[ext_resource type="Texture2D" path="res://Assets/Enemies/Adware/Popups/Adware_Popup_07.png" id="8_popup_07"]
-[ext_resource type="Texture2D" path="res://Assets/Enemies/Adware/Popups/Adware_Popup_08.png" id="9_popup_08"]
-[ext_resource type="Texture2D" path="res://Assets/Enemies/Adware/Popups/Adware_Popup_09.png" id="10_popup_09"]
-[ext_resource type="Texture2D" path="res://Assets/Enemies/Adware/Popups/Adware_Popup_10.png" id="11_popup_10"]
+[ext_resource type="Script" uid="uid://quwu0gcjvxqd" path="res://Scripts/Enemies/adware.gd" id="1_script"]
+[ext_resource type="SpriteFrames" uid="uid://cyh67f2aijren" path="res://assets/Enemies/Adware/AdwareSpriteFrames.tres" id="2_frames"]
+[ext_resource type="AudioStream" uid="uid://8rhfrkf6hokf" path="res://assets/sfx/virus_destroy.wav" id="3_destroy_sfx"]
+[ext_resource type="Texture2D" uid="uid://kwy50u1556nl" path="res://assets/Enemies/Adware/Popups/Adware_Popup_01.png" id="4_popup_01"]
+[ext_resource type="Texture2D" uid="uid://c8layy0s3ug7y" path="res://assets/Enemies/Adware/Popups/Adware_Popup_02.png" id="5_popup_02"]
+[ext_resource type="Texture2D" uid="uid://cxd5cphtwlatg" path="res://assets/Enemies/Adware/Popups/Adware_Popup_03.png" id="6_popup_03"]
+[ext_resource type="Texture2D" uid="uid://cq1080ofj5nqa" path="res://assets/Enemies/Adware/Popups/Adware_Popup_04.png" id="7_popup_04"]
+[ext_resource type="Texture2D" uid="uid://bao1s2auyg38" path="res://assets/Enemies/Adware/Popups/Adware_Popup_05.png" id="8_popup_05"]
+[ext_resource type="Texture2D" uid="uid://conpvsodsyt3b" path="res://assets/Enemies/Adware/Popups/Adware_Popup_06.png" id="9_popup_06"]
+[ext_resource type="Texture2D" uid="uid://6novyohxl4c2" path="res://assets/Enemies/Adware/Popups/Adware_Popup_07.png" id="10_popup_07"]
+[ext_resource type="Texture2D" uid="uid://bqutu444s31g5" path="res://assets/Enemies/Adware/Popups/Adware_Popup_08.png" id="11_popup_08"]
+[ext_resource type="Texture2D" uid="uid://04i7imb4uiip" path="res://assets/Enemies/Adware/Popups/Adware_Popup_09.png" id="12_popup_09"]
+[ext_resource type="Texture2D" uid="uid://05j57y1klyro" path="res://assets/Enemies/Adware/Popups/Adware_Popup_10.png" id="13_popup_10"]
+[ext_resource type="Texture2D" uid="uid://3wgdsxo35gsm" path="res://assets/Enemies/Adware/Popups/Adware_Popup_11.png" id="14_popup_11"]
+[ext_resource type="Texture2D" uid="uid://ug3oxg5ew1fg" path="res://assets/Enemies/Adware/Popups/Adware_Popup_12.png" id="15_popup_12"]
+[ext_resource type="Texture2D" uid="uid://b3ll2uynlj7h1" path="res://assets/Enemies/Adware/Popups/Adware_Popup_13.png" id="16_popup_13"]
+[ext_resource type="Texture2D" uid="uid://c7acy43q1fcrl" path="res://assets/Enemies/Adware/Popups/Adware_Popup_14.png" id="17_popup_14"]
+[ext_resource type="Texture2D" uid="uid://70vedjc4dp28" path="res://assets/Enemies/Adware/Popups/Adware_Popup_15.png" id="18_popup_15"]
+[ext_resource type="Texture2D" uid="uid://bdm7ofw2f0qkw" path="res://assets/Enemies/Adware/Popups/Adware_Popup_16.png" id="19_popup_16"]
+[ext_resource type="Texture2D" uid="uid://bdoqh3emh4cxf" path="res://assets/Enemies/Adware/Popups/Adware_Popup_17.png" id="20_popup_17"]
+[ext_resource type="Texture2D" uid="uid://ddiwpqhisupy5" path="res://assets/Enemies/Adware/Popups/Adware_Popup_18.png" id="21_popup_18"]
+[ext_resource type="Texture2D" uid="uid://bhxevjnwlfdvx" path="res://assets/Enemies/Adware/Popups/Adware_Popup_19.png" id="22_popup_19"]
+[ext_resource type="Texture2D" uid="uid://bqlks6gwvrb1i" path="res://assets/Enemies/Adware/Popups/Adware_Popup_20.png" id="23_popup_20"]
+[ext_resource type="Texture2D" uid="uid://b47mb6d7thusf" path="res://assets/Enemies/Adware/Popups/Adware_Popup_21.png" id="24_popup_21"]
+[ext_resource type="Texture2D" uid="uid://bjstk3v46cqtr" path="res://assets/Enemies/Adware/Popups/Adware_Popup_22.png" id="25_popup_22"]
+[ext_resource type="Texture2D" uid="uid://ct4sodwtisiyq" path="res://assets/Enemies/Adware/Popups/Adware_Popup_23.png" id="26_popup_23"]
+[ext_resource type="Texture2D" uid="uid://bho56yjeilohn" path="res://assets/Enemies/Adware/Popups/Adware_Popup_24.png" id="27_popup_24"]
+[ext_resource type="Texture2D" uid="uid://1272nj2045bw" path="res://assets/Enemies/Adware/Popups/Adware_Popup_25.png" id="28_popup_25"]
+[ext_resource type="Script" path="res://Scripts/UI/trojan_horse_progress_bar.gd" id="29_progress_script"]
+[ext_resource type="Texture2D" uid="uid://d1m6smrk3mokq" path="res://assets/Enemies/TrojanHorse/HealthBar/trojan_health_under.png" id="30_health_under"]
+[ext_resource type="Texture2D" uid="uid://cmndpa34uosxj" path="res://assets/Enemies/TrojanHorse/HealthBar/trojan_health_progress.png" id="31_health_progress"]
+[ext_resource type="Texture2D" uid="uid://b4o5co2e3jx86" path="res://assets/Enemies/TrojanHorse/HealthBar/trojan_health_over.png" id="32_health_over"]
+[ext_resource type="SpriteFrames" uid="uid://culae7w1lc806" path="res://assets/Enemies/Adware/ExitPress/AdwareExitButtonSpriteFrames.tres" id="33_exit_button_frames"]
 
-[node name="Adware" type="Node2D"]
-z_index = 95
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2hlo7"]
+size = Vector2(260, 260)
+
+[node name="Adware" type="AnimatedSprite2D" unique_id=1374644991 groups=["ADWARE"]]
+z_index = 3800
+scale = Vector2(0.18, 0.18)
+sprite_frames = ExtResource("2_frames")
+animation = &"idle"
+autoplay = "idle"
 script = ExtResource("1_script")
+path_speed = 70.0
+max_health = 20
+cyberbuck_reward = 200
+destroy_duration = 0.55
 
-[node name="Popups" type="Node2D" parent="."]
+[node name="Popups" type="Node2D" parent="." unique_id=1780469562]
+z_index = 4000
+scale = Vector2(3, 3)
 
-[node name="Popup01" type="Sprite2D" parent="Popups"]
-scale = Vector2(0.18, 0.18)
-texture = ExtResource("2_popup_01")
-
-[node name="Popup02" type="Sprite2D" parent="Popups"]
+[node name="Popup01" type="Sprite2D" parent="Popups" unique_id=943322675]
 visible = false
-scale = Vector2(0.18, 0.18)
-texture = ExtResource("3_popup_02")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_popup_01")
 
-[node name="Popup03" type="Sprite2D" parent="Popups"]
+[node name="Popup02" type="Sprite2D" parent="Popups" unique_id=2051670321]
 visible = false
-scale = Vector2(0.18, 0.18)
-texture = ExtResource("4_popup_03")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_popup_02")
 
-[node name="Popup04" type="Sprite2D" parent="Popups"]
+[node name="Popup03" type="Sprite2D" parent="Popups" unique_id=2036636313]
 visible = false
-scale = Vector2(0.18, 0.18)
-texture = ExtResource("5_popup_04")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("6_popup_03")
 
-[node name="Popup05" type="Sprite2D" parent="Popups"]
+[node name="Popup04" type="Sprite2D" parent="Popups" unique_id=1258300372]
 visible = false
-scale = Vector2(0.18, 0.18)
-texture = ExtResource("6_popup_05")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("7_popup_04")
 
-[node name="Popup06" type="Sprite2D" parent="Popups"]
+[node name="Popup05" type="Sprite2D" parent="Popups" unique_id=1407039788]
 visible = false
-scale = Vector2(0.18, 0.18)
-texture = ExtResource("7_popup_06")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("8_popup_05")
 
-[node name="Popup07" type="Sprite2D" parent="Popups"]
+[node name="Popup06" type="Sprite2D" parent="Popups" unique_id=1327381514]
 visible = false
-scale = Vector2(0.18, 0.18)
-texture = ExtResource("8_popup_07")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("9_popup_06")
 
-[node name="Popup08" type="Sprite2D" parent="Popups"]
+[node name="Popup07" type="Sprite2D" parent="Popups" unique_id=1920302307]
 visible = false
-scale = Vector2(0.18, 0.18)
-texture = ExtResource("9_popup_08")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("10_popup_07")
 
-[node name="Popup09" type="Sprite2D" parent="Popups"]
+[node name="Popup08" type="Sprite2D" parent="Popups" unique_id=456505795]
 visible = false
-scale = Vector2(0.18, 0.18)
-texture = ExtResource("10_popup_09")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("11_popup_08")
 
-[node name="Popup10" type="Sprite2D" parent="Popups"]
+[node name="Popup09" type="Sprite2D" parent="Popups" unique_id=287732975]
 visible = false
-scale = Vector2(0.18, 0.18)
-texture = ExtResource("11_popup_10")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("12_popup_09")
+
+[node name="Popup10" type="Sprite2D" parent="Popups" unique_id=1395564621]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("13_popup_10")
+
+[node name="Popup11" type="Sprite2D" parent="Popups" unique_id=2145078525]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("14_popup_11")
+
+[node name="Popup12" type="Sprite2D" parent="Popups" unique_id=541816206]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("15_popup_12")
+
+[node name="Popup13" type="Sprite2D" parent="Popups" unique_id=1458644723]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("16_popup_13")
+
+[node name="Popup14" type="Sprite2D" parent="Popups" unique_id=325839475]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("17_popup_14")
+
+[node name="Popup15" type="Sprite2D" parent="Popups" unique_id=26449720]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("18_popup_15")
+
+[node name="Popup16" type="Sprite2D" parent="Popups" unique_id=1193228609]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("19_popup_16")
+
+[node name="Popup17" type="Sprite2D" parent="Popups" unique_id=346126149]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("20_popup_17")
+
+[node name="Popup18" type="Sprite2D" parent="Popups" unique_id=893730013]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("21_popup_18")
+
+[node name="Popup19" type="Sprite2D" parent="Popups" unique_id=1605369346]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("22_popup_19")
+
+[node name="Popup20" type="Sprite2D" parent="Popups" unique_id=1228981162]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("23_popup_20")
+
+[node name="Popup21" type="Sprite2D" parent="Popups" unique_id=1064267783]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("24_popup_21")
+
+[node name="Popup22" type="Sprite2D" parent="Popups" unique_id=956321622]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("25_popup_22")
+
+[node name="Popup23" type="Sprite2D" parent="Popups" unique_id=1494277224]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("26_popup_23")
+
+[node name="Popup24" type="Sprite2D" parent="Popups" unique_id=1381505245]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("27_popup_24")
+
+[node name="Popup25" type="Sprite2D" parent="Popups" unique_id=1292040855]
+visible = false
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("28_popup_25")
+
+[node name="RedButtonCollision" type="Area2D" parent="Popups" unique_id=480850441]
+position = Vector2(555.55554, -292.5926)
+collision_mask = 0
+input_pickable = false
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Popups/RedButtonCollision" unique_id=217046775]
+shape = SubResource("RectangleShape2D_2hlo7")
+debug_color = Color(0.9877494, 0, 0.31468734, 0.41960785)
+
+[node name="ExitButton" type="AnimatedSprite2D" parent="Popups/RedButtonCollision" unique_id=1856404525]
+z_index = 1
+scale = Vector2(0.085127585, 0.085127585)
+sprite_frames = ExtResource("33_exit_button_frames")
+animation = &"Adware_Exit_Press"
+
+[node name="MinibossHealthBar" type="Node2D" parent="." unique_id=1056538010]
+visible = false
+z_index = 3900
+position = Vector2(0, -125)
+scale = Vector2(1.15, 1.15)
+script = ExtResource("29_progress_script")
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="MinibossHealthBar" unique_id=1570095263]
+offset_left = -130.0
+offset_top = -21.0
+offset_right = 130.0
+offset_bottom = 21.0
+mouse_filter = 2
+value = 100.0
+nine_patch_stretch = true
+stretch_margin_left = 24
+stretch_margin_top = 12
+stretch_margin_right = 24
+stretch_margin_bottom = 12
+texture_under = ExtResource("30_health_under")
+texture_over = ExtResource("32_health_over")
+texture_progress = ExtResource("31_health_progress")
+
+[node name="Audio" type="Node" parent="." unique_id=32976246]
+
+[node name="DestroySfx" type="AudioStreamPlayer" parent="Audio" unique_id=2054715299]
+stream = ExtResource("3_destroy_sfx")
+volume_db = -20.0

@@ -4,9 +4,9 @@ extends RefCounted
 const TOWER_DETAILS := {
 	&"guardian": {
 		"name": "Cyber Guardian",
-		"summary": "Starter defender that shoots nearby visible viruses.",
-		"upgrade": "Improves the Guardian's damage, range, cooldown, and late-game utility.",
-		"tooltip": "Cyber Guardian\nShoots nearby visible viruses. Upgrade to increase damage, range, and fire rate."
+		"summary": "Mode-based guardian with defender, signal boost, and firewall roles.",
+		"upgrade": "Switches guardian mode as knowledge unlocks passive boost and firewall utility.",
+		"tooltip": "Cyber Guardian\nDefender shoots visible viruses. Signal Boost is passive support. Firewall places a damaging burn wall on the path."
 	},
 	&"laser": {
 		"name": "Laser Turret",
@@ -55,8 +55,8 @@ const SCANNER_MODE_DETAILS := {
 }
 
 const GUARDIAN_MODE_DETAILS := {
-	&"signal_boost": "Signal Boost Guardian\nFocuses on support coverage and stronger network detection.",
-	&"firewall": "Firewall Guardian\nFocuses on stopping power and direct defensive pressure.",
+	&"signal_boost": "Signal Boost Guardian\nPassive support mode. Boosts tower range, tower cooldown, and SIEM Hawk speed from Knowledge LV3 upward.",
+	&"firewall": "Firewall Guardian\nPlaces a red firewall on the nearest path point. Viruses that cross it take hit damage and burn damage over time.",
 	&"mode_three": "Future Guardian Mode\nReserved for an additional specialization."
 }
 

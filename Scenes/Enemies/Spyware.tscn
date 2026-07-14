@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Enemies/spyware.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/Spyware/SpywareSpriteFrames.tres" id="2_frames"]
+[ext_resource type="FontFile" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="3_font"]
+[ext_resource type="AudioStream" path="res://assets/sfx/virus_destroy.wav" id="4_destroy_sfx"]
+
+[node name="Spyware" type="AnimatedSprite2D" groups=["SPYWARE"]]
+script = ExtResource("1_script")
+path_speed = 100.0
+max_health = 8
+cyberbuck_reward = 200
+destroy_duration = 0.5
+
+[node name="SpywareVisual" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.2, 0.2)
+sprite_frames = ExtResource("2_frames")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="StolenKnowledgeLabel" type="Label" parent="."]
+visible = false
+z_index = 10
+offset_left = -110.0
+offset_top = -170.0
+offset_right = 110.0
+offset_bottom = -124.0
+theme_override_colors/font_color = Color(0.86, 0.7, 1, 1)
+theme_override_colors/font_outline_color = Color(0.055, 0.015, 0.09, 1)
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 24
+text = "Stolen KP: 10"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Audio" type="Node" parent="."]
+
+[node name="DestroySfx" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("4_destroy_sfx")
+volume_db = -20.0

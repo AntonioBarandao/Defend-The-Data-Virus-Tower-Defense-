@@ -16,6 +16,7 @@ autoplay = "Horse_Move"
 script = ExtResource("2_script")
 path_speed = 25.0
 max_health = 50
+cyberbuck_reward = 500
 
 [node name="MinibossHealthBar" type="Node2D" parent="." unique_id=458405390]
 z_index = 700

@@ -17,7 +17,7 @@ corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
 [node name="TowerUpgradeHUD" type="CanvasLayer" unique_id=1108907542]
-layer = 80
+layer = 240
 script = ExtResource("1_script")
 
 [node name="Root" type="Control" parent="." unique_id=887390544]
@@ -34,6 +34,7 @@ custom_minimum_size = Vector2(390, 520)
 layout_mode = 1
 offset_right = 571.0
 offset_bottom = 1079.0
+mouse_filter = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_guardian")
 
 [node name="Margin" type="MarginContainer" parent="Root/MenuPanel" unique_id=1625132570]

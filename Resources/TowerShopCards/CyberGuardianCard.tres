@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="TowerShopCardResource" format=3 uid="uid://dkr0pivroe0jn"]
+
+[ext_resource type="Script" uid="uid://et8vs33f5uou" path="res://Scripts/UI/tower_shop_card_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bg30biooew5ch" path="res://assets/Towers/CyberGuardian/Display_CyberGuardian.png" id="2_texture"]
+[ext_resource type="PackedScene" uid="uid://cddp8ilcjadua" path="res://Scenes/Towers/CyberGuardian.tscn" id="3_scene"]
+
+[resource]
+script = ExtResource("1_script")
+tower_id = &"cyber_guardian"
+display_name = "Cyber Guardian"
+display_texture = ExtResource("2_texture")
+tower_scene = ExtResource("3_scene")
+info_header = "Cyber Guardian"
+info_description = "Free one-time guardian. Defender Mode attacks visible viruses. Signal Boost Mode unlocks at Knowledge LV3 and becomes passive support, scaling range, cooldown, and SIEM Hawk speed from the balance table. Firewall Mode unlocks at Knowledge LV5 and places a red burn wall on the closest path point."
+tower_type = "Mode Tower"

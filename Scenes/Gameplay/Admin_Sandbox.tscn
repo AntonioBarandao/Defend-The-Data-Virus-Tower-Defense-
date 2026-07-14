@@ -20,6 +20,17 @@
 [ext_resource type="PackedScene" path="res://Scenes/UI/ProgressHUD.tscn" id="20_knowledge"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/IPS_Intrusion.tscn" id="21_ips"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/Honeypot_Production.tscn" id="22_honeypot"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/TowerShopCard.tscn" id="23_shop_card"]
+[ext_resource type="Resource" path="res://Resources/TowerShopCards/CyberGuardianCard.tres" id="24_cyber_card"]
+[ext_resource type="Resource" path="res://Resources/TowerShopCards/LaserTurretCard.tres" id="25_laser_card"]
+[ext_resource type="Resource" path="res://Resources/TowerShopCards/IDSScannerCard.tres" id="26_ids_card"]
+[ext_resource type="Resource" path="res://Resources/TowerShopCards/EDRHunterCard.tres" id="27_edr_card"]
+[ext_resource type="Resource" path="res://Resources/TowerShopCards/SIEMHawkCard.tres" id="28_siem_card"]
+[ext_resource type="Resource" path="res://Resources/TowerShopCards/IPSIntrusionCard.tres" id="29_ips_card"]
+[ext_resource type="Resource" path="res://Resources/TowerShopCards/HoneypotProductionCard.tres" id="30_honeypot_card"]
+[ext_resource type="Texture2D" uid="uid://d26s2ivyd1ttd" path="res://assets/UI/TowerStoreArrowHex.svg" id="31_store_toggle"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_store_toggle"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_counter"]
 bg_color = Color(0.025, 0.032, 0.05, 0.88)
@@ -83,6 +94,13 @@ point_count = 40
 script = ExtResource("1_on2he")
 virus_spawn_path = NodePath("VirusElements/SpawnVirus")
 utility_overlay_hud_path = NodePath("UtilityOverlayHUD")
+cyber_guardian_card_resource = ExtResource("24_cyber_card")
+laser_turret_card_resource = ExtResource("25_laser_card")
+ids_scanner_card_resource = ExtResource("26_ids_card")
+edr_hunter_card_resource = ExtResource("27_edr_card")
+siem_hawk_card_resource = ExtResource("28_siem_card")
+ips_intrusion_card_resource = ExtResource("29_ips_card")
+honeypot_production_card_resource = ExtResource("30_honeypot_card")
 
 [node name="AdminSandboxSoundtrack" type="AudioStreamPlayer" parent="." unique_id=662457559]
 stream = ExtResource("17_soundtrack")
@@ -131,6 +149,7 @@ shape = SubResource("RectangleShape2D_rh1nv")
 visible = false
 
 [node name="TestDrag" type="Control" parent="." unique_id=1456189078]
+z_index = 200
 layout_mode = 3
 anchors_preset = 0
 offset_top = -124.00006
@@ -138,12 +157,148 @@ offset_right = 40.0
 offset_bottom = -84.00006
 
 [node name="TowerTrayBackground" type="ColorRect" parent="TestDrag" unique_id=161859911]
+z_index = 205
+z_as_relative = false
 layout_mode = 0
-offset_left = 2103.0
+offset_left = 1562.0
 offset_top = 120.00006
-offset_right = 2562.0
+offset_right = 1921.146
 offset_bottom = 1204.0
 color = Color(0, 0, 0, 0.7058824)
+
+[node name="TowerShopTitle" type="Label" parent="TestDrag"]
+z_index = 212
+layout_mode = 0
+offset_left = 1580.0
+offset_top = 132.0
+offset_right = 1904.0
+offset_bottom = 172.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.74, 0.93, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0.02, 0.05, 0.94)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("15_wq1r8")
+theme_override_font_sizes/font_size = 28
+text = "TOWER SHOP"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TowerShopHint" type="Label" parent="TestDrag"]
+z_index = 212
+layout_mode = 0
+offset_left = 1580.0
+offset_top = 174.0
+offset_right = 1904.0
+offset_bottom = 204.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.52, 0.68, 0.82, 1)
+theme_override_colors/font_outline_color = Color(0, 0.02, 0.05, 0.94)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("15_wq1r8")
+theme_override_font_sizes/font_size = 18
+text = "Drag a tower onto a platform"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="TowerStoreToggleButton" type="Button" parent="TestDrag"]
+custom_minimum_size = Vector2(64, 80)
+z_index = 215
+layout_mode = 0
+offset_left = 1530.0
+offset_top = 622.0
+offset_right = 1594.0
+offset_bottom = 702.0
+mouse_default_cursor_shape = 2
+focus_mode = 0
+tooltip_text = "Hide tower shop"
+theme_override_colors/icon_normal_color = Color(0.35, 0.8, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 0.84, 0.22, 1)
+theme_override_colors/icon_pressed_color = Color(0.98, 0.95, 0.76, 1)
+theme_override_colors/icon_focus_color = Color(0.35, 0.8, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxEmpty_store_toggle")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_store_toggle")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_store_toggle")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_store_toggle")
+icon = ExtResource("31_store_toggle")
+expand_icon = true
+
+[node name="CyberGuardianCard" parent="TestDrag" instance=ExtResource("23_shop_card")]
+z_index = 210
+z_as_relative = false
+offset_left = 1566.0
+offset_top = 242.0
+offset_right = 1724.0
+offset_bottom = 408.0
+card_resource = ExtResource("24_cyber_card")
+tower_name = "Cyber Guardian"
+deploy_cost = 0
+
+[node name="LaserTurretCard" parent="TestDrag" instance=ExtResource("23_shop_card")]
+z_index = 210
+z_as_relative = false
+offset_left = 1742.0
+offset_top = 242.0
+offset_right = 1900.0
+offset_bottom = 408.0
+card_resource = ExtResource("25_laser_card")
+tower_name = "Laser Turret"
+deploy_cost = 450
+
+[node name="IDSScannerCard" parent="TestDrag" instance=ExtResource("23_shop_card")]
+z_index = 210
+z_as_relative = false
+offset_left = 1566.0
+offset_top = 426.0
+offset_right = 1724.0
+offset_bottom = 592.0
+card_resource = ExtResource("26_ids_card")
+tower_name = "IDS Scanner"
+deploy_cost = 0
+
+[node name="EDRHunterCard" parent="TestDrag" instance=ExtResource("23_shop_card")]
+z_index = 210
+z_as_relative = false
+offset_left = 1742.0
+offset_top = 426.0
+offset_right = 1900.0
+offset_bottom = 592.0
+card_resource = ExtResource("27_edr_card")
+tower_name = "EDR Hunter"
+deploy_cost = 900
+
+[node name="SIEMHawkCard" parent="TestDrag" instance=ExtResource("23_shop_card")]
+z_index = 210
+z_as_relative = false
+offset_left = 1566.0
+offset_top = 610.0
+offset_right = 1724.0
+offset_bottom = 776.0
+card_resource = ExtResource("28_siem_card")
+tower_name = "SIEM Hawk"
+deploy_cost = 2500
+
+[node name="IPSIntrusionCard" parent="TestDrag" instance=ExtResource("23_shop_card")]
+z_index = 210
+z_as_relative = false
+offset_left = 1742.0
+offset_top = 610.0
+offset_right = 1900.0
+offset_bottom = 776.0
+card_resource = ExtResource("29_ips_card")
+tower_name = "IPS Intrusion"
+deploy_cost = 1700
+
+[node name="HoneypotProductionCard" parent="TestDrag" instance=ExtResource("23_shop_card")]
+z_index = 210
+z_as_relative = false
+offset_left = 1566.0
+offset_top = 794.0
+offset_right = 1724.0
+offset_bottom = 960.0
+card_resource = ExtResource("30_honeypot_card")
+tower_name = "Honeypot Production"
+deploy_cost = 1500
 
 [node name="PlatformHighlight" type="ColorRect" parent="." unique_id=477646041]
 offset_right = 126.0
@@ -169,6 +324,7 @@ position = Vector2(2768, 301.00006)
 scale = Vector2(0.11188765, 0.11188765)
 
 [node name="IPS_Intrusion" parent="Sprites" instance=ExtResource("21_ips")]
+visible = false
 position = Vector2(2958, 301.00006)
 scale = Vector2(0.11188765, 0.11188765)
 
@@ -242,3 +398,52 @@ debug_color = Color(0.5323416, 0.5497722, 0.4333505, 0.41960785)
 [editable path="CyberQuestionHUD"]
 [editable path="PerformanceHUD"]
 [editable path="ProgressHUD"]
+[editable path="TestDrag/CyberGuardianCard"]
+[editable path="TestDrag/CyberGuardianCard/CardPanel"]
+[editable path="TestDrag/CyberGuardianCard/DisplayImageContainer"]
+[editable path="TestDrag/CyberGuardianCard/DisplayImageContainer/DisplaySprite"]
+[editable path="TestDrag/CyberGuardianCard/DisplayImageContainer/ImageEditFrame"]
+[editable path="TestDrag/CyberGuardianCard/NameLabel"]
+[editable path="TestDrag/CyberGuardianCard/CostLabel"]
+[editable path="TestDrag/LaserTurretCard"]
+[editable path="TestDrag/LaserTurretCard/CardPanel"]
+[editable path="TestDrag/LaserTurretCard/DisplayImageContainer"]
+[editable path="TestDrag/LaserTurretCard/DisplayImageContainer/DisplaySprite"]
+[editable path="TestDrag/LaserTurretCard/DisplayImageContainer/ImageEditFrame"]
+[editable path="TestDrag/LaserTurretCard/NameLabel"]
+[editable path="TestDrag/LaserTurretCard/CostLabel"]
+[editable path="TestDrag/IDSScannerCard"]
+[editable path="TestDrag/IDSScannerCard/CardPanel"]
+[editable path="TestDrag/IDSScannerCard/DisplayImageContainer"]
+[editable path="TestDrag/IDSScannerCard/DisplayImageContainer/DisplaySprite"]
+[editable path="TestDrag/IDSScannerCard/DisplayImageContainer/ImageEditFrame"]
+[editable path="TestDrag/IDSScannerCard/NameLabel"]
+[editable path="TestDrag/IDSScannerCard/CostLabel"]
+[editable path="TestDrag/EDRHunterCard"]
+[editable path="TestDrag/EDRHunterCard/CardPanel"]
+[editable path="TestDrag/EDRHunterCard/DisplayImageContainer"]
+[editable path="TestDrag/EDRHunterCard/DisplayImageContainer/DisplaySprite"]
+[editable path="TestDrag/EDRHunterCard/DisplayImageContainer/ImageEditFrame"]
+[editable path="TestDrag/EDRHunterCard/NameLabel"]
+[editable path="TestDrag/EDRHunterCard/CostLabel"]
+[editable path="TestDrag/SIEMHawkCard"]
+[editable path="TestDrag/SIEMHawkCard/CardPanel"]
+[editable path="TestDrag/SIEMHawkCard/DisplayImageContainer"]
+[editable path="TestDrag/SIEMHawkCard/DisplayImageContainer/DisplaySprite"]
+[editable path="TestDrag/SIEMHawkCard/DisplayImageContainer/ImageEditFrame"]
+[editable path="TestDrag/SIEMHawkCard/NameLabel"]
+[editable path="TestDrag/SIEMHawkCard/CostLabel"]
+[editable path="TestDrag/IPSIntrusionCard"]
+[editable path="TestDrag/IPSIntrusionCard/CardPanel"]
+[editable path="TestDrag/IPSIntrusionCard/DisplayImageContainer"]
+[editable path="TestDrag/IPSIntrusionCard/DisplayImageContainer/DisplaySprite"]
+[editable path="TestDrag/IPSIntrusionCard/DisplayImageContainer/ImageEditFrame"]
+[editable path="TestDrag/IPSIntrusionCard/NameLabel"]
+[editable path="TestDrag/IPSIntrusionCard/CostLabel"]
+[editable path="TestDrag/HoneypotProductionCard"]
+[editable path="TestDrag/HoneypotProductionCard/CardPanel"]
+[editable path="TestDrag/HoneypotProductionCard/DisplayImageContainer"]
+[editable path="TestDrag/HoneypotProductionCard/DisplayImageContainer/DisplaySprite"]
+[editable path="TestDrag/HoneypotProductionCard/DisplayImageContainer/ImageEditFrame"]
+[editable path="TestDrag/HoneypotProductionCard/NameLabel"]
+[editable path="TestDrag/HoneypotProductionCard/CostLabel"]
