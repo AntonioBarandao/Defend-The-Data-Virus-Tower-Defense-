@@ -124,7 +124,51 @@ placement_size = Vector2(92.59923, 92.59923)
 shape = SubResource("RectangleShape2D_8y7lx")
 
 [node name="PlacementSlot2" type="CollisionShape2D" parent="TowerPlacementArea" unique_id=48627030]
-position = Vector2(1145, 176)
+position = Vector2(1146, 172)
+shape = SubResource("RectangleShape2D_rh1nv")
+
+[node name="PlacementSlot3" type="CollisionShape2D" parent="TowerPlacementArea"]
+position = Vector2(902, 284)
+shape = SubResource("RectangleShape2D_rh1nv")
+
+[node name="PlacementSlot4" type="CollisionShape2D" parent="TowerPlacementArea"]
+position = Vector2(218, 246)
+shape = SubResource("RectangleShape2D_rh1nv")
+
+[node name="PlacementSlot5" type="CollisionShape2D" parent="TowerPlacementArea"]
+position = Vector2(441, -134)
+shape = SubResource("RectangleShape2D_rh1nv")
+
+[node name="PlacementSlot6" type="CollisionShape2D" parent="TowerPlacementArea"]
+position = Vector2(761, -7)
+shape = SubResource("RectangleShape2D_rh1nv")
+
+[node name="PlacementSlot7" type="CollisionShape2D" parent="TowerPlacementArea"]
+position = Vector2(1400, 7)
+shape = SubResource("RectangleShape2D_rh1nv")
+
+[node name="PlacementSlot8" type="CollisionShape2D" parent="TowerPlacementArea"]
+position = Vector2(1346, 351)
+shape = SubResource("RectangleShape2D_rh1nv")
+
+[node name="PlacementSlot9" type="CollisionShape2D" parent="TowerPlacementArea"]
+position = Vector2(1178, 488)
+shape = SubResource("RectangleShape2D_rh1nv")
+
+[node name="PlacementSlot10" type="CollisionShape2D" parent="TowerPlacementArea"]
+position = Vector2(406, 475)
+shape = SubResource("RectangleShape2D_rh1nv")
+
+[node name="PlacementSlot11" type="CollisionShape2D" parent="TowerPlacementArea"]
+position = Vector2(-221, 346)
+shape = SubResource("RectangleShape2D_rh1nv")
+
+[node name="PlacementSlot12" type="CollisionShape2D" parent="TowerPlacementArea"]
+position = Vector2(109, 631)
+shape = SubResource("RectangleShape2D_rh1nv")
+
+[node name="PlacementSlot13" type="CollisionShape2D" parent="TowerPlacementArea"]
+position = Vector2(920, 591)
 shape = SubResource("RectangleShape2D_rh1nv")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=394633943]
@@ -139,9 +183,9 @@ offset_bottom = -84.00006
 
 [node name="TowerTrayBackground" type="ColorRect" parent="TestDrag" unique_id=161859911]
 layout_mode = 0
-offset_left = 2103.0
+offset_left = 1461.0
 offset_top = 120.00006
-offset_right = 2562.0
+offset_right = 1920.0
 offset_bottom = 1204.0
 color = Color(0, 0, 0, 0.7058824)
 

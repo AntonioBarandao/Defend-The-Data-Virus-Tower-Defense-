@@ -10,7 +10,7 @@ const PRODUCTION_CYCLE_SECONDS := 4.0
 const OVERLOAD_VIRUS_COUNT := 10
 const OVERLOAD_SECONDS := 10.0
 const HONEYPOT_MAX_LEVEL := 5
-const HONEYPOT_UPGRADE_COSTS := [0, 0, 0, 0, 0]
+const HONEYPOT_UPGRADE_COSTS := [70, 105, 150, 205, 0]
 
 @export_range(32.0, 1200.0, 1.0) var production_radius := 250.0
 @export var production_label_path: NodePath = ^"ProductionPotLabel"

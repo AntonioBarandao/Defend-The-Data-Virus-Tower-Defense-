@@ -21,8 +21,11 @@ signal exit_pressed
 @onready var _settings_button: Button = get_node_or_null(^"Root/MainMenuPanel/Margin/Options/SettingsButton") as Button
 @onready var _exit_button: Button = get_node_or_null(^"Root/MainMenuPanel/Margin/Options/ExitButton") as Button
 
+var _was_tree_paused := false
+
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_reset_button.pressed.connect(func() -> void: reset_pressed.emit())
 	_wave_button.pressed.connect(func() -> void: start_wave_pressed.emit())
 	_add_ten_button.pressed.connect(_request_ten_viruses)
@@ -30,12 +33,14 @@ func _ready() -> void:
 	if _menu_panel != null:
 		_menu_panel.hide()
 	if _menu_button != null:
-		_menu_button.hide()
-		_menu_button.disabled = true
+		_menu_button.show()
+		_menu_button.disabled = false
+		_menu_button.pressed.connect(toggle_menu)
 	if _continue_button != null:
 		_continue_button.pressed.connect(hide_menu)
 	if _settings_button != null:
-		_settings_button.pressed.connect(hide_menu)
+		_settings_button.disabled = true
+		_settings_button.tooltip_text = "Settings are coming soon."
 	if _exit_button != null:
 		_exit_button.pressed.connect(func() -> void: exit_pressed.emit())
 
@@ -48,6 +53,12 @@ func set_wave_button(text: String, disabled: bool) -> void:
 func set_spawn_buttons_disabled(disabled: bool) -> void:
 	_add_ten_button.disabled = disabled
 	_add_hundred_button.disabled = disabled
+
+
+func set_admin_mode(enabled: bool) -> void:
+	$Root/VirusBatchControls.visible = enabled
+	_reset_button.visible = enabled
+	_wave_button.visible = true
 
 
 func _request_ten_viruses() -> void:
@@ -71,10 +82,21 @@ func toggle_menu() -> void:
 
 
 func show_menu() -> void:
-	if _menu_panel != null:
-		_menu_panel.show()
+	if _menu_panel == null or _menu_panel.visible:
+		return
+	_was_tree_paused = get_tree().paused
+	get_tree().paused = true
+	_menu_panel.show()
 
 
 func hide_menu() -> void:
-	if _menu_panel != null:
-		_menu_panel.hide()
+	if _menu_panel == null:
+		return
+	_menu_panel.hide()
+	get_tree().paused = _was_tree_paused
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"ui_cancel"):
+		toggle_menu()
+		get_viewport().set_input_as_handled()

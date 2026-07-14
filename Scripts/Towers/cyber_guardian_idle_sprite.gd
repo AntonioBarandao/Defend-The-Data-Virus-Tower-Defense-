@@ -43,7 +43,7 @@ const LEVEL_DAMAGE_POINTS := [1, 2, 3, 4, 5]
 const LEVEL_ATTACK_RANGES := [250.0, 310.0, 390.0, 500.0, 640.0]
 const LEVEL_COOLDOWNS := [0.5, 0.42, 0.34, 0.28, 0.22]
 const LEVEL_LASER_WIDTHS := [10.0, 11.0, 12.0, 13.0, 14.0]
-const LEVEL_UPGRADE_COSTS := [0, 0, 0, 0, 0]
+const LEVEL_UPGRADE_COSTS := [60, 90, 130, 180, 0]
 const SHOT_RETURN_DELAY := 3.0
 const RANGE_PREVIEW_SEGMENTS := 96
 const RANGE_PREVIEW_FILL_COLOR := Color(0.27, 0.55, 1.0, 0.16)
@@ -86,6 +86,7 @@ var _range_preview_radius := -1.0
 var _menu_range_preview_active := false
 var _summon_sfx: AudioStreamPlayer
 var _base_modulate := Color.WHITE
+var _base_self_modulate := Color.WHITE
 var _current_mode: StringName = MODE_DEFENDER
 var _signal_boost_sprite: Sprite2D
 var _firewall_sprite: Sprite2D
@@ -101,6 +102,7 @@ func _ready() -> void:
 	_drag_start_position = _home_position
 	_rest_rotation = rotation
 	_base_modulate = modulate
+	_base_self_modulate = self_modulate
 	z_index = maxi(z_index, TOWER_VISUAL_Z_INDEX)
 	z_as_relative = false
 	_platform_highlight = get_node_or_null(platform_highlight_path) as ColorRect
@@ -756,14 +758,19 @@ func _hide_mode_sprite_source_nodes() -> void:
 
 
 func _apply_guardian_mode_visual() -> void:
-	_prepare_static_mode_sprite_frames()
+	_hide_mode_sprite_source_nodes()
 	if _current_mode == MODE_DEFENDER:
+		self_modulate = _base_self_modulate
 		if _defender_sprite_frames != null:
 			sprite_frames = _defender_sprite_frames
-	else:
-		var mode_frames := _static_mode_sprite_frames.get(_current_mode) as SpriteFrames
-		if mode_frames != null:
-			sprite_frames = mode_frames
+	elif _current_mode == MODE_SIGNAL_BOOST:
+		self_modulate = Color(_base_self_modulate.r, _base_self_modulate.g, _base_self_modulate.b, 0.0)
+		if _signal_boost_sprite != null:
+			_signal_boost_sprite.show()
+	elif _current_mode == MODE_FIREWALL:
+		self_modulate = Color(_base_self_modulate.r, _base_self_modulate.g, _base_self_modulate.b, 0.0)
+		if _firewall_sprite != null:
+			_firewall_sprite.show()
 
 	if _has_required_animations(sprite_frames):
 		play_animation(IDLE_ANIMATION)

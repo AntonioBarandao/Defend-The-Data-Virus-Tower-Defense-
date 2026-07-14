@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://de8rk6dmegkss"
-path="res://.godot/imported/IDS_Quarantine_Scanner.png-2a76f722b589be65cff8ccc9c20066c3.ctex"
+path="res://.godot/imported/IDS_Quarantine_Scanner.png-1e8f9673cc513493580b44a491065517.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Towers/IDS_Scanner/Modes/IDS_Quarantine_Scanner.png"
-dest_files=["res://.godot/imported/IDS_Quarantine_Scanner.png-2a76f722b589be65cff8ccc9c20066c3.ctex"]
+source_file="res://Assets/Towers/IDS_Scanner/Modes/IDS_Quarantine_Scanner.png"
+dest_files=["res://.godot/imported/IDS_Quarantine_Scanner.png-1e8f9673cc513493580b44a491065517.ctex"]
 
 [params]
 

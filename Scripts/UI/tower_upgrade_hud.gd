@@ -13,6 +13,7 @@ signal siem_dispatch_pressed
 signal siem_land_pressed
 signal ips_upgrade_pressed
 signal honeypot_upgrade_pressed
+signal sell_pressed
 
 enum MenuMode {
 	NONE,
@@ -58,6 +59,7 @@ const GUARDIAN_MODE_FIREWALL := &"firewall"
 @onready var _laser_cost_row: Control = $Root/MenuPanel/Margin/Content/VBoxContainer2/CostRow
 @onready var _laser_cost_label: Label = $Root/MenuPanel/Margin/Content/VBoxContainer2/CostRow/CostAmount
 @onready var _laser_upgrade_button: Button = $Root/MenuPanel/Margin/Content/VBoxContainer2/ButtonPath4
+@onready var _sell_button: Button = $Root/MenuPanel/Margin/Content/SellButton
 
 var _description_label: Label
 var _current_mode := MenuMode.NONE
@@ -85,6 +87,7 @@ func _ready() -> void:
 	_ensure_description_label()
 	_configure_static_tooltips()
 	_laser_upgrade_button.pressed.connect(Callable(self, "_on_upgrade_button_pressed"))
+	_sell_button.pressed.connect(func() -> void: sell_pressed.emit())
 	_siem_dispatch_button.pressed.connect(Callable(self, "_on_siem_dispatch_button_pressed"))
 	_siem_land_button.pressed.connect(Callable(self, "_on_siem_land_button_pressed"))
 	for mode_id in _guardian_mode_buttons.keys():
