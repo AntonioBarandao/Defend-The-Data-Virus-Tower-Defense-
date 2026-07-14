@@ -13,7 +13,7 @@ const PHASE_TWO := &"phase_2"
 const PHASE_THREE := &"phase_3"
 const PHASE_FOUR := &"phase_4"
 const PHASE_END := &"phase_end"
-const PHASE_ONE_DESTROY_SFX := preload("res://Assets/sfx/virus_destroy.wav")
+const PHASE_ONE_DESTROY_SFX := preload("res://assets/sfx/virus_destroy.wav")
 
 @export var play_on_ready := true
 @export var cutscene_skip_hud_path: NodePath = ^"../CutsceneSkipHUD"

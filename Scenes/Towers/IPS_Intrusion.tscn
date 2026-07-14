@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3]
 
-[ext_resource type="SpriteFrames" path="res://Assets/Towers/IPS_Intrusion/IPSIntrusionSpriteFrames.tres" id="1_frames"]
+[ext_resource type="SpriteFrames" path="res://assets/Towers/IPS_Intrusion/IPSIntrusionSpriteFrames.tres" id="1_frames"]
 [ext_resource type="Script" path="res://Scripts/Towers/ips_intrusion.gd" id="2_script"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/IPS_Intrusion_Spike.tscn" id="3_spike"]
 

@@ -279,7 +279,7 @@ offset_right = -567.0
 offset_bottom = 95.0
 
 [node name="GameControlsHUD" parent="." unique_id=772842743 instance=ExtResource("13_controls")]
-layer = 9999
+show_menu_button = false
 
 [node name="TowerUpgradeHUD" parent="." unique_id=1985424915 instance=ExtResource("14_upgrades")]
 layer = 80
@@ -317,10 +317,9 @@ offset_bottom = 58.0
 scale = Vector2(1.2522548, 1.2522548)
 
 [node name="CutsceneDemoMenuHUD" parent="." unique_id=29047704 instance=ExtResource("21_demo_menu")]
-visible = false
 
 [node name="HamburgerButton" parent="CutsceneDemoMenuHUD/Root" index="0"]
-visible = false
+visible = true
 
 [node name="WaveSetPanel" parent="CutsceneDemoMenuHUD/Root" index="3"]
 offset_left = -725.0

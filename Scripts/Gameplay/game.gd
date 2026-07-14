@@ -1031,7 +1031,9 @@ func _make_store_label(label_text: String, font_size: int, font_color: Color) ->
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.z_as_relative = false
 	label.z_index = STORE_LABEL_Z_INDEX
-	label.add_theme_font_override("font", _get_store_font())
+	var store_font := _get_store_font()
+	if store_font != null:
+		label.add_theme_font_override("font", store_font)
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", font_color)
 	label.add_theme_color_override("font_outline_color", Color(0.0, 0.02, 0.05, 0.94))
@@ -1849,7 +1851,9 @@ func _setup_admin_currency_button() -> void:
 	_admin_add_bucks_button.position = Vector2(24, 224)
 	_admin_add_bucks_button.size = Vector2(220, 52)
 	_admin_add_bucks_button.focus_mode = Control.FOCUS_NONE
-	_admin_add_bucks_button.add_theme_font_override("font", _get_store_font())
+	var store_font := _get_store_font()
+	if store_font != null:
+		_admin_add_bucks_button.add_theme_font_override("font", store_font)
 	_admin_add_bucks_button.add_theme_font_size_override("font_size", 18)
 	_admin_add_bucks_button.add_theme_stylebox_override("normal", _make_store_button_style(Color(0.04, 0.14, 0.08, 0.96), Color(0.2, 1.0, 0.48, 1.0)))
 	_admin_add_bucks_button.add_theme_stylebox_override("hover", _make_store_button_style(Color(0.07, 0.22, 0.12, 1.0), Color(0.55, 1.0, 0.7, 1.0)))
@@ -2507,6 +2511,24 @@ func _sell_selected_tower() -> void:
 	_question_hud.add_cyberbucks(refund)
 	_apply_guardian_signal_boost_state()
 	_update_demo_upgrade_buttons()
+
+
+func _get_deployed_tower_cost(tower_id: StringName) -> int:
+	match tower_id:
+		&"laser":
+			return LASER_TURRET_DEPLOY_COST
+		&"scanner":
+			return IDS_SCANNER_DEPLOY_COST
+		&"edr":
+			return EDR_HUNTER_DEPLOY_COST
+		&"siem":
+			return SIEM_HAWK_DEPLOY_COST
+		&"ips":
+			return IPS_INTRUSION_DEPLOY_COST
+		&"honeypot":
+			return HONEYPOT_PRODUCTION_DEPLOY_COST
+		_:
+			return CYBER_GUARDIAN_DEPLOY_COST
 
 
 func _get_selected_tower() -> Node2D:

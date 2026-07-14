@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://w84lgguasvp7"]
 
 [ext_resource type="Script" uid="uid://cx10pf1srbnq7" path="res://Scripts/UI/tower_upgrade_hud.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://80e8xosb7uq1" path="res://Assets/UI/Cutscene/Cyberguardian_Mascot.png" id="2_lydoq"]
-[ext_resource type="Texture2D" uid="uid://c8mbr1sur5jts" path="res://Assets/UI/CyberBucks.png" id="3_bucks"]
+[ext_resource type="Texture2D" uid="uid://80e8xosb7uq1" path="res://assets/UI/Cutscene/Cyberguardian_Mascot.png" id="2_lydoq"]
+[ext_resource type="Texture2D" uid="uid://c8mbr1sur5jts" path="res://assets/UI/CyberBucks.png" id="3_bucks"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_guardian"]
 bg_color = Color(0.035, 0.047, 0.07, 0.94)
