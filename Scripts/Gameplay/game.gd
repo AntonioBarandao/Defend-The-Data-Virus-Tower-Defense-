@@ -414,7 +414,7 @@ func _input(event: InputEvent) -> void:
 
 		var pointer_position := _screen_to_canvas_position(mouse_button.position)
 		if mouse_button.pressed:
-			if _handle_tower_upgrade_sidebar_modal_press(mouse_button.position):
+			if _demo_upgrade_button_has_point(mouse_button.position):
 				return
 
 			if _tower_store_toggle_has_point(mouse_button.position):
@@ -457,19 +457,13 @@ func _input(event: InputEvent) -> void:
 			if _handle_siem_hawk_press(pointer_position, mouse_button.position):
 				return
 
-			if _handle_ips_intrusion_press(pointer_position, mouse_button.position):
+			if _guardian_store == null:
 				return
 
-			if _handle_honeypot_production_press(pointer_position, mouse_button.position):
-				return
-
-			if _find_tower_at_point(_guardians, pointer_position) != null:
+			if _guardian_store.is_placed():
 				_handle_placed_tower_press(pointer_position, mouse_button.position)
-				return
-		elif _pending_store_drag_tower != null:
-			_clear_pending_store_tower_drag()
-			get_viewport().set_input_as_handled()
-			return
+			elif _tower_store_open:
+				_guardian_store.try_start_drag(pointer_position)
 		elif _demo_upgrade_button_has_point(mouse_button.position):
 			return
 		elif _is_store_tower_dragging(_siem_hawk_store):
@@ -535,7 +529,7 @@ func _input(event: InputEvent) -> void:
 		var screen_touch := event as InputEventScreenTouch
 		var pointer_position := _screen_to_canvas_position(screen_touch.position)
 		if screen_touch.pressed:
-			if _handle_tower_upgrade_sidebar_modal_press(screen_touch.position):
+			if _demo_upgrade_button_has_point(screen_touch.position):
 				return
 
 			if _tower_store_toggle_has_point(screen_touch.position):
@@ -578,19 +572,13 @@ func _input(event: InputEvent) -> void:
 			if _handle_siem_hawk_press(pointer_position, screen_touch.position):
 				return
 
-			if _handle_ips_intrusion_press(pointer_position, screen_touch.position):
+			if _guardian_store == null:
 				return
 
-			if _handle_honeypot_production_press(pointer_position, screen_touch.position):
-				return
-
-			if _find_tower_at_point(_guardians, pointer_position) != null:
+			if _guardian_store.is_placed():
 				_handle_placed_tower_press(pointer_position, screen_touch.position)
-				return
-		elif _pending_store_drag_tower != null:
-			_clear_pending_store_tower_drag()
-			get_viewport().set_input_as_handled()
-			return
+			elif _tower_store_open:
+				_guardian_store.try_start_drag(pointer_position)
 		elif _demo_upgrade_button_has_point(screen_touch.position):
 			return
 		elif _is_store_tower_dragging(_siem_hawk_store):
