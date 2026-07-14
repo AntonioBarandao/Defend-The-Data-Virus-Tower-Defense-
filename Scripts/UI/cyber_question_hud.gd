@@ -75,6 +75,7 @@ const QUESTIONS := {
 
 @export var demo_question_animation_enabled := false
 @export var demo_question_reward := 200
+@export_range(0, 10000, 1) var starting_cyberbucks := 250
 @export_range(160.0, 1200.0, 1.0) var demo_panel_slide_distance := 760.0
 
 var cyberbucks := STARTING_CYBERBUCKS
@@ -119,7 +120,6 @@ var _phishing_decoy_answer_index := -1
 
 
 func _ready() -> void:
-	_phishing_rng.randomize()
 	_question_panel.hide()
 	_panel_rest_offsets = _get_panel_offsets()
 	_panel_rest_scale = _question_panel.scale

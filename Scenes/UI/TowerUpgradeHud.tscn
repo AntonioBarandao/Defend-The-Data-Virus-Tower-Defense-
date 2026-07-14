@@ -227,6 +227,12 @@ layout_mode = 2
 focus_mode = 0
 text = "Upgrade"
 
+[node name="SellButton" type="Button" parent="Root/MenuPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+focus_mode = 0
+text = "Sell Tower (60% Refund)"
+
 [node name="ButtonPath5" type="Button" parent="Root/MenuPanel/Margin/Content/VBoxContainer2" unique_id=115214901]
 visible = false
 custom_minimum_size = Vector2(0, 48)

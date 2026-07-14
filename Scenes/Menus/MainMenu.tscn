@@ -47,9 +47,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -260.0
-offset_top = -210.0
+offset_top = -330.0
 offset_right = 260.0
-offset_bottom = 210.0
+offset_bottom = 330.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -82,11 +82,17 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="StartButton" type="Button" parent="MenuPanel/VBox" unique_id=841296870]
+[node name="UserGameButton" type="Button" parent="MenuPanel/VBox" unique_id=841296870]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "ADMIN MAP MENU"
+text = "PLAY GAME"
+
+[node name="AdminGameButton" type="Button" parent="MenuPanel/VBox"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "ADMIN SANDBOX"
 
 [node name="LoginButton" type="Button" parent="MenuPanel/VBox" unique_id=36390648]
 custom_minimum_size = Vector2(0, 55)

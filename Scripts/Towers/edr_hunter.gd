@@ -6,7 +6,7 @@ const EDR_DAMAGE := 10
 const EDR_ATTACK_RANGE := 100000.0
 const EDR_COOLDOWN := 3.0
 const EDR_LASER_WIDTH := 12.0
-const EDR_UPGRADE_COSTS := [0, 0, 0, 0, 0]
+const EDR_UPGRADE_COSTS := [85, 125, 175, 235, 0]
 
 
 func _ready() -> void:

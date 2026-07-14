@@ -58,29 +58,6 @@ const ADWARE_POPUP_INTERVAL := 0.5
 const LASER_DURATION := 0.24
 const GUARDIAN_CYBERBUCK_REWARD := 5
 const LASER_TURRET_CYBERBUCK_REWARD := 5
-const CYBER_GUARDIAN_DEPLOY_COST := 0
-const LASER_TURRET_DEPLOY_COST := 450
-const EDR_HUNTER_DEPLOY_COST := 900
-const HONEYPOT_PRODUCTION_DEPLOY_COST := 1500
-const IPS_INTRUSION_DEPLOY_COST := 1700
-const SIEM_HAWK_DEPLOY_COST := 2500
-const TOWER_ID_CYBER_GUARDIAN := &"cyber_guardian"
-const TOWER_ID_LASER_TURRET := &"laser_turret"
-const TOWER_ID_IDS_SCANNER := &"ids_scanner"
-const TOWER_ID_EDR_HUNTER := &"edr_hunter"
-const TOWER_ID_SIEM_HAWK := &"siem_hawk"
-const TOWER_ID_IPS_INTRUSION := &"ips_intrusion"
-const TOWER_ID_HONEYPOT_PRODUCTION := &"honeypot_production"
-const DEFAULT_TOWER_CARD_RESOURCES := {
-	TOWER_ID_CYBER_GUARDIAN: CyberGuardianCardResource,
-	TOWER_ID_LASER_TURRET: LaserTurretCardResource,
-	TOWER_ID_IDS_SCANNER: IDSScannerCardResource,
-	TOWER_ID_EDR_HUNTER: EDRHunterCardResource,
-	TOWER_ID_SIEM_HAWK: SIEMHawkCardResource,
-	TOWER_ID_IPS_INTRUSION: IPSIntrusionCardResource,
-	TOWER_ID_HONEYPOT_PRODUCTION: HoneypotProductionCardResource
-}
-const GUARDIAN_MODE_DEFENDER := &"defender"
 const GUARDIAN_MODE_SIGNAL_BOOST := &"signal_boost"
 const GUARDIAN_MODE_FIREWALL := &"firewall"
 const SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL := 3
@@ -129,10 +106,11 @@ const STORE_PANEL_EXTRA_BOTTOM := 34.0
 const STORE_PANEL_MIN_WIDTH := 430.0
 const STORE_PANEL_SLIDE_DISTANCE := 360.0
 const STORE_PANEL_ANIM_SECONDS := 0.22
-const STORE_CARD_COLUMNS := 2
-const STORE_CARD_SIZE := Vector2(158, 166)
-const STORE_CARD_GAP := Vector2(18, 18)
-const STORE_CARD_GRID_TOP_OFFSET := 122.0
+const STORE_TOWER_ICON_X_OFFSET := 92.0
+const STORE_TOWER_LABEL_X_OFFSET := 258.0
+const STORE_TOWER_LABEL_SIZE := Vector2(188, 36)
+const STORE_TOWER_ROW_TOP_OFFSET := 132.0
+const STORE_TOWER_ROW_GAP := 104.0
 const STORE_TOWER_DISPLAY_SCALE_MULTIPLIER := 0.72
 const STORE_PANEL_Z_INDEX := 205
 const STORE_LABEL_Z_INDEX := 210
@@ -241,12 +219,6 @@ var _tower_store_placed_scales: Dictionary = {}
 var _tower_store_base_rect := Rect2()
 var _tower_store_open := true
 var _tower_store_tween: Tween
-var _wave_label_store_rest_position := Vector2.ZERO
-var _wave_label_store_position_cached := false
-var _pending_store_drag_tower: Node2D
-var _pending_store_drag_start_position := Vector2.ZERO
-var _restore_tower_store_after_upgrade_panel := false
-var _tower_store_restore_after_upgrade_waiting := false
 var _active_viruses: Array[PathFollow2D] = []
 var _current_wave := 0
 var _wave_in_progress := false
@@ -307,7 +279,6 @@ func _ready() -> void:
 		_virus_spawn = get_node_or_null(^"VirusElements/Spawn2D") as Node2D
 
 	_setup_tower_store()
-	_cache_store_companion_ui_positions()
 
 	if _guardian_store == null:
 		push_warning("Cybersec Guardian drag target was not found.")
@@ -343,6 +314,7 @@ func _ready() -> void:
 		_game_controls_hud.start_wave_pressed.connect(Callable(self, "_start_next_wave"))
 		_game_controls_hud.virus_batch_requested.connect(Callable(self, "spawn_virus_batch"))
 		_game_controls_hud.exit_pressed.connect(Callable(self, "_exit_game"))
+		_game_controls_hud.set_admin_mode(_is_admin_scene())
 	if _tower_upgrade_hud == null:
 		push_warning("TowerUpgradeHUD was not found.")
 	else:
@@ -356,6 +328,7 @@ func _ready() -> void:
 		_tower_upgrade_hud.siem_land_pressed.connect(Callable(self, "_land_siem_hawk_to_headquarters"))
 		_tower_upgrade_hud.ips_upgrade_pressed.connect(Callable(self, "_upgrade_ips_intrusion"))
 		_tower_upgrade_hud.honeypot_upgrade_pressed.connect(Callable(self, "_upgrade_honeypot_production"))
+		_tower_upgrade_hud.sell_pressed.connect(Callable(self, "_sell_selected_tower"))
 	if _guardian != null:
 		_connect_placed_guardian(_guardian)
 	if _siem_hawk != null:
@@ -777,9 +750,7 @@ func _add_tower_store_item(items: Array[Dictionary], tower: Node2D, tower_id: St
 	var card_resource := _get_tower_card_resource_for_id(tower_id)
 	items.append({
 		"tower": tower,
-		"tower_id": tower_id,
-		"label": card_resource.display_name if card_resource != null else label_text,
-		"resource": card_resource
+		"label": label_text
 	})
 
 
@@ -930,87 +901,14 @@ func _create_tower_store_cards(store_items: Array[Dictionary]) -> void:
 
 	for item in store_items:
 		var tower := item["tower"] as Node2D
-		var tower_id := item["tower_id"] as StringName
-		var card_resource := item.get("resource") as TowerShopCardResource
-		var card := _get_or_create_tower_store_card(tower, tower_id, String(item["label"]))
-		if card_resource != null:
-			card.card_resource = card_resource
-		card.configure(String(item["label"]), _get_default_tower_deploy_cost(tower))
-		_cache_tower_store_card_layout(card)
-		_tower_store_item_cards[tower] = card
+		var label := _make_store_label(String(item["label"]), 15, Color(0.86, 0.94, 1.0, 1.0))
+		label.autowrap_mode = TextServer.AUTOWRAP_OFF
+		label.clip_text = true
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		add_child(label)
+		_tower_store_item_labels[tower] = label
 
-	_position_tower_store_cards()
-
-
-func _get_or_create_tower_store_card(tower: Node2D, tower_id: StringName, label_text: String) -> TowerShopCard:
-	var resource_matched_card := _find_authored_tower_store_card_for_id(tower_id)
-	if resource_matched_card != null:
-		_prepare_authored_tower_store_card(resource_matched_card)
-		return resource_matched_card
-
-	var card_name := _get_tower_store_card_name(tower, label_text)
-	var existing_card := _tower_store_panel.get_node_or_null(NodePath(card_name)) as TowerShopCard
-	if existing_card != null:
-		_prepare_authored_tower_store_card(existing_card)
-		return existing_card
-
-	var card := TowerShopCardScene.instantiate() as TowerShopCard
-	card.name = card_name
-	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	card.z_as_relative = false
-	card.z_index = STORE_LABEL_Z_INDEX
-	card.set_meta("authored_store_card", false)
-	_tower_store_panel.add_child(card)
-	return card
-
-
-func _find_authored_tower_store_card_for_id(tower_id: StringName) -> TowerShopCard:
-	if _tower_store_panel == null:
-		return null
-
-	for child in _tower_store_panel.get_children():
-		var card := child as TowerShopCard
-		if card == null or card.card_resource == null:
-			continue
-		if card.card_resource.tower_id == tower_id:
-			return card
-
-	return null
-
-
-func _prepare_authored_tower_store_card(card: TowerShopCard) -> void:
-	card.set_meta("authored_store_card", true)
-	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	card.z_as_relative = false
-	card.z_index = STORE_LABEL_Z_INDEX
-	card.use_default_information_popup_paths()
-
-
-func _cache_tower_store_card_layout(card: TowerShopCard) -> void:
-	if card == null:
-		return
-	if bool(card.get_meta("authored_store_card", false)):
-		_tower_store_use_authored_card_layout = true
-	_tower_store_card_base_rects[card] = card.get_global_rect()
-
-
-func _get_tower_store_card_name(tower: Node2D, fallback_name: String) -> String:
-	if tower == _guardian_store:
-		return "CyberGuardianCard"
-	if tower == _laser_turret_store:
-		return "LaserTurretCard"
-	if tower == _ids_scanner_store:
-		return "IDSScannerCard"
-	if tower == _edr_hunter_store:
-		return "EDRHunterCard"
-	if tower == _siem_hawk_store:
-		return "SIEMHawkCard"
-	if tower == _ips_intrusion_store:
-		return "IPSIntrusionCard"
-	if tower == _honeypot_production_store:
-		return "HoneypotProductionCard"
-
-	return fallback_name.replace(" ", "") + "Card"
+	_position_tower_store_labels()
 
 
 func _make_store_label(label_text: String, font_size: int, font_color: Color) -> Label:
@@ -1044,9 +942,9 @@ func _position_tower_store_cards(slide_offset := 0.0) -> void:
 		return
 
 	var store_rect := _tower_store_base_rect
-	if _tower_store_title_label != null and not _tower_store_title_label_authored:
+	if _tower_store_title_label != null:
 		_position_store_label(_tower_store_title_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 16.0), Vector2(store_rect.size.x - 34.0, 40.0))
-	if _tower_store_hint_label != null and not _tower_store_hint_label_authored:
+	if _tower_store_hint_label != null:
 		_position_store_label(_tower_store_hint_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 58.0), Vector2(store_rect.size.x - 34.0, 30.0))
 
 	var grid_width := STORE_CARD_SIZE.x * float(STORE_CARD_COLUMNS) + STORE_CARD_GAP.x * float(STORE_CARD_COLUMNS - 1)
@@ -1310,11 +1208,10 @@ func _sync_tower_store_items(force_positions: bool) -> void:
 			tower_node.global_position = _tower_store_home_positions[tower_node]
 			tower_node.modulate.a = 1.0
 
-		var card := _tower_store_item_cards.get(tower_node) as TowerShopCard
-		if card != null:
-			card.visible = visible_label
-			card.modulate.a = 1.0
-			card.set_store_state(_can_afford_store_tower(tower_node), deployed_card)
+		var label := _tower_store_item_labels.get(tower_node) as Label
+		if label != null:
+			label.visible = visible_in_store
+			label.modulate.a = 1.0
 
 	if _tower_store_background != null:
 		_tower_store_background.visible = _tower_store_open
@@ -1801,6 +1698,86 @@ func _hide_legacy_store_title() -> void:
 			label.hide()
 
 
+func _get_tower_id(tower: Node) -> StringName:
+	if tower is HoneypotProductionTowerScript:
+		return &"honeypot"
+	if tower is IPSIntrusionTowerScript:
+		return &"ips"
+	if tower is SIEMHawkTowerScript:
+		return &"siem"
+	if tower is EDRHunterTowerScript:
+		return &"edr"
+	if tower is IDSScannerTowerScript:
+		return &"scanner"
+	if tower is LaserTurretScript:
+		return &"laser"
+	if tower is CyberGuardianTowerScript:
+		return &"guardian"
+	return &""
+
+
+func _get_tower_purchase_cost(tower_id: StringName) -> int:
+	return int(TOWER_PURCHASE_COSTS.get(tower_id, 0))
+
+
+func _can_afford_tower(tower: Node) -> bool:
+	var cost := _get_tower_purchase_cost(_get_tower_id(tower))
+	return _question_hud != null and _question_hud.can_spend_cyberbucks(cost)
+
+
+func _complete_tower_purchase(tower: Node2D) -> bool:
+	if _tower_store_base_rect.has_point(tower.global_position):
+		if tower.has_method("reset_tower"):
+			tower.call("reset_tower")
+		_apply_store_display_scale(tower)
+		_sync_tower_store_items(true)
+		return false
+
+	var cost := _get_tower_purchase_cost(_get_tower_id(tower))
+	if _question_hud != null and _question_hud.spend_cyberbucks(cost):
+		return true
+
+	# A tower can own its input handling, so validate again at the authoritative
+	# placement signal and return an unaffordable drop to the shop.
+	if tower.has_method("reset_tower"):
+		tower.call("reset_tower")
+	_apply_store_display_scale(tower)
+	_sync_tower_store_items(true)
+	return false
+
+
+func _setup_admin_currency_button() -> void:
+	if not _is_admin_scene() or _question_hud == null:
+		return
+
+	var canvas := CanvasLayer.new()
+	canvas.name = "AdminCurrencyControls"
+	canvas.layer = 170
+	add_child(canvas)
+	_admin_add_bucks_button = Button.new()
+	_admin_add_bucks_button.name = "AddCyberBucksButton"
+	_admin_add_bucks_button.text = "+%d Cyber Bucks" % ADMIN_CYBERBUCK_GRANT
+	_admin_add_bucks_button.tooltip_text = "Admin test control: add Cyber Bucks."
+	_admin_add_bucks_button.position = Vector2(24, 150)
+	_admin_add_bucks_button.size = Vector2(220, 52)
+	_admin_add_bucks_button.focus_mode = Control.FOCUS_NONE
+	_admin_add_bucks_button.add_theme_font_override("font", _get_store_font())
+	_admin_add_bucks_button.add_theme_font_size_override("font_size", 18)
+	_admin_add_bucks_button.add_theme_stylebox_override("normal", _make_store_button_style(Color(0.04, 0.14, 0.08, 0.96), Color(0.2, 1.0, 0.48, 1.0)))
+	_admin_add_bucks_button.add_theme_stylebox_override("hover", _make_store_button_style(Color(0.07, 0.22, 0.12, 1.0), Color(0.55, 1.0, 0.7, 1.0)))
+	_admin_add_bucks_button.pressed.connect(_add_admin_cyberbucks)
+	canvas.add_child(_admin_add_bucks_button)
+
+
+func _add_admin_cyberbucks() -> void:
+	if _question_hud != null:
+		_question_hud.add_cyberbucks(ADMIN_CYBERBUCK_GRANT)
+
+
+func _is_admin_scene() -> bool:
+	return scene_file_path.ends_with("Admin_Sandbox.tscn")
+
+
 func _connect_store_prototypes() -> void:
 	_connect_guardian_store_prototype(_guardian_store)
 	_connect_laser_store_prototype(_laser_turret_store)
@@ -1862,6 +1839,8 @@ func _connect_honeypot_store_prototype(tower: HoneypotProductionTowerScript) -> 
 
 
 func _on_guardian_store_tower_placed(tower: CyberGuardianTowerScript) -> void:
+	if not _complete_tower_purchase(tower):
+		return
 	_restore_placed_tower_scale(tower)
 	_guardians.append(tower)
 	_guardian = tower
@@ -1872,6 +1851,8 @@ func _on_guardian_store_tower_placed(tower: CyberGuardianTowerScript) -> void:
 
 
 func _on_laser_store_tower_placed(tower: LaserTurretScript) -> void:
+	if not _complete_tower_purchase(tower):
+		return
 	_restore_placed_tower_scale(tower)
 	_laser_turrets.append(tower)
 	_laser_turret = tower
@@ -1880,6 +1861,8 @@ func _on_laser_store_tower_placed(tower: LaserTurretScript) -> void:
 
 
 func _on_scanner_store_tower_placed(tower: IDSScannerTowerScript) -> void:
+	if not _complete_tower_purchase(tower):
+		return
 	_restore_placed_tower_scale(tower)
 	_ids_scanners.append(tower)
 	_ids_scanner = tower
@@ -1889,6 +1872,8 @@ func _on_scanner_store_tower_placed(tower: IDSScannerTowerScript) -> void:
 
 
 func _on_edr_store_tower_placed(tower: EDRHunterTowerScript) -> void:
+	if not _complete_tower_purchase(tower):
+		return
 	_restore_placed_tower_scale(tower)
 	_edr_hunters.append(tower)
 	_edr_hunter = tower
@@ -1897,6 +1882,8 @@ func _on_edr_store_tower_placed(tower: EDRHunterTowerScript) -> void:
 
 
 func _on_siem_store_tower_placed(tower: SIEMHawkTowerScript) -> void:
+	if not _complete_tower_purchase(tower):
+		return
 	_restore_placed_tower_scale(tower)
 	_siem_hawks.append(tower)
 	_siem_hawk = tower
@@ -1906,6 +1893,8 @@ func _on_siem_store_tower_placed(tower: SIEMHawkTowerScript) -> void:
 
 
 func _on_ips_store_tower_placed(tower: IPSIntrusionTowerScript) -> void:
+	if not _complete_tower_purchase(tower):
+		return
 	_restore_placed_tower_scale(tower)
 	_ips_intrusions.append(tower)
 	_ips_intrusion = tower
@@ -1915,6 +1904,8 @@ func _on_ips_store_tower_placed(tower: IPSIntrusionTowerScript) -> void:
 
 
 func _on_honeypot_store_tower_placed(tower: HoneypotProductionTowerScript) -> void:
+	if not _complete_tower_purchase(tower):
+		return
 	_restore_placed_tower_scale(tower)
 	_honeypot_productions.append(tower)
 	_honeypot_production = tower
@@ -2426,6 +2417,74 @@ func _upgrade_honeypot_production() -> void:
 		_utility_overlay_hud.show_tower_upgrade_fx(_world_to_screen_position(_honeypot_production.global_position))
 
 
+func _sell_selected_tower() -> void:
+	if _tower_upgrade_hud == null or _question_hud == null:
+		return
+
+	var tower := _get_selected_tower() as Node2D
+	if tower == null or not is_instance_valid(tower):
+		return
+
+	var tower_id := _get_tower_id(tower)
+	var refund := roundi(float(_get_tower_purchase_cost(tower_id)) * TOWER_SELL_REFUND_RATE)
+	_remove_sold_tower_from_tracking(tower, tower_id)
+	_tower_upgrade_hud.hide_all()
+	tower.queue_free()
+	_question_hud.add_cyberbucks(refund)
+	_apply_guardian_signal_boost_state()
+	_update_demo_upgrade_buttons()
+
+
+func _get_selected_tower() -> Node2D:
+	if _tower_upgrade_hud.is_guardian_panel_visible():
+		return _guardian
+	if _tower_upgrade_hud.is_laser_panel_visible():
+		return _laser_turret
+	if _tower_upgrade_hud.is_scanner_panel_visible():
+		return _ids_scanner
+	if _tower_upgrade_hud.is_edr_panel_visible():
+		return _edr_hunter
+	if _tower_upgrade_hud.is_siem_panel_visible():
+		return _siem_hawk
+	if _tower_upgrade_hud.is_ips_panel_visible():
+		return _ips_intrusion
+	if _tower_upgrade_hud.is_honeypot_panel_visible():
+		return _honeypot_production
+	return null
+
+
+func _remove_sold_tower_from_tracking(tower: Node2D, tower_id: StringName) -> void:
+	match tower_id:
+		&"guardian":
+			_guardians.erase(tower)
+			if _guardian == tower:
+				_guardian = null
+		&"laser":
+			_laser_turrets.erase(tower)
+			if _laser_turret == tower:
+				_laser_turret = null
+		&"scanner":
+			_ids_scanners.erase(tower)
+			if _ids_scanner == tower:
+				_ids_scanner = null
+		&"edr":
+			_edr_hunters.erase(tower)
+			if _edr_hunter == tower:
+				_edr_hunter = null
+		&"siem":
+			_siem_hawks.erase(tower)
+			if _siem_hawk == tower:
+				_siem_hawk = null
+		&"ips":
+			_ips_intrusions.erase(tower)
+			if _ips_intrusion == tower:
+				_ips_intrusion = null
+		&"honeypot":
+			_honeypot_productions.erase(tower)
+			if _honeypot_production == tower:
+				_honeypot_production = null
+
+
 func _toggle_siem_hawk_dispatch() -> void:
 	if _is_act_input_locked():
 		return
@@ -2506,7 +2565,6 @@ func _on_scanner_bounty_awarded(amount: int) -> void:
 func _on_cyberbucks_changed(amount: int) -> void:
 	if _progress_hud != null:
 		_progress_hud.set_cyberbucks(amount)
-	_sync_tower_store_card_states()
 
 
 func _on_siem_hawk_knowledge_extracted(amount: int) -> void:
@@ -3092,7 +3150,8 @@ func _on_phishing_decoy_selected() -> void:
 
 
 func _exit_game() -> void:
-	get_tree().quit()
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://Scenes/Menus/MainMenu.tscn")
 
 
 func _try_spawn_virus_from_press(pointer_position: Vector2) -> bool:

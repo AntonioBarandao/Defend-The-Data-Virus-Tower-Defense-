@@ -2,7 +2,8 @@ extends Control
 
 @onready var background: TextureRect = $Background
 @onready var scanline: ColorRect = $Scanline
-@onready var start_button: Button = $MenuPanel/VBox/StartButton
+@onready var user_game_button: Button = $MenuPanel/VBox/UserGameButton
+@onready var admin_game_button: Button = $MenuPanel/VBox/AdminGameButton
 @onready var login_button: Button = $MenuPanel/VBox/LoginButton
 @onready var options_button: Button = $MenuPanel/VBox/OptionsButton
 @onready var quit_button: Button = $MenuPanel/VBox/QuitButton
@@ -15,7 +16,8 @@ var background_zoom_amount := 0.015
 var time_passed := 0.0
 
 func _ready() -> void:
-	start_button.pressed.connect(_on_start_pressed)
+	user_game_button.pressed.connect(_on_user_game_pressed)
+	admin_game_button.pressed.connect(_on_admin_game_pressed)
 	login_button.pressed.connect(_on_login_pressed)
 	options_button.pressed.connect(_on_options_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
@@ -26,8 +28,13 @@ func _process(delta: float) -> void:
 	time_passed += delta
 
 
-func _on_start_pressed() -> void:
-	status_label.text = "Opening admin map menu..."
+func _on_user_game_pressed() -> void:
+	status_label.text = "Starting normal game..."
+	get_tree().change_scene_to_file("res://Scenes/Gameplay/Normal_Game.tscn")
+
+
+func _on_admin_game_pressed() -> void:
+	status_label.text = "Opening admin sandbox..."
 	get_tree().change_scene_to_file("res://Scenes/Gameplay/Admin_Sandbox.tscn")
 
 func _on_presentation_pressed() -> void:
