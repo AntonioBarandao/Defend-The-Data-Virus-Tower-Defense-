@@ -8,8 +8,9 @@
 script = ExtResource("1_script")
 tower_id = &"cyber_guardian"
 display_name = "Cyber Guardian"
+deploy_cost = 100
 display_texture = ExtResource("2_texture")
 tower_scene = ExtResource("3_scene")
 info_header = "Cyber Guardian"
-info_description = "Free one-time guardian. Defender Mode attacks visible viruses. Signal Boost Mode unlocks at Knowledge LV3 and becomes passive support, scaling range, cooldown, and SIEM Hawk speed from the balance table. Firewall Mode unlocks at Knowledge LV5 and places a red burn wall on the closest path point."
+info_description = "Defender Mode attacks visible viruses. Signal Boost Mode unlocks at Knowledge LV3 and becomes passive support, scaling range, cooldown, and SIEM Hawk speed from the balance table. Firewall Mode unlocks at Knowledge LV5 and places a red burn wall on the closest path point."
 tower_type = "Mode Tower"

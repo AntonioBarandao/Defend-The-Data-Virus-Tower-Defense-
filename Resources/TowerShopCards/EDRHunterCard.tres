@@ -8,7 +8,7 @@
 script = ExtResource("1_script")
 tower_id = &"edr_hunter"
 display_name = "EDR Hunter"
-deploy_cost = 900
+deploy_cost = 175
 display_texture = ExtResource("2_texture")
 tower_scene = ExtResource("3_scene")
 info_header = "EDR Hunter"

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://drni3bw1ta7k8"
-path="res://.godot/imported/Cyber_Guardian_SignalBoost_Sprite.png-29b78abfd6ba0ca1b3c9658250f2d84b.ctex"
+path="res://.godot/imported/Cyber_Guardian_SignalBoost_Sprite.png-75af646c93d62bec04ad2bfcdefffec0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Towers/CyberGuardian/Modes/Cyber_Guardian_SignalBoost_Sprite.png"
-dest_files=["res://.godot/imported/Cyber_Guardian_SignalBoost_Sprite.png-29b78abfd6ba0ca1b3c9658250f2d84b.ctex"]
+source_file="res://Assets/Towers/CyberGuardian/Modes/Cyber_Guardian_SignalBoost_Sprite.png"
+dest_files=["res://.godot/imported/Cyber_Guardian_SignalBoost_Sprite.png-75af646c93d62bec04ad2bfcdefffec0.ctex"]
 
 [params]
 

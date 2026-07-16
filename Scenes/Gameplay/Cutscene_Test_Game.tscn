@@ -528,7 +528,7 @@ offset_right = 1900.0
 offset_bottom = 408.0
 card_resource = ExtResource("31_laser_card")
 tower_name = "Laser Turret"
-deploy_cost = 450
+deploy_cost = 125
 
 [node name="CardPanel" parent="TestDrag/LaserTurretCard" index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_syyru")
@@ -587,7 +587,7 @@ offset_right = 1900.0
 offset_bottom = 592.0
 card_resource = ExtResource("33_edr_card")
 tower_name = "EDR Hunter"
-deploy_cost = 900
+deploy_cost = 175
 
 [node name="CardPanel" parent="TestDrag/EDRHunterCard" index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_cqx10")
@@ -621,7 +621,7 @@ offset_right = 1724.0
 offset_bottom = 776.0
 card_resource = ExtResource("34_siem_card")
 tower_name = "SIEM Hawk"
-deploy_cost = 2500
+deploy_cost = 225
 
 [node name="CardPanel" parent="TestDrag/SIEMHawkCard" index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_b1f5y")
@@ -653,7 +653,7 @@ offset_right = 1900.0
 offset_bottom = 776.0
 card_resource = ExtResource("35_ips_card")
 tower_name = "IPS Spike"
-deploy_cost = 1700
+deploy_cost = 200
 
 [node name="CardPanel" parent="TestDrag/IPSIntrusionCard" index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_mljs0")
@@ -685,7 +685,7 @@ offset_right = 1724.0
 offset_bottom = 960.0
 card_resource = ExtResource("36_honeypot_card")
 tower_name = "Honeypot"
-deploy_cost = 1500
+deploy_cost = 250
 
 [node name="CardPanel" parent="TestDrag/HoneypotProductionCard" index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_qunwk")

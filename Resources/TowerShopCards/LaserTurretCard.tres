@@ -8,7 +8,7 @@
 script = ExtResource("1_script")
 tower_id = &"laser_turret"
 display_name = "Laser Turret"
-deploy_cost = 450
+deploy_cost = 125
 display_texture = ExtResource("2_texture")
 tower_scene = ExtResource("3_scene")
 info_header = "Laser Turret"

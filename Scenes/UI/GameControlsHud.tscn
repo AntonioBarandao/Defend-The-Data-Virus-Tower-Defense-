@@ -105,6 +105,27 @@ grow_vertical = 0
 theme_override_constants/separation = 8
 alignment = 2
 
+[node name="LivesPanel" type="PanelContainer" parent="Root"]
+custom_minimum_size = Vector2(220, 58)
+layout_mode = 1
+offset_left = 24.0
+offset_top = 150.0
+offset_right = 244.0
+offset_bottom = 208.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_menu")
+
+[node name="LivesLabel" type="Label" parent="Root/LivesPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.42, 0.42, 1)
+theme_override_colors/font_outline_color = Color(0.18, 0.01, 0.02, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 24
+text = "LIVES  20 / 20"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="AddTenVirusesButton" type="Button" parent="Root/VirusBatchControls" unique_id=2112472185]
 custom_minimum_size = Vector2(102, 40)
 layout_mode = 2

@@ -60,13 +60,13 @@ const GUARDIAN_CYBERBUCK_REWARD := 5
 const LASER_TURRET_CYBERBUCK_REWARD := 5
 const ADMIN_CYBERBUCK_GRANT := 500
 const TOWER_SELL_REFUND_RATE := 0.6
-const CYBER_GUARDIAN_DEPLOY_COST := 0
-const LASER_TURRET_DEPLOY_COST := 450
-const IDS_SCANNER_DEPLOY_COST := 0
-const EDR_HUNTER_DEPLOY_COST := 900
-const HONEYPOT_PRODUCTION_DEPLOY_COST := 1500
-const IPS_INTRUSION_DEPLOY_COST := 1700
-const SIEM_HAWK_DEPLOY_COST := 2500
+const CYBER_GUARDIAN_DEPLOY_COST := 100
+const LASER_TURRET_DEPLOY_COST := 125
+const IDS_SCANNER_DEPLOY_COST := 150
+const EDR_HUNTER_DEPLOY_COST := 175
+const HONEYPOT_PRODUCTION_DEPLOY_COST := 250
+const IPS_INTRUSION_DEPLOY_COST := 200
+const SIEM_HAWK_DEPLOY_COST := 225
 const TOWER_ID_CYBER_GUARDIAN := &"cyber_guardian"
 const TOWER_ID_LASER_TURRET := &"laser_turret"
 const TOWER_ID_IDS_SCANNER := &"ids_scanner"
@@ -178,6 +178,8 @@ const STORE_DRAG_START_THRESHOLD := 12.0
 @export var tower_store_card_resources: Array[Resource] = []
 @export_group("")
 @export var demo_spawn_buttons_ignore_question_lock := false
+@export_range(1, 999, 1) var starting_lives := 20
+@export var admin_mode := false
 @export_group("Path Guide")
 @export var show_path_guide := true
 @export_range(4.0, 64.0, 1.0) var path_guide_sample_spacing := 16.0
@@ -252,6 +254,8 @@ var _restore_tower_store_after_upgrade_panel := false
 var _tower_store_restore_after_upgrade_waiting := false
 var _admin_add_bucks_button: Button
 var _active_viruses: Array[PathFollow2D] = []
+var _lives := 0
+var _game_over := false
 var _current_wave := 0
 var _wave_in_progress := false
 var _wave_question_pending := false
@@ -349,6 +353,8 @@ func _ready() -> void:
 		_game_controls_hud.virus_batch_requested.connect(Callable(self, "spawn_virus_batch"))
 		_game_controls_hud.exit_pressed.connect(Callable(self, "_exit_game"))
 		_game_controls_hud.set_admin_mode(_is_admin_scene())
+	_lives = maxi(1, starting_lives)
+	_update_lives_display()
 	if _tower_upgrade_hud == null:
 		push_warning("TowerUpgradeHUD was not found.")
 	else:
@@ -448,7 +454,7 @@ func _input(event: InputEvent) -> void:
 
 		var pointer_position := _screen_to_canvas_position(mouse_button.position)
 		if mouse_button.pressed:
-			if _demo_upgrade_button_has_point(mouse_button.position):
+			if _handle_tower_upgrade_sidebar_modal_press(mouse_button.position):
 				return
 
 			if _tower_store_toggle_has_point(mouse_button.position):
@@ -491,13 +497,19 @@ func _input(event: InputEvent) -> void:
 			if _handle_siem_hawk_press(pointer_position, mouse_button.position):
 				return
 
-			if _guardian_store == null:
+			if _handle_ips_intrusion_press(pointer_position, mouse_button.position):
 				return
 
-			if _guardian_store.is_placed():
+			if _handle_honeypot_production_press(pointer_position, mouse_button.position):
+				return
+
+			if _find_tower_at_point(_guardians, pointer_position) != null:
 				_handle_placed_tower_press(pointer_position, mouse_button.position)
-			elif _tower_store_open:
-				_guardian_store.try_start_drag(pointer_position)
+				return
+		elif _pending_store_drag_tower != null:
+			_clear_pending_store_tower_drag()
+			get_viewport().set_input_as_handled()
+			return
 		elif _demo_upgrade_button_has_point(mouse_button.position):
 			return
 		elif _is_store_tower_dragging(_siem_hawk_store):
@@ -563,7 +575,7 @@ func _input(event: InputEvent) -> void:
 		var screen_touch := event as InputEventScreenTouch
 		var pointer_position := _screen_to_canvas_position(screen_touch.position)
 		if screen_touch.pressed:
-			if _demo_upgrade_button_has_point(screen_touch.position):
+			if _handle_tower_upgrade_sidebar_modal_press(screen_touch.position):
 				return
 
 			if _tower_store_toggle_has_point(screen_touch.position):
@@ -606,13 +618,19 @@ func _input(event: InputEvent) -> void:
 			if _handle_siem_hawk_press(pointer_position, screen_touch.position):
 				return
 
-			if _guardian_store == null:
+			if _handle_ips_intrusion_press(pointer_position, screen_touch.position):
 				return
 
-			if _guardian_store.is_placed():
+			if _handle_honeypot_production_press(pointer_position, screen_touch.position):
+				return
+
+			if _find_tower_at_point(_guardians, pointer_position) != null:
 				_handle_placed_tower_press(pointer_position, screen_touch.position)
-			elif _tower_store_open:
-				_guardian_store.try_start_drag(pointer_position)
+				return
+		elif _pending_store_drag_tower != null:
+			_clear_pending_store_tower_drag()
+			get_viewport().set_input_as_handled()
+			return
 		elif _demo_upgrade_button_has_point(screen_touch.position):
 			return
 		elif _is_store_tower_dragging(_siem_hawk_store):
@@ -675,6 +693,8 @@ func _input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	if _game_over:
+		return
 	if _is_act_input_locked():
 		if _tower_store_canvas != null:
 			_tower_store_canvas.hide()
@@ -693,6 +713,8 @@ func _process(delta: float) -> void:
 	_update_wave_spawner(delta)
 	_update_adware_spawner(delta)
 	_update_active_viruses(delta)
+	if _game_over:
+		return
 	_update_spyware_invasions(delta)
 	_update_support_tower_scans(delta)
 	_update_siem_hawk_knowledge(delta)
@@ -962,14 +984,10 @@ func _get_or_create_tower_store_card(tower: Node2D, tower_id: StringName, label_
 func _find_authored_tower_store_card_for_id(tower_id: StringName) -> TowerShopCard:
 	if _tower_store_panel == null:
 		return null
-
 	for child in _tower_store_panel.get_children():
 		var card := child as TowerShopCard
-		if card == null or card.card_resource == null:
-			continue
-		if card.card_resource.tower_id == tower_id:
+		if card != null and card.card_resource != null and card.card_resource.tower_id == tower_id:
 			return card
-
 	return null
 
 
@@ -1004,7 +1022,6 @@ func _get_tower_store_card_name(tower: Node2D, fallback_name: String) -> String:
 		return "IPSIntrusionCard"
 	if tower == _honeypot_production_store:
 		return "HoneypotProductionCard"
-
 	return fallback_name.replace(" ", "") + "Card"
 
 
@@ -1041,9 +1058,9 @@ func _position_tower_store_cards(slide_offset := 0.0) -> void:
 		return
 
 	var store_rect := _tower_store_base_rect
-	if _tower_store_title_label != null:
+	if _tower_store_title_label != null and not _tower_store_title_label_authored:
 		_position_store_label(_tower_store_title_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 16.0), Vector2(store_rect.size.x - 34.0, 40.0))
-	if _tower_store_hint_label != null:
+	if _tower_store_hint_label != null and not _tower_store_hint_label_authored:
 		_position_store_label(_tower_store_hint_label, Vector2(store_rect.position.x + store_rect.size.x * 0.5 + slide_offset, store_rect.position.y + 58.0), Vector2(store_rect.size.x - 34.0, 30.0))
 
 	var grid_width := STORE_CARD_SIZE.x * float(STORE_CARD_COLUMNS) + STORE_CARD_GAP.x * float(STORE_CARD_COLUMNS - 1)
@@ -1753,17 +1770,17 @@ func _get_tower_deploy_cost(tower: Node2D) -> int:
 
 
 func _get_default_tower_deploy_cost(tower: Node2D) -> int:
-	if tower == _laser_turret_store:
+	if tower is LaserTurretScript:
 		return LASER_TURRET_DEPLOY_COST
-	if tower == _ids_scanner_store:
+	if tower is IDSScannerTowerScript:
 		return IDS_SCANNER_DEPLOY_COST
-	if tower == _edr_hunter_store:
+	if tower is EDRHunterTowerScript:
 		return EDR_HUNTER_DEPLOY_COST
-	if tower == _honeypot_production_store:
+	if tower is HoneypotProductionTowerScript:
 		return HONEYPOT_PRODUCTION_DEPLOY_COST
-	if tower == _ips_intrusion_store:
+	if tower is IPSIntrusionTowerScript:
 		return IPS_INTRUSION_DEPLOY_COST
-	if tower == _siem_hawk_store:
+	if tower is SIEMHawkTowerScript:
 		return SIEM_HAWK_DEPLOY_COST
 
 	return CYBER_GUARDIAN_DEPLOY_COST
@@ -1830,7 +1847,8 @@ func _setup_admin_currency_button() -> void:
 	_admin_add_bucks_button.name = "AddCyberBucksButton"
 	_admin_add_bucks_button.text = "+%d Cyber Bucks" % ADMIN_CYBERBUCK_GRANT
 	_admin_add_bucks_button.tooltip_text = "Admin test control: add Cyber Bucks."
-	_admin_add_bucks_button.position = Vector2(24, 150)
+	# Keep this admin-only control below the shared lives counter.
+	_admin_add_bucks_button.position = Vector2(24, 224)
 	_admin_add_bucks_button.size = Vector2(220, 52)
 	_admin_add_bucks_button.focus_mode = Control.FOCUS_NONE
 	var store_font := _get_store_font()
@@ -1849,7 +1867,7 @@ func _add_admin_cyberbucks() -> void:
 
 
 func _is_admin_scene() -> bool:
-	return scene_file_path.ends_with("Admin_Sandbox.tscn")
+	return admin_mode or scene_file_path.ends_with("Admin_Sandbox.tscn")
 
 
 func _connect_store_prototypes() -> void:
@@ -2494,31 +2512,13 @@ func _sell_selected_tower() -> void:
 		return
 
 	var tower_id := _get_tower_id(tower)
-	var refund := roundi(float(_get_deployed_tower_cost(tower_id)) * TOWER_SELL_REFUND_RATE)
+	var refund := roundi(float(_get_default_tower_deploy_cost(tower)) * TOWER_SELL_REFUND_RATE)
 	_remove_sold_tower_from_tracking(tower, tower_id)
 	_tower_upgrade_hud.hide_all()
 	tower.queue_free()
 	_question_hud.add_cyberbucks(refund)
 	_apply_guardian_signal_boost_state()
 	_update_demo_upgrade_buttons()
-
-
-func _get_deployed_tower_cost(tower_id: StringName) -> int:
-	match tower_id:
-		&"laser":
-			return LASER_TURRET_DEPLOY_COST
-		&"scanner":
-			return IDS_SCANNER_DEPLOY_COST
-		&"edr":
-			return EDR_HUNTER_DEPLOY_COST
-		&"siem":
-			return SIEM_HAWK_DEPLOY_COST
-		&"ips":
-			return IPS_INTRUSION_DEPLOY_COST
-		&"honeypot":
-			return HONEYPOT_PRODUCTION_DEPLOY_COST
-		_:
-			return CYBER_GUARDIAN_DEPLOY_COST
 
 
 func _get_selected_tower() -> Node2D:
@@ -2651,6 +2651,7 @@ func _on_scanner_bounty_awarded(amount: int) -> void:
 func _on_cyberbucks_changed(amount: int) -> void:
 	if _progress_hud != null:
 		_progress_hud.set_cyberbucks(amount)
+	_sync_tower_store_card_states()
 
 
 func _on_siem_hawk_knowledge_extracted(amount: int) -> void:
@@ -3098,7 +3099,8 @@ func _start_next_wave() -> void:
 
 
 func _should_play_wave_five_cutscene() -> bool:
-	return not _wave_five_cutscene_played \
+	return not _is_admin_scene() \
+		and not _wave_five_cutscene_played \
 		and not _wave_five_cutscene_running \
 		and _current_wave + 1 == WAVE_FIVE_CUTSCENE_WAVE \
 		and _text_cutscene_hud != null \
@@ -3617,10 +3619,31 @@ func _update_active_viruses(delta: float) -> void:
 			if escaping_virus != null and escaping_virus.has_method("on_path_escaped"):
 				escaping_virus.call("on_path_escaped")
 			_despawn_virus(follow, false)
+			_lose_life()
 			count_changed = true
 
 	if count_changed:
 		_update_virus_count_label()
+
+
+func _lose_life(amount: int = 1) -> void:
+	if _game_over or amount <= 0:
+		return
+	_lives = maxi(0, _lives - amount)
+	_update_lives_display()
+	if _lives <= 0:
+		_game_over = true
+		call_deferred("_return_to_main_menu_after_defeat")
+
+
+func _update_lives_display() -> void:
+	if _game_controls_hud != null:
+		_game_controls_hud.set_lives(_lives, maxi(1, starting_lives))
+
+
+func _return_to_main_menu_after_defeat() -> void:
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://Scenes/Menus/MainMenu.tscn")
 
 
 func _update_spyware_invasions(delta: float) -> void:
