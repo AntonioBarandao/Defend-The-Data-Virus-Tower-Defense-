@@ -40,9 +40,9 @@ const TOWER_DETAILS := {
 	},
 	&"honeypot": {
 		"name": "Honeypot Production",
-		"summary": "Economy support tower that generates Cyber Bucks near viruses.",
-		"upgrade": "Improves production support while keeping overload pressure manageable.",
-		"tooltip": "Honeypot Production\nGenerates Cyber Bucks while viruses are nearby. Collect when the pot fills, but avoid overloads."
+		"summary": "Economy support tower that banks Cyber Bucks and, from LV3, Knowledge Points.",
+		"upgrade": "Adds 25% production speed and doubles Cyber Buck storage each level. LV3 unlocks Knowledge production.",
+		"tooltip": "Honeypot Production\nGenerates Cyber Bucks while viruses are nearby and overloads immediately at 10 in range. Press it to collect its banks."
 	}
 }
 

@@ -255,9 +255,12 @@ func set_honeypot_stats(
 	max_level: int,
 	pot_amount: int,
 	pot_capacity: int,
-	production_rate: int,
+	production_rate: float,
 	production_radius: float,
 	status_text: String,
+	knowledge_amount: int,
+	knowledge_capacity: int,
+	knowledge_unlocked: bool,
 	can_upgrade: bool,
 	upgrade_cost: int = 0
 ) -> void:
@@ -265,7 +268,9 @@ func set_honeypot_stats(
 	_scanner_mode_section.hide()
 	_siem_dispatch_section.hide()
 	_laser_level_label.text = "Level %d / %d" % [level, max_level]
-	_laser_power_label.text = "Pot: %d/%d | +%d/s" % [pot_amount, pot_capacity, production_rate]
+	_laser_power_label.text = "Cyber Bucks: %d/%d | +%.1f/s" % [pot_amount, pot_capacity, production_rate]
+	if knowledge_unlocked:
+		_laser_power_label.text += "\nKnowledge: %d/%d | +1/3s" % [knowledge_amount, knowledge_capacity]
 	_laser_range_label.text = "Lure Radius: %d px | %s" % [roundi(production_radius), status_text]
 
 	var at_max_level := level >= max_level

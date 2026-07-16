@@ -2192,6 +2192,12 @@ func _handle_honeypot_production_press(pointer_position: Vector2, screen_positio
 
 	_honeypot_production = honeypot_production
 	var collected := _honeypot_production.collect_production()
+	var collected_knowledge := 0
+	if _progress_hud != null:
+		collected_knowledge = _honeypot_production.collect_knowledge_production()
+		if collected_knowledge > 0:
+			_progress_hud.add_knowledge_points(collected_knowledge, true)
+			_apply_guardian_signal_boost_state()
 	if collected > 0 and _question_hud != null:
 		_question_hud.add_cyberbucks(collected)
 		_sync_laser_upgrade_panel()
@@ -2201,6 +2207,8 @@ func _handle_honeypot_production_press(pointer_position: Vector2, screen_positio
 		_sync_ips_upgrade_panel()
 		_sync_honeypot_upgrade_panel()
 		_update_demo_upgrade_buttons()
+	if collected_knowledge > 0:
+		_sync_all_tower_upgrade_panels()
 
 	_show_honeypot_upgrade_panel()
 	get_viewport().set_input_as_handled()
@@ -3027,6 +3035,9 @@ func _sync_honeypot_upgrade_panel() -> void:
 	var rate := _honeypot_production.get_production_rate()
 	var range := _honeypot_production.get_attack_range()
 	var status := _honeypot_production.get_status_text()
+	var knowledge_amount := _honeypot_production.get_knowledge_pot()
+	var knowledge_capacity := _honeypot_production.get_knowledge_pot_capacity()
+	var knowledge_unlocked := _honeypot_production.is_knowledge_production_unlocked()
 	var upgrade_cost := _honeypot_production.get_upgrade_cost()
 	var can_afford_next_level := _can_afford_upgrade(upgrade_cost)
 	_tower_upgrade_hud.set_honeypot_stats(
@@ -3037,6 +3048,9 @@ func _sync_honeypot_upgrade_panel() -> void:
 		rate,
 		range,
 		status,
+		knowledge_amount,
+		knowledge_capacity,
+		knowledge_unlocked,
 		_honeypot_production.can_upgrade() and can_afford_next_level,
 		upgrade_cost
 	)

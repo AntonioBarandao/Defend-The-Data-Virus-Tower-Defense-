@@ -2,33 +2,45 @@ class_name HoneypotProductionTower
 extends "res://Scripts/Towers/cyber_guardian_idle_sprite.gd"
 
 signal production_collected(amount: int)
+signal knowledge_production_collected(amount: int)
 
-const POT_CAPACITY := 100
+const BASE_POT_CAPACITY := 100
 const PRODUCTION_AMOUNT := 10
 const PRODUCTION_TICK_SECONDS := 1.0
 const PRODUCTION_CYCLE_SECONDS := 4.0
 const OVERLOAD_VIRUS_COUNT := 10
 const OVERLOAD_SECONDS := 10.0
 const HONEYPOT_MAX_LEVEL := 5
-const HONEYPOT_UPGRADE_COSTS := [70, 105, 150, 205, 0]
+const HONEYPOT_UPGRADE_COSTS := [0, 0, 0, 0, 0]
+const PRODUCTION_SPEED_MULTIPLIERS := [1.0, 1.25, 1.5, 1.75, 2.0]
+const POT_CAPACITY_MULTIPLIERS := [1, 2, 4, 8, 16]
+const KNOWLEDGE_PRODUCTION_UNLOCK_LEVEL := 3
+const KNOWLEDGE_POT_CAPACITY := 10
+const KNOWLEDGE_PRODUCTION_AMOUNT := 1
+const KNOWLEDGE_PRODUCTION_TICK_SECONDS := 3.0
 
 @export_range(32.0, 1200.0, 1.0) var production_radius := 250.0
 @export var production_label_path: NodePath = ^"ProductionPotLabel"
+@export var knowledge_label_path: NodePath = ^"KnowledgePotLabel"
 @export var production_effect_path: NodePath = ^"ProductionEffect"
 @export var production_effect_fill_path: NodePath = ^"ProductionEffect/EffectFill"
 @export var production_effect_ring_path: NodePath = ^"ProductionEffect/EffectRing"
 @export var label_offset := Vector2(-112.0, -158.0)
+@export var knowledge_label_offset := Vector2(-112.0, -67.0)
 @export_range(24.0, 220.0, 1.0) var production_effect_radius := 108.0
 @export_range(0.0, 8.0, 0.1) var production_effect_pulse_speed := 1.7
 
 var _production_label: Label
+var _knowledge_label: Label
 var _production_effect: Node2D
 var _production_effect_fill: Polygon2D
 var _production_effect_ring: Line2D
 var _production_pot := 0
+var _knowledge_pot := 0
 var _producing := false
 var _production_remaining := 0.0
 var _production_tick_elapsed := 0.0
+var _knowledge_tick_elapsed := 0.0
 var _shutdown_remaining := 0.0
 var _effect_phase := 0.0
 var _collect_tween: Tween
@@ -41,6 +53,7 @@ func _ready() -> void:
 	range_preview_fill_color = Color(0.04, 1.0, 0.72, 0.13)
 	range_preview_outline_color = Color(0.42, 1.0, 0.78, 0.78)
 	_production_label = get_node_or_null(production_label_path) as Label
+	_knowledge_label = get_node_or_null(knowledge_label_path) as Label
 	_production_effect = get_node_or_null(production_effect_path) as Node2D
 	_production_effect_fill = get_node_or_null(production_effect_fill_path) as Polygon2D
 	_production_effect_ring = get_node_or_null(production_effect_ring_path) as Line2D
@@ -57,9 +70,11 @@ func _process(delta: float) -> void:
 func reset_tower() -> void:
 	super.reset_tower()
 	_production_pot = 0
+	_knowledge_pot = 0
 	_producing = false
 	_production_remaining = 0.0
 	_production_tick_elapsed = 0.0
+	_knowledge_tick_elapsed = 0.0
 	_shutdown_remaining = 0.0
 	_effect_phase = 0.0
 	_sync_status_visuals(0.0)
@@ -95,12 +110,28 @@ func upgrade() -> bool:
 	return true
 
 
-func get_production_rate() -> int:
-	return PRODUCTION_AMOUNT
+func get_production_rate() -> float:
+	return float(PRODUCTION_AMOUNT) * _get_production_speed_multiplier()
+
+
+func get_production_tick_seconds() -> float:
+	return PRODUCTION_TICK_SECONDS / _get_production_speed_multiplier()
 
 
 func get_pot_capacity() -> int:
-	return POT_CAPACITY
+	return BASE_POT_CAPACITY * int(POT_CAPACITY_MULTIPLIERS[_get_level_index()])
+
+
+func is_knowledge_production_unlocked() -> bool:
+	return level >= KNOWLEDGE_PRODUCTION_UNLOCK_LEVEL
+
+
+func get_knowledge_pot() -> int:
+	return _knowledge_pot
+
+
+func get_knowledge_pot_capacity() -> int:
+	return KNOWLEDGE_POT_CAPACITY
 
 
 func get_overload_threshold() -> int:
@@ -108,10 +139,10 @@ func get_overload_threshold() -> int:
 
 
 func get_status_text() -> String:
-	if _production_pot >= POT_CAPACITY:
-		return "Ready to collect"
 	if _shutdown_remaining > 0.0:
 		return "Overloaded %.0fs" % ceilf(_shutdown_remaining)
+	if _production_pot >= get_pot_capacity():
+		return "Ready to collect"
 	if _producing:
 		return "Producing"
 
@@ -126,19 +157,25 @@ func update_support_scan(active_viruses: Array[PathFollow2D], delta: float) -> v
 	if not is_placed():
 		_stop_production()
 		_shutdown_remaining = 0.0
-		return
-	if _production_pot >= POT_CAPACITY:
-		_stop_production()
+		_knowledge_tick_elapsed = 0.0
 		return
 	if _shutdown_remaining > 0.0:
 		_stop_production()
 		_shutdown_remaining = maxf(0.0, _shutdown_remaining - delta)
 		return
+
+	var virus_count := _count_viruses_in_radius(active_viruses)
+	if virus_count >= OVERLOAD_VIRUS_COUNT:
+		_start_shutdown()
+		return
+	if _production_pot >= get_pot_capacity():
+		_stop_production()
+		return
 	if _producing:
 		_update_production_cycle(active_viruses, delta)
 		return
 
-	_try_start_production_cycle(active_viruses)
+	_try_start_production_cycle(virus_count)
 
 
 func collect_production() -> int:
@@ -150,6 +187,18 @@ func collect_production() -> int:
 	_play_collect_feedback()
 	_sync_status_visuals(0.0)
 	production_collected.emit(collected)
+	return collected
+
+
+func collect_knowledge_production() -> int:
+	if not is_placed() or _knowledge_pot <= 0:
+		return 0
+
+	var collected := _knowledge_pot
+	_knowledge_pot = 0
+	_play_collect_feedback()
+	_sync_status_visuals(0.0)
+	knowledge_production_collected.emit(collected)
 	return collected
 
 
@@ -168,26 +217,30 @@ func is_producing() -> bool:
 func _update_production_cycle(active_viruses: Array[PathFollow2D], delta: float) -> void:
 	_production_remaining = maxf(0.0, _production_remaining - delta)
 	_production_tick_elapsed += delta
-	while _production_tick_elapsed >= PRODUCTION_TICK_SECONDS and _production_pot < POT_CAPACITY:
-		_production_tick_elapsed -= PRODUCTION_TICK_SECONDS
-		_production_pot = mini(POT_CAPACITY, _production_pot + PRODUCTION_AMOUNT)
+	var production_tick_seconds := get_production_tick_seconds()
+	var pot_capacity := get_pot_capacity()
+	while _production_tick_elapsed >= production_tick_seconds and _production_pot < pot_capacity:
+		_production_tick_elapsed -= production_tick_seconds
+		_production_pot = mini(pot_capacity, _production_pot + PRODUCTION_AMOUNT)
 
-	if _production_pot >= POT_CAPACITY:
+	_update_knowledge_production(delta)
+
+	if _production_pot >= pot_capacity:
 		_stop_production()
 		return
 	if _production_remaining > 0.0:
 		return
 
 	_stop_production()
-	_try_start_production_cycle(active_viruses)
+	_try_start_production_cycle(_count_viruses_in_radius(active_viruses))
 
 
-func _try_start_production_cycle(active_viruses: Array[PathFollow2D]) -> void:
-	var virus_count := _count_viruses_in_radius(active_viruses)
+func _try_start_production_cycle(virus_count: int) -> void:
 	if virus_count >= OVERLOAD_VIRUS_COUNT:
 		_start_shutdown()
 		return
 	if virus_count <= 0:
+		_knowledge_tick_elapsed = 0.0
 		return
 
 	_producing = true
@@ -198,7 +251,18 @@ func _try_start_production_cycle(active_viruses: Array[PathFollow2D]) -> void:
 
 func _start_shutdown() -> void:
 	_stop_production()
+	_knowledge_tick_elapsed = 0.0
 	_shutdown_remaining = OVERLOAD_SECONDS
+
+
+func _update_knowledge_production(delta: float) -> void:
+	if not is_knowledge_production_unlocked() or _knowledge_pot >= KNOWLEDGE_POT_CAPACITY:
+		return
+
+	_knowledge_tick_elapsed += delta
+	while _knowledge_tick_elapsed >= KNOWLEDGE_PRODUCTION_TICK_SECONDS and _knowledge_pot < KNOWLEDGE_POT_CAPACITY:
+		_knowledge_tick_elapsed -= KNOWLEDGE_PRODUCTION_TICK_SECONDS
+		_knowledge_pot = mini(KNOWLEDGE_POT_CAPACITY, _knowledge_pot + KNOWLEDGE_PRODUCTION_AMOUNT)
 
 
 func _stop_production() -> void:
@@ -232,6 +296,10 @@ func _configure_status_nodes() -> void:
 		_production_label.top_level = true
 		_production_label.z_as_relative = false
 		_production_label.z_index = z_index + 30
+	if _knowledge_label != null:
+		_knowledge_label.top_level = true
+		_knowledge_label.z_as_relative = false
+		_knowledge_label.z_index = z_index + 30
 	if _production_effect != null:
 		_production_effect.top_level = true
 		_production_effect.z_as_relative = false
@@ -252,6 +320,7 @@ func _rebuild_production_effect_geometry() -> void:
 
 func _sync_status_visuals(delta: float) -> void:
 	_sync_production_label()
+	_sync_knowledge_label()
 	_sync_production_effect(delta)
 	_sync_shutdown_modulate()
 
@@ -266,18 +335,48 @@ func _sync_production_label() -> void:
 
 	_production_label.global_position = global_position + label_offset
 	_production_label.scale = Vector2.ONE
-	if _production_pot >= POT_CAPACITY:
-		_production_label.text = "Production Pot\n%d/%d\nCOLLECT" % [_production_pot, POT_CAPACITY]
-		_production_label.add_theme_color_override("font_color", Color(0.38, 1.0, 0.44, 1.0))
-	elif _shutdown_remaining > 0.0:
-		_production_label.text = "Production Pot\n%d/%d\nOVERLOAD %.0fs" % [_production_pot, POT_CAPACITY, ceilf(_shutdown_remaining)]
+	var pot_capacity := get_pot_capacity()
+	if _shutdown_remaining > 0.0:
+		_production_label.text = "Production Pot\n%d/%d\nOVERLOAD %.0fs" % [_production_pot, pot_capacity, ceilf(_shutdown_remaining)]
 		_production_label.add_theme_color_override("font_color", Color(1.0, 0.32, 0.24, 1.0))
+	elif _production_pot >= pot_capacity:
+		_production_label.text = "Production Pot\n%d/%d\nCOLLECT" % [_production_pot, pot_capacity]
+		_production_label.add_theme_color_override("font_color", Color(0.38, 1.0, 0.44, 1.0))
 	elif _producing:
-		_production_label.text = "Production Pot\n%d/%d\n+%d/s" % [_production_pot, POT_CAPACITY, PRODUCTION_AMOUNT]
+		_production_label.text = "Production Pot\n%d/%d\n+%.1f/s" % [_production_pot, pot_capacity, get_production_rate()]
 		_production_label.add_theme_color_override("font_color", Color(0.55, 1.0, 0.82, 1.0))
 	else:
-		_production_label.text = "Production Pot\n%d/%d" % [_production_pot, POT_CAPACITY]
+		_production_label.text = "Production Pot\n%d/%d" % [_production_pot, pot_capacity]
 		_production_label.add_theme_color_override("font_color", Color(0.64, 0.9, 1.0, 1.0))
+
+
+func _sync_knowledge_label() -> void:
+	if _knowledge_label == null:
+		return
+
+	_knowledge_label.visible = is_placed() and is_knowledge_production_unlocked()
+	if not _knowledge_label.visible:
+		return
+
+	_knowledge_label.global_position = global_position + knowledge_label_offset
+	_knowledge_label.scale = Vector2.ONE
+	if _knowledge_pot >= KNOWLEDGE_POT_CAPACITY:
+		_knowledge_label.text = "Knowledge Pot  %d/%d  COLLECT" % [_knowledge_pot, KNOWLEDGE_POT_CAPACITY]
+		_knowledge_label.add_theme_color_override("font_color", Color(0.9, 0.64, 1.0, 1.0))
+	elif _producing:
+		_knowledge_label.text = "Knowledge Pot  %d/%d  +1/3s" % [_knowledge_pot, KNOWLEDGE_POT_CAPACITY]
+		_knowledge_label.add_theme_color_override("font_color", Color(0.76, 0.46, 1.0, 1.0))
+	else:
+		_knowledge_label.text = "Knowledge Pot  %d/%d" % [_knowledge_pot, KNOWLEDGE_POT_CAPACITY]
+		_knowledge_label.add_theme_color_override("font_color", Color(0.76, 0.46, 1.0, 1.0))
+
+
+func _get_level_index() -> int:
+	return clampi(level - 1, 0, HONEYPOT_MAX_LEVEL - 1)
+
+
+func _get_production_speed_multiplier() -> float:
+	return float(PRODUCTION_SPEED_MULTIPLIERS[_get_level_index()])
 
 
 func _sync_production_effect(delta: float) -> void:

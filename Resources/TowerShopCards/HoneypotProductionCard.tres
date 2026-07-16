@@ -12,6 +12,6 @@ deploy_cost = 1500
 display_texture = ExtResource("2_texture")
 tower_scene = ExtResource("3_scene")
 info_header = "Honeypot Production"
-info_description = "Economy scanner tower. If 1-9 viruses are inside its 250 px radius, it starts a 4 second production cycle and stores 10 Cyber Bucks per second. At 10 or more viruses it overloads, shuts down for 10 seconds, then recovers. The production pot caps at 100 Cyber Bucks and turns ready-to-collect when full; pressing the tower collects the stored Cyber Bucks."
+info_description = "Economy scanner tower. It immediately overloads when 10 or more viruses are inside its 250 px radius and shuts down for 10 seconds. Each upgrade adds 25% production speed and doubles the Cyber Buck bank, reaching 20 Cyber Bucks per second and 1,600 storage at LV5. LV3 unlocks a purple Knowledge Pot that stores up to 10 KP at one point every three active-production seconds. Press the deployed tower to collect both banks."
 tower_type = "Economy Tower"
 upgrade_costs = Array[int]([0, 0, 0, 0])
