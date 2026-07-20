@@ -151,7 +151,7 @@ func _input(event: InputEvent) -> void:
 	if not autonomous_drag_input:
 		return
 
-	if deployed or _is_cutscene_input_locked():
+	if deployed or _is_world_input_locked():
 		return
 
 	if event is InputEventMouseButton:
@@ -802,6 +802,19 @@ func _is_cutscene_input_locked() -> bool:
 
 	var cutscene := scene.get_node_or_null(^"TextCutsceneHUD")
 	return cutscene != null and cutscene.has_method("is_cutscene_running") and bool(cutscene.call("is_cutscene_running"))
+
+
+func _is_world_input_locked() -> bool:
+	if _is_cutscene_input_locked():
+		return true
+
+	var scene := get_tree().current_scene
+	if scene == null:
+		return false
+	var question_hud := scene.get_node_or_null(^"CyberQuestionHUD")
+	return question_hud != null \
+		and question_hud.has_method("is_question_open") \
+		and bool(question_hud.call("is_question_open"))
 
 
 func _get_red_virus(follow: PathFollow2D) -> RedVirus:

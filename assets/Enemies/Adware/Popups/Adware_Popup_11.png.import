@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://3wgdsxo35gsm"
-path="res://.godot/imported/Adware_Popup_11.png-cffae6b5be967da7b28d0a6fa38e1f6b.ctex"
+path="res://.godot/imported/Adware_Popup_11.png-49c266a385454f956b1391e9c164f062.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Enemies/Adware/Popups/Adware_Popup_11.png"
-dest_files=["res://.godot/imported/Adware_Popup_11.png-cffae6b5be967da7b28d0a6fa38e1f6b.ctex"]
+source_file="res://assets/Enemies/Adware/Popups/Adware_Popup_11.png"
+dest_files=["res://.godot/imported/Adware_Popup_11.png-49c266a385454f956b1391e9c164f062.ctex"]
 
 [params]
 

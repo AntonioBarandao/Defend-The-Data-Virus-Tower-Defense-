@@ -6,7 +6,8 @@ func _ready():
 	$FormPanel/VBox/RegisterButton.pressed.connect(_on_register_pressed)
 
 func _on_login_pressed():
-	get_tree().change_scene_to_file(
+	LoadingScreen.open_game_scene(
+		get_tree(),
 		"res://Scenes/Gameplay/Admin_Sandbox.tscn"
 	)
 

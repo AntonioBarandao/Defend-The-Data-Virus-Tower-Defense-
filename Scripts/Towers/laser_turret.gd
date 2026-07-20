@@ -148,7 +148,7 @@ func _input(event: InputEvent) -> void:
 	if not autonomous_drag_input:
 		return
 
-	if _is_cutscene_input_locked():
+	if _is_world_input_locked():
 		return
 
 	if _placed:
@@ -307,6 +307,23 @@ func get_attack_range() -> float:
 func set_menu_range_preview_active(active: bool) -> void:
 	_menu_range_preview_active = active
 	_update_attack_range_preview()
+
+
+func clear_range_preview() -> void:
+	_menu_range_preview_active = false
+	_range_preview_forced_time_remaining = 0.0
+	_set_range_preview_visible(false)
+	if is_instance_valid(_range_preview_fill):
+		_range_preview_fill.queue_free()
+	if is_instance_valid(_range_preview_outline):
+		_range_preview_outline.queue_free()
+	_range_preview_fill = null
+	_range_preview_outline = null
+	_range_preview_radius = -1.0
+
+
+func _exit_tree() -> void:
+	clear_range_preview()
 
 
 func get_shot_cooldown() -> float:
@@ -949,6 +966,19 @@ func _is_cutscene_input_locked() -> bool:
 
 	var cutscene := scene.get_node_or_null(^"TextCutsceneHUD")
 	return cutscene != null and cutscene.has_method("is_cutscene_running") and bool(cutscene.call("is_cutscene_running"))
+
+
+func _is_world_input_locked() -> bool:
+	if _is_cutscene_input_locked():
+		return true
+
+	var scene := get_tree().current_scene
+	if scene == null:
+		return false
+	var question_hud := scene.get_node_or_null(^"CyberQuestionHUD")
+	return question_hud != null \
+		and question_hud.has_method("is_question_open") \
+		and bool(question_hud.call("is_question_open"))
 
 
 func _schedule_return_to_rest_state() -> void:

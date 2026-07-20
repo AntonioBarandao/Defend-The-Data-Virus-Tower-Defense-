@@ -19,7 +19,7 @@ shadow_color = Color(0, 0, 0, 0.5)
 shadow_size = 14
 
 [node name="CyberQuestionHUD" type="CanvasLayer" unique_id=1266848843]
-layer = 150
+layer = 3000
 script = ExtResource("1_script")
 
 [node name="Root" type="Control" parent="." unique_id=1715806035]
@@ -31,18 +31,34 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="InputBlocker" type="ColorRect" parent="Root"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0, 0, 0, 0)
+
 [node name="QuestionPanel" type="PanelContainer" parent="Root" unique_id=1626758872]
 layout_mode = 1
+z_index = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -1209.0
-offset_top = -470.0
-offset_right = 961.0
+offset_left = -640.0
+offset_top = -293.0
+offset_right = 640.0
+offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 0
+scale = Vector2(1.25, 1.25)
+pivot_offset = Vector2(640, 293)
+mouse_filter = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_question")
 
 [node name="Margin" type="MarginContainer" parent="Root/QuestionPanel" unique_id=1595519009]
@@ -55,10 +71,12 @@ theme_override_constants/margin_bottom = 24
 [node name="Content" type="VBoxContainer" parent="Root/QuestionPanel/Margin" unique_id=1562954456]
 layout_mode = 2
 theme_override_constants/separation = 16
+alignment = 1
 
 [node name="SelectionView" type="VBoxContainer" parent="Root/QuestionPanel/Margin/Content" unique_id=1237603739]
 layout_mode = 2
 theme_override_constants/separation = 16
+alignment = 1
 
 [node name="Title" type="RichTextLabel" parent="Root/QuestionPanel/Margin/Content/SelectionView" unique_id=300695286]
 custom_minimum_size = Vector2(0, 48)
@@ -77,17 +95,17 @@ theme_override_constants/separation = 16
 alignment = 1
 
 [node name="CybersecurityButton" type="Button" parent="Root/QuestionPanel/Margin/Content/SelectionView/CategoryButtons" unique_id=1369515974]
-custom_minimum_size = Vector2(220, 44)
+custom_minimum_size = Vector2(220, 56)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 40
 text = "Cybersecurity"
 
 [node name="NetworkingButton" type="Button" parent="Root/QuestionPanel/Margin/Content/SelectionView/CategoryButtons" unique_id=2026885184]
-custom_minimum_size = Vector2(220, 44)
+custom_minimum_size = Vector2(220, 56)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 40
 text = "Networking"
 
 [node name="DifficultyRow" type="HBoxContainer" parent="Root/QuestionPanel/Margin/Content/SelectionView" unique_id=855078073]
@@ -101,10 +119,10 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="EasyButton" type="Button" parent="Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow/EasyCard" unique_id=345548716]
-custom_minimum_size = Vector2(190, 52)
+custom_minimum_size = Vector2(190, 60)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 text = "Easy"
 
 [node name="EasyReward" type="HBoxContainer" parent="Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow/EasyCard" unique_id=338532293]
@@ -124,7 +142,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.83, 0.95, 1, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 18
-text = "+10"
+text = "+50"
 vertical_alignment = 1
 
 [node name="MediumCard" type="VBoxContainer" parent="Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow" unique_id=2026208883]
@@ -133,10 +151,10 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="MediumButton" type="Button" parent="Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow/MediumCard" unique_id=1957662001]
-custom_minimum_size = Vector2(190, 52)
+custom_minimum_size = Vector2(190, 60)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 text = "Medium"
 
 [node name="MediumReward" type="HBoxContainer" parent="Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow/MediumCard" unique_id=2133697897]
@@ -156,7 +174,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.83, 0.95, 1, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 18
-text = "+25"
+text = "+100"
 vertical_alignment = 1
 
 [node name="HardCard" type="VBoxContainer" parent="Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow" unique_id=675348781]
@@ -165,10 +183,10 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="HardButton" type="Button" parent="Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow/HardCard" unique_id=579942209]
-custom_minimum_size = Vector2(190, 52)
+custom_minimum_size = Vector2(190, 60)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 text = "Hard"
 
 [node name="HardReward" type="HBoxContainer" parent="Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow/HardCard" unique_id=1607072098]
@@ -188,13 +206,14 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.83, 0.95, 1, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 18
-text = "+50"
+text = "+200"
 vertical_alignment = 1
 
 [node name="QuestionView" type="VBoxContainer" parent="Root/QuestionPanel/Margin/Content" unique_id=1315647021]
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 12
+alignment = 1
 
 [node name="QuestionText" type="Label" parent="Root/QuestionPanel/Margin/Content/QuestionView" unique_id=1898545955]
 custom_minimum_size = Vector2(0, 62)
@@ -232,27 +251,31 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="AnswerButton1" type="Button" parent="Root/QuestionPanel/Margin/Content/QuestionView/AnswerButtons" unique_id=1890130963]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 28
 text = "Answer 1"
 
 [node name="AnswerButton2" type="Button" parent="Root/QuestionPanel/Margin/Content/QuestionView/AnswerButtons" unique_id=223889312]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 28
 text = "Answer 2"
 
 [node name="AnswerButton3" type="Button" parent="Root/QuestionPanel/Margin/Content/QuestionView/AnswerButtons" unique_id=465799031]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 28
 text = "Answer 3"
 
 [node name="AnswerButton4" type="Button" parent="Root/QuestionPanel/Margin/Content/QuestionView/AnswerButtons" unique_id=328189567]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 28
 text = "Answer 4"
 
 [node name="FeedbackLabel" type="Label" parent="Root/QuestionPanel/Margin/Content/QuestionView" unique_id=177089832]
@@ -264,7 +287,8 @@ theme_override_font_sizes/font_size = 17
 horizontal_alignment = 1
 
 [node name="BackButton" type="Button" parent="Root/QuestionPanel/Margin/Content/QuestionView" unique_id=2096119587]
-custom_minimum_size = Vector2(0, 36)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 26
 text = "Change Difficulty"

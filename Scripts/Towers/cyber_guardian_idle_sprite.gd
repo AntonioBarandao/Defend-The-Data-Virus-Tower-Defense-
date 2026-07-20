@@ -288,6 +288,22 @@ func set_menu_range_preview_active(active: bool) -> void:
 	_update_attack_range_preview()
 
 
+func clear_range_preview() -> void:
+	_menu_range_preview_active = false
+	_set_range_preview_visible(false)
+	if is_instance_valid(_range_preview_fill):
+		_range_preview_fill.queue_free()
+	if is_instance_valid(_range_preview_outline):
+		_range_preview_outline.queue_free()
+	_range_preview_fill = null
+	_range_preview_outline = null
+	_range_preview_radius = -1.0
+
+
+func _exit_tree() -> void:
+	clear_range_preview()
+
+
 func get_shot_cooldown() -> float:
 	return LEVEL_COOLDOWNS[level - 1] * _get_signal_boost_cooldown_multiplier()
 

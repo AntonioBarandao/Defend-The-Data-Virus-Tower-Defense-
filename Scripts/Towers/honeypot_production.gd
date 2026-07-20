@@ -5,14 +5,13 @@ signal production_collected(amount: int)
 signal knowledge_production_collected(amount: int)
 
 const BASE_POT_CAPACITY := 100
-const PRODUCTION_AMOUNT := 10
-const PRODUCTION_TICK_SECONDS := 1.0
+const PRODUCTION_AMOUNT := 1
+const PRODUCTION_TICK_SECONDS_BY_LEVEL := [0.1, 0.05, 0.025, 0.01, 0.005]
 const PRODUCTION_CYCLE_SECONDS := 4.0
 const OVERLOAD_VIRUS_COUNT := 10
 const OVERLOAD_SECONDS := 10.0
 const HONEYPOT_MAX_LEVEL := 5
 const HONEYPOT_UPGRADE_COSTS := [0, 0, 0, 0, 0]
-const PRODUCTION_SPEED_MULTIPLIERS := [1.0, 1.25, 1.5, 1.75, 2.0]
 const POT_CAPACITY_MULTIPLIERS := [1, 2, 4, 8, 16]
 const KNOWLEDGE_PRODUCTION_UNLOCK_LEVEL := 3
 const KNOWLEDGE_POT_CAPACITY := 10
@@ -25,6 +24,15 @@ const KNOWLEDGE_PRODUCTION_TICK_SECONDS := 3.0
 @export var production_effect_path: NodePath = ^"ProductionEffect"
 @export var production_effect_fill_path: NodePath = ^"ProductionEffect/EffectFill"
 @export var production_effect_ring_path: NodePath = ^"ProductionEffect/EffectRing"
+@export_group("Level Visuals")
+@export var level_visual_paths: Array[NodePath] = [
+	^"LevelVisuals/LV1Visual",
+	^"LevelVisuals/LV2Visual",
+	^"LevelVisuals/LV3Visual",
+	^"LevelVisuals/LV4Visual",
+	^"LevelVisuals/LV5Visual"
+]
+@export_group("")
 @export var label_offset := Vector2(-112.0, -158.0)
 @export var knowledge_label_offset := Vector2(-112.0, -67.0)
 @export_range(24.0, 220.0, 1.0) var production_effect_radius := 108.0
@@ -44,9 +52,11 @@ var _knowledge_tick_elapsed := 0.0
 var _shutdown_remaining := 0.0
 var _effect_phase := 0.0
 var _collect_tween: Tween
+var _level_visuals: Array[AnimatedSprite2D] = []
 
 
 func _ready() -> void:
+	_cache_level_visuals()
 	super._ready()
 	remove_from_group("OFFENSE_TOWER")
 	add_to_group("SUPPORT_TOWER")
@@ -59,6 +69,7 @@ func _ready() -> void:
 	_production_effect_ring = get_node_or_null(production_effect_ring_path) as Line2D
 	_configure_status_nodes()
 	_rebuild_production_effect_geometry()
+	_sync_level_visual()
 	_sync_status_visuals(0.0)
 
 
@@ -69,6 +80,7 @@ func _process(delta: float) -> void:
 
 func reset_tower() -> void:
 	super.reset_tower()
+	_sync_level_visual()
 	_production_pot = 0
 	_knowledge_pot = 0
 	_producing = false
@@ -105,17 +117,59 @@ func upgrade() -> bool:
 
 	level += 1
 	_range_preview_radius = -1.0
+	_sync_level_visual()
 	if is_placed():
 		_spawn_summon_effect()
 	return true
 
 
+func play_animation(_animation_name: StringName) -> void:
+	if _level_visuals.is_empty():
+		_cache_level_visuals()
+
+	var level_index := _get_level_index()
+	if level_index >= _level_visuals.size():
+		return
+
+	var visual := _level_visuals[level_index]
+	if visual == null or visual.sprite_frames == null:
+		return
+
+	var level_animation := StringName("idle_lv%d" % (level_index + 1))
+	if not visual.sprite_frames.has_animation(level_animation):
+		return
+
+	_active_visual = visual
+	_current_animation = level_animation
+	for candidate in _level_visuals:
+		if candidate == null:
+			continue
+		candidate.visible = candidate == visual
+		if candidate != visual:
+			candidate.stop()
+
+	visual.animation = level_animation
+	visual.frame = 0
+	visual.frame_progress = 0.0
+	visual.play()
+
+
+func _cache_level_visuals() -> void:
+	_level_visuals.clear()
+	for visual_path in level_visual_paths:
+		_level_visuals.append(get_node_or_null(visual_path) as AnimatedSprite2D)
+
+
+func _sync_level_visual() -> void:
+	play_animation(IDLE_ANIMATION)
+
+
 func get_production_rate() -> float:
-	return float(PRODUCTION_AMOUNT) * _get_production_speed_multiplier()
+	return float(PRODUCTION_AMOUNT) / get_production_tick_seconds()
 
 
 func get_production_tick_seconds() -> float:
-	return PRODUCTION_TICK_SECONDS / _get_production_speed_multiplier()
+	return float(PRODUCTION_TICK_SECONDS_BY_LEVEL[_get_level_index()])
 
 
 func get_pot_capacity() -> int:
@@ -373,10 +427,6 @@ func _sync_knowledge_label() -> void:
 
 func _get_level_index() -> int:
 	return clampi(level - 1, 0, HONEYPOT_MAX_LEVEL - 1)
-
-
-func _get_production_speed_multiplier() -> float:
-	return float(PRODUCTION_SPEED_MULTIPLIERS[_get_level_index()])
 
 
 func _sync_production_effect(delta: float) -> void:

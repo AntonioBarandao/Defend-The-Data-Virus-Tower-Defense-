@@ -4,14 +4,42 @@
 [ext_resource type="Script" uid="uid://nmv1yvoifcya" path="res://Scripts/Towers/honeypot_production.gd" id="2_script"]
 [ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="3_font"]
 
-[node name="Honeypot_Production" type="AnimatedSprite2D" unique_id=1856785052 groups=["Defender", "SUPPORT_TOWER"]]
+[node name="Honeypot_Production" type="Node2D" unique_id=1856785052 groups=["Defender", "SUPPORT_TOWER"]]
 scale = Vector2(0.11188765, 0.11188765)
-sprite_frames = ExtResource("1_frames")
-animation = &"idle"
-autoplay = "idle"
 script = ExtResource("2_script")
 range_preview_fill_color = Color(0.04, 1, 0.72, 0.13)
 range_preview_outline_color = Color(0.42, 1, 0.78, 0.78)
+defender_idle_visual_path = NodePath("LevelVisuals/LV1Visual")
+defender_summon_visual_path = NodePath("LevelVisuals/LV1Visual")
+defender_shoot_visual_path = NodePath("LevelVisuals/LV1Visual")
+
+[node name="LevelVisuals" type="Node2D" parent="."]
+scale = Vector2(4.2666664, 4.2666664)
+
+[node name="LV1Visual" type="AnimatedSprite2D" parent="LevelVisuals"]
+sprite_frames = ExtResource("1_frames")
+animation = &"idle_lv1"
+autoplay = "idle_lv1"
+
+[node name="LV2Visual" type="AnimatedSprite2D" parent="LevelVisuals"]
+visible = false
+sprite_frames = ExtResource("1_frames")
+animation = &"idle_lv2"
+
+[node name="LV3Visual" type="AnimatedSprite2D" parent="LevelVisuals"]
+visible = false
+sprite_frames = ExtResource("1_frames")
+animation = &"idle_lv3"
+
+[node name="LV4Visual" type="AnimatedSprite2D" parent="LevelVisuals"]
+visible = false
+sprite_frames = ExtResource("1_frames")
+animation = &"idle_lv4"
+
+[node name="LV5Visual" type="AnimatedSprite2D" parent="LevelVisuals"]
+visible = false
+sprite_frames = ExtResource("1_frames")
+animation = &"idle_lv5"
 
 [node name="ProductionEffect" type="Node2D" parent="." unique_id=378587894]
 visible = false

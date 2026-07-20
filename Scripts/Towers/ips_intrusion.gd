@@ -7,7 +7,7 @@ const IPS_ATTACK_RANGE := 360.0
 const IPS_MAX_LEVEL := 5
 const IPS_UPGRADE_COSTS := [0, 0, 0, 0, 0]
 
-@export var spike_scene: PackedScene = preload("res://Scenes/Towers/IPS_Intrusion_Spike.tscn")
+@export var spike_scene: PackedScene
 @export_range(1, 12, 1) var max_spikes := 5
 @export_range(0.2, 10.0, 0.1) var spike_production_seconds := 2.0
 @export_range(1, 100, 1) var spike_damage := 1

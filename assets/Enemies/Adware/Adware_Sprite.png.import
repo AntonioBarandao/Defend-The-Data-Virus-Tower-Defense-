@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://5xrddehgy3be"
-path="res://.godot/imported/Adware_Sprite.png-fd89ef0c2591ab212839fc26be6bcb33.ctex"
+path="res://.godot/imported/Adware_Sprite.png-221cd66657d6090041026d940bb015b2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Enemies/Adware/Adware_Sprite.png"
-dest_files=["res://.godot/imported/Adware_Sprite.png-fd89ef0c2591ab212839fc26be6bcb33.ctex"]
+source_file="res://assets/Enemies/Adware/Adware_Sprite.png"
+dest_files=["res://.godot/imported/Adware_Sprite.png-221cd66657d6090041026d940bb015b2.ctex"]
 
 [params]
 

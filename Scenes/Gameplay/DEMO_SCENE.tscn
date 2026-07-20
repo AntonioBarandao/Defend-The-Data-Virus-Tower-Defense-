@@ -889,11 +889,13 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -924.0
-offset_top = -397.0
-offset_right = 36.0
+offset_left = -640.0
+offset_top = -293.0
+offset_right = 640.0
+offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 0
+pivot_offset = Vector2(640, 293)
 theme_override_styles/panel = SubResource("StyleBoxFlat_question")
 
 [node name="Margin" parent="CyberQuestionHUD/Root/QuestionPanel" index="0" unique_id=1595519009]
@@ -928,17 +930,17 @@ theme_override_constants/separation = 16
 alignment = 1
 
 [node name="CybersecurityButton" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/SelectionView/CategoryButtons" index="0" unique_id=1369515974]
-custom_minimum_size = Vector2(220, 44)
+custom_minimum_size = Vector2(220, 56)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("12_htda3")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 40
 text = "Cybersecurity"
 
 [node name="NetworkingButton" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/SelectionView/CategoryButtons" index="1" unique_id=2026885184]
-custom_minimum_size = Vector2(220, 44)
+custom_minimum_size = Vector2(220, 56)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("12_htda3")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 40
 text = "Networking"
 
 [node name="DifficultyRow" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/SelectionView" index="2" unique_id=855078073]
@@ -952,10 +954,10 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="EasyButton" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow/EasyCard" index="0" unique_id=345548716]
-custom_minimum_size = Vector2(190, 52)
+custom_minimum_size = Vector2(190, 60)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("12_htda3")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 text = "Easy"
 
 [node name="EasyReward" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow/EasyCard" index="1" unique_id=338532293]
@@ -984,10 +986,10 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="MediumButton" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow/MediumCard" index="0" unique_id=1957662001]
-custom_minimum_size = Vector2(190, 52)
+custom_minimum_size = Vector2(190, 60)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("12_htda3")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 text = "Medium"
 
 [node name="MediumReward" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow/MediumCard" index="1" unique_id=2133697897]
@@ -1016,10 +1018,10 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="HardButton" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow/HardCard" index="0" unique_id=579942209]
-custom_minimum_size = Vector2(190, 52)
+custom_minimum_size = Vector2(190, 60)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("12_htda3")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 text = "Hard"
 
 [node name="HardReward" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/SelectionView/DifficultyRow/HardCard" index="1" unique_id=1607072098]
@@ -1083,27 +1085,31 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="AnswerButton1" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/QuestionView/AnswerButtons" index="0" unique_id=1890130963]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("13_ifm3f")
+theme_override_font_sizes/font_size = 28
 text = "Answer 1"
 
 [node name="AnswerButton2" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/QuestionView/AnswerButtons" index="1" unique_id=223889312]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("13_ifm3f")
+theme_override_font_sizes/font_size = 28
 text = "Answer 2"
 
 [node name="AnswerButton3" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/QuestionView/AnswerButtons" index="2" unique_id=465799031]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("13_ifm3f")
+theme_override_font_sizes/font_size = 28
 text = "Answer 3"
 
 [node name="AnswerButton4" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/QuestionView/AnswerButtons" index="3" unique_id=328189567]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("13_ifm3f")
+theme_override_font_sizes/font_size = 28
 text = "Answer 4"
 
 [node name="FeedbackLabel" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/QuestionView" index="3" unique_id=177089832]
@@ -1115,9 +1121,10 @@ theme_override_colors/font_color = Color(1, 0.45, 0.38, 1)
 horizontal_alignment = 1
 
 [node name="BackButton" parent="CyberQuestionHUD/Root/QuestionPanel/Margin/Content/QuestionView" index="4" unique_id=2096119587]
-custom_minimum_size = Vector2(0, 36)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("13_ifm3f")
+theme_override_font_sizes/font_size = 26
 text = "Change Difficulty"
 
 [node name="PerformanceHUD" parent="." unique_id=1039250105 instance=ExtResource("3_ifm3f")]

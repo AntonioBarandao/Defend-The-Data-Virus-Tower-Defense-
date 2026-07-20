@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="SpriteFrames" path="res://assets/Towers/EDR_Hunter/EDRHunterDroneSpriteFrames.tres" id="1_frames"]
+[ext_resource type="Script" path="res://Scripts/Towers/edr_hunter_drone.gd" id="2_script"]
+
+[node name="EDR_Hunter_Drone" type="Node2D"]
+z_index = 2
+script = ExtResource("2_script")
+
+[node name="VisualPivot" type="Node2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VisualPivot"]
+sprite_frames = ExtResource("1_frames")
+animation = &"idle"
+autoplay = "idle"

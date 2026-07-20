@@ -35,6 +35,9 @@ const GUARDIAN_MODE_FIREWALL := &"firewall"
 @export var slide_hidden_offset := 36.0
 @export var slide_seconds := 0.24
 @export_group("")
+@export_group("Honeypot Displays")
+@export var honeypot_level_display_textures: Array[Texture2D] = []
+@export_group("")
 
 @onready var _menu_panel: PanelContainer = $Root/MenuPanel
 @onready var _title_label: Label = $Root/MenuPanel/Margin/Content/Title
@@ -63,6 +66,8 @@ const GUARDIAN_MODE_FIREWALL := &"firewall"
 	&"nullifier": $Root/MenuPanel/Margin/Content/VBoxContainer2/ScannerModeSection/ModeGrid/NullifierModeButton
 }
 @onready var _laser_cost_row: Control = $Root/MenuPanel/Margin/Content/VBoxContainer2/CostRow
+@onready var _honeypot_display_section: Control = $Root/MenuPanel/Margin/Content/VBoxContainer2/HoneypotLevelDisplay
+@onready var _honeypot_level_display: TextureRect = $Root/MenuPanel/Margin/Content/VBoxContainer2/HoneypotLevelDisplay/DisplayMargin/LevelImage
 @onready var _laser_cost_label: Label = $Root/MenuPanel/Margin/Content/VBoxContainer2/CostRow/CostAmount
 @onready var _laser_upgrade_button: Button = $Root/MenuPanel/Margin/Content/VBoxContainer2/ButtonPath4
 @onready var _sell_button: Button = $Root/MenuPanel/Margin/Content/SellButton
@@ -265,6 +270,7 @@ func set_honeypot_stats(
 	upgrade_cost: int = 0
 ) -> void:
 	_set_tower_description(&"honeypot")
+	_sync_honeypot_level_display(level)
 	_scanner_mode_section.hide()
 	_siem_dispatch_section.hide()
 	_laser_level_label.text = "Level %d / %d" % [level, max_level]
@@ -590,6 +596,16 @@ func _configure_static_tooltips() -> void:
 func _set_tower_description(tower_id: StringName) -> void:
 	if _description_label != null:
 		_description_label.text = TowerTooltips.tower_summary(tower_id)
+	if _honeypot_display_section != null:
+		_honeypot_display_section.visible = tower_id == &"honeypot"
+
+
+func _sync_honeypot_level_display(level: int) -> void:
+	if _honeypot_level_display == null or honeypot_level_display_textures.is_empty():
+		return
+
+	var display_index := clampi(level - 1, 0, honeypot_level_display_textures.size() - 1)
+	_honeypot_level_display.texture = honeypot_level_display_textures[display_index]
 
 
 func _set_upgrade_button_state(tower_id: StringName, at_max_level: bool, can_upgrade: bool, upgrade_cost: int) -> void:
@@ -620,6 +636,7 @@ func _cache_drawer_positions() -> void:
 
 func _show_menu_panel_animated() -> void:
 	visible = true
+	_honeypot_display_section.visible = _current_mode == MenuMode.HONEYPOT
 	_cache_drawer_positions()
 	if _menu_tween != null:
 		_menu_tween.kill()

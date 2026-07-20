@@ -30,16 +30,21 @@ func _process(delta: float) -> void:
 
 func _on_user_game_pressed() -> void:
 	status_label.text = "Starting normal game..."
-	get_tree().change_scene_to_file("res://Scenes/Gameplay/Normal_Game.tscn")
+	_open_game_scene("res://Scenes/Gameplay/Normal_Game.tscn")
 
 
 func _on_admin_game_pressed() -> void:
 	status_label.text = "Opening admin sandbox..."
-	get_tree().change_scene_to_file("res://Scenes/Gameplay/Admin_Sandbox.tscn")
+	_open_game_scene("res://Scenes/Gameplay/Admin_Sandbox.tscn")
 
 func _on_presentation_pressed() -> void:
 	status_label.text = "Opening presentation..."
-	get_tree().change_scene_to_file("res://Scenes/Gameplay/DEMO_SCENE.tscn")
+	_open_game_scene("res://Scenes/Gameplay/DEMO_SCENE.tscn")
+
+func _open_game_scene(scene_path: String) -> void:
+	var load_error := LoadingScreen.open_game_scene(get_tree(), scene_path)
+	if load_error != OK:
+		status_label.text = "Unable to open game scene."
 
 func _on_login_pressed() -> void:
 	status_label.text = "Opening login..."

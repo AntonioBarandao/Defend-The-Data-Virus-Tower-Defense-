@@ -17,6 +17,7 @@ const PHASE_ONE_DESTROY_SFX := preload("res://assets/sfx/virus_destroy.wav")
 
 @export var play_on_ready := true
 @export var cutscene_skip_hud_path: NodePath = ^"../CutsceneSkipHUD"
+@export var game_controls_hud_path: NodePath = ^"../GameControlsHUD"
 @export var dialogue_lines: PackedStringArray = [
 	"Our hardware is being under attack! Help us defeat the viruses and save our cpu!",
 	"Deploy cybersecurity towers onto safe platforms and stop the viruses before they breach the system.",
@@ -83,6 +84,7 @@ var _panel_final_global_position := Vector2.ZERO
 var _mascot_final_global_position := Vector2.ZERO
 var _mascot_bob_tween: Tween
 var _cutscene_camera: Camera2D
+var _game_controls_hud: GameControlsHUD
 var _camera_start_global_position := Vector2.ZERO
 var _camera_start_zoom := Vector2.ONE
 var _camera_tween: Tween
@@ -110,13 +112,33 @@ func _ready() -> void:
 	_ensure_continue_button_styles()
 	_speaker_label.text = "CYBER GUARDIAN"
 	_cutscene_skip_hud = get_node_or_null(cutscene_skip_hud_path)
+	_game_controls_hud = get_node_or_null(game_controls_hud_path) as GameControlsHUD
+	act_started.connect(_on_act_started)
+	cutscene_finished.connect(_on_cutscene_finished)
 	_cutscene_camera = get_node_or_null(cutscene_camera_path) as Camera2D
 	_capture_cutscene_camera_start()
+	_hide_wave5_preview_until_cutscene()
 	_set_phase_one_target_visible(false, false)
 	_root.visible = false
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if play_on_ready:
 		call_deferred("start_cutscene")
+
+
+func _on_act_started(_act_number: int) -> void:
+	if _game_controls_hud != null:
+		_game_controls_hud.set_lives_visible(false)
+
+
+func _on_cutscene_finished() -> void:
+	if _game_controls_hud != null:
+		_game_controls_hud.set_lives_visible(true)
+
+
+func _hide_wave5_preview_until_cutscene() -> void:
+	var preview := get_node_or_null(wave5_trojan_preview_path) as CanvasItem
+	if preview != null:
+		preview.hide()
 
 
 func start_cutscene() -> void:

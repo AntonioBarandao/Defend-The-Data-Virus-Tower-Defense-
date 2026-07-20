@@ -3,6 +3,7 @@ extends CanvasLayer
 
 const ADD_TEN_VIRUS_COUNT := 10
 const ADD_HUNDRED_VIRUS_COUNT := 100
+const NORMAL_GAME_SPEED := 1.0
 
 signal reset_pressed
 signal start_wave_pressed
@@ -10,11 +11,14 @@ signal add_ten_pressed
 signal add_hundred_pressed
 signal virus_batch_requested(count: int)
 signal exit_pressed
+signal game_speed_changed(multiplier: float)
 
 @export var show_menu_button := true
+@export_range(1.0, 4.0, 0.25) var accelerated_game_speed := 2.0
 
 @onready var _reset_button: Button = $Root/BottomRightControls/ResetTowerButton
 @onready var _wave_button: Button = $Root/BottomRightControls/StartWaveButton
+@onready var _speed_button: Button = $Root/BottomRightControls/SpeedButton
 @onready var _add_ten_button: Button = $Root/VirusBatchControls/AddTenVirusesButton
 @onready var _add_hundred_button: Button = $Root/VirusBatchControls/AddHundredVirusesButton
 @onready var _menu_button: Button = get_node_or_null(^"Root/MainMenuButton") as Button
@@ -22,15 +26,19 @@ signal exit_pressed
 @onready var _continue_button: Button = get_node_or_null(^"Root/MainMenuPanel/Margin/Options/ContinueButton") as Button
 @onready var _settings_button: Button = get_node_or_null(^"Root/MainMenuPanel/Margin/Options/SettingsButton") as Button
 @onready var _exit_button: Button = get_node_or_null(^"Root/MainMenuPanel/Margin/Options/ExitButton") as Button
-@onready var _lives_label: Label = get_node_or_null(^"Root/LivesPanel/LivesLabel") as Label
+@onready var _lives_panel: PanelContainer = get_node_or_null(^"Root/LivesPanel") as PanelContainer
+@onready var _lives_label: Label = get_node_or_null(^"Root/LivesPanel/Margin/Content/Readout/LivesLabel") as Label
 
 var _was_tree_paused := false
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	Engine.time_scale = NORMAL_GAME_SPEED
 	_reset_button.pressed.connect(func() -> void: reset_pressed.emit())
 	_wave_button.pressed.connect(func() -> void: start_wave_pressed.emit())
+	_speed_button.set_pressed_no_signal(false)
+	_speed_button.toggled.connect(set_speed_enabled)
 	_add_ten_button.pressed.connect(_request_ten_viruses)
 	_add_hundred_button.pressed.connect(_request_hundred_viruses)
 	if _menu_panel != null:
@@ -49,6 +57,18 @@ func _ready() -> void:
 		_exit_button.pressed.connect(func() -> void: exit_pressed.emit())
 
 
+func _exit_tree() -> void:
+	Engine.time_scale = NORMAL_GAME_SPEED
+
+
+func set_speed_enabled(enabled: bool) -> void:
+	var speed := accelerated_game_speed if enabled else NORMAL_GAME_SPEED
+	Engine.time_scale = speed
+	if _speed_button != null and _speed_button.button_pressed != enabled:
+		_speed_button.set_pressed_no_signal(enabled)
+	game_speed_changed.emit(speed)
+
+
 func set_wave_button(text: String, disabled: bool) -> void:
 	_wave_button.text = text
 	_wave_button.disabled = disabled
@@ -62,7 +82,12 @@ func set_spawn_buttons_disabled(disabled: bool) -> void:
 func set_lives(current_lives: int, maximum_lives: int) -> void:
 	if _lives_label == null:
 		return
-	_lives_label.text = "LIVES  %d / %d" % [maxi(0, current_lives), maxi(1, maximum_lives)]
+	_lives_label.text = "%d/%d" % [maxi(0, current_lives), maxi(1, maximum_lives)]
+
+
+func set_lives_visible(is_visible: bool) -> void:
+	if _lives_panel != null:
+		_lives_panel.visible = is_visible
 
 
 func set_admin_mode(enabled: bool) -> void:
@@ -77,6 +102,7 @@ func has_gameplay_control_at_screen_position(screen_position: Vector2) -> bool:
 		_reset_button,
 		_add_ten_button,
 		_add_hundred_button,
+		_speed_button,
 		_menu_button,
 		_menu_panel
 	]

@@ -12,6 +12,6 @@ deploy_cost = 175
 display_texture = ExtResource("2_texture")
 tower_scene = ExtResource("3_scene")
 info_header = "EDR Hunter"
-info_description = "Offense hunter with infinite map range. It can see camouflaged viruses without uncloaking them, deals 10 damage per shot, and fires once every 3 seconds. It has upgrade support in the sidebar, but all test upgrade costs are currently 0."
+info_description = "Global offense hunter that detects camouflaged viruses without uncloaking them. The Hunter deals 10 damage every 3 seconds and uses level-specific idle, aim, and shoot animations. At LV4 it deploys a patrol drone that deals 1 damage every second; LV5 currently uses the supplied test visual."
 tower_type = "Offense Tower"
 upgrade_costs = Array[int]([0, 0, 0, 0])

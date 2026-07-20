@@ -77,6 +77,9 @@ const QUESTIONS := {
 @export var demo_question_reward := 200
 @export_range(0, 10000, 1) var starting_cyberbucks := 250
 @export_range(160.0, 1200.0, 1.0) var demo_panel_slide_distance := 760.0
+@export_group("Presentation")
+@export_range(0.5, 2.0, 0.05) var ui_scale_multiplier := 1.0
+@export_group("")
 
 var cyberbucks := STARTING_CYBERBUCKS
 var _selected_category := CATEGORY_CYBERSECURITY
@@ -96,6 +99,7 @@ var _control_tweens: Dictionary = {}
 var _phishing_rng := RandomNumberGenerator.new()
 var _phishing_decoy_answer_index := -1
 
+@onready var _input_blocker: Control = $Root/InputBlocker
 @onready var _question_panel: PanelContainer = $Root/QuestionPanel
 @onready var _selection_view: VBoxContainer = $Root/QuestionPanel/Margin/Content/SelectionView
 @onready var _question_view: VBoxContainer = $Root/QuestionPanel/Margin/Content/QuestionView
@@ -120,6 +124,10 @@ var _phishing_decoy_answer_index := -1
 
 
 func _ready() -> void:
+	_question_panel.resized.connect(_sync_panel_bottom_pivot)
+	_apply_ui_scale()
+	_sync_panel_bottom_pivot()
+	_input_blocker.hide()
 	_question_panel.hide()
 	_panel_rest_offsets = _get_panel_offsets()
 	_panel_rest_scale = _question_panel.scale
@@ -141,10 +149,19 @@ func _ready() -> void:
 		_answer_buttons[index].pressed.connect(Callable(self, "_answer_selected").bind(index))
 
 
+func _apply_ui_scale() -> void:
+	_question_panel.scale *= ui_scale_multiplier
+
+
+func _sync_panel_bottom_pivot() -> void:
+	_question_panel.pivot_offset = Vector2(_question_panel.size.x * 0.5, _question_panel.size.y)
+
+
 func show_wave_question(wave_number: int) -> void:
 	_current_wave = wave_number
 	_answer_locked = false
 	_show_selection_view()
+	_input_blocker.show()
 	_question_panel.show()
 	if demo_question_animation_enabled:
 		_animate_panel_entry()
@@ -158,6 +175,10 @@ func add_cyberbucks(amount: int) -> void:
 
 func get_cyberbucks() -> int:
 	return cyberbucks
+
+
+func is_question_open() -> bool:
+	return _question_panel != null and _question_panel.visible
 
 
 func can_spend_cyberbucks(amount: int) -> bool:
@@ -257,6 +278,7 @@ func _answer_selected(answer_index: int) -> void:
 		_feedback_label.text = ""
 
 	_question_panel.hide()
+	_input_blocker.hide()
 	_restore_panel_transform()
 	question_solved.emit(_current_reward)
 
@@ -278,6 +300,7 @@ func _show_wrong_answer_review(correct_index: int) -> void:
 		await _animate_panel_exit()
 
 	_question_panel.hide()
+	_input_blocker.hide()
 	_restore_panel_transform()
 	_reset_answer_button_review_state()
 	_back_button.disabled = false

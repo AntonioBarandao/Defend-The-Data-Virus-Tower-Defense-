@@ -250,6 +250,7 @@ var _wave_label_store_rest_position := Vector2.ZERO
 var _wave_label_store_position_cached := false
 var _pending_store_drag_tower: Node2D
 var _pending_store_drag_start_position := Vector2.ZERO
+var _restore_tower_store_after_drag := false
 var _restore_tower_store_after_upgrade_panel := false
 var _tower_store_restore_after_upgrade_waiting := false
 var _admin_add_bucks_button: Button
@@ -445,6 +446,10 @@ func _input(event: InputEvent) -> void:
 		if _text_cutscene_hud != null and _text_cutscene_hud.has_method("handle_cutscene_advance_input"):
 			_text_cutscene_hud.call("handle_cutscene_advance_input", event)
 		get_viewport().set_input_as_handled()
+		return
+
+	# Let the questionnaire's Controls receive input while blocking world interactions.
+	if _is_question_input_locked():
 		return
 
 	if event is InputEventMouseButton:
@@ -1285,6 +1290,8 @@ func _apply_tower_store_slide(slide_offset: float) -> void:
 		_tower_store_hint_label.modulate.a = 1.0 - clampf(slide_offset / STORE_PANEL_SLIDE_DISTANCE, 0.0, 1.0)
 
 	for tower in _tower_store_home_positions.keys():
+		if not is_instance_valid(tower):
+			continue
 		var tower_node := tower as Node2D
 		if tower_node == null:
 			continue
@@ -1310,6 +1317,8 @@ func _apply_tower_store_slide(slide_offset: float) -> void:
 
 func _sync_tower_store_items(force_positions: bool) -> void:
 	for tower in _tower_store_home_positions.keys():
+		if not is_instance_valid(tower):
+			continue
 		var tower_node := tower as Node2D
 		if tower_node == null:
 			continue
@@ -1350,6 +1359,8 @@ func _sync_tower_store_items(force_positions: bool) -> void:
 
 func _hide_available_store_tower_previews() -> void:
 	for tower in _tower_store_home_positions.keys():
+		if not is_instance_valid(tower):
+			continue
 		var tower_node := tower as Node2D
 		if tower_node == null:
 			continue
@@ -1388,6 +1399,8 @@ func _can_afford_store_tower(tower: Node2D) -> bool:
 
 func _sync_tower_store_card_states() -> void:
 	for tower in _tower_store_item_cards.keys():
+		if not is_instance_valid(tower):
+			continue
 		var tower_node := tower as Node2D
 		var card := _tower_store_item_cards.get(tower_node) as TowerShopCard
 		if tower_node == null or card == null:
@@ -1685,6 +1698,7 @@ func _try_start_store_tower_drag(tower: Node2D, pointer_position: Vector2) -> bo
 		_sync_tower_store_card_states()
 		return false
 
+	var store_was_open := _tower_store_open
 	var home_position: Vector2 = _tower_store_home_positions.get(tower, tower.global_position)
 	_restore_placed_tower_scale(tower)
 	tower.global_position = pointer_position
@@ -1697,6 +1711,7 @@ func _try_start_store_tower_drag(tower: Node2D, pointer_position: Vector2) -> bo
 		return false
 
 	tower.set("_drag_start_position", home_position)
+	_restore_tower_store_after_drag = store_was_open
 	_set_store_card_drag_highlight(tower, true)
 	_update_store_tower_drag(tower, pointer_position)
 	return true
@@ -1757,8 +1772,16 @@ func _finish_store_tower_drag(tower: Node2D) -> bool:
 	else:
 		_restore_store_tower_preview(tower)
 	_set_store_card_drag_highlight(tower, false)
+	_restore_tower_store_after_completed_drag()
 
 	return was_placed
+
+
+func _restore_tower_store_after_completed_drag() -> void:
+	var should_restore := _restore_tower_store_after_drag
+	_restore_tower_store_after_drag = false
+	if should_restore:
+		_set_tower_store_open(true)
 
 
 func _get_tower_deploy_cost(tower: Node2D) -> int:
@@ -2513,7 +2536,12 @@ func _sell_selected_tower() -> void:
 
 	var tower_id := _get_tower_id(tower)
 	var refund := roundi(float(_get_default_tower_deploy_cost(tower)) * TOWER_SELL_REFUND_RATE)
+	_set_tower_menu_radius_previews(false, false, false, false, false, false, false)
+	if tower.has_method("clear_range_preview"):
+		tower.call("clear_range_preview")
 	_remove_sold_tower_from_tracking(tower, tower_id)
+	if tower_id == &"guardian" and tower == _guardian_store:
+		_spawn_replacement_guardian()
 	_tower_upgrade_hud.hide_all()
 	tower.queue_free()
 	_question_hud.add_cyberbucks(refund)
@@ -3715,6 +3743,12 @@ func _update_edr_hunter_attack(delta: float) -> void:
 		var target := edr_hunter.update_attack(delta, _active_viruses)
 		if target != null:
 			_shoot_edr_hunter_target(edr_hunter, target)
+		var drone_attacks := edr_hunter.update_drone_attacks(delta, _active_viruses)
+		for drone_attack in drone_attacks:
+			var drone_target := drone_attack.get("target") as PathFollow2D
+			var drone_index := int(drone_attack.get("drone_index", 0))
+			if drone_target != null:
+				_shoot_edr_hunter_drone_target(edr_hunter, drone_target, drone_index)
 
 
 func _update_siem_hawk_attack(delta: float) -> void:
@@ -3743,7 +3777,6 @@ func _shoot_virus(guardian: CyberGuardianTowerScript, target: PathFollow2D) -> v
 	var target_position := _get_target_center(target)
 	guardian.aim_at(target_position)
 	guardian.play_shoot()
-	_spawn_colored_laser(guardian.global_position, target_position, Color(0.1, 0.55, 1.0, 1.0), guardian.get_laser_width())
 	var destroyed := _damage_virus(target, guardian.get_shot_power())
 	if destroyed and _utility_overlay_hud != null:
 		_utility_overlay_hud.show_guardian_destroy_popup(
@@ -3760,8 +3793,16 @@ func _shoot_edr_hunter_target(edr_hunter: EDRHunterTowerScript, target: PathFoll
 	var target_position := _get_target_center(target)
 	edr_hunter.aim_at(target_position)
 	edr_hunter.play_shoot()
-	_spawn_colored_laser(edr_hunter.global_position, target_position, Color(0.12, 0.95, 1.0, 1.0), edr_hunter.get_laser_width())
 	_damage_virus(target, edr_hunter.get_shot_power())
+
+
+func _shoot_edr_hunter_drone_target(edr_hunter: EDRHunterTowerScript, target: PathFollow2D, drone_index: int = 0) -> void:
+	if edr_hunter == null or not is_instance_valid(target):
+		return
+
+	var target_position := _get_target_center(target)
+	edr_hunter.fire_drone_at(target_position, drone_index)
+	_damage_virus(target, edr_hunter.get_drone_shot_power())
 
 
 func _shoot_siem_hawk_target(siem_hawk: SIEMHawkTowerScript, target: PathFollow2D) -> void:
@@ -4070,6 +4111,12 @@ func _is_act_input_locked() -> bool:
 	return _text_cutscene_hud != null \
 		and _text_cutscene_hud.has_method("is_cutscene_running") \
 		and bool(_text_cutscene_hud.call("is_cutscene_running"))
+
+
+func _is_question_input_locked() -> bool:
+	return _question_hud != null \
+		and _question_hud.has_method("is_question_open") \
+		and bool(_question_hud.call("is_question_open"))
 
 
 func _demo_upgrade_button_has_point(screen_position: Vector2) -> bool:

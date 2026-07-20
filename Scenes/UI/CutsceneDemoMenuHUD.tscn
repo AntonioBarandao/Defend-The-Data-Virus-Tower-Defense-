@@ -71,7 +71,39 @@ theme_override_font_sizes/font_size = 25
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
-text = "|||"
+
+[node name="IconCenter" type="CenterContainer" parent="Root/HamburgerButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Bars" type="VBoxContainer" parent="Root/HamburgerButton/IconCenter"]
+custom_minimum_size = Vector2(30, 21)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 5
+
+[node name="Bar1" type="ColorRect" parent="Root/HamburgerButton/IconCenter/Bars"]
+custom_minimum_size = Vector2(30, 3)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.9, 0.97, 1, 1)
+
+[node name="Bar2" type="ColorRect" parent="Root/HamburgerButton/IconCenter/Bars"]
+custom_minimum_size = Vector2(30, 3)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.9, 0.97, 1, 1)
+
+[node name="Bar3" type="ColorRect" parent="Root/HamburgerButton/IconCenter/Bars"]
+custom_minimum_size = Vector2(30, 3)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.9, 0.97, 1, 1)
 
 [node name="DimOverlay" type="ColorRect" parent="Root"]
 visible = false

@@ -1,8 +1,221 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://djw1fm0wta4mt"]
 
-[ext_resource type="PackedScene" path="res://Scenes/Gameplay/Cutscene_Test_Game.tscn" id="1_game_base"]
+[ext_resource type="PackedScene" uid="uid://nfjr7ke15kok" path="res://Scenes/Gameplay/Cutscene_Test_Game.tscn" id="1_game_base"]
 
-[node name="NormalGame" instance=ExtResource("1_game_base")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_16a2y"]
+resource_local_to_scene = true
+size = Vector2(92.59923, 92.59923)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4isur"]
+resource_local_to_scene = true
+size = Vector2(92.59923, 92.59923)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cnfm4"]
+bg_color = Color(0.017, 0.031, 0.055, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.78, 1, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.46)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vxbcp"]
+bg_color = Color(0.017, 0.031, 0.055, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.78, 1, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.46)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w8x1g"]
+bg_color = Color(0.017, 0.031, 0.055, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.78, 1, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.46)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_obgb4"]
+bg_color = Color(0.017, 0.031, 0.055, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.78, 1, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.46)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d77ev"]
+bg_color = Color(0.017, 0.031, 0.055, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.78, 1, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.46)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pqf0i"]
+bg_color = Color(0.017, 0.031, 0.055, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.78, 1, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.46)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n2mrm"]
+bg_color = Color(0.017, 0.031, 0.055, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.78, 1, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.46)
+shadow_size = 8
+
+[node name="NormalGame" unique_id=435809193 instance=ExtResource("1_game_base")]
+
+[node name="CyberQuestionHUD" parent="." index="1" unique_id=923521268]
+visible = true
+
+[node name="QuestionPanel" parent="CyberQuestionHUD/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="0" unique_id=1626758872]
+offset_left = -804.0
+offset_top = -299.0
+offset_right = 448.79993
+offset_bottom = -6.0
+
+[node name="LivesPanel" parent="GameControlsHUD/Root" parent_id_path=PackedInt32Array(772842743, 1956639417) index="2"]
+offset_left = 1297.0
+offset_top = 104.0
+offset_right = 1547.0
+offset_bottom = 183.0
+
+[node name="MainMenuButton" parent="GameControlsHUD/Root" parent_id_path=PackedInt32Array(772842743, 1956639417) index="3" unique_id=1814937485]
+visible = false
 
 [node name="WaveSetPanel" parent="CutsceneDemoMenuHUD/Root" index="3"]
 visible = false
+
+[node name="CpuArena" parent="." index="12" unique_id=1951202282]
+position = Vector2(957.99994, 541.5)
+scale = Vector2(1.1495215, 1.1509033)
+
+[node name="PlacementSlot1" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="0" unique_id=1417027579]
+position = Vector2(387, 221)
+shape = SubResource("RectangleShape2D_16a2y")
+
+[node name="PlacementSlot2" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="1" unique_id=48627030]
+position = Vector2(1432, 398)
+shape = SubResource("RectangleShape2D_4isur")
+
+[node name="PlacementSlot3" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="2" unique_id=137045265]
+shape = SubResource("RectangleShape2D_4isur")
+
+[node name="PlacementSlot4" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="3" unique_id=1305535456]
+position = Vector2(584, 472)
+shape = SubResource("RectangleShape2D_4isur")
+
+[node name="PlacementSlot5" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="4" unique_id=391813529]
+position = Vector2(790, 91)
+shape = SubResource("RectangleShape2D_4isur")
+
+[node name="PlacementSlot6" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="5" unique_id=1249310685]
+position = Vector2(1082, 216)
+shape = SubResource("RectangleShape2D_4isur")
+
+[node name="PlacementSlot7" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="6" unique_id=1482182287]
+shape = SubResource("RectangleShape2D_4isur")
+
+[node name="PlacementSlot8" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="7" unique_id=982379324]
+shape = SubResource("RectangleShape2D_4isur")
+
+[node name="PlacementSlot9" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="8" unique_id=1772379268]
+position = Vector2(1464, 716)
+shape = SubResource("RectangleShape2D_4isur")
+
+[node name="PlacementSlot10" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="9" unique_id=1444550936]
+shape = SubResource("RectangleShape2D_4isur")
+
+[node name="PlacementSlot11" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="10" unique_id=1353559619]
+position = Vector2(185, 572)
+shape = SubResource("RectangleShape2D_4isur")
+
+[node name="PlacementSlot12" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="11" unique_id=1465608734]
+shape = SubResource("RectangleShape2D_4isur")
+
+[node name="PlacementSlot13" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="12" unique_id=918020816]
+shape = SubResource("RectangleShape2D_4isur")
+
+[node name="CardPanel" parent="TestDrag/CyberGuardianCard" parent_id_path=PackedInt32Array(1248978504) index="0" unique_id=1171323138]
+theme_override_styles/panel = SubResource("StyleBoxFlat_cnfm4")
+
+[node name="CardPanel" parent="TestDrag/LaserTurretCard" parent_id_path=PackedInt32Array(1774681448) index="0" unique_id=1171323138]
+theme_override_styles/panel = SubResource("StyleBoxFlat_vxbcp")
+
+[node name="CardPanel" parent="TestDrag/IDSScannerCard" parent_id_path=PackedInt32Array(2136481415) index="0" unique_id=1171323138]
+theme_override_styles/panel = SubResource("StyleBoxFlat_w8x1g")
+
+[node name="CardPanel" parent="TestDrag/EDRHunterCard" parent_id_path=PackedInt32Array(1058679109) index="0" unique_id=1171323138]
+theme_override_styles/panel = SubResource("StyleBoxFlat_obgb4")
+
+[node name="CardPanel" parent="TestDrag/SIEMHawkCard" parent_id_path=PackedInt32Array(2097101912) index="0" unique_id=1171323138]
+theme_override_styles/panel = SubResource("StyleBoxFlat_d77ev")
+
+[node name="CardPanel" parent="TestDrag/IPSIntrusionCard" parent_id_path=PackedInt32Array(1750948893) index="0" unique_id=1171323138]
+theme_override_styles/panel = SubResource("StyleBoxFlat_pqf0i")
+
+[node name="CardPanel" parent="TestDrag/HoneypotProductionCard" parent_id_path=PackedInt32Array(1207325943) index="0" unique_id=1171323138]
+theme_override_styles/panel = SubResource("StyleBoxFlat_n2mrm")
+
+[editable path="CyberQuestionHUD"]
+[editable path="PerformanceHUD"]
+[editable path="ProgressHUD"]
+[editable path="GameControlsHUD"]
+[editable path="TowerUpgradeHUD"]
+[editable path="UtilityOverlayHUD"]
+[editable path="TextCutsceneHUD"]
+[editable path="AnnounceTextHUD"]
+[editable path="CutsceneSkipHUD"]
+[editable path="CutsceneDemoMenuHUD"]
+[editable path="TestDrag/CyberGuardianCard"]
+[editable path="TestDrag/LaserTurretCard"]
+[editable path="TestDrag/IDSScannerCard"]
+[editable path="TestDrag/EDRHunterCard"]
+[editable path="TestDrag/SIEMHawkCard"]
+[editable path="TestDrag/IPSIntrusionCard"]
+[editable path="TestDrag/HoneypotProductionCard"]

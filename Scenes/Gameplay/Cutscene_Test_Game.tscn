@@ -32,7 +32,7 @@
 [ext_resource type="PackedScene" uid="uid://da4s186a72uym" path="res://Scenes/UI/ProgressHUD.tscn" id="26_knowledge"]
 [ext_resource type="Texture2D" uid="uid://bqdusmrw3lfhu" path="res://assets/Towers/SIEM_Hawk/SIEM_Hawk_LV1.png" id="27_cqx10"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/IPS_Intrusion.tscn" id="27_ips"]
-[ext_resource type="PackedScene" path="res://Scenes/Towers/Honeypot_Production.tscn" id="28_honeypot"]
+[ext_resource type="PackedScene" uid="uid://dkg2q5hxvf4h5" path="res://Scenes/Towers/Honeypot_Production.tscn" id="28_honeypot"]
 [ext_resource type="Texture2D" uid="uid://ppmwosf12rw" path="res://assets/Towers/IPS_Intrusion/IPS_Intrusion_LV1.png" id="29_b1f5y"]
 [ext_resource type="PackedScene" uid="uid://c5wlti2knr5s8" path="res://Scenes/UI/TowerShopCard.tscn" id="29_shop_card"]
 [ext_resource type="Resource" uid="uid://dkr0pivroe0jn" path="res://Resources/TowerShopCards/CyberGuardianCard.tres" id="30_cyber_card"]
@@ -247,10 +247,6 @@ visible = false
 demo_question_animation_enabled = true
 
 [node name="QuestionPanel" parent="CyberQuestionHUD/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="0" unique_id=1626758872]
-offset_left = -959.0
-offset_top = -335.0
-offset_right = 610.0
-offset_bottom = -3.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_question")
 
 [node name="PerformanceHUD" parent="." unique_id=1039250105 instance=ExtResource("12_perf")]
@@ -317,9 +313,6 @@ offset_bottom = 58.0
 scale = Vector2(1.2522548, 1.2522548)
 
 [node name="CutsceneDemoMenuHUD" parent="." unique_id=29047704 instance=ExtResource("21_demo_menu")]
-
-[node name="HamburgerButton" parent="CutsceneDemoMenuHUD/Root" index="0"]
-visible = true
 
 [node name="WaveSetPanel" parent="CutsceneDemoMenuHUD/Root" index="3"]
 offset_left = -725.0
@@ -470,10 +463,10 @@ autowrap_mode = 3
 z_index = 215
 custom_minimum_size = Vector2(64, 80)
 layout_mode = 0
-offset_left = 1503.0
-offset_top = 419.00006
-offset_right = 1567.0
-offset_bottom = 728.0
+offset_left = 1496.0
+offset_top = 562.00006
+offset_right = 1560.0
+offset_bottom = 642.00006
 tooltip_text = "Hide tower shop"
 focus_mode = 0
 mouse_default_cursor_shape = 2
@@ -512,6 +505,9 @@ offset_top = -0.99993896
 offset_bottom = 35.00006
 text = "Cyber Guardian"
 
+[node name="CostLabel" parent="TestDrag/CyberGuardianCard" index="3" unique_id=1790508198]
+text = "100"
+
 [node name="InformationPopup" parent="TestDrag/CyberGuardianCard" index="5" unique_id=2022084967]
 visible = false
 offset_left = -430.0
@@ -541,7 +537,7 @@ texture = ExtResource("21_qnrg6")
 text = "Laser Turret"
 
 [node name="CostLabel" parent="TestDrag/LaserTurretCard" index="3" unique_id=1790508198]
-text = "450"
+text = "125"
 
 [node name="InformationPopup" parent="TestDrag/LaserTurretCard" index="5" unique_id=2022084967]
 visible = false
@@ -570,6 +566,9 @@ texture = ExtResource("23_syyru")
 
 [node name="NameLabel" parent="TestDrag/IDSScannerCard" index="2" unique_id=1393031364]
 text = "IDS Scanner"
+
+[node name="CostLabel" parent="TestDrag/IDSScannerCard" index="3" unique_id=1790508198]
+text = "150"
 
 [node name="InformationPopup" parent="TestDrag/IDSScannerCard" index="5" unique_id=2022084967]
 visible = false
@@ -603,7 +602,7 @@ text = "EDR Hunter"
 [node name="CostLabel" parent="TestDrag/EDRHunterCard" index="3" unique_id=1790508198]
 offset_left = 12.0
 offset_right = 150.0
-text = "900"
+text = "175"
 
 [node name="InformationPopup" parent="TestDrag/EDRHunterCard" index="5" unique_id=2022084967]
 visible = false
@@ -635,7 +634,7 @@ texture = ExtResource("27_cqx10")
 text = "SIEM Hawk"
 
 [node name="CostLabel" parent="TestDrag/SIEMHawkCard" index="3" unique_id=1790508198]
-text = "2500"
+text = "225"
 
 [node name="InformationPopup" parent="TestDrag/SIEMHawkCard" index="5" unique_id=2022084967]
 visible = false
@@ -667,7 +666,7 @@ texture = ExtResource("29_b1f5y")
 text = "IPS Intrusion"
 
 [node name="CostLabel" parent="TestDrag/IPSIntrusionCard" index="3" unique_id=1790508198]
-text = "1700"
+text = "200"
 
 [node name="InformationPopup" parent="TestDrag/IPSIntrusionCard" index="5" unique_id=2022084967]
 visible = false
@@ -699,7 +698,7 @@ texture = ExtResource("31_mljs0")
 text = "Honeypot Production"
 
 [node name="CostLabel" parent="TestDrag/HoneypotProductionCard" index="3" unique_id=1790508198]
-text = "1500"
+text = "250"
 
 [node name="InformationPopup" parent="TestDrag/HoneypotProductionCard" index="5" unique_id=2022084967]
 visible = false
@@ -727,6 +726,7 @@ scale = Vector2(1.3333842, 1.1424017)
 texture = ExtResource("16_m0vd8")
 
 [node name="Wave5CutsceneTrojanHorse" parent="Otherground_Cutscene/CutsceneBack" unique_id=1612727341 instance=ExtResource("10_trojan")]
+visible = false
 position = Vector2(490.50436, -249.47443)
 rotation = -1.5808704
 scale = Vector2(0.4, 0.4)
@@ -771,7 +771,6 @@ position = Vector2(1819.0001, 297.00006)
 [node name="EDR_Hunter" parent="Sprites" unique_id=768204913 instance=ExtResource("24_edr")]
 visible = false
 position = Vector2(1819, 471.0001)
-animation = &"SummonAnim"
 
 [node name="SIEM_Hawk" parent="Sprites" unique_id=1126839204 instance=ExtResource("25_siem")]
 visible = false
