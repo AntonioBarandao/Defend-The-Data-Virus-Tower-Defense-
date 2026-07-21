@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://deihvlnvp3oat"
-path="res://.godot/imported/Adware_Exit_Press_atlas_24fps.png-07e283cbcf6644109d8f45bcef40e317.ctex"
+path="res://.godot/imported/Adware_Exit_Press_atlas_24fps.png-448dfbb5992e9f08024c0879caa4ec33.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Enemies/Adware/ExitPress/Adware_Exit_Press_atlas_24fps.png"
-dest_files=["res://.godot/imported/Adware_Exit_Press_atlas_24fps.png-07e283cbcf6644109d8f45bcef40e317.ctex"]
+source_file="res://Assets/Enemies/Adware/ExitPress/Adware_Exit_Press_atlas_24fps.png"
+dest_files=["res://.godot/imported/Adware_Exit_Press_atlas_24fps.png-448dfbb5992e9f08024c0879caa4ec33.ctex"]
 
 [params]
 

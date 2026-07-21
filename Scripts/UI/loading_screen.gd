@@ -3,6 +3,8 @@ extends Control
 
 const LOADING_SCREEN_SCENE_PATH := "res://Scenes/UI/LoadingScreen.tscn"
 const TARGET_SCENE_META := &"loading_screen_target_scene"
+const ADWARE_POPUP_COUNT := 25
+const ADWARE_POPUP_PATH_FORMAT := "res://Assets/Enemies/Adware/Popups/Adware_Popup_%02d.png"
 
 @export_file("*.tscn") var target_scene_path := "res://Scenes/Gameplay/Cutscene_Test_Game.tscn"
 @export_range(0.0, 5.0, 0.05) var minimum_visible_seconds := 0.8
@@ -25,10 +27,12 @@ var _load_complete := false
 var _transition_started := false
 var _artwork_entrance_finished := false
 var _last_progress_change_msec := 0
+var _adware_jumpscare_active := false
 
 @onready var _loading_label: Label = $LoadingPanel/Margin/Content/LoadingLabel
 @onready var _progress_bar: ProgressBar = $LoadingPanel/Margin/Content/ProgressWrap/ProgressBar
 @onready var _progress_pulse: ColorRect = $LoadingPanel/Margin/Content/ProgressWrap/ProgressPulse
+@onready var _adware_accept_button: Button = $ArtworkLayer/Viruses/Adware/AcceptButton
 
 
 static func open_game_scene(scene_tree: SceneTree, destination_path: String) -> Error:
@@ -47,6 +51,7 @@ static func open_game_scene(scene_tree: SceneTree, destination_path: String) -> 
 
 
 func _ready() -> void:
+	_adware_accept_button.pressed.connect(_on_adware_accept_pressed)
 	_apply_requested_target_scene()
 	_progress_bar.value = 0.0
 	_update_loading_text()
@@ -76,8 +81,73 @@ func _process(delta: float) -> void:
 		_load_complete
 		and _elapsed >= minimum_visible_seconds
 		and _artwork_entrance_finished
+		and not _adware_jumpscare_active
 	):
 		_transition_to_target_scene()
+
+
+func _on_adware_accept_pressed() -> void:
+	if _adware_jumpscare_active:
+		return
+
+	_adware_jumpscare_active = true
+	_adware_accept_button.disabled = true
+	_play_adware_jumpscare()
+
+
+func _play_adware_jumpscare() -> void:
+	var overlay := Control.new()
+	overlay.name = "AdwareJumpscare"
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.z_index = 100
+	add_child(overlay)
+	move_child(overlay, get_child_count() - 1)
+
+	var blackout := ColorRect.new()
+	blackout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	blackout.color = Color(0.08, 0.0, 0.0, 0.82)
+	blackout.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.add_child(blackout)
+
+	var viewport_size := get_viewport_rect().size
+	var random := RandomNumberGenerator.new()
+	random.seed = Time.get_ticks_usec()
+
+	for popup_number in range(1, ADWARE_POPUP_COUNT + 1):
+		var texture := load(ADWARE_POPUP_PATH_FORMAT % popup_number) as Texture2D
+		if texture == null:
+			continue
+
+		var popup := TextureRect.new()
+		popup.texture = texture
+		popup.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		popup.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		var popup_width := random.randf_range(250.0, 520.0)
+		var aspect := texture.get_height() / maxf(float(texture.get_width()), 1.0)
+		popup.size = Vector2(popup_width, popup_width * aspect)
+		popup.position = Vector2(
+			random.randf_range(-popup.size.x * 0.15, maxf(0.0, viewport_size.x - popup.size.x * 0.85)),
+			random.randf_range(-popup.size.y * 0.15, maxf(0.0, viewport_size.y - popup.size.y * 0.85))
+		)
+		popup.pivot_offset = popup.size * 0.5
+		popup.scale = Vector2(0.04, 0.04)
+		popup.rotation = random.randf_range(-0.22, 0.22)
+		popup.modulate.a = 0.0
+		popup.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		overlay.add_child(popup)
+
+		var delay := float(popup_number - 1) * 0.035
+		var popup_tween := create_tween().set_parallel(true)
+		popup_tween.tween_property(popup, "scale", Vector2.ONE, 0.16).set_delay(delay).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		popup_tween.tween_property(popup, "modulate:a", 1.0, 0.06).set_delay(delay)
+		popup_tween.tween_property(popup, "rotation", random.randf_range(-0.04, 0.04), 0.18).set_delay(delay)
+
+	var finish_tween := create_tween()
+	finish_tween.tween_interval(1.55)
+	finish_tween.tween_property(overlay, "modulate:a", 0.0, 0.32)
+	finish_tween.tween_callback(overlay.queue_free)
+	finish_tween.tween_callback(func() -> void: _adware_jumpscare_active = false)
 
 
 func _request_target_scene() -> void:

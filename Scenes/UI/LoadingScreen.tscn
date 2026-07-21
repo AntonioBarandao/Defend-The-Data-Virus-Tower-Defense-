@@ -116,6 +116,15 @@ position = Vector2(614.5625, 488)
 scale = Vector2(0.3277659, 0.3277659)
 texture = ExtResource("3_adware")
 
+[node name="AcceptButton" type="Button" parent="ArtworkLayer/Viruses/Adware"]
+offset_left = 0.0
+offset_top = 92.0
+offset_right = 350.0
+offset_bottom = 245.0
+mouse_default_cursor_shape = 2
+flat = true
+tooltip_text = "Accept"
+
 [node name="MutantVirus" type="Sprite2D" parent="ArtworkLayer/Viruses" unique_id=1280499747]
 position = Vector2(696.5624, 758.99994)
 scale = Vector2(0.3265957, 0.3265957)
