@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bpxhwuwa1piro"
-path="res://.godot/imported/IPS_Intrusion_LV1_Spike.png-b8ab204226fa61d5de1bdf4ea96dc3eb.ctex"
+path="res://.godot/imported/IPS_Intrusion_LV1_Spike.png-1e73f15388f5ee916a1c2abc099a0030.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Towers/IPS_Intrusion/IPS_Intrusion_LV1_Spike.png"
-dest_files=["res://.godot/imported/IPS_Intrusion_LV1_Spike.png-b8ab204226fa61d5de1bdf4ea96dc3eb.ctex"]
+source_file="res://assets/Towers/IPS_Intrusion/IPS_Intrusion_LV1_Spike.png"
+dest_files=["res://.godot/imported/IPS_Intrusion_LV1_Spike.png-1e73f15388f5ee916a1c2abc099a0030.ctex"]
 
 [params]
 

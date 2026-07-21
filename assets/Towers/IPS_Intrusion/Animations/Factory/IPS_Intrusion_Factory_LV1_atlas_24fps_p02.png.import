@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bao8577f734b1"
-path="res://.godot/imported/IPS_Intrusion_Factory_LV1_atlas_24fps_p02.png-c2bfe42c6f044a6e1d21fc9346757dff.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://assets/Towers/IPS_Intrusion/Animations/Factory/IPS_Intrusion_Factory_LV1_atlas_24fps_p02.png"
-dest_files=["res://.godot/imported/IPS_Intrusion_Factory_LV1_atlas_24fps_p02.png-c2bfe42c6f044a6e1d21fc9346757dff.ctex"]
 
 [params]
 

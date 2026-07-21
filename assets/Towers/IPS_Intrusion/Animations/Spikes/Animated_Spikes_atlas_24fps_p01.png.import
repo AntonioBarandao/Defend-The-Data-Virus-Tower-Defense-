@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c40m24guuhisq"
-path="res://.godot/imported/Animated_Spikes_atlas_24fps_p01.png-67a4aac949e39eb0b6e63a5482358fdd.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://assets/Towers/IPS_Intrusion/Animations/Spikes/Animated_Spikes_atlas_24fps_p01.png"
-dest_files=["res://.godot/imported/Animated_Spikes_atlas_24fps_p01.png-67a4aac949e39eb0b6e63a5482358fdd.ctex"]
 
 [params]
 

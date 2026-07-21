@@ -3,8 +3,8 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cu4d4m2j6gr5r"
-path.s3tc="res://.godot/imported/EDR_Hunter_Drone_Idle_atlas_24fps_p01.png-7824b425c8702bb4877bfacf5497a161.s3tc.ctex"
-path.etc2="res://.godot/imported/EDR_Hunter_Drone_Idle_atlas_24fps_p01.png-7824b425c8702bb4877bfacf5497a161.etc2.ctex"
+path.s3tc="res://.godot/imported/EDR_Hunter_Drone_Idle_atlas_24fps_p01.png-c8addeabeb7d56e35679f79ae8dc8297.s3tc.ctex"
+path.etc2="res://.godot/imported/EDR_Hunter_Drone_Idle_atlas_24fps_p01.png-c8addeabeb7d56e35679f79ae8dc8297.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
@@ -12,8 +12,8 @@ metadata={
 
 [deps]
 
-source_file="res://Assets/Towers/EDR_Hunter/Animations/Drone/EDR_Hunter_Drone_Idle_atlas_24fps_p01.png"
-dest_files=["res://.godot/imported/EDR_Hunter_Drone_Idle_atlas_24fps_p01.png-7824b425c8702bb4877bfacf5497a161.s3tc.ctex", "res://.godot/imported/EDR_Hunter_Drone_Idle_atlas_24fps_p01.png-7824b425c8702bb4877bfacf5497a161.etc2.ctex"]
+source_file="res://assets/Towers/EDR_Hunter/Animations/Drone/EDR_Hunter_Drone_Idle_atlas_24fps_p01.png"
+dest_files=["res://.godot/imported/EDR_Hunter_Drone_Idle_atlas_24fps_p01.png-c8addeabeb7d56e35679f79ae8dc8297.s3tc.ctex", "res://.godot/imported/EDR_Hunter_Drone_Idle_atlas_24fps_p01.png-c8addeabeb7d56e35679f79ae8dc8297.etc2.ctex"]
 
 [params]
 

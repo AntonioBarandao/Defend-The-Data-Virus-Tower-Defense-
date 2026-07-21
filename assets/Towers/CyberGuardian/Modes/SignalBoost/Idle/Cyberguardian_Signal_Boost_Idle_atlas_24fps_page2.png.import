@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bw5fg3di418ac"
-path="res://.godot/imported/Cyberguardian_Signal_Boost_Idle_atlas_24fps_page2.png-cb24ed252c9fbaf0e37bb5da212faf8b.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://assets/Towers/CyberGuardian/Modes/SignalBoost/Idle/Cyberguardian_Signal_Boost_Idle_atlas_24fps_page2.png"
-dest_files=["res://.godot/imported/Cyberguardian_Signal_Boost_Idle_atlas_24fps_page2.png-cb24ed252c9fbaf0e37bb5da212faf8b.ctex"]
 
 [params]
 

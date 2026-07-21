@@ -3,8 +3,8 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://uo2kbmxeae88"
-path.s3tc="res://.godot/imported/EDR_Hunter_LV1_Shoot_atlas_24fps_p01.png-e5b58b9b40bbf3fdcdf214cc5a9f2c14.s3tc.ctex"
-path.etc2="res://.godot/imported/EDR_Hunter_LV1_Shoot_atlas_24fps_p01.png-e5b58b9b40bbf3fdcdf214cc5a9f2c14.etc2.ctex"
+path.s3tc="res://.godot/imported/EDR_Hunter_LV1_Shoot_atlas_24fps_p01.png-559ba1abdbcc7e2a20b664582c30763d.s3tc.ctex"
+path.etc2="res://.godot/imported/EDR_Hunter_LV1_Shoot_atlas_24fps_p01.png-559ba1abdbcc7e2a20b664582c30763d.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
@@ -12,8 +12,8 @@ metadata={
 
 [deps]
 
-source_file="res://Assets/Towers/EDR_Hunter/Animations/LV1/EDR_Hunter_LV1_Shoot_atlas_24fps_p01.png"
-dest_files=["res://.godot/imported/EDR_Hunter_LV1_Shoot_atlas_24fps_p01.png-e5b58b9b40bbf3fdcdf214cc5a9f2c14.s3tc.ctex", "res://.godot/imported/EDR_Hunter_LV1_Shoot_atlas_24fps_p01.png-e5b58b9b40bbf3fdcdf214cc5a9f2c14.etc2.ctex"]
+source_file="res://assets/Towers/EDR_Hunter/Animations/LV1/EDR_Hunter_LV1_Shoot_atlas_24fps_p01.png"
+dest_files=["res://.godot/imported/EDR_Hunter_LV1_Shoot_atlas_24fps_p01.png-559ba1abdbcc7e2a20b664582c30763d.s3tc.ctex", "res://.godot/imported/EDR_Hunter_LV1_Shoot_atlas_24fps_p01.png-559ba1abdbcc7e2a20b664582c30763d.etc2.ctex"]
 
 [params]
 
