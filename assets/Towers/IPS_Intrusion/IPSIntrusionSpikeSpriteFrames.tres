@@ -1,8 +1,8 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://qi862ppyhgpw"]
 
-[ext_resource type="Texture2D" uid="uid://c40m24guuhisq" path="res://assets/Towers/IPS_Intrusion/Animations/Spikes/Animated_Spikes_atlas_24fps_p01.png" id="1_k105a"]
-[ext_resource type="Texture2D" uid="uid://bstda3b2k677h" path="res://assets/Towers/IPS_Intrusion/Animations/Spikes/Animated_Spikes_atlas_24fps_p02.png" id="2_psnkb"]
-[ext_resource type="Texture2D" uid="uid://r472ndgvgir4" path="res://assets/Towers/IPS_Intrusion/Animations/Spikes/Animated_Spikes_atlas_24fps_p03.png" id="3_5ifwn"]
+[ext_resource type="Texture2D" uid="uid://c40m24guuhisq" path="res://Assets/Towers/IPS_Intrusion/Animations/Spikes/Animated_Spikes_atlas_24fps_p01.png" id="1_k105a"]
+[ext_resource type="Texture2D" uid="uid://bstda3b2k677h" path="res://Assets/Towers/IPS_Intrusion/Animations/Spikes/Animated_Spikes_atlas_24fps_p02.png" id="2_psnkb"]
+[ext_resource type="Texture2D" uid="uid://r472ndgvgir4" path="res://Assets/Towers/IPS_Intrusion/Animations/Spikes/Animated_Spikes_atlas_24fps_p03.png" id="3_5ifwn"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wj0y7"]
 atlas = ExtResource("1_k105a")
