@@ -3,6 +3,8 @@ extends Node2D
 
 signal placed(tower: CyberGuardianTower)
 signal mode_changed(mode_id: StringName)
+signal signal_boost_effect_changed(active: bool)
+signal signal_boost_status_changed(state_id: StringName, time_remaining: float)
 signal firewall_damage_requested(follow: PathFollow2D, amount: int)
 
 const TowerSummonEffectScript := preload("res://Scripts/Effects/tower_summon_effect.gd")
@@ -19,6 +21,10 @@ const TRACK_ANIMATIONS := [
 const MODE_DEFENDER := &"defender"
 const MODE_SIGNAL_BOOST := &"signal_boost"
 const MODE_FIREWALL := &"firewall"
+const SIGNAL_BOOST_STATE_READY := &"ready"
+const SIGNAL_BOOST_STATE_DECLARE := &"declare"
+const SIGNAL_BOOST_STATE_ACTIVE := &"active"
+const SIGNAL_BOOST_STATE_COOLDOWN := &"cooldown"
 const MODE_SEQUENCE := [
 	MODE_DEFENDER,
 	MODE_SIGNAL_BOOST,
@@ -75,11 +81,14 @@ const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
 @export var defender_summon_visual_path: NodePath = ^"Visuals/DefenderSummon"
 @export var defender_shoot_visual_path: NodePath = ^"Visuals/DefenderShoot"
 @export var signal_boost_idle_visual_path: NodePath = ^"Visuals/SignalBoostIdle"
-@export var signal_boost_summon_visual_path: NodePath = ^"Visuals/SignalBoostSummon"
-@export var signal_boost_shoot_visual_path: NodePath = ^"Visuals/SignalBoostShoot"
+@export var signal_boost_declare_visual_path: NodePath = ^"Visuals/SignalBoostDeclare"
+@export var signal_boost_active_visual_path: NodePath = ^"Visuals/SignalBoostActive"
 @export var firewall_idle_visual_path: NodePath = ^"Visuals/FirewallIdle"
 @export var firewall_summon_visual_path: NodePath = ^"Visuals/FirewallSummon"
 @export var firewall_shoot_visual_path: NodePath = ^"Visuals/FirewallShoot"
+@export_group("Signal Boost")
+@export_range(1.0, 300.0, 1.0) var signal_boost_active_duration := 50.0
+@export_range(1.0, 600.0, 1.0) var signal_boost_cooldown_duration := 120.0
 @export_group("Mode Sprites")
 @export var signal_boost_sprite_path: NodePath = ^"ModeSprites/SignalBoostSprite"
 @export var firewall_sprite_path: NodePath = ^"ModeSprites/FirewallSprite"
@@ -122,6 +131,9 @@ var _signal_boost_active := false
 var _signal_boost_range_multiplier := SIGNAL_BOOST_RANGE_MULTIPLIER
 var _signal_boost_cooldown_multiplier := SIGNAL_BOOST_COOLDOWN_MULTIPLIER
 var _signal_boost_hawk_speed_multiplier := SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER
+var _signal_boost_state: StringName = SIGNAL_BOOST_STATE_READY
+var _signal_boost_time_remaining := 0.0
+var _signal_boost_last_reported_second := -1
 var _virus_path: Path2D
 var _firewall_area: Area2D
 var _firewall_collision_shape: CollisionShape2D
@@ -182,7 +194,8 @@ func _ready() -> void:
 	_asset_cache.load_startup_resources()
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_update_signal_boost_cycle(delta)
 	_update_attack_range_preview()
 
 
@@ -247,6 +260,7 @@ func finish_drag() -> bool:
 
 func reset_tower() -> void:
 	level = 1
+	_reset_signal_boost_cycle()
 	set_guardian_mode(MODE_DEFENDER)
 	set_signal_boost_active(false)
 	global_position = _home_position
@@ -344,16 +358,50 @@ func set_guardian_mode(mode_id: StringName) -> bool:
 	if normalized_mode == _current_mode:
 		return true
 
+	var previous_mode := _current_mode
 	_current_mode = normalized_mode
+	if previous_mode == MODE_SIGNAL_BOOST \
+			and _current_mode != MODE_SIGNAL_BOOST \
+			and _signal_boost_state in [SIGNAL_BOOST_STATE_DECLARE, SIGNAL_BOOST_STATE_ACTIVE]:
+		_start_signal_boost_cooldown()
 	_apply_guardian_mode_visual()
 	_sync_mode_groups()
 	_sync_firewall_field()
+	_update_attack_range_preview()
 	mode_changed.emit(_current_mode)
 	return true
 
 
 func get_current_mode_id() -> StringName:
 	return _current_mode
+
+
+func activate_signal_boost() -> bool:
+	if not can_activate_signal_boost():
+		return false
+
+	var declare_duration := _get_animation_duration(SUMMON_ANIMATION)
+	_set_signal_boost_cycle_state(SIGNAL_BOOST_STATE_DECLARE, maxf(0.01, declare_duration))
+	play_animation(SUMMON_ANIMATION)
+	return true
+
+
+func can_activate_signal_boost() -> bool:
+	return _placed \
+		and _current_mode == MODE_SIGNAL_BOOST \
+		and _signal_boost_state == SIGNAL_BOOST_STATE_READY
+
+
+func get_signal_boost_state_id() -> StringName:
+	return _signal_boost_state
+
+
+func get_signal_boost_time_remaining() -> float:
+	return maxf(0.0, _signal_boost_time_remaining)
+
+
+func is_signal_boost_effect_active() -> bool:
+	return _signal_boost_state == SIGNAL_BOOST_STATE_ACTIVE
 
 
 func get_mode_display_name(mode_id: StringName = &"") -> String:
@@ -380,6 +428,78 @@ func get_unlocked_mode_ids(knowledge_level: int) -> Array[StringName]:
 			unlocked_modes.append(mode_id)
 
 	return unlocked_modes
+
+
+func _update_signal_boost_cycle(delta: float) -> void:
+	if _signal_boost_state == SIGNAL_BOOST_STATE_READY:
+		return
+
+	_signal_boost_time_remaining = maxf(0.0, _signal_boost_time_remaining - delta)
+	var reported_second := ceili(_signal_boost_time_remaining)
+	if reported_second != _signal_boost_last_reported_second:
+		_signal_boost_last_reported_second = reported_second
+		signal_boost_status_changed.emit(_signal_boost_state, _signal_boost_time_remaining)
+	if _signal_boost_time_remaining > 0.0:
+		return
+
+	match _signal_boost_state:
+		SIGNAL_BOOST_STATE_DECLARE:
+			_start_signal_boost_active()
+		SIGNAL_BOOST_STATE_ACTIVE:
+			_start_signal_boost_cooldown()
+		SIGNAL_BOOST_STATE_COOLDOWN:
+			_set_signal_boost_cycle_state(SIGNAL_BOOST_STATE_READY, 0.0)
+			if _current_mode == MODE_SIGNAL_BOOST:
+				play_animation(IDLE_ANIMATION)
+
+
+func _start_signal_boost_active() -> void:
+	if not _placed or _current_mode != MODE_SIGNAL_BOOST:
+		_start_signal_boost_cooldown()
+		return
+
+	_set_signal_boost_cycle_state(SIGNAL_BOOST_STATE_ACTIVE, signal_boost_active_duration)
+	play_animation(SHOOT_ANIMATION)
+
+
+func _start_signal_boost_cooldown() -> void:
+	_set_signal_boost_cycle_state(SIGNAL_BOOST_STATE_COOLDOWN, signal_boost_cooldown_duration)
+	if _current_mode == MODE_SIGNAL_BOOST:
+		play_animation(IDLE_ANIMATION)
+
+
+func _reset_signal_boost_cycle() -> void:
+	_set_signal_boost_cycle_state(SIGNAL_BOOST_STATE_READY, 0.0)
+	if _current_mode == MODE_SIGNAL_BOOST:
+		play_animation(IDLE_ANIMATION)
+
+
+func _set_signal_boost_cycle_state(state_id: StringName, time_remaining: float) -> void:
+	var effect_was_active := _signal_boost_state == SIGNAL_BOOST_STATE_ACTIVE
+	_signal_boost_state = state_id
+	_signal_boost_time_remaining = maxf(0.0, time_remaining)
+	_signal_boost_last_reported_second = ceili(_signal_boost_time_remaining)
+	var effect_is_active := _signal_boost_state == SIGNAL_BOOST_STATE_ACTIVE
+	if effect_was_active != effect_is_active:
+		signal_boost_effect_changed.emit(effect_is_active)
+	signal_boost_status_changed.emit(_signal_boost_state, _signal_boost_time_remaining)
+
+
+func _get_animation_duration(animation_name: StringName) -> float:
+	var visual := _get_visual_for_animation(animation_name)
+	if visual == null or visual.sprite_frames == null:
+		return 0.0
+	var frames := visual.sprite_frames
+	if not frames.has_animation(animation_name):
+		return 0.0
+
+	var animation_speed := frames.get_animation_speed(animation_name)
+	if animation_speed <= 0.0:
+		return 0.0
+	var duration := 0.0
+	for frame_index in range(frames.get_frame_count(animation_name)):
+		duration += frames.get_frame_duration(animation_name, frame_index) / animation_speed
+	return duration
 
 
 func set_signal_boost_active(active: bool) -> void:
@@ -494,8 +614,8 @@ func _configure_animation_visuals() -> void:
 	_register_track_visual(MODE_DEFENDER, SUMMON_ANIMATION, defender_summon_visual_path)
 	_register_track_visual(MODE_DEFENDER, SHOOT_ANIMATION, defender_shoot_visual_path)
 	_register_track_visual(MODE_SIGNAL_BOOST, IDLE_ANIMATION, signal_boost_idle_visual_path)
-	_register_track_visual(MODE_SIGNAL_BOOST, SUMMON_ANIMATION, signal_boost_summon_visual_path)
-	_register_track_visual(MODE_SIGNAL_BOOST, SHOOT_ANIMATION, signal_boost_shoot_visual_path)
+	_register_track_visual(MODE_SIGNAL_BOOST, SUMMON_ANIMATION, signal_boost_declare_visual_path)
+	_register_track_visual(MODE_SIGNAL_BOOST, SHOOT_ANIMATION, signal_boost_active_visual_path)
 	_register_track_visual(MODE_FIREWALL, IDLE_ANIMATION, firewall_idle_visual_path)
 	_register_track_visual(MODE_FIREWALL, SUMMON_ANIMATION, firewall_summon_visual_path)
 	_register_track_visual(MODE_FIREWALL, SHOOT_ANIMATION, firewall_shoot_visual_path)
@@ -562,8 +682,13 @@ func _show_only_visual(visual_to_show: AnimatedSprite2D) -> void:
 
 
 func _on_track_visual_animation_finished(visual: AnimatedSprite2D) -> void:
-	if visual == _active_visual:
-		_return_to_idle()
+	if visual != _active_visual:
+		return
+	if _current_mode == MODE_SIGNAL_BOOST and _signal_boost_state == SIGNAL_BOOST_STATE_DECLARE:
+		_start_signal_boost_active()
+		return
+
+	_return_to_idle()
 
 
 func contains_global_point(pointer_position: Vector2) -> bool:
@@ -680,7 +805,8 @@ func _update_platform_highlight() -> void:
 
 
 func _update_attack_range_preview() -> void:
-	if not show_attack_range_preview:
+	if not show_attack_range_preview or _current_mode != MODE_DEFENDER:
+		_set_range_preview_visible(false)
 		return
 
 	var should_show := _dragging or _menu_range_preview_active

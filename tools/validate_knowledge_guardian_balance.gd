@@ -30,10 +30,24 @@ func _run() -> void:
 		var guardian := guardian_scene.instantiate() as CyberGuardianTower
 		root.add_child(guardian)
 		await process_frame
+		guardian.set_menu_range_preview_active(true)
+		await process_frame
+		var range_fill := guardian.get("_range_preview_fill") as Polygon2D
+		var range_outline := guardian.get("_range_preview_outline") as Line2D
+		_check(range_fill != null and range_outline != null, "Cyber Guardian range preview is created")
 		var unlocked_modes := guardian.get_unlocked_mode_ids(1)
 		for mode_id in [&"defender", &"signal_boost", &"firewall"]:
 			_check(mode_id in unlocked_modes, "%s is unlocked at Knowledge LV1" % guardian.get_mode_display_name(mode_id))
 			_check(guardian.set_guardian_mode(mode_id), "%s can be selected" % guardian.get_mode_display_name(mode_id))
+			await process_frame
+			var should_show_range: bool = mode_id == &"defender"
+			_check(
+				range_fill != null
+				and range_outline != null
+				and range_fill.visible == should_show_range
+				and range_outline.visible == should_show_range,
+				"%s range preview visibility is correct" % guardian.get_mode_display_name(mode_id)
+			)
 		guardian.queue_free()
 
 	await process_frame

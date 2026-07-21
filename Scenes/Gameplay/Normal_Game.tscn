@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://djw1fm0wta4mt"]
 
 [ext_resource type="PackedScene" uid="uid://nfjr7ke15kok" path="res://Scenes/Gameplay/Cutscene_Test_Game.tscn" id="1_game_base"]
+[ext_resource type="Texture2D" uid="uid://c0okywelrqut" path="res://assets/Towers/CyberGuardian/Modes/SignalBoost/Cyber_Guardian_SignalBoost_Icon.png" id="2_4isur"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_16a2y"]
 resource_local_to_scene = true
@@ -113,22 +114,33 @@ shadow_size = 8
 [node name="CyberQuestionHUD" parent="." index="1" unique_id=923521268]
 visible = true
 
-[node name="QuestionPanel" parent="CyberQuestionHUD/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="0" unique_id=1626758872]
+[node name="QuestionPanel" parent="CyberQuestionHUD/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="1" unique_id=1626758872]
 offset_left = -804.0
 offset_top = -299.0
 offset_right = 448.79993
 offset_bottom = -6.0
 
-[node name="GameControlsHUD" parent="." index="4" unique_id=772842743]
-lives_store_slide_multiplier = 1.0
-lives_stamp_start_scale = 1.55
-lives_stamp_duration = 0.36
+[node name="AbilitySlot" parent="SignalBoostHUD/Root" parent_id_path=PackedInt32Array(1966753094, 1920354202) index="0" unique_id=1043464847]
+offset_left = 14.0
+offset_top = 476.0
+offset_right = 194.0
+offset_bottom = 695.0
+tooltip_text = ""
+mouse_filter = 1
+mouse_default_cursor_shape = 0
 
-[node name="LivesPanel" parent="GameControlsHUD/Root" parent_id_path=PackedInt32Array(772842743, 1956639417) index="2"]
-offset_left = 1297.0
-offset_top = 104.0
-offset_right = 1547.0
-offset_bottom = 183.0
+[node name="ActivationButton" parent="SignalBoostHUD/Root/AbilitySlot/Margin/Content/IconFrame" parent_id_path=PackedInt32Array(1966753094, 2003845464) index="0" unique_id=375932501]
+custom_minimum_size = Vector2(136, 136)
+layout_mode = 0
+offset_left = -43.0
+offset_top = -29.0
+offset_right = 188.0
+offset_bottom = 202.0
+tooltip_text = "Activate Signal Boost"
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("2_4isur")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="MainMenuButton" parent="GameControlsHUD/Root" parent_id_path=PackedInt32Array(772842743, 1956639417) index="3" unique_id=1814937485]
 visible = false
@@ -136,7 +148,7 @@ visible = false
 [node name="WaveSetPanel" parent="CutsceneDemoMenuHUD/Root" index="3"]
 visible = false
 
-[node name="CpuArena" parent="." index="12" unique_id=1951202282]
+[node name="CpuArena" parent="." index="13" unique_id=1951202282]
 position = Vector2(957.99994, 541.5)
 scale = Vector2(1.1495215, 1.1509033)
 
@@ -210,6 +222,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_n2mrm")
 [editable path="CyberQuestionHUD"]
 [editable path="PerformanceHUD"]
 [editable path="ProgressHUD"]
+[editable path="SignalBoostHUD"]
 [editable path="GameControlsHUD"]
 [editable path="TowerUpgradeHUD"]
 [editable path="UtilityOverlayHUD"]
