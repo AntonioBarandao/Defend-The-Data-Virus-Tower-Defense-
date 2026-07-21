@@ -3904,12 +3904,13 @@ func _shoot_siem_hawk_target(siem_hawk: SIEMHawkTowerScript, target: PathFollow2
 
 
 func _shoot_laser_turret_targets(laser_turret: LaserTurretScript, targets: Array[PathFollow2D]) -> void:
-	if laser_turret == null:
+	if not is_instance_valid(laser_turret):
 		return
 
 	var origin_position := laser_turret.global_position
 	var laser_width := laser_turret.get_laser_width()
 	var laser_color := laser_turret.get_laser_color()
+	var shot_power := laser_turret.get_shot_power()
 	var destroyed_count := 0
 	var destroyed_reward := 0
 	for target in targets:
@@ -3924,7 +3925,7 @@ func _shoot_laser_turret_targets(laser_turret: LaserTurretScript, targets: Array
 				_spawn_colored_laser(origin_position, target_position, laser_color, laser_width)
 		else:
 			_spawn_colored_laser(origin_position, target_position, laser_color, laser_width)
-		if _damage_virus(target, _laser_turret.get_shot_power(), false):
+		if _damage_virus(target, shot_power, false):
 			destroyed_count += 1
 			destroyed_reward += target_reward
 
@@ -3933,7 +3934,7 @@ func _shoot_laser_turret_targets(laser_turret: LaserTurretScript, targets: Array
 			_utility_overlay_hud.show_tower_destroy_popup(
 				_world_to_screen_position(laser_turret.global_position),
 				destroyed_reward,
-				laser_turret.get_shot_power(),
+				shot_power,
 				laser_turret.get_shot_cooldown()
 			)
 		laser_turret.mark_shot_fired()
