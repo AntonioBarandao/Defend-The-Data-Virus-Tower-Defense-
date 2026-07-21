@@ -1,5 +1,6 @@
 
 extends Control
+var auth = AuthWrapper.new()
 
 func _ready():
 	$FormPanel/VBox/CreateButton.pressed.connect(_on_create_pressed)
@@ -26,8 +27,13 @@ func _on_create_pressed():
 	if password != confirm_password:
 		status.text = "Passwords do not match."
 		return
-
-	status.text = "Account details look good."
+	
+	if auth.register_user(username, password):
+		status.text = "Account created successfully!"
+		await get_tree().create_timer(1.0).timeout
+		get_tree().change_scene_to_file("res://Scenes/Menus/LoginScene.tscn")
+	else:
+		status.text = "Username already exists."
 
 func _on_back_pressed():
 	get_tree().change_scene_to_file("res://Scenes/Menus/LoginScene.tscn")

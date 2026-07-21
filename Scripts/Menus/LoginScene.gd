@@ -3,7 +3,7 @@ extends Control
 const MAIN_MENU_SCENE := "res://Scenes/Menus/MainMenu.tscn"
 const SESSION_USERNAME_META := &"logged_in_username"
 const WELCOME_PENDING_META := &"login_welcome_pending"
-
+var auth := AuthWrapper.new()
 
 func _ready():
 	$FormPanel/VBox/LoginButton.pressed.connect(_on_login_pressed)
@@ -13,20 +13,26 @@ func _ready():
 	$FormPanel/VBox/PasswordInput.text_submitted.connect(_submit_login)
 	$FormPanel/VBox/UsernameInput.grab_focus()
 
-func _on_login_pressed():
-	var username: String = $FormPanel/VBox/UsernameInput.text.strip_edges()
-	var password: String = $FormPanel/VBox/PasswordInput.text
+
+func _on_login_pressed(): 
+	var username = $FormPanel/VBox/UsernameInput.text.strip_edges()
+	var password = $FormPanel/VBox/PasswordInput.text
+
 	if username.is_empty() or password.is_empty():
 		$FormPanel/VBox/StatusLabel.text = "Enter your username and password."
 		return
 
-	get_tree().root.set_meta(SESSION_USERNAME_META, username)
-	get_tree().root.set_meta(WELCOME_PENDING_META, true)
-	var change_error := get_tree().change_scene_to_file(MAIN_MENU_SCENE)
-	if change_error != OK:
-		get_tree().root.remove_meta(SESSION_USERNAME_META)
-		get_tree().root.remove_meta(WELCOME_PENDING_META)
-		$FormPanel/VBox/StatusLabel.text = "Unable to return to the main menu."
+	if auth.login(username, password):
+		get_tree().root.set_meta(SESSION_USERNAME_META, username)
+		get_tree().root.set_meta(WELCOME_PENDING_META, true)
+
+		var err := get_tree().change_scene_to_file(MAIN_MENU_SCENE)
+		if err != OK:
+			get_tree().root.remove_meta(SESSION_USERNAME_META)
+			get_tree().root.remove_meta(WELCOME_PENDING_META)
+			$FormPanel/VBox/StatusLabel.text = "Unable to return to the main menu."
+	else:
+		$FormPanel/VBox/StatusLabel.text = "Invalid username or password."
 
 func _on_back_pressed():
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
