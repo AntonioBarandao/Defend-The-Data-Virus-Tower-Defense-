@@ -3,6 +3,7 @@
 
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/dictionary.hpp>
 
 #include "database.h"
 #include "auth.h"
@@ -15,7 +16,7 @@ class AuthWrapper : public RefCounted {
 private:
     Database db;
     Auth* auth;
-    int current_user_id = -1;
+
     godot::String current_username = "";
 
 protected:
@@ -25,9 +26,20 @@ public:
     AuthWrapper();
     ~AuthWrapper();
 
+    // Authentication
     bool login(String username, String password);
     bool register_user(String username, String password);
     void logout();
+
+    // Save System
+    bool save_game(int coins,
+                   int experience,
+                   int highest_wave);
+
+    Dictionary load_game();
+
+    // Current user
+    int get_current_user_id() const;
 };
 
 #endif
