@@ -8,6 +8,20 @@ const DEFAULT_FONT_ROOT := "res://assets/Fonts"
 const FONT_EXTENSIONS := ["otf", "ttf"]
 const FONT_OVERLAY_NAME := "PhishingLetterFontOverlay"
 const FONT_OVERLAY_META := "phishing_letter_font_overlay"
+const FONT_ORIGINAL_STATE_META := "phishing_font_original_state"
+const HIDDEN_TEXT_COLOR_NAMES := [
+	"font_color",
+	"font_pressed_color",
+	"font_hover_color",
+	"font_hover_pressed_color",
+	"font_focus_color",
+	"font_disabled_color",
+	"font_readonly_color",
+	"font_uneditable_color",
+	"font_placeholder_color",
+	"caret_color",
+	"selection_color"
+]
 
 
 func _ready() -> void:
@@ -48,6 +62,30 @@ static func apply_font_corruption(root: Node, rng: RandomNumberGenerator, fonts_
 		return
 
 	_apply_font_corruption_recursive(root, font_paths, rng)
+
+
+static func clear_font_corruption(root: Node) -> void:
+	if root == null:
+		return
+
+	_clear_font_corruption_recursive(root)
+
+
+static func set_corrupted_control_font_color(control: Control, color: Color) -> bool:
+	if control == null or not control.has_meta(FONT_ORIGINAL_STATE_META):
+		return false
+
+	var original_state := control.get_meta(FONT_ORIGINAL_STATE_META) as Dictionary
+	if String(original_state.get("kind", "")) != "control_overlay":
+		return false
+
+	var overlay := control.get_node_or_null(FONT_OVERLAY_NAME) as RichTextLabel
+	if overlay == null:
+		return false
+
+	overlay.add_theme_color_override("default_color", color)
+	_hide_control_text(control)
+	return true
 
 
 static func load_font_paths(fonts_root: String = DEFAULT_FONT_ROOT) -> Array[String]:
@@ -106,7 +144,7 @@ static func _apply_font_corruption_recursive(node: Node, font_paths: Array[Strin
 
 
 static func _apply_letter_font_corruption(control: Control, font_paths: Array[String], rng: RandomNumberGenerator) -> void:
-	if font_paths.is_empty():
+	if font_paths.is_empty() or control.has_meta(FONT_ORIGINAL_STATE_META):
 		return
 
 	var text := _get_control_text(control)
@@ -115,15 +153,21 @@ static func _apply_letter_font_corruption(control: Control, font_paths: Array[St
 
 	if control is RichTextLabel:
 		var rich_text := control as RichTextLabel
+		var original_bbcode_enabled := rich_text.bbcode_enabled
+		control.set_meta(FONT_ORIGINAL_STATE_META, {
+			"kind": "rich_text",
+			"text": rich_text.text,
+			"bbcode_enabled": original_bbcode_enabled
+		})
 		rich_text.bbcode_enabled = true
-		rich_text.text = _build_letter_font_bbcode(text, font_paths, rng)
+		rich_text.text = _build_letter_font_bbcode(rich_text.text, font_paths, rng, original_bbcode_enabled)
 		return
 
 	if not (control is Label or control is Button or control is LineEdit or control is TextEdit):
 		return
 
 	_clear_existing_letter_overlay(control)
-	_hide_control_text(control)
+	_capture_control_color_state(control)
 
 	var overlay := RichTextLabel.new()
 	overlay.name = FONT_OVERLAY_NAME
@@ -137,17 +181,31 @@ static func _apply_letter_font_corruption(control: Control, font_paths: Array[St
 	overlay.z_index = 100
 	overlay.autowrap_mode = control.autowrap_mode if control is Label or control is TextEdit else TextServer.AUTOWRAP_OFF
 	_copy_text_theme(control, overlay)
+	_hide_control_text(control)
 	control.add_child(overlay)
 	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 
-static func _build_letter_font_bbcode(text: String, font_paths: Array[String], rng: RandomNumberGenerator) -> String:
+static func _build_letter_font_bbcode(
+	text: String,
+	font_paths: Array[String],
+	rng: RandomNumberGenerator,
+	preserve_bbcode_tags := false
+) -> String:
 	var bbcode := ""
 	var previous_font_index := -1
-	for index in text.length():
+	var index := 0
+	while index < text.length():
 		var character := text.substr(index, 1)
+		if preserve_bbcode_tags and character == "[":
+			var tag_end := text.find("]", index)
+			if tag_end >= index:
+				bbcode += text.substr(index, tag_end - index + 1)
+				index = tag_end + 1
+				continue
 		if character == "\n":
 			bbcode += "\n"
+			index += 1
 			continue
 
 		var font_index := rng.randi_range(0, font_paths.size() - 1)
@@ -157,6 +215,7 @@ static func _build_letter_font_bbcode(text: String, font_paths: Array[String], r
 		previous_font_index = font_index
 		var font_path := font_paths[font_index]
 		bbcode += "[font=\"%s\"]%s[/font]" % [font_path, _escape_bbcode(character)]
+		index += 1
 
 	return bbcode
 
@@ -185,25 +244,59 @@ static func _get_control_text(control: Control) -> String:
 static func _clear_existing_letter_overlay(control: Control) -> void:
 	for child in control.get_children():
 		if child.has_meta(FONT_OVERLAY_META) or child.name == FONT_OVERLAY_NAME:
-			child.queue_free()
+			child.free()
+
+
+static func _capture_control_color_state(control: Control) -> void:
+	var color_overrides := {}
+	for color_name in HIDDEN_TEXT_COLOR_NAMES:
+		color_overrides[color_name] = {
+			"had_override": control.has_theme_color_override(color_name),
+			"color": control.get_theme_color(color_name)
+		}
+	control.set_meta(FONT_ORIGINAL_STATE_META, {
+		"kind": "control_overlay",
+		"color_overrides": color_overrides
+	})
 
 
 static func _hide_control_text(control: Control) -> void:
 	var transparent := Color(1.0, 1.0, 1.0, 0.0)
-	for color_name in [
-		"font_color",
-		"font_pressed_color",
-		"font_hover_color",
-		"font_hover_pressed_color",
-		"font_focus_color",
-		"font_disabled_color",
-		"font_readonly_color",
-		"font_uneditable_color",
-		"font_placeholder_color",
-		"caret_color",
-		"selection_color"
-	]:
+	for color_name in HIDDEN_TEXT_COLOR_NAMES:
 		control.add_theme_color_override(color_name, transparent)
+
+
+static func _clear_font_corruption_recursive(node: Node) -> void:
+	if node.has_meta(FONT_OVERLAY_META):
+		return
+
+	for child in node.get_children():
+		_clear_font_corruption_recursive(child)
+
+	var control := node as Control
+	if control == null or not control.has_meta(FONT_ORIGINAL_STATE_META):
+		return
+
+	var original_state := control.get_meta(FONT_ORIGINAL_STATE_META) as Dictionary
+	var state_kind := String(original_state.get("kind", ""))
+	if state_kind == "rich_text" and control is RichTextLabel:
+		var rich_text := control as RichTextLabel
+		rich_text.bbcode_enabled = bool(original_state.get("bbcode_enabled", false))
+		rich_text.text = String(original_state.get("text", ""))
+	elif state_kind == "control_overlay":
+		_clear_existing_letter_overlay(control)
+		_restore_control_color_state(control, original_state.get("color_overrides", {}) as Dictionary)
+
+	control.remove_meta(FONT_ORIGINAL_STATE_META)
+
+
+static func _restore_control_color_state(control: Control, color_overrides: Dictionary) -> void:
+	for color_name in HIDDEN_TEXT_COLOR_NAMES:
+		var color_state := color_overrides.get(color_name, {}) as Dictionary
+		if bool(color_state.get("had_override", false)):
+			control.add_theme_color_override(color_name, color_state.get("color", Color.WHITE) as Color)
+		else:
+			control.remove_theme_color_override(color_name)
 
 
 static func _copy_text_theme(source: Control, target: RichTextLabel) -> void:

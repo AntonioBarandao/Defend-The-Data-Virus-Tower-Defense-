@@ -119,6 +119,11 @@ offset_top = -299.0
 offset_right = 448.79993
 offset_bottom = -6.0
 
+[node name="GameControlsHUD" parent="." index="4" unique_id=772842743]
+lives_store_slide_multiplier = 1.0
+lives_stamp_start_scale = 1.55
+lives_stamp_duration = 0.36
+
 [node name="LivesPanel" parent="GameControlsHUD/Root" parent_id_path=PackedInt32Array(772842743, 1956639417) index="2"]
 offset_left = 1297.0
 offset_top = 104.0

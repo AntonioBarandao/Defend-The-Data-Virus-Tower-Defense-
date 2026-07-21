@@ -158,6 +158,7 @@ func _sync_panel_bottom_pivot() -> void:
 
 
 func show_wave_question(wave_number: int) -> void:
+	_clear_phishing_font_corruption()
 	_current_wave = wave_number
 	_answer_locked = false
 	_show_selection_view()
@@ -280,6 +281,7 @@ func _answer_selected(answer_index: int) -> void:
 	_question_panel.hide()
 	_input_blocker.hide()
 	_restore_panel_transform()
+	_clear_phishing_font_corruption()
 	question_solved.emit(_current_reward)
 
 
@@ -304,6 +306,7 @@ func _show_wrong_answer_review(correct_index: int) -> void:
 	_restore_panel_transform()
 	_reset_answer_button_review_state()
 	_back_button.disabled = false
+	_clear_phishing_font_corruption()
 	question_solved.emit(0)
 
 
@@ -323,10 +326,12 @@ func _apply_wrong_answer_review_state(correct_index: int) -> void:
 			button.modulate = ANSWER_CORRECT_REVIEW_MODULATE
 			button.add_theme_color_override("font_color", ANSWER_CORRECT_REVIEW_FONT_COLOR)
 			button.add_theme_color_override("font_disabled_color", ANSWER_CORRECT_REVIEW_FONT_COLOR)
+			PhishingEmailScript.set_corrupted_control_font_color(button, ANSWER_CORRECT_REVIEW_FONT_COLOR)
 		else:
 			button.modulate = ANSWER_FADED_REVIEW_MODULATE
 			button.add_theme_color_override("font_color", ANSWER_FADED_REVIEW_FONT_COLOR)
 			button.add_theme_color_override("font_disabled_color", ANSWER_FADED_REVIEW_FONT_COLOR)
+			PhishingEmailScript.set_corrupted_control_font_color(button, ANSWER_FADED_REVIEW_FONT_COLOR)
 
 
 func _reset_answer_button_review_state() -> void:
@@ -363,6 +368,15 @@ func _trigger_phishing_decoy_failure() -> void:
 	_phishing_decoy_answer_index = -1
 	PhishingEmailScript.apply_font_corruption(get_tree().root, _phishing_rng)
 	phishing_decoy_selected.emit()
+
+
+func _clear_phishing_font_corruption() -> void:
+	if is_inside_tree():
+		PhishingEmailScript.clear_font_corruption(get_tree().root)
+
+
+func _exit_tree() -> void:
+	_clear_phishing_font_corruption()
 
 
 func _update_cyberbuck_amount() -> void:

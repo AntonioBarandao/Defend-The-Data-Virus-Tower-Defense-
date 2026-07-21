@@ -6,9 +6,13 @@ signal spike_damage_requested(follow: PathFollow2D, amount: int)
 const IPS_ATTACK_RANGE := 360.0
 const IPS_MAX_LEVEL := 5
 const IPS_UPGRADE_COSTS := [0, 0, 0, 0, 0]
+const MAX_SPIKE_BONUSES_BY_LEVEL := [0, 2, 4, 6, 8]
+const ATTACK_RANGE_MULTIPLIERS_BY_LEVEL := [1.0, 1.2, 1.4, 1.6, 1.8]
+const PRODUCTION_SPEED_MULTIPLIERS_BY_LEVEL := [1.0, 1.15, 1.30, 1.45, 1.60]
+const FACTORY_PRODUCTION_ANIMATION := &"IPS_Intrusion_Factory_LV1"
 
 @export var spike_scene: PackedScene
-@export_range(1, 12, 1) var max_spikes := 5
+@export_range(1, 24, 1) var max_spikes := 5
 @export_range(0.2, 10.0, 0.1) var spike_production_seconds := 2.0
 @export_range(1, 100, 1) var spike_damage := 1
 @export_range(16.0, 180.0, 1.0) var spike_spacing := 66.0
@@ -17,6 +21,7 @@ const IPS_UPGRADE_COSTS := [0, 0, 0, 0, 0]
 var _production_elapsed := 0.0
 var _spikes: Array[IPSIntrusionSpike] = []
 var _factory_pulse_tween: Tween
+var _factory_animation_active := false
 
 
 func _ready() -> void:
@@ -28,6 +33,7 @@ func _ready() -> void:
 func reset_tower() -> void:
 	super.reset_tower()
 	_production_elapsed = 0.0
+	_set_factory_production_active(false)
 	_clear_spikes()
 
 
@@ -44,6 +50,7 @@ func update_attack(_delta: float, _active_viruses: Array[PathFollow2D]) -> PathF
 
 func update_spike_factory(delta: float, active_viruses: Array[PathFollow2D]) -> void:
 	if not is_placed():
+		_set_factory_production_active(false)
 		return
 
 	_resolve_virus_path()
@@ -51,7 +58,9 @@ func update_spike_factory(delta: float, active_viruses: Array[PathFollow2D]) -> 
 	_sync_spike_positions()
 	_damage_viruses_with_spikes(active_viruses)
 
-	if _spikes.size() >= max_spikes or not _has_path_target_in_range():
+	var can_produce_spike := _spikes.size() < get_max_spikes() and _has_path_target_in_range()
+	_set_factory_production_active(can_produce_spike)
+	if not can_produce_spike:
 		_production_elapsed = 0.0
 		return
 
@@ -64,7 +73,7 @@ func update_spike_factory(delta: float, active_viruses: Array[PathFollow2D]) -> 
 
 
 func get_attack_range() -> float:
-	return IPS_ATTACK_RANGE * _get_signal_boost_range_multiplier()
+	return IPS_ATTACK_RANGE * get_level_attack_range_multiplier() * _get_signal_boost_range_multiplier()
 
 
 func get_max_level() -> int:
@@ -87,11 +96,19 @@ func get_shot_power() -> int:
 
 
 func get_shot_cooldown() -> float:
-	return spike_production_seconds * _get_signal_boost_cooldown_multiplier()
+	return spike_production_seconds / get_level_production_speed_multiplier() * _get_signal_boost_cooldown_multiplier()
 
 
 func get_max_spikes() -> int:
-	return max_spikes
+	return max_spikes + int(MAX_SPIKE_BONUSES_BY_LEVEL[_get_level_balance_index()])
+
+
+func get_level_attack_range_multiplier() -> float:
+	return float(ATTACK_RANGE_MULTIPLIERS_BY_LEVEL[_get_level_balance_index()])
+
+
+func get_level_production_speed_multiplier() -> float:
+	return float(PRODUCTION_SPEED_MULTIPLIERS_BY_LEVEL[_get_level_balance_index()])
 
 
 func upgrade() -> bool:
@@ -221,7 +238,7 @@ func _find_spike_target(slot_index: int, occupied_offsets: Array[float] = []) ->
 func _build_candidate_deltas(slot_index: int) -> Array[float]:
 	var preferred := _get_slot_delta(slot_index)
 	var candidates: Array[float] = [preferred]
-	for index in range(max_spikes + 2):
+	for index in range(get_max_spikes() + 2):
 		var distance := float(index) * spike_spacing
 		for sign in [1.0, -1.0]:
 			var value: float = distance * float(sign)
@@ -311,3 +328,18 @@ func _play_factory_pulse() -> void:
 	_factory_pulse_tween = create_tween()
 	_factory_pulse_tween.tween_property(self, "modulate", Color(0.72, 0.95, 1.0, 1.0), 0.12)
 	_factory_pulse_tween.tween_property(self, "modulate", Color.WHITE, 0.22)
+
+
+func _set_factory_production_active(active: bool) -> void:
+	if active == _factory_animation_active:
+		return
+
+	_factory_animation_active = active
+	if active:
+		play_animation(FACTORY_PRODUCTION_ANIMATION)
+	else:
+		play_idle()
+
+
+func _get_level_balance_index() -> int:
+	return clampi(level - 1, 0, IPS_MAX_LEVEL - 1)

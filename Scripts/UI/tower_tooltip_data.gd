@@ -5,7 +5,7 @@ const TOWER_DETAILS := {
 	&"guardian": {
 		"name": "Cyber Guardian",
 		"summary": "Mode-based guardian with defender, signal boost, and firewall roles.",
-		"upgrade": "Switches guardian mode as knowledge unlocks passive boost and firewall utility.",
+		"upgrade": "All three Guardian modes are available from Knowledge LV1.",
 		"tooltip": "Cyber Guardian\nDefender shoots visible viruses. Signal Boost is passive support. Firewall places a damaging burn wall on the path."
 	},
 	&"laser": {
@@ -28,14 +28,14 @@ const TOWER_DETAILS := {
 	},
 	&"siem": {
 		"name": "SIEM Hawk",
-		"summary": "Intel tower that can dispatch, freeze mode, and bank knowledge.",
+		"summary": "Mobile intel tower that travels to selected destinations, freezes, and banks knowledge.",
 		"upgrade": "Improves hawk combat stats and knowledge pressure.",
-		"tooltip": "SIEM Hawk\nAttacks threats and can dispatch into Frozen Mode. Land it at HQ to bank extracted knowledge."
+		"tooltip": "SIEM Hawk\nEnter Destination Mode, then select a map location for the Hawk. Freeze it to scan in place or land at HQ to bank knowledge."
 	},
 	&"ips": {
 		"name": "IPS Intrusion",
 		"summary": "Path-control tower that manufactures damaging intrusion spikes.",
-		"upgrade": "Improves spike factory pressure and path denial.",
+		"upgrade": "Each level adds 2 spike slots, 20% base range, and 15% production speed.",
 		"tooltip": "IPS Intrusion\nPlaces spikes on the virus path. Spikes damage the next virus that crosses them."
 	},
 	&"honeypot": {
@@ -55,12 +55,12 @@ const SCANNER_MODE_DETAILS := {
 }
 
 const GUARDIAN_MODE_DETAILS := {
-	&"signal_boost": "Signal Boost Guardian\nPassive support mode. Boosts tower range, tower cooldown, and SIEM Hawk speed from Knowledge LV3 upward.",
+	&"signal_boost": "Signal Boost Guardian\nPassive support mode. Available from Knowledge LV1; boosts tower range, tower cooldown, and SIEM Hawk speed.",
 	&"firewall": "Firewall Guardian\nPlaces a red firewall on the nearest path point. Viruses that cross it take hit damage and burn damage over time.",
 	&"mode_three": "Future Guardian Mode\nReserved for an additional specialization."
 }
 
-const SIEM_DISPATCH_TOOLTIP := "Dispatch Hawk\nSends the SIEM Hawk into Frozen Mode so it can extract and bank knowledge."
+const SIEM_DISPATCH_TOOLTIP := "Destination Mode\nSelect a map location for the SIEM Hawk. A blue marker remains until it arrives."
 const SIEM_LAND_TOOLTIP := "Land to Headquarters\nReturns the SIEM Hawk to HQ and stores banked knowledge."
 
 

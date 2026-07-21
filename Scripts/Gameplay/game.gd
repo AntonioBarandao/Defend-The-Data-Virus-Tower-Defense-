@@ -86,17 +86,17 @@ const DEFAULT_TOWER_CARD_RESOURCES := {
 const GUARDIAN_MODE_DEFENDER := &"defender"
 const GUARDIAN_MODE_SIGNAL_BOOST := &"signal_boost"
 const GUARDIAN_MODE_FIREWALL := &"firewall"
-const SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL := 3
+const SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL := 1
 const SIGNAL_BOOST_RANGE_BASE_BONUS := 0.10
 const SIGNAL_BOOST_COOLDOWN_BASE_REDUCTION := 0.10
 const SIGNAL_BOOST_HAWK_SPEED_BASE_BONUS := 0.20
 const SIGNAL_BOOST_STEP_BONUS := 0.05
 const SIGNAL_BOOST_STEP_LEVELS := [4, 6, 7, 9, 10]
-const FIREWALL_UNLOCK_KNOWLEDGE_LEVEL := 5
+const FIREWALL_UNLOCK_KNOWLEDGE_LEVEL := 1
 const FIREWALL_BURN_DURATION_SECONDS := 5.0
 const FIREWALL_BALANCE_BY_MIN_KNOWLEDGE_LEVEL := [
 	{
-		"level": 5,
+		"level": 1,
 		"hit_damage": 1,
 		"burn_damage": 1,
 		"burn_tick_seconds": 1.0
@@ -459,6 +459,9 @@ func _input(event: InputEvent) -> void:
 
 		var pointer_position := _screen_to_canvas_position(mouse_button.position)
 		if mouse_button.pressed:
+			if _demo_siem_hawk_action_buttons_has_point(mouse_button.position):
+				return
+
 			if _handle_tower_upgrade_sidebar_modal_press(mouse_button.position):
 				return
 
@@ -510,6 +513,10 @@ func _input(event: InputEvent) -> void:
 
 			if _find_tower_at_point(_guardians, pointer_position) != null:
 				_handle_placed_tower_press(pointer_position, mouse_button.position)
+				return
+
+			if _try_set_siem_hawk_destination(pointer_position):
+				get_viewport().set_input_as_handled()
 				return
 		elif _pending_store_drag_tower != null:
 			_clear_pending_store_tower_drag()
@@ -580,6 +587,9 @@ func _input(event: InputEvent) -> void:
 		var screen_touch := event as InputEventScreenTouch
 		var pointer_position := _screen_to_canvas_position(screen_touch.position)
 		if screen_touch.pressed:
+			if _demo_siem_hawk_action_buttons_has_point(screen_touch.position):
+				return
+
 			if _handle_tower_upgrade_sidebar_modal_press(screen_touch.position):
 				return
 
@@ -631,6 +641,10 @@ func _input(event: InputEvent) -> void:
 
 			if _find_tower_at_point(_guardians, pointer_position) != null:
 				_handle_placed_tower_press(pointer_position, screen_touch.position)
+				return
+
+			if _try_set_siem_hawk_destination(pointer_position):
+				get_viewport().set_input_as_handled()
 				return
 		elif _pending_store_drag_tower != null:
 			_clear_pending_store_tower_drag()
@@ -1267,6 +1281,8 @@ func _cache_store_companion_ui_positions() -> void:
 	if not _wave_label_store_position_cached and _wave_label != null:
 		_wave_label_store_rest_position = _wave_label.global_position
 		_wave_label_store_position_cached = true
+	if _game_controls_hud != null and _game_controls_hud.has_method("cache_store_companion_ui_position"):
+		_game_controls_hud.call("cache_store_companion_ui_position")
 
 	if _cutscene_demo_menu_hud != null and _cutscene_demo_menu_hud.has_method("cache_store_companion_ui_positions"):
 		_cutscene_demo_menu_hud.call("cache_store_companion_ui_positions")
@@ -1276,6 +1292,8 @@ func _apply_store_companion_ui_slide(slide_offset: float) -> void:
 	_cache_store_companion_ui_positions()
 	if _wave_label != null and _wave_label_store_position_cached:
 		_wave_label.global_position = _wave_label_store_rest_position + Vector2(slide_offset, 0.0)
+	if _game_controls_hud != null and _game_controls_hud.has_method("apply_store_companion_slide"):
+		_game_controls_hud.call("apply_store_companion_slide", slide_offset)
 
 	if _cutscene_demo_menu_hud != null and _cutscene_demo_menu_hud.has_method("apply_store_companion_slide"):
 		_cutscene_demo_menu_hud.call("apply_store_companion_slide", slide_offset)
@@ -2204,6 +2222,15 @@ func _handle_siem_hawk_press(pointer_position: Vector2, screen_position: Vector2
 	return false
 
 
+func _try_set_siem_hawk_destination(pointer_position: Vector2) -> bool:
+	if _siem_hawk == null or not is_instance_valid(_siem_hawk):
+		return false
+	if not _siem_hawk.can_accept_dispatch_destination():
+		return false
+
+	return _siem_hawk.set_dispatch_destination(pointer_position)
+
+
 func _handle_ips_intrusion_press(pointer_position: Vector2, screen_position: Vector2) -> bool:
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.ips_panel_has_point(screen_position):
 		return true
@@ -2606,7 +2633,20 @@ func _toggle_siem_hawk_dispatch() -> void:
 		return
 
 	_siem_hawk.toggle_dispatch()
+	if _siem_hawk.is_dispatched():
+		_hide_siem_sidebar_for_destination_selection()
 	_sync_siem_upgrade_panel()
+
+
+func _hide_siem_sidebar_for_destination_selection() -> void:
+	if _tower_upgrade_hud == null or not _tower_upgrade_hud.is_siem_panel_visible():
+		return
+
+	# Destination selection needs the next map press. Keep the shop closed so it
+	# cannot cover or consume that press while the Hawk is being directed.
+	_restore_tower_store_after_upgrade_panel = false
+	_tower_upgrade_hud.hide_siem_panel()
+	_set_tower_menu_radius_previews(false, false, false, false, false, false, false)
 
 
 func _land_siem_hawk_to_headquarters() -> void:
@@ -2902,10 +2942,7 @@ func _get_guardian_sidebar_status_text(knowledge_level: int) -> String:
 			float(firewall_profile["burn_duration"])
 		]
 
-	return "Defender Mode\nOffensive guardian fire is active.\nSignal Boost unlocks at Knowledge LV%d.\nFirewall unlocks at Knowledge LV%d." % [
-		SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL,
-		FIREWALL_UNLOCK_KNOWLEDGE_LEVEL
-	]
+	return "Defender Mode\nOffensive guardian fire is active.\nAll Guardian modes are available from Knowledge LV1."
 
 
 func _format_percent(value: float) -> String:

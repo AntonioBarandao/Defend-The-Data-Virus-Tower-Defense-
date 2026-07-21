@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 AssetCache="*res://Scripts/Menus/asset_cache.gd"
+CustomCursorController="*res://Scenes/UI/CustomCursor.tscn"
 
 [display]
 

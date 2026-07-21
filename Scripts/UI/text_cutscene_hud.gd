@@ -132,7 +132,7 @@ func _on_act_started(_act_number: int) -> void:
 
 func _on_cutscene_finished() -> void:
 	if _game_controls_hud != null:
-		_game_controls_hud.set_lives_visible(true)
+		_game_controls_hud.set_lives_visible(true, true)
 
 
 func _hide_wave5_preview_until_cutscene() -> void:
@@ -457,7 +457,6 @@ func _finish_cutscene() -> void:
 	_start_phase(PHASE_END)
 	_stop_mascot_bob()
 	_continue_button.hide()
-	_cleanup_wave5_preview_trojan()
 	await _return_camera_to_start()
 	if _skip_requested or not _running:
 		return
@@ -478,6 +477,7 @@ func _finish_cutscene() -> void:
 	_dialogue_panel.global_position = _panel_final_global_position
 	_mascot.global_position = _mascot_final_global_position
 	_prepare_all_overlays_hidden()
+	_cleanup_wave5_preview_trojan()
 	_set_phase_one_target_visible(false)
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.hide()
@@ -510,13 +510,11 @@ func _run_wave5_phase_one() -> void:
 	if _skip_requested or not _running:
 		return
 
-	_set_phase_one_target_visible(false)
 	_finish_phase(PHASE_ONE)
 
 
 func _run_wave5_phase_three() -> void:
 	_start_phase(PHASE_THREE)
-	_set_phase_one_target_visible(true)
 	_dialogue_panel.hide()
 	_mascot.hide()
 	_dim_overlay.hide()
@@ -527,7 +525,6 @@ func _run_wave5_phase_three() -> void:
 	if _skip_requested or not _running:
 		return
 
-	_set_phase_one_target_visible(false)
 	_finish_phase(PHASE_THREE)
 
 
