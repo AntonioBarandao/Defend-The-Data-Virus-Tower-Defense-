@@ -12,9 +12,9 @@ const DIFFICULTY_EASY := "easy"
 const DIFFICULTY_MEDIUM := "medium"
 const DIFFICULTY_HARD := "hard"
 const REWARDS := {
-	DIFFICULTY_EASY: 10,
-	DIFFICULTY_MEDIUM: 25,
-	DIFFICULTY_HARD: 50
+	DIFFICULTY_EASY: 50,
+	DIFFICULTY_MEDIUM: 100,
+	DIFFICULTY_HARD: 200
 }
 const DEMO_WRONG_TEXT := "Wrong Answer for this wave ..."
 const DEMO_WRONG_FEEDBACK_SECONDS := 3.0
@@ -31,6 +31,51 @@ const QUESTIONS := {
 				"prompt": "Which practice helps protect an account if a password is stolen?",
 				"answers": ["Enable multi-factor authentication", "Reuse one simple password", "Share passwords in chat", "Turn off software updates"],
 				"correct": 0
+			},
+			{
+				"prompt": "What is phishing?",
+				"answers": ["A way to cool a computer", "A fake message designed to steal information", "A method for compressing files", "A type of network cable"],
+				"correct": 1
+			},
+			{
+				"prompt": "Which password is the strongest?",
+				"answers": ["password123", "Tyler2008", "qwerty", "River!Orbit7-Cactus"],
+				"correct": 3
+			},
+			{
+				"prompt": "What should you do when an app says a security update is available?",
+				"answers": ["Install it from the app or vendor's official source", "Ignore every update", "Download it from an unknown pop-up", "Post your password to check it"],
+				"correct": 0
+			},
+			{
+				"prompt": "What does antivirus software primarily help detect?",
+				"answers": ["Slow internet plans", "Malicious software", "Weak Wi-Fi signals", "Broken monitors"],
+				"correct": 1
+			},
+			{
+				"prompt": "Which action is safest on a shared or public computer?",
+				"answers": ["Save every password in the browser", "Leave your account signed in", "Sign out when you are finished", "Disable the screen lock"],
+				"correct": 2
+			},
+			{
+				"prompt": "What should you do if a website asks for sensitive information and its address looks misspelled?",
+				"answers": ["Enter the information quickly", "Leave the site and navigate to the official address yourself", "Send the link to friends", "Disable browser warnings"],
+				"correct": 1
+			},
+			{
+				"prompt": "Why is it safer to use a password manager?",
+				"answers": ["It lets you use one weak password everywhere", "It makes accounts public", "It helps create and store unique strong passwords", "It removes the need for authentication"],
+				"correct": 2
+			},
+			{
+				"prompt": "Which information should you avoid posting publicly?",
+				"answers": ["Your favorite color", "A public weather report", "A movie review", "Your password or account recovery codes"],
+				"correct": 3
+			},
+			{
+				"prompt": "What is malware?",
+				"answers": ["Software created to harm, disrupt, or gain unauthorized access", "A secure backup format", "A network cable standard", "A software license"],
+				"correct": 0
 			}
 		],
 		DIFFICULTY_MEDIUM: [
@@ -38,6 +83,51 @@ const QUESTIONS := {
 				"prompt": "What should you do before opening an unexpected email attachment?",
 				"answers": ["Verify the sender and reason first", "Open it quickly", "Forward it to everyone", "Disable antivirus alerts"],
 				"correct": 0
+			},
+			{
+				"prompt": "What is the principle of least privilege?",
+				"answers": ["Give everyone administrator access", "Give users only the access needed for their work", "Use the shortest possible password", "Keep all files public"],
+				"correct": 1
+			},
+			{
+				"prompt": "Which backup approach best protects against ransomware?",
+				"answers": ["Keep one backup permanently connected", "Rename important files", "Maintain tested backups, including an offline or immutable copy", "Store the only copy on the infected device"],
+				"correct": 2
+			},
+			{
+				"prompt": "What is social engineering?",
+				"answers": ["Manipulating people into revealing information or taking unsafe actions", "Repairing damaged hardware", "Designing social media pages", "Encrypting a hard drive"],
+				"correct": 0
+			},
+			{
+				"prompt": "Why should an organization review security logs?",
+				"answers": ["To increase monitor brightness", "To identify suspicious activity and support investigations", "To make passwords shorter", "To replace software updates"],
+				"correct": 1
+			},
+			{
+				"prompt": "Which is the best response to a suspected compromised account?",
+				"answers": ["Keep using it normally", "Delete all audit logs", "Share the account with coworkers", "Report it, reset credentials, and review active sessions"],
+				"correct": 3
+			},
+			{
+				"prompt": "What is the primary purpose of data encryption?",
+				"answers": ["Make data unreadable without the correct key", "Delete duplicate files", "Increase processor speed", "Replace user authentication"],
+				"correct": 0
+			},
+			{
+				"prompt": "Why should unused user accounts be disabled?",
+				"answers": ["To increase storage capacity", "To reduce unnecessary paths an attacker could use", "To improve screen resolution", "To make usernames shorter"],
+				"correct": 1
+			},
+			{
+				"prompt": "Which event is a common indicator of a brute-force login attempt?",
+				"answers": ["One successful login during work hours", "A normal software update", "Many failed logins in a short period", "A user changing their profile image"],
+				"correct": 2
+			},
+			{
+				"prompt": "What does security awareness training help employees recognize?",
+				"answers": ["Only hardware failures", "Threats such as phishing and social engineering", "How to bypass company policies", "How to disable logging"],
+				"correct": 1
 			}
 		],
 		DIFFICULTY_HARD: [
@@ -45,6 +135,51 @@ const QUESTIONS := {
 				"prompt": "Why should passwords be hashed before storage?",
 				"answers": ["To verify them without storing the original password", "To make them easier to read", "To remove the need for login checks", "To send them faster over Wi-Fi"],
 				"correct": 0
+			},
+			{
+				"prompt": "What does salting password hashes defend against?",
+				"answers": ["SQL syntax errors", "Precomputed hash lookup and identical-hash comparison", "Packet fragmentation", "Expired TLS certificates"],
+				"correct": 1
+			},
+			{
+				"prompt": "Which control most directly limits lateral movement after one endpoint is compromised?",
+				"answers": ["A larger internet connection", "Disabling audit logs", "Network segmentation with tightly controlled access", "Using the same admin password everywhere"],
+				"correct": 2
+			},
+			{
+				"prompt": "Why is input parameterization important in database applications?",
+				"answers": ["It separates data from executable SQL commands", "It automatically encrypts the database", "It replaces access control", "It guarantees the server cannot fail"],
+				"correct": 0
+			},
+			{
+				"prompt": "What security property does a digital signature primarily provide?",
+				"answers": ["Availability and compression", "Confidentiality only", "Anonymity", "Integrity and proof of the signer's private-key possession"],
+				"correct": 3
+			},
+			{
+				"prompt": "An unknown process begins contacting many internal hosts. What is the best first containment action?",
+				"answers": ["Publicly post the logs", "Isolate the affected endpoint while preserving evidence", "Erase every system immediately", "Disable all backups"],
+				"correct": 1
+			},
+			{
+				"prompt": "Which vulnerability is caused when a program writes beyond an allocated memory boundary?",
+				"answers": ["DNS caching", "Buffer overflow", "Network address translation", "Certificate pinning"],
+				"correct": 1
+			},
+			{
+				"prompt": "What is the main security benefit of application allowlisting?",
+				"answers": ["Only approved software is permitted to execute", "All network ports remain open", "Every user becomes an administrator", "Files no longer need backups"],
+				"correct": 0
+			},
+			{
+				"prompt": "Which technique can protect a web session cookie from access by injected JavaScript?",
+				"answers": ["The HttpOnly attribute", "A longer domain name", "Disabling TLS", "Opening an additional port"],
+				"correct": 0
+			},
+			{
+				"prompt": "Why is key rotation an important cryptographic practice?",
+				"answers": ["It makes plaintext longer", "It limits exposure if a key is compromised", "It removes the need for access logs", "It converts asymmetric keys into passwords"],
+				"correct": 1
 			}
 		]
 	},
@@ -54,12 +189,102 @@ const QUESTIONS := {
 				"prompt": "Which device commonly directs traffic between different networks?",
 				"answers": ["Router", "Keyboard", "Monitor", "Headphones"],
 				"correct": 0
+			},
+			{
+				"prompt": "What does an IP address identify?",
+				"answers": ["A user's password", "A device or interface on an IP network", "A type of keyboard", "A file's size"],
+				"correct": 1
+			},
+			{
+				"prompt": "Which protocol translates domain names such as example.com into IP addresses?",
+				"answers": ["DNS", "HDMI", "USB", "SMTP"],
+				"correct": 0
+			},
+			{
+				"prompt": "Which device connects devices on the same local network and forwards Ethernet frames?",
+				"answers": ["Printer", "Switch", "Projector", "Modem cable"],
+				"correct": 1
+			},
+			{
+				"prompt": "What does Wi-Fi allow a device to do?",
+				"answers": ["Connect to a network wirelessly", "Remove malware automatically", "Increase hard-drive capacity", "Create stronger passwords"],
+				"correct": 0
+			},
+			{
+				"prompt": "What is a LAN?",
+				"answers": ["A long-distance satellite only", "A password policy", "A network covering a limited area such as a home or school", "An antivirus scan"],
+				"correct": 2
+			},
+			{
+				"prompt": "Which cable is commonly used for wired Ethernet connections?",
+				"answers": ["HDMI", "Twisted-pair Ethernet cable", "Power cord only", "Audio cable"],
+				"correct": 1
+			},
+			{
+				"prompt": "What does a modem commonly connect a home network to?",
+				"answers": ["An internet service provider", "A keyboard", "A local printer only", "A computer's battery"],
+				"correct": 0
+			},
+			{
+				"prompt": "What is the name of a network's wireless identifier?",
+				"answers": ["CPU", "URL", "SSID", "PDF"],
+				"correct": 2
+			},
+			{
+				"prompt": "Which service is normally used to send email between mail servers?",
+				"answers": ["SMTP", "DNS", "SSH", "DHCP"],
+				"correct": 0
 			}
 		],
 		DIFFICULTY_MEDIUM: [
 			{
 				"prompt": "Which protocol is used for encrypted web browsing?",
 				"answers": ["HTTPS", "FTP", "Telnet", "HTTP only"],
+				"correct": 0
+			},
+			{
+				"prompt": "What is the main purpose of DHCP?",
+				"answers": ["Automatically assign network configuration to clients", "Encrypt email messages", "Block every inbound packet", "Translate web pages into HTML"],
+				"correct": 0
+			},
+			{
+				"prompt": "Which transport protocol provides reliable, ordered delivery?",
+				"answers": ["ARP", "ICMP", "TCP", "UDP"],
+				"correct": 2
+			},
+			{
+				"prompt": "What is a default gateway used for?",
+				"answers": ["Store DNS records", "Forward traffic to destinations outside the local subnet", "Assign MAC addresses", "Measure CPU temperature"],
+				"correct": 1
+			},
+			{
+				"prompt": "What does a subnet mask determine?",
+				"answers": ["The Wi-Fi password length", "The physical cable type", "Which part of an IP address is the network portion", "The website's encryption key"],
+				"correct": 2
+			},
+			{
+				"prompt": "Which command commonly tests whether another host is reachable using ICMP?",
+				"answers": ["mkdir", "ping", "copy", "format"],
+				"correct": 1
+			},
+			{
+				"prompt": "What is the purpose of ARP on an IPv4 local network?",
+				"answers": ["Map an IPv4 address to a MAC address", "Encrypt application data", "Assign domain names", "Route traffic across the internet"],
+				"correct": 0
+			},
+			{
+				"prompt": "Which port is the default for HTTPS?",
+				"answers": ["21", "53", "80", "443"],
+				"correct": 3
+			},
+			{
+				"prompt": "What is the main difference between a hub and a switch?",
+				"answers": ["A hub encrypts all traffic", "A switch forwards frames using learned MAC addresses", "A hub assigns IP addresses", "A switch only works wirelessly"],
+				"correct": 1
+			},
+			{
+				"prompt": "What does NAT commonly allow on a home network?",
+				"answers": ["Multiple private devices to share a public IP address", "DNS to replace Ethernet", "Every device to become a web server", "Passwords to travel without encryption"],
 				"correct": 0
 			}
 		],
@@ -68,13 +293,57 @@ const QUESTIONS := {
 				"prompt": "What information does a firewall rule commonly inspect before allowing traffic?",
 				"answers": ["IP addresses, ports, and protocols", "Screen brightness", "Mouse speed", "Keyboard layout"],
 				"correct": 0
+			},
+			{
+				"prompt": "How many usable host addresses are normally available in an IPv4 /27 subnet?",
+				"answers": ["14", "30", "32", "62"],
+				"correct": 1
+			},
+			{
+				"prompt": "Why can a switch send an unknown unicast frame out multiple ports?",
+				"answers": ["The destination MAC is not yet in its forwarding table", "The IP address is encrypted", "TCP requires broadcasting", "The cable is always faulty"],
+				"correct": 0
+			},
+			{
+				"prompt": "What is the purpose of the TCP three-way handshake?",
+				"answers": ["Resolve a hostname", "Assign a VLAN", "Establish connection state and synchronize sequence numbers", "Encrypt a disk"],
+				"correct": 2
+			},
+			{
+				"prompt": "A host has address 192.168.10.70/26. What is its network address?",
+				"answers": ["192.168.10.0", "192.168.10.64", "192.168.10.70", "192.168.10.128"],
+				"correct": 1
+			},
+			{
+				"prompt": "Which routing protocol is designed to exchange routes between autonomous systems on the internet?",
+				"answers": ["OSPF", "STP", "BGP", "ARP"],
+				"correct": 2
+			},
+			{
+				"prompt": "What problem does Spanning Tree Protocol prevent in switched Ethernet networks?",
+				"answers": ["Routing table encryption", "Layer 2 loops and broadcast storms", "Weak Wi-Fi passwords", "Duplicate DNS zones"],
+				"correct": 1
+			},
+			{
+				"prompt": "Which IPv6 prefix length is typically used for a standard LAN subnet?",
+				"answers": ["/8", "/32", "/64", "/128"],
+				"correct": 2
+			},
+			{
+				"prompt": "What is route convergence?",
+				"answers": ["Routers reaching a consistent view of available network paths", "Combining passwords into one key", "Converting IPv6 addresses into MAC addresses", "Compressing packet payloads"],
+				"correct": 0
+			},
+			{
+				"prompt": "Why might an administrator configure a VLAN trunk between switches?",
+				"answers": ["To carry traffic for multiple VLANs over one link", "To disable frame tagging", "To replace every router", "To assign public IP addresses automatically"],
+				"correct": 0
 			}
 		]
 	}
 }
 
 @export var demo_question_animation_enabled := false
-@export var demo_question_reward := 200
 @export_range(0, 10000, 1) var starting_cyberbucks := 250
 @export_range(160.0, 1200.0, 1.0) var demo_panel_slide_distance := 760.0
 @export_group("Presentation")
@@ -384,9 +653,6 @@ func _update_cyberbuck_amount() -> void:
 
 
 func _get_question_reward(difficulty: String) -> int:
-	if demo_question_animation_enabled:
-		return demo_question_reward
-
 	return int(REWARDS[difficulty])
 
 
