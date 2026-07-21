@@ -15,6 +15,11 @@ signal game_speed_changed(multiplier: float)
 
 @export var show_menu_button := true
 @export_range(1.0, 4.0, 0.25) var accelerated_game_speed := 2.0
+@export_group("Lives Card")
+@export_range(0.0, 2.0, 0.05) var lives_store_slide_multiplier := 1.0
+@export_range(1.0, 2.0, 0.05) var lives_stamp_start_scale := 1.55
+@export_range(0.1, 1.0, 0.01) var lives_stamp_duration := 0.36
+@export_group("")
 
 @onready var _reset_button: Button = $Root/BottomRightControls/ResetTowerButton
 @onready var _wave_button: Button = $Root/BottomRightControls/StartWaveButton
@@ -30,6 +35,12 @@ signal game_speed_changed(multiplier: float)
 @onready var _lives_label: Label = get_node_or_null(^"Root/LivesPanel/Margin/Content/Readout/LivesLabel") as Label
 
 var _was_tree_paused := false
+var _lives_store_rest_position := Vector2.ZERO
+var _lives_store_position_cached := false
+var _lives_rest_scale := Vector2.ONE
+var _lives_rest_modulate := Color.WHITE
+var _lives_rest_pivot_offset := Vector2.ZERO
+var _lives_stamp_tween: Tween
 
 
 func _ready() -> void:
@@ -55,6 +66,8 @@ func _ready() -> void:
 		_settings_button.tooltip_text = "Settings are coming soon."
 	if _exit_button != null:
 		_exit_button.pressed.connect(func() -> void: exit_pressed.emit())
+	_cache_lives_card_presentation()
+	cache_store_companion_ui_position()
 
 
 func _exit_tree() -> void:
@@ -85,9 +98,88 @@ func set_lives(current_lives: int, maximum_lives: int) -> void:
 	_lives_label.text = "%d/%d" % [maxi(0, current_lives), maxi(1, maximum_lives)]
 
 
-func set_lives_visible(is_visible: bool) -> void:
-	if _lives_panel != null:
-		_lives_panel.visible = is_visible
+func set_lives_visible(is_visible: bool, animate_stamp := false) -> void:
+	if _lives_panel == null:
+		return
+
+	_kill_lives_stamp_tween()
+	if not is_visible:
+		_lives_panel.hide()
+		_restore_lives_card_presentation()
+		return
+
+	if animate_stamp:
+		_play_lives_stamp_reveal()
+	else:
+		_restore_lives_card_presentation()
+		_lives_panel.show()
+
+
+func cache_store_companion_ui_position() -> void:
+	if _lives_panel == null or _lives_store_position_cached:
+		return
+	_lives_store_rest_position = _lives_panel.global_position
+	_lives_store_position_cached = true
+
+
+func apply_store_companion_slide(slide_offset: float) -> void:
+	cache_store_companion_ui_position()
+	if _lives_panel == null or not _lives_store_position_cached:
+		return
+	_lives_panel.global_position = _lives_store_rest_position + Vector2(
+		slide_offset * lives_store_slide_multiplier,
+		0.0
+	)
+
+
+func _cache_lives_card_presentation() -> void:
+	if _lives_panel == null:
+		return
+	_lives_rest_scale = _lives_panel.scale
+	_lives_rest_modulate = _lives_panel.modulate
+	_lives_rest_pivot_offset = _lives_panel.pivot_offset
+
+
+func _play_lives_stamp_reveal() -> void:
+	_restore_lives_card_presentation()
+	_lives_panel.show()
+	_lives_panel.pivot_offset = _lives_panel.size * 0.5
+	_lives_panel.scale = _lives_rest_scale * lives_stamp_start_scale
+	_lives_panel.modulate = Color(
+		minf(1.35, _lives_rest_modulate.r * 1.22),
+		minf(1.35, _lives_rest_modulate.g * 1.22),
+		minf(1.35, _lives_rest_modulate.b * 1.22),
+		0.0
+	)
+
+	var impact_duration := lives_stamp_duration * 0.48
+	var rebound_duration := lives_stamp_duration * 0.22
+	var settle_duration := lives_stamp_duration - impact_duration - rebound_duration
+	_lives_stamp_tween = create_tween()
+	_lives_stamp_tween.set_parallel(true)
+	_lives_stamp_tween.tween_property(_lives_panel, "scale", _lives_rest_scale * 0.92, impact_duration).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
+	_lives_stamp_tween.tween_property(_lives_panel, "modulate", _lives_rest_modulate, impact_duration * 0.55).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_lives_stamp_tween.set_parallel(false)
+	_lives_stamp_tween.tween_property(_lives_panel, "scale", _lives_rest_scale * 1.07, rebound_duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_lives_stamp_tween.tween_property(_lives_panel, "scale", _lives_rest_scale, settle_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_lives_stamp_tween.tween_callback(func() -> void:
+		_lives_stamp_tween = null
+		_restore_lives_card_presentation()
+	)
+
+
+func _restore_lives_card_presentation() -> void:
+	if _lives_panel == null:
+		return
+	_lives_panel.scale = _lives_rest_scale
+	_lives_panel.modulate = _lives_rest_modulate
+	_lives_panel.pivot_offset = _lives_rest_pivot_offset
+
+
+func _kill_lives_stamp_tween() -> void:
+	if _lives_stamp_tween != null and _lives_stamp_tween.is_valid():
+		_lives_stamp_tween.kill()
+	_lives_stamp_tween = null
 
 
 func set_admin_mode(enabled: bool) -> void:

@@ -130,7 +130,7 @@ func upgrade() -> bool:
 
 
 func can_scan_cloaked_viruses() -> bool:
-	return true
+	return false
 
 
 func aim_at(target_position: Vector2) -> void:

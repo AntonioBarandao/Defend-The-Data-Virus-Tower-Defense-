@@ -1,6 +1,6 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://culae7w1lc806"]
 
-[ext_resource type="Texture2D" uid="uid://deihvlnvp3oat" path="res://assets/Enemies/Adware/ExitPress/Adware_Exit_Press_atlas_24fps.png" id="1_exit_press_atlas"]
+[ext_resource type="Texture2D" uid="uid://deihvlnvp3oat" path="res://Assets/Enemies/Adware/ExitPress/Adware_Exit_Press_atlas_24fps.png" id="1_exit_press_atlas"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_exit_00"]
 atlas = ExtResource("1_exit_press_atlas")

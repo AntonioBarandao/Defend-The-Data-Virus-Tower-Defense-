@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://cg7unbnwfqj4l"]
+
+[ext_resource type="Script" uid="uid://v8wou860b3bc" path="res://Scripts/UI/custom_cursor_controller.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bs4ydtm6mwgu8" path="res://assets/UI/Cursor/DFD_Custom_Cursor_Hover.png" id="2_hover"]
+[ext_resource type="Texture2D" uid="uid://syeemu1avm1d" path="res://assets/UI/Cursor/DFD_Custom_Cursor_Press.png" id="3_press"]
+
+[node name="CustomCursorController" type="CanvasLayer" unique_id=410170170]
+layer = 2147483647
+script = ExtResource("1_script")
+
+[node name="CursorPivot" type="Node2D" parent="." unique_id=387864304]
+z_index = 4096
+z_as_relative = false
+position = Vector2(320, 240)
+rotation = -0.46251225
+scale = Vector2(0.275, 0.275)
+
+[node name="HoverCursor" type="Sprite2D" parent="CursorPivot" unique_id=59615882]
+position = Vector2(24, 101)
+texture = ExtResource("2_hover")
+
+[node name="PressCursor" type="Sprite2D" parent="CursorPivot" unique_id=787635058]
+visible = false
+position = Vector2(25, 80)
+texture = ExtResource("3_press")

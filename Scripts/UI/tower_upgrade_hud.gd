@@ -81,8 +81,8 @@ var _guardian_mode_names := {
 }
 var _guardian_mode_unlock_levels := {
 	GUARDIAN_MODE_DEFENDER: 1,
-	GUARDIAN_MODE_SIGNAL_BOOST: 3,
-	GUARDIAN_MODE_FIREWALL: 5
+	GUARDIAN_MODE_SIGNAL_BOOST: 1,
+	GUARDIAN_MODE_FIREWALL: 1
 }
 var _scanner_mode_names := {
 	&"camo": "Camo",
@@ -284,7 +284,7 @@ func set_honeypot_stats(
 
 
 func set_siem_dispatch_state(dispatched: bool, banked_knowledge: int, landing_to_headquarters := false, can_land := false) -> void:
-	_siem_dispatch_button.text = "Frozen Mode" if dispatched else "Dispatch Hawk"
+	_siem_dispatch_button.text = "Freeze Mode" if dispatched else "Destination Mode"
 	_siem_land_button.text = "Landing..." if landing_to_headquarters else "Land to Headquarters"
 	_siem_land_button.disabled = landing_to_headquarters or not can_land
 	_siem_banked_knowledge_label.text = "Banked Knowledge: %d" % maxi(0, banked_knowledge)

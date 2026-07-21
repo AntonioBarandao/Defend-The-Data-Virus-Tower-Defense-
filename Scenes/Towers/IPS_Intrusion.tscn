@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/Towers/IPS_Intrusion_Spike.tscn" id="3_spike"]
 
 [node name="IPS_Intrusion" type="AnimatedSprite2D" groups=["Defender", "OFFENSE_TOWER"]]
-scale = Vector2(0.11188765, 0.11188765)
+scale = Vector2(0.479, 0.479)
 sprite_frames = ExtResource("1_frames")
 animation = &"idle"
 autoplay = "idle"

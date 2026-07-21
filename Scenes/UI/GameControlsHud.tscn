@@ -72,6 +72,9 @@ shadow_size = 9
 [node name="GameControlsHUD" type="CanvasLayer" unique_id=1568501266]
 layer = 140
 script = ExtResource("1_script")
+lives_store_slide_multiplier = 1.0
+lives_stamp_start_scale = 1.55
+lives_stamp_duration = 0.36
 
 [node name="Root" type="Control" parent="." unique_id=1956639417]
 layout_mode = 3

@@ -2,7 +2,7 @@ class_name ProgressHUD
 extends CanvasLayer
 
 const MAX_KNOWLEDGE_LEVEL := 10
-const LEVEL_POINT_REQUIREMENTS := [0, 10, 50, 150, 250, 350, 450, 550, 650, 750]
+const LEVEL_POINT_REQUIREMENTS := [0, 5, 7, 10, 250, 350, 450, 550, 650, 750]
 
 @onready var _cyberbuck_amount_label: Label = $Root/CyberBuckCounter/CounterBox/Amount
 @onready var _level_label: Label = $Root/Panel/Margin/Content/LevelLabel

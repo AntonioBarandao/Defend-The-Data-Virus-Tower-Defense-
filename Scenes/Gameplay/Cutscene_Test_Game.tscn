@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://nfjr7ke15kok"]
+[gd_scene format=3 uid="uid://bxc2ry5rgfr31"]
 
 [ext_resource type="Script" uid="uid://cg642h3m1khds" path="res://Scripts/Gameplay/game.gd" id="1_on2he"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/IDS_Scanner.tscn" id="4_pc5c2"]
@@ -44,6 +44,7 @@
 [ext_resource type="Resource" uid="uid://cwd4nrntt1fxh" path="res://Resources/TowerShopCards/IPSIntrusionCard.tres" id="35_ips_card"]
 [ext_resource type="Resource" uid="uid://ciee7jdsbe0he" path="res://Resources/TowerShopCards/HoneypotProductionCard.tres" id="36_honeypot_card"]
 [ext_resource type="Texture2D" uid="uid://d26s2ivyd1ttd" path="res://assets/UI/TowerStoreArrowHex.svg" id="37_store_toggle"]
+[ext_resource type="PackedScene" uid="uid://c3y7m55tbgdll" path="res://Scenes/UI/SignalBoostHUD.tscn" id="38_signal_boost_hud"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_question"]
 bg_color = Color(0.025, 0.032, 0.05, 0.94)
@@ -125,20 +126,6 @@ resource_local_to_scene = true
 size = Vector2(92.59923, 92.59923)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_store_toggle"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qnrg6"]
-bg_color = Color(0.017, 0.031, 0.055, 0.96)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.25, 0.78, 1, 0.92)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-shadow_color = Color(0, 0, 0, 0.46)
-shadow_size = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syyru"]
 bg_color = Color(0.017, 0.031, 0.055, 0.96)
@@ -224,11 +211,25 @@ corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.46)
 shadow_size = 8
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tcrod"]
+bg_color = Color(0.017, 0.031, 0.055, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.78, 1, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.46)
+shadow_size = 8
+
 [sub_resource type="Curve2D" id="Curve2D_63v24"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -58.81182, -26, 0, 0, 0, 0, 194.00346, -22, 0, 0, 0, 0, 220.31721, 20, 0, 0, 0, 0, 232.3777, 83, 0, 0, 0, 0, 315.7046, 82, 0, 0, 0, 0, 358.45618, -19, 0, 0, 0, 0, 403.24866, -38, 0, 0, 0, 0, 553.1664, -40, 0, 0, 0, 0, 579.6762, -101, 0, 0, 0, 0, 608.92847, -138, 0, 0, 0, 0, 790.84076, -136, 0, 0, 0, 0, 829.2343, -97, 0, 0, 0, 0, 831.97675, -30, 0, 0, 0, 0, 869.4562, -2, 0, 0, 0, 0, 1112.6154, -9, 0, 0, 0, 0, 1129.9839, -71, 0, 0, 0, 0, 1168.3774, -113, 0, 0, 0, 0, 1400.567, -111, 0, 0, 0, 0, 1449.9302, -73, 0, 0, 0, 0, 1453.5262, 169, 0, 0, 0, 0, 1264.3575, 172, 0, 0, 0, 0, 1234.4933, 207, 0, 0, 0, 0, 1236.686, 352, 0, 0, 0, 0, 1204.8903, 388, 0, 0, 0, 0, 901.4508, 385, 0, 0, 0, 0, 855.7442, 401, 0, 0, 0, 0, 843.8605, 467, 0, 0, 0, 0, 793.5832, 488, 0, 0, 0, 0, 521.17175, 483, 0, 0, 0, 0, 476.37927, 447, 0, 0, 0, 0, 479.12164, 381, 0, 0, 0, 0, 480.03577, 301, 0, 0, 0, 0, 431.92365, 262, 0, 0, 0, 0, 197.29268, 261, 0, 0, 0, 0, 168.78612, 299, 0, 0, 0, 0, 158.91847, 434, 0, 0, 0, 0, 124.43828, 483, 0, 0, 0, 0, 64.6275, 502, 0, 0, 0, 0, 49.277817, 547, 0, 0, 0, 0, 12, 555)
+"points": PackedVector2Array(0, 0, 0, 0, -58.81182, -26, 0, 0, 0, 0, 194.00346, -22, 0, 0, 0, 0, 220.31721, 20, 0, 0, 0, 0, 232.3777, 83, 0, 0, 0, 0, 315.7046, 82, 0, 0, 0, 0, 344.81555, -14, 0, 0, 0, 0, 365.0475, -38, 0, 0, 0, 0, 528.9263, -36, 0, 0, 0, 0, 563.32056, -74, 0, 0, 0, 0, 568.37854, -116, 0, 0, 0, 0, 586.5873, -137, 0, 0, 0, 0, 783.84875, -137, 0, 0, 0, 0, 811.1619, -107, 0, 0, 0, 0, 831.97675, -30, 0, 0, 0, 0, 869.4562, -2, 0, 0, 0, 0, 1112.6154, -9, 0, 0, 0, 0, 1129.9839, -71, 0, 0, 0, 0, 1168.3774, -113, 0, 0, 0, 0, 1400.567, -111, 0, 0, 0, 0, 1449.9302, -73, 0, 0, 0, 0, 1453.5262, 169, 0, 0, 0, 0, 1264.3575, 172, 0, 0, 0, 0, 1234.4933, 207, 0, 0, 0, 0, 1236.686, 352, 0, 0, 0, 0, 1204.8903, 388, 0, 0, 0, 0, 901.4508, 385, 0, 0, 0, 0, 855.7442, 401, 0, 0, 0, 0, 843.8605, 467, 0, 0, 0, 0, 793.5832, 488, 0, 0, 0, 0, 521.17175, 483, 0, 0, 0, 0, 476.37927, 447, 0, 0, 0, 0, 479.12164, 381, 0, 0, 0, 0, 480.03577, 301, 0, 0, 0, 0, 431.92365, 262, 0, 0, 0, 0, 197.29268, 261, 0, 0, 0, 0, 168.78612, 299, 0, 0, 0, 0, 158.91847, 434, 0, 0, 0, 0, 124.43828, 483, 0, 0, 0, 0, 64.6275, 502, 0, 0, 0, 0, 49.277817, 547, 0, 0, 0, 0, 12, 555)
 }
-point_count = 40
+point_count = 41
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xpbew"]
 
@@ -246,7 +247,7 @@ volume_db = -6.0
 visible = false
 demo_question_animation_enabled = true
 
-[node name="QuestionPanel" parent="CyberQuestionHUD/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="0" unique_id=1626758872]
+[node name="QuestionPanel" parent="CyberQuestionHUD/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="1" unique_id=1626758872]
 theme_override_styles/panel = SubResource("StyleBoxFlat_question")
 
 [node name="PerformanceHUD" parent="." unique_id=1039250105 instance=ExtResource("12_perf")]
@@ -273,6 +274,8 @@ custom_minimum_size = Vector2(360, 20)
 offset_left = -927.0
 offset_right = -567.0
 offset_bottom = 95.0
+
+[node name="SignalBoostHUD" parent="." unique_id=1966753094 instance=ExtResource("38_signal_boost_hud")]
 
 [node name="GameControlsHUD" parent="." unique_id=772842743 instance=ExtResource("13_controls")]
 show_menu_button = false
@@ -493,7 +496,7 @@ card_resource = ExtResource("30_cyber_card")
 tower_name = "Cyber Guardian"
 
 [node name="CardPanel" parent="TestDrag/CyberGuardianCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_qnrg6")
+theme_override_styles/panel = SubResource("StyleBoxFlat_syyru")
 
 [node name="DisplaySprite" parent="TestDrag/CyberGuardianCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1248978504, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 63.00006)
@@ -527,7 +530,7 @@ tower_name = "Laser Turret"
 deploy_cost = 125
 
 [node name="CardPanel" parent="TestDrag/LaserTurretCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_syyru")
+theme_override_styles/panel = SubResource("StyleBoxFlat_5iosg")
 
 [node name="DisplaySprite" parent="TestDrag/LaserTurretCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1774681448, 113385319) index="0" unique_id=590825140]
 position = Vector2(68, 59.00006)
@@ -557,7 +560,7 @@ card_resource = ExtResource("32_ids_card")
 tower_name = "IDS Scanner"
 
 [node name="CardPanel" parent="TestDrag/IDSScannerCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_5iosg")
+theme_override_styles/panel = SubResource("StyleBoxFlat_cqx10")
 
 [node name="DisplaySprite" parent="TestDrag/IDSScannerCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2136481415, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 58.00006)
@@ -589,7 +592,7 @@ tower_name = "EDR Hunter"
 deploy_cost = 175
 
 [node name="CardPanel" parent="TestDrag/EDRHunterCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_cqx10")
+theme_override_styles/panel = SubResource("StyleBoxFlat_b1f5y")
 
 [node name="DisplaySprite" parent="TestDrag/EDRHunterCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1058679109, 113385319) index="0" unique_id=590825140]
 position = Vector2(67, 59.00006)
@@ -623,7 +626,7 @@ tower_name = "SIEM Hawk"
 deploy_cost = 225
 
 [node name="CardPanel" parent="TestDrag/SIEMHawkCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_b1f5y")
+theme_override_styles/panel = SubResource("StyleBoxFlat_mljs0")
 
 [node name="DisplaySprite" parent="TestDrag/SIEMHawkCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2097101912, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 63.00006)
@@ -655,7 +658,7 @@ tower_name = "IPS Spike"
 deploy_cost = 200
 
 [node name="CardPanel" parent="TestDrag/IPSIntrusionCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_mljs0")
+theme_override_styles/panel = SubResource("StyleBoxFlat_qunwk")
 
 [node name="DisplaySprite" parent="TestDrag/IPSIntrusionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1750948893, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 61.00006)
@@ -687,7 +690,7 @@ tower_name = "Honeypot"
 deploy_cost = 250
 
 [node name="CardPanel" parent="TestDrag/HoneypotProductionCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_qunwk")
+theme_override_styles/panel = SubResource("StyleBoxFlat_tcrod")
 
 [node name="DisplaySprite" parent="TestDrag/HoneypotProductionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1207325943, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 61.00006)
@@ -827,6 +830,7 @@ debug_color = Color(0.5323416, 0.5497722, 0.4333505, 0.41960785)
 [editable path="CyberQuestionHUD"]
 [editable path="PerformanceHUD"]
 [editable path="ProgressHUD"]
+[editable path="SignalBoostHUD"]
 [editable path="GameControlsHUD"]
 [editable path="TowerUpgradeHUD"]
 [editable path="UtilityOverlayHUD"]
