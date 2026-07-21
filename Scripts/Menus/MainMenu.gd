@@ -5,16 +5,14 @@ const WELCOME_PENDING_META := &"login_welcome_pending"
 
 @onready var background: TextureRect = $Background
 @onready var scanline: ColorRect = $Scanline
-@onready var title_label: Label = $MenuPanel/VBox/Title
+@onready var logo: TextureRect = $MenuPanel/VBox/Logo
 @onready var user_game_button: Button = $MenuPanel/VBox/UserGameButton
 @onready var admin_game_button: Button = $MenuPanel/VBox/AdminGameButton
 @onready var login_button: Button = $MenuPanel/VBox/LoginButton
 @onready var options_button: Button = $MenuPanel/VBox/OptionsButton
 @onready var quit_button: Button = $MenuPanel/VBox/QuitButton
 @onready var status_label: Label = $StatusLabel
-<<<<<<< HEAD
 @onready var sign_out_button: Button = $MenuPanel/VBox/SignOutButton
-=======
 @onready var welcome_banner: PanelContainer = $WelcomeBanner
 @onready var welcome_label: Label = $WelcomeBanner/Margin/WelcomeLabel
 @onready var presentation_button: Button = $PresentationButton
@@ -25,7 +23,6 @@ const WELCOME_PENDING_META := &"login_welcome_pending"
 @onready var options_close_button: Button = $OptionsOverlay/Panel/Margin/VBox/CloseButton
 @onready var jumpscare_overlay: ColorRect = $JumpscareOverlay
 @onready var jumpscare_icon: TextureRect = $JumpscareOverlay/Icon
->>>>>>> f30231dfd1cd994d0d0d95a41f486d77913a28d6
 
 var scan_speed := 120.0
 var background_zoom_amount := 0.015
@@ -42,14 +39,12 @@ func _ready() -> void:
 	login_button.pressed.connect(_on_login_pressed)
 	options_button.pressed.connect(_on_options_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
-<<<<<<< HEAD
 	sign_out_button.pressed.connect(_on_sign_out_pressed)
-=======
 	presentation_button.pressed.connect(_on_presentation_pressed)
 	volume_slider.value_changed.connect(_on_volume_changed)
 	fullscreen_check.toggled.connect(_on_fullscreen_toggled)
 	options_close_button.pressed.connect(_close_options)
-	title_label.gui_input.connect(_on_title_gui_input)
+	logo.gui_input.connect(_on_title_gui_input)
 	fullscreen_check.button_pressed = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
 	var master_bus := AudioServer.get_bus_index("Master")
 	volume_slider.value = db_to_linear(AudioServer.get_bus_volume_db(master_bus)) * 100.0
@@ -62,6 +57,7 @@ func _ready() -> void:
 func _sync_account_state() -> void:
 	_logged_in_username = String(get_tree().root.get_meta(SESSION_USERNAME_META, "")).strip_edges()
 	login_button.text = "ACCOUNT"
+	sign_out_button.visible = not _logged_in_username.is_empty()
 
 
 func _show_logged_in_welcome() -> void:
@@ -126,7 +122,6 @@ func _activate_easter_egg() -> void:
 	_jumpscare_tween.tween_interval(1.1)
 	_jumpscare_tween.tween_property(jumpscare_overlay, "modulate:a", 0.0, 0.4)
 	_jumpscare_tween.tween_callback(jumpscare_overlay.hide)
->>>>>>> f30231dfd1cd994d0d0d95a41f486d77913a28d6
 
 func _process(delta: float) -> void:
 	time_passed += delta
@@ -141,6 +136,11 @@ func _on_admin_game_pressed() -> void:
 	status_label.text = "Opening admin sandbox..."
 	_open_game_scene("res://Scenes/Gameplay/Admin_Sandbox.tscn")
 
+
+func _on_presentation_pressed() -> void:
+	status_label.text = "Opening presentation..."
+	_open_game_scene("res://Scenes/Gameplay/DEMO_SCENE.tscn")
+
 func _open_game_scene(scene_path: String) -> void:
 	var load_error := LoadingScreen.open_game_scene(get_tree(), scene_path)
 	if load_error != OK:
@@ -154,6 +154,14 @@ func _on_login_pressed() -> void:
 
 	status_label.text = "Opening login..."
 	get_tree().change_scene_to_file("res://Scenes/Menus/LoginScene.tscn")
+
+
+func _on_sign_out_pressed() -> void:
+	get_tree().root.remove_meta(SESSION_USERNAME_META)
+	get_tree().root.remove_meta(WELCOME_PENDING_META)
+	_logged_in_username = ""
+	status_label.text = "Signed out."
+	_sync_account_state()
 
 func _on_options_pressed() -> void:
 	options_overlay.show()

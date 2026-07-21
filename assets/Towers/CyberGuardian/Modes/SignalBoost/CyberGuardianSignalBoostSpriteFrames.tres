@@ -1,9 +1,9 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://cvgvhnbx7rou0"]
 
-[ext_resource type="Texture2D" uid="uid://ck757east6n1w" path="res://assets/Towers/CyberGuardian/Modes/SignalBoost/Active/Cyberguardian_Signal_Boost_Active_atlas_24fps.png" id="1_q5llc"]
-[ext_resource type="Texture2D" uid="uid://6dk0fww5e8ta" path="res://assets/Towers/CyberGuardian/Modes/SignalBoost/Declare/Cyberguardian_Signal_Boost_Declare_atlas_24fps.png" id="2_n3otk"]
-[ext_resource type="Texture2D" uid="uid://dwomtxq6hg2kh" path="res://assets/Towers/CyberGuardian/Modes/SignalBoost/Idle/Cyberguardian_Signal_Boost_Idle_atlas_24fps_page1.png" id="3_m6y27"]
-[ext_resource type="Texture2D" uid="uid://bw5fg3di418ac" path="res://assets/Towers/CyberGuardian/Modes/SignalBoost/Idle/Cyberguardian_Signal_Boost_Idle_atlas_24fps_page2.png" id="4_fhfkr"]
+[ext_resource type="Texture2D" uid="uid://ck757east6n1w" path="res://Assets/Towers/CyberGuardian/Modes/SignalBoost/Active/Cyberguardian_Signal_Boost_Active_atlas_24fps.png" id="1_q5llc"]
+[ext_resource type="Texture2D" uid="uid://6dk0fww5e8ta" path="res://Assets/Towers/CyberGuardian/Modes/SignalBoost/Declare/Cyberguardian_Signal_Boost_Declare_atlas_24fps.png" id="2_n3otk"]
+[ext_resource type="Texture2D" uid="uid://dwomtxq6hg2kh" path="res://Assets/Towers/CyberGuardian/Modes/SignalBoost/Idle/Cyberguardian_Signal_Boost_Idle_atlas_24fps_page1.png" id="3_m6y27"]
+[ext_resource type="Texture2D" uid="uid://bw5fg3di418ac" path="res://Assets/Towers/CyberGuardian/Modes/SignalBoost/Idle/Cyberguardian_Signal_Boost_Idle_atlas_24fps_page2.png" id="4_fhfkr"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1b5mc"]
 atlas = ExtResource("1_q5llc")
