@@ -3,35 +3,8 @@
 [ext_resource type="SpriteFrames" uid="uid://r6uhqh3ktfcw" path="res://assets/Towers/CyberGuardian/CyberGuardianSpriteFrames.res" id="1_frames"]
 [ext_resource type="Script" uid="uid://bi54nma58lbdq" path="res://Scripts/Towers/cyber_guardian_idle_sprite.gd" id="2_script"]
 [ext_resource type="AudioStream" uid="uid://5t88uc81blnw" path="res://assets/sfx/cyberguardian_summon.wav" id="3_summon_sfx"]
-[ext_resource type="Texture2D" uid="uid://drni3bw1ta7k8" path="res://assets/Towers/CyberGuardian/Modes/Cyber_Guardian_SignalBoost_Sprite.png" id="4_signal_boost"]
+[ext_resource type="SpriteFrames" path="res://assets/Towers/CyberGuardian/Modes/SignalBoost/CyberGuardianSignalBoostSpriteFrames.tres" id="4_signal_boost_frames"]
 [ext_resource type="Texture2D" uid="uid://c52ke2x6eylyl" path="res://assets/Towers/CyberGuardian/Modes/Cyber_Guardian_Firewall_Sprite.png" id="5_firewall"]
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_signal_boost"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("4_signal_boost")
-}],
-"loop": 0,
-"name": &"ShootAnim",
-"speed": 1.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("4_signal_boost")
-}],
-"loop": 0,
-"name": &"SummonAnim",
-"speed": 1.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("4_signal_boost")
-}],
-"loop": 1,
-"name": &"idle",
-"speed": 1.0
-}]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_firewall"]
 animations = [{
@@ -88,22 +61,20 @@ animation = &"ShootAnim"
 [node name="SignalBoostIdle" type="AnimatedSprite2D" parent="Visuals" unique_id=1463574160]
 visible = false
 position = Vector2(0, -80)
-scale = Vector2(0.3, 0.3)
-sprite_frames = SubResource("SpriteFrames_signal_boost")
+sprite_frames = ExtResource("4_signal_boost_frames")
 animation = &"idle"
+autoplay = "idle"
 
-[node name="SignalBoostSummon" type="AnimatedSprite2D" parent="Visuals" unique_id=1563574160]
+[node name="SignalBoostDeclare" type="AnimatedSprite2D" parent="Visuals" unique_id=1563574160]
 visible = false
-position = Vector2(0, -86.13333)
-scale = Vector2(0.3, 0.3)
-sprite_frames = SubResource("SpriteFrames_signal_boost")
+position = Vector2(0, -80)
+sprite_frames = ExtResource("4_signal_boost_frames")
 animation = &"SummonAnim"
 
-[node name="SignalBoostShoot" type="AnimatedSprite2D" parent="Visuals" unique_id=1663574160]
+[node name="SignalBoostActive" type="AnimatedSprite2D" parent="Visuals" unique_id=1663574160]
 visible = false
-position = Vector2(0, -86.13333)
-scale = Vector2(0.3, 0.3)
-sprite_frames = SubResource("SpriteFrames_signal_boost")
+position = Vector2(0, -80)
+sprite_frames = ExtResource("4_signal_boost_frames")
 animation = &"ShootAnim"
 
 [node name="FirewallIdle" type="AnimatedSprite2D" parent="Visuals" unique_id=1763574160]

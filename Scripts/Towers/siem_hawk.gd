@@ -19,8 +19,12 @@ const SIEM_UPGRADE_COSTS := [0, 0, 0, 0, 0]
 const RED_VIRUS_KNOWLEDGE_POINTS := 1
 const TROJAN_HORSE_KNOWLEDGE_POINTS := 5
 const KNOWLEDGE_EXTRACTION_SECONDS := 3.0
+const DISPATCH_SPEED_MULTIPLIERS_BY_LEVEL := [1.0, 1.35, 1.70, 2.10, 2.50]
+const KNOWLEDGE_EXTRACTION_MULTIPLIERS_BY_LEVEL := [1.0, 2.0, 3.0, 4.0, 5.0]
 const ARC_SEGMENTS := 36
 const LANDING_DISTANCE_EPSILON := 2.0
+const DESTINATION_DISTANCE_EPSILON := 2.0
+const DESTINATION_MARKER_SEGMENTS := 48
 const GRAB_SIZE := Vector2(220, 220)
 const PLACEMENT_HIGHLIGHT_SIZE := Vector2(180, 120)
 const PLACEMENT_SLOT_PREFIX := "placementslot"
@@ -31,7 +35,7 @@ const SHOT_RETURN_DELAY := 3.0
 const RANGE_PREVIEW_SEGMENTS := 96
 const RANGE_PREVIEW_FILL_COLOR := Color(0.27, 0.55, 1.0, 0.16)
 const RANGE_PREVIEW_OUTLINE_COLOR := Color(0.48, 0.83, 1.0, 0.78)
-const TOWER_VISUAL_Z_INDEX := 60
+const SIEM_HAWK_VISUAL_Z_INDEX := 180
 const SUMMON_EFFECT_Z_OFFSET := -1
 const DRAG_VALID_MODULATE := Color(0.42, 1.0, 0.46, 0.84)
 const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
@@ -42,6 +46,8 @@ const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
 @export var show_attack_range_preview := true
 @export var range_preview_fill_color := RANGE_PREVIEW_FILL_COLOR
 @export var range_preview_outline_color := RANGE_PREVIEW_OUTLINE_COLOR
+@export_group("Rendering")
+@export var tower_visual_z_index := SIEM_HAWK_VISUAL_Z_INDEX
 @export_group("Level Visuals")
 @export var level_1_visual_path: NodePath = ^"LevelVisuals/LV1Visual"
 @export var level_2_visual_path: NodePath = ^"LevelVisuals/LV2Visual"
@@ -54,6 +60,17 @@ const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
 @export var base_z_index := 59
 @export_group("Dispatch")
 @export_range(1.0, 400.0, 1.0) var dispatch_speed := 100.0
+@export_range(0.0, 2.0, 0.05) var destination_turn_seconds := 0.5
+@export var destination_marker_path: NodePath = ^"DestinationMarker"
+@export var destination_marker_fill_path: NodePath = ^"DestinationMarker/Fill"
+@export var destination_marker_outline_path: NodePath = ^"DestinationMarker/Outline"
+@export_range(8.0, 120.0, 1.0) var destination_marker_radius := 36.0
+@export var destination_marker_fill_color := Color(0.12, 0.58, 1.0, 0.18)
+@export var destination_marker_outline_color := Color(0.35, 0.84, 1.0, 0.92)
+@export_range(0.0, 12.0, 0.1) var destination_marker_pulse_speed := 2.4
+@export_group("Screen Border")
+@export var constrain_dispatch_to_viewport := true
+@export_range(0.0, 256.0, 1.0) var viewport_border_padding := 18.0
 @export_group("Knowledge Scanner")
 @export var scan_arc_fill_path: NodePath = ^"ScanArcFill"
 @export var scan_arc_outline_path: NodePath = ^"ScanArcOutline"
@@ -96,6 +113,14 @@ var _signal_boost_active := false
 var _station_position := Vector2.ZERO
 var _dispatched := false
 var _landing_to_headquarters := false
+var _dispatch_destination := Vector2.ZERO
+var _has_dispatch_destination := false
+var _destination_turn_tween: Tween
+var _turning_to_destination := false
+var _destination_marker: Node2D
+var _destination_marker_fill: Polygon2D
+var _destination_marker_outline: Line2D
+var _destination_marker_phase := 0.0
 var _banked_knowledge_points := 0
 var _scanned_virus_ids := {}
 var _extraction_elapsed := 0.0
@@ -114,7 +139,7 @@ func _ready() -> void:
 	_station_position = global_position
 	_rest_rotation = rotation
 	_base_modulate = modulate
-	z_index = maxi(z_index, TOWER_VISUAL_Z_INDEX)
+	z_index = tower_visual_z_index
 	z_as_relative = false
 	_platform_highlight = get_node_or_null(platform_highlight_path) as ColorRect
 	_summon_sfx = get_node_or_null(summon_sfx_path) as AudioStreamPlayer
@@ -126,10 +151,14 @@ func _ready() -> void:
 	_scan_arc_fill = get_node_or_null(scan_arc_fill_path) as Polygon2D
 	_scan_arc_outline = get_node_or_null(scan_arc_outline_path) as Line2D
 	_knowledge_label = get_node_or_null(knowledge_label_path) as Label
+	_destination_marker = get_node_or_null(destination_marker_path) as Node2D
+	_destination_marker_fill = get_node_or_null(destination_marker_fill_path) as Polygon2D
+	_destination_marker_outline = get_node_or_null(destination_marker_outline_path) as Line2D
 	if _platform_highlight != null:
 		_platform_highlight.hide()
 	_collect_level_visuals()
 	_configure_top_level_scanner_nodes()
+	_configure_destination_marker()
 	_sync_level_visuals(true)
 	play_idle()
 	_last_visible_state = visible
@@ -145,6 +174,7 @@ func _process(delta: float) -> void:
 	_update_attack_range_preview()
 	_sync_base_sprite()
 	_update_scan_arc_visual(delta)
+	_update_destination_marker(delta)
 	_sync_knowledge_label()
 
 
@@ -231,6 +261,7 @@ func reset_tower() -> void:
 		_shot_return_tween = null
 	_dispatched = false
 	_landing_to_headquarters = false
+	_clear_dispatch_destination()
 	_banked_knowledge_points = 0
 	_scanned_virus_ids.clear()
 	_extraction_elapsed = 0.0
@@ -254,6 +285,7 @@ func set_dispatched(value: bool) -> void:
 
 	_dispatched = value
 	_landing_to_headquarters = false
+	_clear_dispatch_destination()
 	_extraction_elapsed = 0.0
 	dispatch_mode_changed.emit(_dispatched)
 	_sync_knowledge_label()
@@ -265,6 +297,34 @@ func toggle_dispatch() -> void:
 
 func is_dispatched() -> bool:
 	return _dispatched
+
+
+func can_accept_dispatch_destination() -> bool:
+	return is_placed() and _dispatched and not _landing_to_headquarters
+
+
+func set_dispatch_destination(destination: Vector2) -> bool:
+	if not can_accept_dispatch_destination():
+		return false
+
+	_dispatch_destination = _clamp_dispatch_position_to_viewport(destination)
+	_has_dispatch_destination = true
+	_begin_destination_turn()
+	_sync_destination_marker_position()
+	_update_destination_marker(0.0)
+	return true
+
+
+func has_dispatch_destination() -> bool:
+	return _has_dispatch_destination
+
+
+func get_dispatch_destination() -> Vector2:
+	return _dispatch_destination
+
+
+func is_turning_to_destination() -> bool:
+	return _turning_to_destination
 
 
 func is_landing_to_headquarters() -> bool:
@@ -299,6 +359,7 @@ func land_to_headquarters() -> void:
 
 	_landing_to_headquarters = true
 	_dispatched = true
+	_clear_dispatch_destination()
 	_extraction_elapsed = 0.0
 	dispatch_mode_changed.emit(_dispatched)
 	_sync_knowledge_label()
@@ -308,7 +369,7 @@ func get_banked_knowledge_points() -> int:
 	return _banked_knowledge_points
 
 
-func update_knowledge_scan(delta: float, mouse_global_position: Vector2, active_viruses: Array[PathFollow2D]) -> void:
+func update_knowledge_scan(delta: float, _mouse_global_position: Vector2, active_viruses: Array[PathFollow2D]) -> void:
 	if not is_placed():
 		return
 
@@ -316,7 +377,7 @@ func update_knowledge_scan(delta: float, mouse_global_position: Vector2, active_
 		_update_landing_movement(delta)
 		_extraction_elapsed = 0.0
 	elif _dispatched:
-		_update_dispatch_movement(delta, mouse_global_position)
+		_update_dispatch_movement(delta)
 		_scan_viruses_in_arc(active_viruses)
 		_extraction_elapsed = 0.0
 	elif not _is_at_headquarters():
@@ -382,7 +443,22 @@ func get_laser_width() -> float:
 
 
 func get_dispatch_speed() -> float:
-	return dispatch_speed * (get_signal_boost_hawk_speed_multiplier() if is_signal_boost_active() else 1.0)
+	var signal_boost_multiplier := get_signal_boost_hawk_speed_multiplier() if is_signal_boost_active() else 1.0
+	return dispatch_speed * get_level_dispatch_speed_multiplier() * signal_boost_multiplier
+
+
+func get_level_dispatch_speed_multiplier() -> float:
+	var level_index := clampi(level - 1, 0, DISPATCH_SPEED_MULTIPLIERS_BY_LEVEL.size() - 1)
+	return float(DISPATCH_SPEED_MULTIPLIERS_BY_LEVEL[level_index])
+
+
+func get_knowledge_extraction_multiplier() -> float:
+	var level_index := clampi(level - 1, 0, KNOWLEDGE_EXTRACTION_MULTIPLIERS_BY_LEVEL.size() - 1)
+	return float(KNOWLEDGE_EXTRACTION_MULTIPLIERS_BY_LEVEL[level_index])
+
+
+func get_knowledge_extraction_seconds() -> float:
+	return KNOWLEDGE_EXTRACTION_SECONDS / maxf(1.0, get_knowledge_extraction_multiplier())
 
 
 func get_max_level() -> int:
@@ -462,7 +538,7 @@ func get_signal_boost_hawk_speed_multiplier() -> float:
 
 
 func update_attack(delta: float, active_viruses: Array[PathFollow2D]) -> PathFollow2D:
-	if level <= 1 or not _dispatched or _landing_to_headquarters:
+	if level <= 1 or not _dispatched or _landing_to_headquarters or _has_dispatch_destination:
 		if not _should_preserve_hawk_rotation():
 			_return_to_rest_state_if_not_shooting()
 		return null
@@ -665,11 +741,30 @@ func _should_preserve_hawk_rotation() -> bool:
 	return is_placed() and (_dispatched or _landing_to_headquarters or not _is_at_headquarters())
 
 
-func _update_dispatch_movement(delta: float, mouse_global_position: Vector2) -> void:
-	var direction := mouse_global_position - global_position
-	if direction.length_squared() > 0.0001:
-		global_rotation = direction.angle() - forward_rotation_offset
-	global_position = global_position.move_toward(mouse_global_position, maxf(0.0, get_dispatch_speed()) * delta)
+func _update_dispatch_movement(delta: float) -> void:
+	if not _has_dispatch_destination:
+		global_position = _clamp_dispatch_position_to_viewport(global_position)
+		return
+
+	_dispatch_destination = _clamp_dispatch_position_to_viewport(_dispatch_destination)
+	_sync_destination_marker_position()
+	var direction := _dispatch_destination - global_position
+	if direction.length_squared() <= DESTINATION_DISTANCE_EPSILON * DESTINATION_DISTANCE_EPSILON:
+		global_position = _dispatch_destination
+		_clear_dispatch_destination()
+		return
+
+	if _turning_to_destination:
+		return
+
+	global_position = global_position.move_toward(
+		_dispatch_destination,
+		maxf(0.0, get_dispatch_speed()) * delta
+	)
+	global_position = _clamp_dispatch_position_to_viewport(global_position)
+	if global_position.distance_squared_to(_dispatch_destination) <= DESTINATION_DISTANCE_EPSILON * DESTINATION_DISTANCE_EPSILON:
+		global_position = _dispatch_destination
+		_clear_dispatch_destination()
 
 
 func _update_landing_movement(delta: float) -> void:
@@ -688,6 +783,7 @@ func _complete_landing_to_headquarters() -> void:
 	global_position = _station_position
 	_landing_to_headquarters = false
 	_dispatched = false
+	_clear_dispatch_destination()
 	_extraction_elapsed = 0.0
 	dispatch_mode_changed.emit(_dispatched)
 	_sync_knowledge_label()
@@ -724,8 +820,9 @@ func _extract_banked_knowledge(delta: float) -> void:
 		return
 
 	_extraction_elapsed += delta
-	while _banked_knowledge_points > 0 and _extraction_elapsed >= KNOWLEDGE_EXTRACTION_SECONDS:
-		_extraction_elapsed -= KNOWLEDGE_EXTRACTION_SECONDS
+	var extraction_seconds := get_knowledge_extraction_seconds()
+	while _banked_knowledge_points > 0 and _extraction_elapsed >= extraction_seconds:
+		_extraction_elapsed -= extraction_seconds
 		_banked_knowledge_points -= 1
 		knowledge_extracted.emit(1)
 		knowledge_bank_changed.emit(_banked_knowledge_points)
@@ -776,6 +873,162 @@ func _configure_top_level_scanner_nodes() -> void:
 		_knowledge_label.top_level = true
 		_knowledge_label.z_as_relative = false
 		_knowledge_label.z_index = 90
+
+
+func _configure_destination_marker() -> void:
+	if _destination_marker == null:
+		return
+
+	_destination_marker.top_level = true
+	_destination_marker.z_as_relative = false
+	_destination_marker.z_index = tower_visual_z_index - 2
+	_destination_marker.visible = false
+	var fill_points := _build_destination_marker_points(false)
+	var outline_points := _build_destination_marker_points(true)
+	if _destination_marker_fill != null:
+		_destination_marker_fill.polygon = fill_points
+		_destination_marker_fill.color = destination_marker_fill_color
+	if _destination_marker_outline != null:
+		_destination_marker_outline.points = outline_points
+		_destination_marker_outline.default_color = destination_marker_outline_color
+
+
+func _update_destination_marker(delta: float) -> void:
+	if _destination_marker == null:
+		return
+
+	var should_show := visible and can_accept_dispatch_destination() and _has_dispatch_destination
+	_destination_marker.visible = should_show
+	if not should_show:
+		return
+
+	_destination_marker_phase += delta * destination_marker_pulse_speed
+	_sync_destination_marker_position()
+	var pulse := 0.82 + sin(_destination_marker_phase * TAU) * 0.18
+	if _destination_marker_fill != null:
+		var fill_color := destination_marker_fill_color
+		fill_color.a *= pulse
+		_destination_marker_fill.color = fill_color
+	if _destination_marker_outline != null:
+		var outline_color := destination_marker_outline_color
+		outline_color.a *= pulse
+		_destination_marker_outline.default_color = outline_color
+
+
+func _sync_destination_marker_position() -> void:
+	if _destination_marker == null or not _has_dispatch_destination:
+		return
+	_destination_marker.global_position = _dispatch_destination
+	_destination_marker.global_rotation = 0.0
+	_destination_marker.global_scale = Vector2.ONE
+
+
+func _clear_dispatch_destination() -> void:
+	_cancel_destination_turn()
+	_has_dispatch_destination = false
+	if _destination_marker != null:
+		_destination_marker.visible = false
+
+
+func _begin_destination_turn() -> void:
+	_cancel_destination_turn()
+	var direction := _dispatch_destination - global_position
+	if direction.length_squared() <= DESTINATION_DISTANCE_EPSILON * DESTINATION_DISTANCE_EPSILON:
+		return
+
+	var desired_rotation := direction.angle() - forward_rotation_offset
+	var target_rotation := global_rotation + angle_difference(global_rotation, desired_rotation)
+	if destination_turn_seconds <= 0.0 or is_equal_approx(global_rotation, target_rotation):
+		global_rotation = target_rotation
+		return
+
+	_turning_to_destination = true
+	_destination_turn_tween = create_tween()
+	_destination_turn_tween.set_trans(Tween.TRANS_SINE)
+	_destination_turn_tween.set_ease(Tween.EASE_IN_OUT)
+	_destination_turn_tween.tween_property(
+		self,
+		"global_rotation",
+		target_rotation,
+		destination_turn_seconds
+	)
+	_destination_turn_tween.tween_callback(Callable(self, "_finish_destination_turn"))
+
+
+func _finish_destination_turn() -> void:
+	_turning_to_destination = false
+	_destination_turn_tween = null
+
+
+func _cancel_destination_turn() -> void:
+	if _destination_turn_tween != null:
+		_destination_turn_tween.kill()
+		_destination_turn_tween = null
+	_turning_to_destination = false
+
+
+func _build_destination_marker_points(close_loop: bool) -> PackedVector2Array:
+	var points := PackedVector2Array()
+	for index in range(DESTINATION_MARKER_SEGMENTS):
+		var angle := TAU * float(index) / float(DESTINATION_MARKER_SEGMENTS)
+		points.append(Vector2(cos(angle), sin(angle)) * destination_marker_radius)
+	if close_loop and not points.is_empty():
+		points.append(points[0])
+	return points
+
+
+func _clamp_dispatch_position_to_viewport(world_position: Vector2) -> Vector2:
+	if not constrain_dispatch_to_viewport or not is_inside_tree():
+		return world_position
+
+	var canvas_transform := get_canvas_transform()
+	if is_zero_approx(canvas_transform.determinant()):
+		return world_position
+
+	var screen_position := canvas_transform * world_position
+	var viewport_rect := get_viewport().get_visible_rect()
+	var hawk_radius := _get_hawk_screen_radius() + viewport_border_padding
+	var minimum := viewport_rect.position + Vector2.ONE * hawk_radius
+	var maximum := viewport_rect.end - Vector2.ONE * hawk_radius
+	if minimum.x > maximum.x:
+		minimum.x = viewport_rect.get_center().x
+		maximum.x = minimum.x
+	if minimum.y > maximum.y:
+		minimum.y = viewport_rect.get_center().y
+		maximum.y = minimum.y
+
+	var clamped_screen_position := Vector2(
+		clampf(screen_position.x, minimum.x, maximum.x),
+		clampf(screen_position.y, minimum.y, maximum.y)
+	)
+	return canvas_transform.affine_inverse() * clamped_screen_position
+
+
+func _get_hawk_screen_radius() -> float:
+	var visual := _get_active_visual()
+	var center_screen := get_global_transform_with_canvas().origin
+	var visual_rect := Rect2(-GRAB_SIZE * 0.5, GRAB_SIZE)
+	var visual_transform := get_global_transform_with_canvas()
+	if visual != null and visual.sprite_frames != null \
+			and visual.sprite_frames.has_animation(visual.animation):
+		var frame_texture := visual.sprite_frames.get_frame_texture(visual.animation, visual.frame)
+		if frame_texture != null:
+			var frame_size := frame_texture.get_size()
+			var frame_position := visual.offset
+			if visual.centered:
+				frame_position -= frame_size * 0.5
+			visual_rect = Rect2(frame_position, frame_size)
+		visual_transform = visual.get_global_transform_with_canvas()
+
+	var radius := 0.0
+	for corner in [
+		visual_rect.position,
+		Vector2(visual_rect.end.x, visual_rect.position.y),
+		visual_rect.end,
+		Vector2(visual_rect.position.x, visual_rect.end.y),
+	]:
+		radius = maxf(radius, center_screen.distance_to(visual_transform * corner))
+	return maxf(1.0, radius)
 
 
 func _update_scan_arc_visual(delta: float) -> void:

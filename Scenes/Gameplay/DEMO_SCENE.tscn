@@ -24,6 +24,7 @@
 [ext_resource type="Script" path="res://Scripts/Towers/cyber_guardian_idle_sprite.gd" id="19_t15jr"]
 [ext_resource type="SpriteFrames" path="res://assets/Enemies/RedVirus/RedVirusSpriteFrames.res" id="24_c2bmv"]
 [ext_resource type="Script" path="res://Scripts/Enemies/red_virus.gd" id="25_j1qy7"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/SignalBoostHUD.tscn" id="26_signal_boost_hud"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_counter"]
 bg_color = Color(0.025, 0.032, 0.05, 0.88)
@@ -1200,6 +1201,8 @@ horizontal_alignment = 1
 
 [node name="ProgressHUD" parent="." instance=ExtResource("3_progress")]
 
+[node name="SignalBoostHUD" parent="." instance=ExtResource("26_signal_boost_hud")]
+
 [node name="GameControlsHUD" type="CanvasLayer" parent="." unique_id=2071966808 instance=ExtResource("4_jhfxb")]
 layer = 120
 script = ExtResource("10_1m2aq")
@@ -1328,3 +1331,4 @@ debug_color = Color(0.5323416, 0.5497722, 0.4333505, 0.41960785)
 [editable path="CyberQuestionHUD"]
 [editable path="PerformanceHUD"]
 [editable path="ProgressHUD"]
+[editable path="SignalBoostHUD"]

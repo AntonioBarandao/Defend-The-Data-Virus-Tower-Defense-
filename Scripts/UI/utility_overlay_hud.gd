@@ -216,7 +216,7 @@ func set_siem_hawk_action_state(
 	_siem_hawk_land_button.disabled = landing_to_headquarters or not can_land
 	_siem_hawk_land_button.text = "Landing..." if landing_to_headquarters else "Land to Headquarters"
 	_siem_hawk_freeze_button.disabled = landing_to_headquarters
-	_siem_hawk_freeze_button.text = "Freeze Mode" if dispatched else "Follow Mode"
+	_siem_hawk_freeze_button.text = "Freeze Mode" if dispatched else "Destination Mode"
 	_position_hover_control(
 		_siem_hawk_action_panel,
 		hawk_screen_position,
@@ -348,7 +348,7 @@ func _create_siem_hawk_action_panel() -> void:
 	_siem_hawk_action_panel.visible = false
 	_siem_hawk_action_panel.z_as_relative = false
 	_siem_hawk_action_panel.z_index = 1000
-	_siem_hawk_action_panel.mouse_filter = Control.MOUSE_FILTER_PASS
+	_siem_hawk_action_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	var panel_style := StyleBoxFlat.new()
 	panel_style.bg_color = Color(0.028, 0.054, 0.12, 0.94)
 	panel_style.border_width_left = 2
@@ -379,6 +379,8 @@ func _create_siem_hawk_action_panel() -> void:
 
 	_siem_hawk_land_button = _create_siem_hawk_action_button("Land to Headquarters")
 	_siem_hawk_freeze_button = _create_siem_hawk_action_button("Freeze Mode")
+	_siem_hawk_land_button.tooltip_text = TowerTooltips.SIEM_LAND_TOOLTIP
+	_siem_hawk_freeze_button.tooltip_text = TowerTooltips.SIEM_DISPATCH_TOOLTIP
 	content.add_child(_siem_hawk_land_button)
 	content.add_child(_siem_hawk_freeze_button)
 	$Root.add_child(_siem_hawk_action_panel)
