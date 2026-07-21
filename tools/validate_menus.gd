@@ -4,10 +4,13 @@ const MENU_SCENES := [
 	"res://Scenes/Menus/MainMenu.tscn",
 	"res://Scenes/Menus/LoginScene.tscn",
 	"res://Scenes/Menus/RegisterScene.tscn",
+	"res://Scenes/Menus/AccountScene.tscn",
 ]
 
 func _initialize() -> void:
 	for scene_path in MENU_SCENES:
+		if scene_path.ends_with("AccountScene.tscn"):
+			root.set_meta(&"logged_in_username", "ValidationUser")
 		var packed := load(scene_path) as PackedScene
 		if packed == null:
 			push_error("Unable to load %s" % scene_path)
@@ -22,6 +25,7 @@ func _initialize() -> void:
 		await process_frame
 		instance.queue_free()
 		await process_frame
+	root.remove_meta(&"logged_in_username")
 
 	root.set_meta(&"logged_in_username", "ValidationUser")
 	root.set_meta(&"login_welcome_pending", true)
@@ -40,19 +44,31 @@ func _initialize() -> void:
 		push_error("Main menu did not display the logged-in username banner.")
 		quit(1)
 		return
-	if account_button.text != "SIGNED IN: ValidationUser":
-		push_error("Account button did not reflect the active login session.")
+	if account_button.text != "ACCOUNT":
+		push_error("Main menu account button has an incorrect label.")
 		quit(1)
 		return
-	account_button.pressed.emit()
+
+	var account_scene := (load("res://Scenes/Menus/AccountScene.tscn") as PackedScene).instantiate()
+	root.add_child(account_scene)
 	await process_frame
-	if status_label.text != "Signed in as ValidationUser.":
-		push_error("Signed-in account button attempted to reopen the login screen.")
+	var username_value := account_scene.get_node(^"AccountPanel/Margin/Content/UsernameValue") as Label
+	if username_value.text != "ValidationUser":
+		push_error("Account scene did not display the active username.")
 		quit(1)
 		return
+	account_scene.call("_clear_session")
+	if root.has_meta(&"logged_in_username"):
+		push_error("Account logout did not clear the active session.")
+		quit(1)
+		return
+	account_scene.queue_free()
+	root.set_meta(&"logged_in_username", "ValidationUser")
 	main_menu.call("_activate_easter_egg")
 	await process_frame
-	if not welcome_banner.visible or welcome_label.text != "SECURITY BREACH DETECTED: IT WAS THE OFFICE PRINTER.":
+	var jumpscare_overlay := main_menu.get_node(^"JumpscareOverlay") as ColorRect
+	var jumpscare_icon := main_menu.get_node(^"JumpscareOverlay/Icon") as TextureRect
+	if not jumpscare_overlay.visible or jumpscare_icon.texture == null:
 		push_error("Main menu easter egg did not activate.")
 		quit(1)
 		return

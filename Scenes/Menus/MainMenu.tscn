@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://day3pew2qansw"]
+[gd_scene load_steps=6 format=3 uid="uid://day3pew2qansw"]
 
 [ext_resource type="Script" uid="uid://sibvc4mbuwwo" path="res://Scripts/Menus/MainMenu.gd" id="1_v3fht"]
 [ext_resource type="Texture2D" uid="uid://b06j3hqub4kmp" path="res://assets/Backgrounds/BackgroundMainMenu.png" id="2_b42ut"]
 [ext_resource type="Theme" path="res://Resources/MenuTheme.tres" id="3_theme"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="4_jumpscare_icon"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxWelcomeBanner"]
 bg_color = Color(0.025, 0.2, 0.09, 0.97)
@@ -255,3 +256,33 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 18
 text = "Secure your knowledge. Protect the system."
 horizontal_alignment = 1
+
+[node name="JumpscareOverlay" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+z_index = 100
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Icon" type="TextureRect" parent="JumpscareOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -350.0
+offset_right = 350.0
+offset_bottom = 350.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(350, 350)
+texture = ExtResource("4_jumpscare_icon")
+expand_mode = 1
+stretch_mode = 5

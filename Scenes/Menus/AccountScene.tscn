@@ -1,0 +1,110 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Menus/AccountScene.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://b06j3hqub4kmp" path="res://assets/Backgrounds/BackgroundMainMenu.png" id="2_background"]
+[ext_resource type="Theme" path="res://Resources/MenuTheme.tres" id="3_theme"]
+
+[node name="AccountScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+theme = ExtResource("3_theme")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_background")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DarkOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="AccountPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -330.0
+offset_top = -260.0
+offset_right = 330.0
+offset_bottom = 260.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="AccountPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 42
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 42
+
+[node name="Content" type="VBoxContainer" parent="AccountPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="AccountPanel/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.58, 1)
+theme_override_font_sizes/font_size = 38
+text = "ACCOUNT"
+horizontal_alignment = 1
+
+[node name="Status" type="Label" parent="AccountPanel/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.42, 1, 0.62, 1)
+theme_override_font_sizes/font_size = 20
+text = "● SIGNED IN"
+horizontal_alignment = 1
+
+[node name="Separator" type="HSeparator" parent="AccountPanel/Margin/Content"]
+layout_mode = 2
+
+[node name="UsernameHeading" type="Label" parent="AccountPanel/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "USERNAME"
+horizontal_alignment = 1
+
+[node name="UsernameValue" type="Label" parent="AccountPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 28
+text = "Username"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+
+[node name="Spacer" type="Control" parent="AccountPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="LogoutButton" type="Button" parent="AccountPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.72, 0.72, 1)
+theme_override_font_sizes/font_size = 22
+text = "LOG OUT"
+
+[node name="BackButton" type="Button" parent="AccountPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "BACK TO MENU"
