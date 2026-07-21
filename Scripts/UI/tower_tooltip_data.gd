@@ -22,9 +22,9 @@ const TOWER_DETAILS := {
 	},
 	&"edr": {
 		"name": "EDR Hunter",
-		"summary": "Global hunter that can target cloaked threats anywhere.",
-		"upgrade": "Strengthens a global anti-virus shot that can see cloaked enemies.",
-		"tooltip": "EDR Hunter\nTargets viruses globally, including cloaked threats. Best for catching leaks across the whole map."
+		"summary": "Global offense hunter that can engage visible threats anywhere.",
+		"upgrade": "Strengthens its global anti-virus shot and unlocks patrol drones.",
+		"tooltip": "EDR Hunter\nTargets visible viruses globally. Camouflaged threats must be revealed or nullified before the Hunter and its drones can engage them."
 	},
 	&"siem": {
 		"name": "SIEM Hawk",

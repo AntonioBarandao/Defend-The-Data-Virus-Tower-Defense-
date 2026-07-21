@@ -2,6 +2,7 @@ extends SceneTree
 
 const HUNTER_SCENE := preload("res://Scenes/Towers/EDR_Hunter.tscn")
 const RED_VIRUS_SCENE := preload("res://Scenes/Enemies/RedVirus.tscn")
+const TROJAN_HORSE_SCENE := preload("res://Scenes/Enemies/TrojanHorse.tscn")
 const HUNTER_FRAMES_PATH := "res://assets/Towers/EDR_Hunter/EDRHunterSpriteFrames.tres"
 const DRONE_FRAMES_PATH := "res://assets/Towers/EDR_Hunter/EDRHunterDroneSpriteFrames.tres"
 
@@ -38,6 +39,13 @@ func _validate() -> void:
 	root.add_child(hunter)
 	await process_frame
 	assert(hunter.get_level() == 1, "EDR Hunter must start at LV1.")
+	assert(not hunter.can_scan_cloaked_viruses(), "EDR Hunter must not detect camouflaged viruses.")
+	var cloaked_trojan := TROJAN_HORSE_SCENE.instantiate() as TrojanHorse
+	root.add_child(cloaked_trojan)
+	await process_frame
+	cloaked_trojan.spawn_as_cloaked()
+	assert(cloaked_trojan.is_cloaked(), "Trojan Horse camo test setup failed.")
+	assert(not cloaked_trojan.can_be_targeted_by(hunter), "EDR Hunter can still target a camouflaged Trojan Horse.")
 	_assert_active_level_visual(hunter, 1)
 
 	assert(hunter.upgrade(), "EDR Hunter failed to upgrade to LV2.")
