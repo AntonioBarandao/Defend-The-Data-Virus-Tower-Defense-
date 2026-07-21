@@ -3,8 +3,8 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://xtuk4qf0dfiv"
-path.s3tc="res://.godot/imported/EDR_Hunter_LV5_test.png-fc08187222bb3ab73059b74fa28f69ab.s3tc.ctex"
-path.etc2="res://.godot/imported/EDR_Hunter_LV5_test.png-fc08187222bb3ab73059b74fa28f69ab.etc2.ctex"
+path.s3tc="res://.godot/imported/EDR_Hunter_LV5_test.png-4cf9abe147776535cf8cd961a55acb60.s3tc.ctex"
+path.etc2="res://.godot/imported/EDR_Hunter_LV5_test.png-4cf9abe147776535cf8cd961a55acb60.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
@@ -12,8 +12,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/Towers/EDR_Hunter/Animations/LV5/EDR_Hunter_LV5_test.png"
-dest_files=["res://.godot/imported/EDR_Hunter_LV5_test.png-fc08187222bb3ab73059b74fa28f69ab.s3tc.ctex", "res://.godot/imported/EDR_Hunter_LV5_test.png-fc08187222bb3ab73059b74fa28f69ab.etc2.ctex"]
+source_file="res://Assets/Towers/EDR_Hunter/Animations/LV5/EDR_Hunter_LV5_test.png"
+dest_files=["res://.godot/imported/EDR_Hunter_LV5_test.png-4cf9abe147776535cf8cd961a55acb60.s3tc.ctex", "res://.godot/imported/EDR_Hunter_LV5_test.png-4cf9abe147776535cf8cd961a55acb60.etc2.ctex"]
 
 [params]
 
