@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://l0qvd6hjspqm"
-path="res://.godot/imported/Display_Honeypot_Factory_LV1.png-adbfbafe343073534acb36039eb6f2b4.ctex"
+path="res://.godot/imported/Display_Honeypot_Factory_LV1.png-a7031ca7369bf68b67164ba040e4426b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Towers/Honeypot_Production/Displays/Display_Honeypot_Factory_LV1.png"
-dest_files=["res://.godot/imported/Display_Honeypot_Factory_LV1.png-adbfbafe343073534acb36039eb6f2b4.ctex"]
+source_file="res://assets/Towers/Honeypot_Production/Displays/Display_Honeypot_Factory_LV1.png"
+dest_files=["res://.godot/imported/Display_Honeypot_Factory_LV1.png-a7031ca7369bf68b67164ba040e4426b.ctex"]
 
 [params]
 
