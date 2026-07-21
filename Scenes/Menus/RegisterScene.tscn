@@ -1,7 +1,8 @@
-[gd_scene format=3 uid="uid://wlcy4w47pxdv"]
+[gd_scene load_steps=4 format=3 uid="uid://wlcy4w47pxdv"]
 
 [ext_resource type="Script" uid="uid://dfm0uk5ro7m5k" path="res://Scripts/Menus/RegisterScene.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://b06j3hqub4kmp" path="res://assets/Backgrounds/BackgroundMainMenu.png" id="2_saynr"]
+[ext_resource type="Theme" path="res://Resources/MenuTheme.tres" id="3_theme"]
 
 [node name="RegisterScene" type="Control" unique_id=932983187]
 layout_mode = 3
@@ -11,6 +12,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
+theme = ExtResource("3_theme")
 
 [node name="Background" type="TextureRect" parent="." unique_id=417995744]
 layout_mode = 1

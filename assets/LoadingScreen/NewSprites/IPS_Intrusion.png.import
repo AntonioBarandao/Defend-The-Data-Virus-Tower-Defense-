@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://jelbl5xe6682"
-path="res://.godot/imported/IPS_Intrusion.png-239075d395f9b59618f74c985201c206.ctex"
+path="res://.godot/imported/IPS_Intrusion.png-6ca67ad49229420384161fb1e4dda10b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/LoadingScreen/NewSprites/IPS_Intrusion.png"
-dest_files=["res://.godot/imported/IPS_Intrusion.png-239075d395f9b59618f74c985201c206.ctex"]
+source_file="res://Assets/LoadingScreen/NewSprites/IPS_Intrusion.png"
+dest_files=["res://.godot/imported/IPS_Intrusion.png-6ca67ad49229420384161fb1e4dda10b.ctex"]
 
 [params]
 

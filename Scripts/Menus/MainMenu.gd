@@ -8,8 +8,12 @@ extends Control
 @onready var options_button: Button = $MenuPanel/VBox/OptionsButton
 @onready var quit_button: Button = $MenuPanel/VBox/QuitButton
 @onready var status_label: Label = $StatusLabel
-@onready var sign_out_button: Button = $MenuPanel/VBox/SignOutButton
 @onready var presentation_button: Button = $PresentationButton
+@onready var options_overlay: ColorRect = $OptionsOverlay
+@onready var volume_slider: HSlider = $OptionsOverlay/Panel/Margin/VBox/VolumeSlider
+@onready var volume_label: Label = $OptionsOverlay/Panel/Margin/VBox/VolumeLabel
+@onready var fullscreen_check: CheckButton = $OptionsOverlay/Panel/Margin/VBox/FullscreenCheck
+@onready var options_close_button: Button = $OptionsOverlay/Panel/Margin/VBox/CloseButton
 
 var scan_speed := 120.0
 var background_zoom_amount := 0.015
@@ -21,8 +25,15 @@ func _ready() -> void:
 	login_button.pressed.connect(_on_login_pressed)
 	options_button.pressed.connect(_on_options_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
-	sign_out_button.pressed.connect(_on_sign_out_pressed)
 	presentation_button.pressed.connect(_on_presentation_pressed)
+	volume_slider.value_changed.connect(_on_volume_changed)
+	fullscreen_check.toggled.connect(_on_fullscreen_toggled)
+	options_close_button.pressed.connect(_close_options)
+	fullscreen_check.button_pressed = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
+	var master_bus := AudioServer.get_bus_index("Master")
+	volume_slider.value = db_to_linear(AudioServer.get_bus_volume_db(master_bus)) * 100.0
+	_on_volume_changed(volume_slider.value)
+	user_game_button.grab_focus()
 
 func _process(delta: float) -> void:
 	time_passed += delta
@@ -51,10 +62,26 @@ func _on_login_pressed() -> void:
 	get_tree().change_scene_to_file("res://Scenes/Menus/LoginScene.tscn")
 
 func _on_options_pressed() -> void:
-	status_label.text = "Options menu not connected yet."
+	options_overlay.show()
+	options_close_button.grab_focus()
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
 
-func _on_sign_out_pressed():
-	status_label.text = "Sign out functionality coming soon."
+func _on_volume_changed(value: float) -> void:
+	volume_label.text = "Master volume: %d%%" % roundi(value)
+	var master_bus := AudioServer.get_bus_index("Master")
+	AudioServer.set_bus_volume_db(master_bus, linear_to_db(maxf(value / 100.0, 0.001)))
+	AudioServer.set_bus_mute(master_bus, value <= 0.0)
+
+func _on_fullscreen_toggled(enabled: bool) -> void:
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if enabled else DisplayServer.WINDOW_MODE_WINDOWED)
+
+func _close_options() -> void:
+	options_overlay.hide()
+	options_button.grab_focus()
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") and options_overlay.visible:
+		_close_options()
+		get_viewport().set_input_as_handled()
