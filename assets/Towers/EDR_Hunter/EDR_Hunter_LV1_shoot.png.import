@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dowa2lp8nhr5h"
-path="res://.godot/imported/EDR_Hunter_LV1_shoot.png-53da9bbe341cdd63721383991fe17f2e.ctex"
+path="res://.godot/imported/EDR_Hunter_LV1_shoot.png-bba2d7af945c098147acc4dafcaf90e6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Towers/EDR_Hunter/EDR_Hunter_LV1_shoot.png"
-dest_files=["res://.godot/imported/EDR_Hunter_LV1_shoot.png-53da9bbe341cdd63721383991fe17f2e.ctex"]
+source_file="res://Assets/Towers/EDR_Hunter/EDR_Hunter_LV1_shoot.png"
+dest_files=["res://.godot/imported/EDR_Hunter_LV1_shoot.png-bba2d7af945c098147acc4dafcaf90e6.ctex"]
 
 [params]
 

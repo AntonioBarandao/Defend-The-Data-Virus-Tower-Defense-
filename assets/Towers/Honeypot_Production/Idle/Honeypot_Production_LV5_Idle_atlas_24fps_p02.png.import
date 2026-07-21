@@ -3,8 +3,8 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://druid0dstd11y"
-path.s3tc="res://.godot/imported/Honeypot_Production_LV5_Idle_atlas_24fps_p02.png-348f32a5137304542602dac8830b1443.s3tc.ctex"
-path.etc2="res://.godot/imported/Honeypot_Production_LV5_Idle_atlas_24fps_p02.png-348f32a5137304542602dac8830b1443.etc2.ctex"
+path.s3tc="res://.godot/imported/Honeypot_Production_LV5_Idle_atlas_24fps_p02.png-195cfea5b5242f35da0b52a3da106bfe.s3tc.ctex"
+path.etc2="res://.godot/imported/Honeypot_Production_LV5_Idle_atlas_24fps_p02.png-195cfea5b5242f35da0b52a3da106bfe.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
@@ -12,8 +12,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/Towers/Honeypot_Production/Idle/Honeypot_Production_LV5_Idle_atlas_24fps_p02.png"
-dest_files=["res://.godot/imported/Honeypot_Production_LV5_Idle_atlas_24fps_p02.png-348f32a5137304542602dac8830b1443.s3tc.ctex", "res://.godot/imported/Honeypot_Production_LV5_Idle_atlas_24fps_p02.png-348f32a5137304542602dac8830b1443.etc2.ctex"]
+source_file="res://Assets/Towers/Honeypot_Production/Idle/Honeypot_Production_LV5_Idle_atlas_24fps_p02.png"
+dest_files=["res://.godot/imported/Honeypot_Production_LV5_Idle_atlas_24fps_p02.png-195cfea5b5242f35da0b52a3da106bfe.s3tc.ctex", "res://.godot/imported/Honeypot_Production_LV5_Idle_atlas_24fps_p02.png-195cfea5b5242f35da0b52a3da106bfe.etc2.ctex"]
 
 [params]
 

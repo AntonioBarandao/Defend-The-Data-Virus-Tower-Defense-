@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ce7b1b007y36i"
-path="res://.godot/imported/Spyware.png-766074a159524ea31d0e8bd596217db4.ctex"
+path="res://.godot/imported/Spyware.png-5358c6203cdb673ab72da81c802e6020.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/LoadingScreen/Spyware.png"
-dest_files=["res://.godot/imported/Spyware.png-766074a159524ea31d0e8bd596217db4.ctex"]
+source_file="res://Assets/LoadingScreen/Spyware.png"
+dest_files=["res://.godot/imported/Spyware.png-5358c6203cdb673ab72da81c802e6020.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b408qvpb23icx"
-path="res://.godot/imported/Spyware_Sprite.png-d3c46779bc0654036cb6a2d248b45b1d.ctex"
+path="res://.godot/imported/Spyware_Sprite.png-79c04255c7fa4a8aab36e9159243e5a6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Enemies/Spyware/Spyware_Sprite.png"
-dest_files=["res://.godot/imported/Spyware_Sprite.png-d3c46779bc0654036cb6a2d248b45b1d.ctex"]
+source_file="res://Assets/Enemies/Spyware/Spyware_Sprite.png"
+dest_files=["res://.godot/imported/Spyware_Sprite.png-79c04255c7fa4a8aab36e9159243e5a6.ctex"]
 
 [params]
 
