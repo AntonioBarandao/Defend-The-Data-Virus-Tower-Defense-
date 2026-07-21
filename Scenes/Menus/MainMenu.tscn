@@ -1,8 +1,22 @@
-[gd_scene load_steps=4 format=3 uid="uid://day3pew2qansw"]
+[gd_scene load_steps=5 format=3 uid="uid://day3pew2qansw"]
 
 [ext_resource type="Script" uid="uid://sibvc4mbuwwo" path="res://Scripts/Menus/MainMenu.gd" id="1_v3fht"]
 [ext_resource type="Texture2D" uid="uid://b06j3hqub4kmp" path="res://assets/Backgrounds/BackgroundMainMenu.png" id="2_b42ut"]
 [ext_resource type="Theme" path="res://Resources/MenuTheme.tres" id="3_theme"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxWelcomeBanner"]
+bg_color = Color(0.025, 0.2, 0.09, 0.97)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.22, 1, 0.48, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.65)
+shadow_size = 18
 
 [node name="MainMenu" type="Control" unique_id=1563887743]
 layout_mode = 3
@@ -41,6 +55,39 @@ offset_right = 1920.0
 offset_bottom = -18.0
 color = Color(0, 0.9, 1, 0.22)
 
+[node name="WelcomeBanner" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+z_index = 20
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 300.0
+offset_top = 42.0
+offset_right = -300.0
+offset_bottom = 152.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxWelcomeBanner")
+
+[node name="Margin" type="MarginContainer" parent="WelcomeBanner"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 14
+
+[node name="WelcomeLabel" type="Label" parent="WelcomeBanner/Margin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 1, 0.8, 1)
+theme_override_colors/font_shadow_color = Color(0, 0.08, 0.025, 0.9)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 44
+text = "WELCOME!"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+
 [node name="MenuPanel" type="Panel" parent="." unique_id=1606240950]
 layout_mode = 1
 anchors_preset = 8
@@ -70,6 +117,8 @@ theme_override_constants/separation = 18
 
 [node name="Title" type="Label" parent="MenuPanel/VBox" unique_id=1950426886]
 layout_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 2
 theme_override_font_sizes/font_size = 42
 text = "DEFEND THE DATA"
 horizontal_alignment = 1

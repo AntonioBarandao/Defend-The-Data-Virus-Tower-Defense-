@@ -1,5 +1,10 @@
 extends Control
 
+const MAIN_MENU_SCENE := "res://Scenes/Menus/MainMenu.tscn"
+const SESSION_USERNAME_META := &"logged_in_username"
+const WELCOME_PENDING_META := &"login_welcome_pending"
+
+
 func _ready():
 	$FormPanel/VBox/LoginButton.pressed.connect(_on_login_pressed)
 	$FormPanel/VBox/BackButton.pressed.connect(_on_back_pressed)
@@ -14,15 +19,17 @@ func _on_login_pressed():
 	if username.is_empty() or password.is_empty():
 		$FormPanel/VBox/StatusLabel.text = "Enter your username and password."
 		return
-	LoadingScreen.open_game_scene(
-		get_tree(),
-		"res://Scenes/Gameplay/Admin_Sandbox.tscn"
-	)
+
+	get_tree().root.set_meta(SESSION_USERNAME_META, username)
+	get_tree().root.set_meta(WELCOME_PENDING_META, true)
+	var change_error := get_tree().change_scene_to_file(MAIN_MENU_SCENE)
+	if change_error != OK:
+		get_tree().root.remove_meta(SESSION_USERNAME_META)
+		get_tree().root.remove_meta(WELCOME_PENDING_META)
+		$FormPanel/VBox/StatusLabel.text = "Unable to return to the main menu."
 
 func _on_back_pressed():
-	get_tree().change_scene_to_file(
-		"res://Scenes/Menus/MainMenu.tscn"
-	)
+	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
 func _on_register_pressed():
 	get_tree().change_scene_to_file(
