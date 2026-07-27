@@ -1,20 +1,21 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://b27b3apx0ajth"]
 
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/MutantVirus/MutantVirusSpriteFrames.tres" id="1_frames"]
-[ext_resource type="Script" path="res://Scripts/Enemies/evolved_virus.gd" id="2_script"]
-[ext_resource type="AudioStream" path="res://assets/sfx/virus_destroy.wav" id="3_destroy_sfx"]
+[ext_resource type="SpriteFrames" uid="uid://6u7tpvsoru3f" path="res://assets/Enemies/MutantVirus/MutantVirusSpriteFrames.tres" id="1_frames"]
+[ext_resource type="Script" uid="uid://bhxbrh72j1inj" path="res://Scripts/Enemies/evolved_virus.gd" id="2_script"]
 
-[node name="MutantVirus" type="AnimatedSprite2D" groups=["EVOLVED_VIRUS"]]
+[node name="MutantVirus" type="AnimatedSprite2D" unique_id=1598398572 groups=["EVOLVED_VIRUS", "MUTANT_VIRUS"]]
 scale = Vector2(0.11, 0.11)
+script = ExtResource("2_script")
+max_health = 7
+cyberbuck_reward = 350
+destroy_sfx_path = NodePath("Sounds/MutantVirusDestroySfx")
+
+[node name="IdleAnimation" type="AnimatedSprite2D" parent="." unique_id=1150392744]
 sprite_frames = ExtResource("1_frames")
 animation = &"idle"
 autoplay = "idle"
-script = ExtResource("2_script")
-max_health = 15
-cyberbuck_reward = 350
 
-[node name="Audio" type="Node" parent="."]
-
-[node name="DestroySfx" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource("3_destroy_sfx")
-volume_db = -20.0
+[node name="DestroyAnimation" type="AnimatedSprite2D" parent="." unique_id=230820210]
+scale = Vector2(1.8779254, 1.8779254)
+sprite_frames = ExtResource("1_frames")
+animation = &"destroy"

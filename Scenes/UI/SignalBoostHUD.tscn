@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bcewsmh4k44wh" path="res://Scripts/UI/signal_boost_hud.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://c0okywelrqut" path="res://assets/Towers/CyberGuardian/Modes/SignalBoost/Cyber_Guardian_SignalBoost_Icon.png" id="2_icon"]
 [ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="3_font"]
+[ext_resource type="Texture2D" path="res://assets/Towers/CyberGuardian/Modes/Firewall/Cyber_Guardian_Firewall_Icon.png" id="4_firewall_icon"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ability"]
 bg_color = Color(0.018, 0.027, 0.025, 0.94)
@@ -11,6 +12,20 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.64, 0.92, 0.18, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.52)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_firewall"]
+bg_color = Color(0.035, 0.022, 0.018, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.34, 0.12, 0.94)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -85,4 +100,62 @@ offset_bottom = 195.0
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 18
 text = "SIGNAL BOOST"
+horizontal_alignment = 1
+
+[node name="FirewallAbilitySlot" type="Panel" parent="Root"]
+visible = false
+custom_minimum_size = Vector2(180, 210)
+layout_mode = 0
+offset_left = 720.0
+offset_top = 22.0
+offset_right = 900.0
+offset_bottom = 232.0
+tooltip_text = "Activate Firewall"
+mouse_default_cursor_shape = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_firewall")
+
+[node name="Margin" type="Control" parent="Root/FirewallAbilitySlot"]
+anchors_preset = 0
+offset_left = 12.0
+offset_top = 10.0
+offset_right = 168.0
+offset_bottom = 177.0
+mouse_filter = 2
+
+[node name="Content" type="Control" parent="Root/FirewallAbilitySlot/Margin"]
+anchors_preset = 0
+offset_right = 156.0
+offset_bottom = 190.0
+mouse_filter = 2
+
+[node name="IconFrame" type="Control" parent="Root/FirewallAbilitySlot/Margin/Content"]
+custom_minimum_size = Vector2(144, 144)
+anchors_preset = 0
+offset_left = 6.0
+offset_right = 150.0
+offset_bottom = 144.0
+mouse_filter = 2
+
+[node name="FirewallIcon" type="TextureRect" parent="Root/FirewallAbilitySlot/Margin/Content/IconFrame"]
+custom_minimum_size = Vector2(136, 136)
+layout_mode = 0
+offset_left = -43.0
+offset_top = -29.0
+offset_right = 188.0
+offset_bottom = 202.0
+mouse_filter = 2
+texture = ExtResource("4_firewall_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StatusLabel" type="Label" parent="Root/FirewallAbilitySlot/Margin/Content"]
+layout_mode = 0
+offset_left = -12.0
+offset_top = 172.0
+offset_right = 168.0
+offset_bottom = 195.0
+theme_override_colors/font_color = Color(1, 0.48, 0.18, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 18
+text = "FIREWALL"
 horizontal_alignment = 1

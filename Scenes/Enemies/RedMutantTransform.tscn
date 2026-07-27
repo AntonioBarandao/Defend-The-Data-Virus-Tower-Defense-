@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/ZombieNode/Minions/Mutation/RedMutantTransformSpriteFrames.tres" id="1_frames"]
+
+[node name="RedMutantTransform" type="AnimatedSprite2D"]
+scale = Vector2(0.25, 0.25)
+sprite_frames = ExtResource("1_frames")
+animation = &"transform"

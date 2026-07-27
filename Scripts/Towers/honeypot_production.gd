@@ -24,6 +24,8 @@ const KNOWLEDGE_PRODUCTION_TICK_SECONDS := 3.0
 @export var production_effect_path: NodePath = ^"ProductionEffect"
 @export var production_effect_fill_path: NodePath = ^"ProductionEffect/EffectFill"
 @export var production_effect_ring_path: NodePath = ^"ProductionEffect/EffectRing"
+@export_group("Audio")
+@export var collect_sfx_path: NodePath = ^"Sounds/HoneypotProductionCollectSfx"
 @export_group("Level Visuals")
 @export var level_visual_paths: Array[NodePath] = [
 	^"LevelVisuals/LV1Visual",
@@ -43,6 +45,7 @@ var _knowledge_label: Label
 var _production_effect: Node2D
 var _production_effect_fill: Polygon2D
 var _production_effect_ring: Line2D
+var _collect_sfx: AudioStreamPlayer
 var _production_pot := 0
 var _knowledge_pot := 0
 var _producing := false
@@ -67,6 +70,7 @@ func _ready() -> void:
 	_production_effect = get_node_or_null(production_effect_path) as Node2D
 	_production_effect_fill = get_node_or_null(production_effect_fill_path) as Polygon2D
 	_production_effect_ring = get_node_or_null(production_effect_ring_path) as Line2D
+	_collect_sfx = CentralAudioResolver.resolve(self, collect_sfx_path)
 	_configure_status_nodes()
 	_rebuild_production_effect_geometry()
 	_sync_level_visual()
@@ -178,6 +182,10 @@ func get_pot_capacity() -> int:
 
 func is_knowledge_production_unlocked() -> bool:
 	return level >= KNOWLEDGE_PRODUCTION_UNLOCK_LEVEL
+
+
+func is_spyware_knowledge_source() -> bool:
+	return is_placed() and is_knowledge_production_unlocked()
 
 
 func get_knowledge_pot() -> int:
@@ -461,6 +469,7 @@ func _sync_shutdown_modulate() -> void:
 
 
 func _play_collect_feedback() -> void:
+	_play_audio_player(_collect_sfx)
 	if _production_label == null:
 		return
 	if _collect_tween != null:

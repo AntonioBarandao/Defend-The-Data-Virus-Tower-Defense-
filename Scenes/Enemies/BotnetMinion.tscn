@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Enemies/botnet_minion.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/BotnetNode/AntiCharge/BotnetMinion.png" id="2_base"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/BotnetNode/AntiCharge/BotnetMinionAntiCharged.png" id="3_charged"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_botnet_minion"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_base")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_charged")
+}],
+"loop": true,
+"name": &"anti_charged",
+"speed": 1.0
+}]
+
+[node name="BotnetMinion" type="AnimatedSprite2D" groups=["BOTNET_MINION", "VIRUS_ENEMY"]]
+z_index = 72
+scale = Vector2(0.24, 0.24)
+sprite_frames = SubResource("SpriteFrames_botnet_minion")
+animation = &"idle"
+autoplay = "idle"
+script = ExtResource("1_script")
+path_speed = 150.0
+max_health = 1
+cyberbuck_reward = 10
+
+[node name="ScanSpotlight" type="Node2D" parent="."]
+top_level = true
+z_index = 52
+z_as_relative = false
+modulate = Color(1, 1, 1, 0.5)
+
+[node name="OuterGlow" type="Polygon2D" parent="ScanSpotlight"]
+color = Color(1, 0.03, 0.08, 0.28)
+polygon = PackedVector2Array(44, 0, 40.65, 7.65, 31.11, 14.14, 16.84, 18.48, 0, 20, -16.84, 18.48, -31.11, 14.14, -40.65, 7.65, -44, 0, -40.65, -7.65, -31.11, -14.14, -16.84, -18.48, 0, -20, 16.84, -18.48, 31.11, -14.14, 40.65, -7.65)
+
+[node name="CoreGlow" type="Polygon2D" parent="ScanSpotlight"]
+color = Color(1, 0.08, 0.12, 0.42)
+polygon = PackedVector2Array(30, 0, 27.72, 4.59, 21.21, 8.49, 11.48, 11.09, 0, 12, -11.48, 11.09, -21.21, 8.49, -27.72, 4.59, -30, 0, -27.72, -4.59, -21.21, -8.49, -11.48, -11.09, 0, -12, 11.48, -11.09, 21.21, -8.49, 27.72, -4.59)
+
+[node name="ScanRing" type="Line2D" parent="ScanSpotlight"]
+width = 2.5
+default_color = Color(1, 0.18, 0.22, 0.9)
+closed = true
+antialiased = true
+points = PackedVector2Array(40, 0, 36.96, 6.89, 28.28, 12.73, 15.31, 16.63, 0, 18, -15.31, 16.63, -28.28, 12.73, -36.96, 6.89, -40, 0, -36.96, -6.89, -28.28, -12.73, -15.31, -16.63, 0, -18, 15.31, -16.63, 28.28, -12.73, 36.96, -6.89)

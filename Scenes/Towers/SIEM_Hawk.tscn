@@ -3,6 +3,10 @@
 [ext_resource type="SpriteFrames" uid="uid://okjq4nkrqx2i" path="res://assets/Towers/SIEM_Hawk/SIEMHawkSpriteFrames.tres" id="1_frames"]
 [ext_resource type="Script" uid="uid://degsxbf8k6ewd" path="res://Scripts/Towers/siem_hawk.gd" id="2_script"]
 [ext_resource type="Texture2D" uid="uid://b6x0qkc0yqkv7" path="res://assets/Towers/SIEM_Hawk/SIEM_Hawk_Base.png" id="3_base"]
+[ext_resource type="SpriteFrames" uid="uid://b7dkdf4ig70xp" path="res://assets/Towers/SIEM_Hawk/Attack/SIEMHawkAttackLV2SpriteFrames.tres" id="4_attack_lv2"]
+[ext_resource type="SpriteFrames" uid="uid://bph7j8mq6uh15" path="res://assets/Towers/SIEM_Hawk/Attack/SIEMHawkAttackLV3SpriteFrames.tres" id="5_attack_lv3"]
+[ext_resource type="SpriteFrames" uid="uid://b7iswb22ep7tg" path="res://assets/Towers/SIEM_Hawk/Attack/SIEMHawkAttackLV4SpriteFrames.tres" id="6_attack_lv4"]
+[ext_resource type="SpriteFrames" uid="uid://bnbn211ymo8re" path="res://assets/Towers/SIEM_Hawk/Attack/SIEMHawkAttackLV5SpriteFrames.tres" id="7_attack_lv5"]
 
 [node name="SIEM_Hawk" type="Node2D" unique_id=1629272437 groups=["Defender", "OFFENSE_TOWER"]]
 z_index = 180
@@ -43,20 +47,53 @@ sprite_frames = ExtResource("1_frames")
 animation = &"idle_lv5"
 autoplay = "idle_lv5"
 
+[node name="LV2AttackVisual" type="AnimatedSprite2D" parent="." unique_id=807296603]
+visible = false
+z_index = 1
+scale = Vector2(6.4, 6.4)
+sprite_frames = ExtResource("4_attack_lv2")
+animation = &"attack_lv2"
+frame_progress = 0.90498143
+
+[node name="LV3AttackVisual" type="AnimatedSprite2D" parent="." unique_id=7419504]
+visible = false
+z_index = 1
+position = Vector2(0, -71.5003)
+scale = Vector2(8.413616, 8.413616)
+sprite_frames = ExtResource("5_attack_lv3")
+animation = &"attack_lv3"
+frame_progress = 0.098308206
+
+[node name="LV4AttackVisual" type="AnimatedSprite2D" parent="." unique_id=1518918543]
+visible = false
+z_index = 1
+scale = Vector2(6.4, 6.4)
+sprite_frames = ExtResource("6_attack_lv4")
+animation = &"attack_lv4"
+frame_progress = 0.28152555
+
+[node name="LV5AttackVisual" type="AnimatedSprite2D" parent="." unique_id=277829601]
+visible = false
+z_index = 1
+scale = Vector2(6.4, 6.4)
+sprite_frames = ExtResource("7_attack_lv5")
+animation = &"attack_lv5"
+frame_progress = 0.95329475
+
 [node name="BaseSprite" type="Sprite2D" parent="." unique_id=1995772345]
 z_index = -1
 texture = ExtResource("3_base")
 
-[node name="DestinationMarker" type="Node2D" parent="."]
-top_level = true
+[node name="DestinationMarker" type="Node2D" parent="." unique_id=1601214702]
 visible = false
-z_as_relative = false
+top_level = true
 z_index = 178
+z_as_relative = false
 
-[node name="Fill" type="Polygon2D" parent="DestinationMarker"]
+[node name="Fill" type="Polygon2D" parent="DestinationMarker" unique_id=1426456091]
 color = Color(0.12, 0.58, 1, 0.18)
 
-[node name="Outline" type="Line2D" parent="DestinationMarker"]
+[node name="Outline" type="Line2D" parent="DestinationMarker" unique_id=1854790789]
 width = 3.0
 default_color = Color(0.35, 0.84, 1, 0.92)
 joint_mode = 1

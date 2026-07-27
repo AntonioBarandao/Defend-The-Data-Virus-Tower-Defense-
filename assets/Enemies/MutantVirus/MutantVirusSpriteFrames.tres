@@ -1,7 +1,7 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://6u7tpvsoru3f"]
 
-[ext_resource type="Texture2D" uid="uid://cqvms7mutantv" path="res://Assets/Enemies/MutantVirus/MutantVirus_Sprite.png" id="1_idle"]
-[ext_resource type="Texture2D" uid="uid://dvcf440matnhb" path="res://Assets/Enemies/MutantVirus/Destroy/Mutant_Virus_Destroy_atlas_24fps.png" id="2_atlas"]
+[ext_resource type="Texture2D" uid="uid://cqvms7mutantv" path="res://assets/Enemies/MutantVirus/MutantVirus_Sprite.png" id="1_idle"]
+[ext_resource type="Texture2D" uid="uid://dvcf440matnhb" path="res://assets/Enemies/MutantVirus/Destroy/Mutant_Virus_Destroy_atlas_24fps.png" id="2_atlas"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mutant_destroy_000"]
 atlas = ExtResource("2_atlas")

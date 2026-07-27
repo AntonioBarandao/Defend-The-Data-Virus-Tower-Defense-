@@ -2,11 +2,6 @@
 
 [ext_resource type="Script" uid="uid://1hxvtyv2h673" path="res://Scripts/UI/tower_shop_card.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="2_font"]
-[ext_resource type="Script" uid="uid://et8vs33f5uou" path="res://Scripts/UI/tower_shop_card_resource.gd" id="2_oviki"]
-
-[sub_resource type="Resource" id="Resource_l53pi"]
-script = ExtResource("2_oviki")
-metadata/_custom_type_script = "uid://et8vs33f5uou"
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oviki"]
 bg_color = Color(0.017, 0.031, 0.055, 0.96)
@@ -130,7 +125,6 @@ offset_right = 158.0
 offset_bottom = 166.0
 mouse_filter = 2
 script = ExtResource("1_script")
-card_resource = SubResource("Resource_l53pi")
 
 [node name="CardPanel" type="Panel" parent="." unique_id=1171323138]
 z_index = 1

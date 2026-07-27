@@ -1,6 +1,8 @@
 class_name IPSIntrusionTower
 extends "res://Scripts/Towers/cyber_guardian_idle_sprite.gd"
 
+const AudioResolver := preload("res://Scripts/Audio/audio_player_resolver.gd")
+
 signal spike_damage_requested(follow: PathFollow2D, amount: int)
 
 const IPS_ATTACK_RANGE := 360.0
@@ -8,26 +10,59 @@ const IPS_MAX_LEVEL := 5
 const IPS_UPGRADE_COSTS := [0, 0, 0, 0, 0]
 const MAX_SPIKE_BONUSES_BY_LEVEL := [0, 2, 4, 6, 8]
 const ATTACK_RANGE_MULTIPLIERS_BY_LEVEL := [1.0, 1.2, 1.4, 1.6, 1.8]
-const PRODUCTION_SPEED_MULTIPLIERS_BY_LEVEL := [1.0, 1.15, 1.30, 1.45, 1.60]
-const FACTORY_PRODUCTION_ANIMATION := &"IPS_Intrusion_Factory_LV1"
+const PRODUCTION_SPEED_MULTIPLIERS_BY_LEVEL := [1.0, 1.45, 1.60, 1.85, 2.60]
+const SPIKE_DURABILITY_BY_LEVEL := [1, 2, 3, 4, 5]
+const FACTORY_ANIMATION_PREFIX := "IPS_Intrusion_Factory_LV"
 
 @export var spike_scene: PackedScene
+@export var electricity_link_scene: PackedScene
 @export_range(1, 24, 1) var max_spikes := 5
 @export_range(0.2, 10.0, 0.1) var spike_production_seconds := 2.0
 @export_range(1, 100, 1) var spike_damage := 1
 @export_range(16.0, 180.0, 1.0) var spike_spacing := 66.0
 @export_range(0.05, 2.0, 0.05) var spike_move_seconds := 0.45
+@export_group("Factory Level Visuals")
+@export var factory_level_visual_paths: Array[NodePath] = [
+	^"FactoryVisual",
+	^"LV2FactoryVisual",
+	^"LV3FactoryVisual",
+	^"LV4FactoryVisual",
+	^"LV5FactoryVisual",
+]
+@export_group("")
+@export_group("Electricity Links")
+@export_range(1, 100, 1) var electricity_damage := 1
+@export_range(0.1, 5.0, 0.1) var electricity_tick_seconds := 0.5
+@export_range(1.0, 3.0, 0.05) var electricity_link_distance_multiplier := 1.35
+@export_group("")
+@export_group("Audio")
+@export var spike_hit_sfx_path: NodePath = ^"Sounds/IPSIntrusionSpikeSfx"
+@export var electricity_sfx_path: NodePath = ^"Sounds/IPSIntrusionElectricitySfx"
+@export_group("")
 
 var _production_elapsed := 0.0
 var _spikes: Array[IPSIntrusionSpike] = []
+var _electricity_links := {}
+var _electricity_contact_elapsed := {}
 var _factory_pulse_tween: Tween
 var _factory_animation_active := false
+var _factory_level_visuals: Array[AnimatedSprite2D] = []
+var _spike_hit_sfx: AudioStreamPlayer
+var _electricity_sfx: AudioStreamPlayer
 
 
 func _ready() -> void:
 	super._ready()
+	_cache_factory_level_visuals()
+	_spike_hit_sfx = AudioResolver.resolve(self, spike_hit_sfx_path)
+	_electricity_sfx = AudioResolver.resolve(self, electricity_sfx_path)
 	range_preview_fill_color = Color(0.12, 0.68, 1.0, 0.14)
 	range_preview_outline_color = Color(0.34, 0.86, 1.0, 0.82)
+	_sync_factory_level_animation()
+
+
+func _exit_tree() -> void:
+	_clear_spikes()
 
 
 func reset_tower() -> void:
@@ -35,6 +70,7 @@ func reset_tower() -> void:
 	_production_elapsed = 0.0
 	_set_factory_production_active(false)
 	_clear_spikes()
+	_sync_factory_level_animation()
 
 
 func finish_drag() -> bool:
@@ -44,6 +80,16 @@ func finish_drag() -> bool:
 	return was_placed
 
 
+func play_summon() -> void:
+	super.play_summon()
+	_sync_factory_level_animation()
+
+
+func play_idle() -> void:
+	super.play_idle()
+	_sync_factory_level_animation()
+
+
 func update_attack(_delta: float, _active_viruses: Array[PathFollow2D]) -> PathFollow2D:
 	return null
 
@@ -51,12 +97,16 @@ func update_attack(_delta: float, _active_viruses: Array[PathFollow2D]) -> PathF
 func update_spike_factory(delta: float, active_viruses: Array[PathFollow2D]) -> void:
 	if not is_placed():
 		_set_factory_production_active(false)
+		_clear_electricity_links()
 		return
 
+	_sync_factory_level_animation()
 	_resolve_virus_path()
 	_prune_spikes()
 	_sync_spike_positions()
 	_damage_viruses_with_spikes(active_viruses)
+	_sync_electricity_links()
+	_damage_viruses_with_electricity(delta, active_viruses)
 
 	var can_produce_spike := _spikes.size() < get_max_spikes() and _has_path_target_in_range()
 	_set_factory_production_active(can_produce_spike)
@@ -92,7 +142,7 @@ func get_upgrade_cost() -> int:
 
 
 func get_shot_power() -> int:
-	return spike_damage
+	return _get_signal_boosted_damage(spike_damage)
 
 
 func get_shot_cooldown() -> float:
@@ -101,6 +151,10 @@ func get_shot_cooldown() -> float:
 
 func get_max_spikes() -> int:
 	return max_spikes + int(MAX_SPIKE_BONUSES_BY_LEVEL[_get_level_balance_index()])
+
+
+func get_spike_durability() -> int:
+	return int(SPIKE_DURABILITY_BY_LEVEL[_get_level_balance_index()])
 
 
 func get_level_attack_range_multiplier() -> float:
@@ -117,6 +171,10 @@ func upgrade() -> bool:
 
 	level += 1
 	_range_preview_radius = -1.0
+	_sync_factory_level_animation()
+	for spike in _spikes:
+		if is_instance_valid(spike):
+			spike.configure_for_level(level)
 	if is_placed():
 		_spawn_summon_effect()
 	return true
@@ -138,11 +196,12 @@ func _spawn_next_spike() -> void:
 	if game_root == null:
 		return
 
-	game_root.add_child(spike)
 	spike.damage = spike_damage
+	spike.configure_for_level(level)
 	spike.path_offset = float(target["offset"])
 	spike.z_index = z_index + 1
 	spike.z_as_relative = false
+	game_root.add_child(spike)
 	_spikes.append(spike)
 
 	var target_position: Vector2 = target["position"]
@@ -182,8 +241,144 @@ func _damage_viruses_with_spikes(active_viruses: Array[PathFollow2D]) -> void:
 			if not _can_spike_target_follow(follow):
 				continue
 			if spike.mark_follow_hit(follow):
-				spike_damage_requested.emit(follow, spike.damage)
+				spike_damage_requested.emit(
+					follow,
+					_get_signal_boosted_damage(spike.damage)
+				)
+				_play_sfx_if_idle(_spike_hit_sfx)
 				break
+
+
+func _sync_electricity_links() -> void:
+	var landed_spikes: Array[IPSIntrusionSpike] = []
+	for spike in _spikes:
+		if is_instance_valid(spike) and spike.is_landed():
+			landed_spikes.append(spike)
+	landed_spikes.sort_custom(
+		func(first: IPSIntrusionSpike, second: IPSIntrusionSpike) -> bool:
+			return first.path_offset < second.path_offset
+	)
+
+	var desired_pairs := {}
+	for index in range(landed_spikes.size() - 1):
+		var first := landed_spikes[index]
+		var second := landed_spikes[index + 1]
+		if absf(second.path_offset - first.path_offset) \
+				> spike_spacing * electricity_link_distance_multiplier:
+			continue
+
+		var pair_key := _get_electricity_pair_key(first, second)
+		desired_pairs[pair_key] = true
+		var link := _electricity_links.get(pair_key) as IPSElectricityLink
+		if not is_instance_valid(link):
+			link = _create_electricity_link(first, second)
+			if link == null:
+				continue
+			_electricity_links[pair_key] = link
+		link.sync_link()
+
+	for pair_key_value in _electricity_links.keys().duplicate():
+		var pair_key := String(pair_key_value)
+		if desired_pairs.has(pair_key):
+			continue
+		_remove_electricity_link(pair_key)
+
+
+func _create_electricity_link(
+	first: IPSIntrusionSpike,
+	second: IPSIntrusionSpike
+) -> IPSElectricityLink:
+	if electricity_link_scene == null:
+		return null
+	var link := electricity_link_scene.instantiate() as IPSElectricityLink
+	if link == null:
+		return null
+	var game_root := _get_game_root()
+	if game_root == null:
+		link.queue_free()
+		return null
+
+	link.z_index = z_index + 2
+	link.z_as_relative = false
+	game_root.add_child(link)
+	link.configure(first, second)
+	return link
+
+
+func _damage_viruses_with_electricity(
+	delta: float,
+	active_viruses: Array[PathFollow2D]
+) -> void:
+	var active_contacts := {}
+	for pair_key_value in _electricity_links.keys():
+		var pair_key := String(pair_key_value)
+		var link := _electricity_links[pair_key] as IPSElectricityLink
+		if not is_instance_valid(link) or not link.sync_link():
+			continue
+
+		for follow in active_viruses:
+			if not _can_spike_target_follow(follow) \
+					or not link.contains_follow(follow):
+				continue
+
+			var contact_key := "%s|%d" % [pair_key, follow.get_instance_id()]
+			active_contacts[contact_key] = true
+			var elapsed := float(
+				_electricity_contact_elapsed.get(contact_key, 0.0)
+			) + delta
+			while elapsed >= electricity_tick_seconds:
+				if not _can_spike_target_follow(follow):
+					break
+				elapsed -= electricity_tick_seconds
+				spike_damage_requested.emit(
+					follow,
+					_get_signal_boosted_damage(electricity_damage)
+				)
+				_play_sfx_if_idle(_electricity_sfx)
+			_electricity_contact_elapsed[contact_key] = elapsed
+
+	for contact_key in _electricity_contact_elapsed.keys().duplicate():
+		if not active_contacts.has(contact_key):
+			_electricity_contact_elapsed.erase(contact_key)
+
+
+func _get_electricity_pair_key(
+	first: IPSIntrusionSpike,
+	second: IPSIntrusionSpike
+) -> String:
+	var first_id := first.get_instance_id()
+	var second_id := second.get_instance_id()
+	return (
+		"%d:%d" % [first_id, second_id]
+		if first_id < second_id
+		else "%d:%d" % [second_id, first_id]
+	)
+
+
+func _play_sfx_if_idle(player: AudioStreamPlayer) -> void:
+	if player == null or player.playing:
+		return
+	player.play()
+
+
+func _remove_electricity_link(pair_key: String) -> void:
+	var link := _electricity_links.get(pair_key) as IPSElectricityLink
+	if is_instance_valid(link):
+		link.queue_free()
+	_electricity_links.erase(pair_key)
+	for contact_key_value in _electricity_contact_elapsed.keys().duplicate():
+		var contact_key := String(contact_key_value)
+		if contact_key.begins_with(pair_key + "|"):
+			_electricity_contact_elapsed.erase(contact_key)
+
+
+func _clear_electricity_links() -> void:
+	for link_value in _electricity_links.values():
+		var link := link_value as IPSElectricityLink
+		if is_instance_valid(link):
+			link.queue_free()
+	_electricity_links.clear()
+	_electricity_contact_elapsed.clear()
 
 
 func _can_spike_target_follow(follow: PathFollow2D) -> bool:
@@ -315,6 +510,7 @@ func _prune_spikes() -> void:
 
 
 func _clear_spikes() -> void:
+	_clear_electricity_links()
 	for spike in _spikes:
 		if is_instance_valid(spike):
 			spike.queue_free()
@@ -331,14 +527,63 @@ func _play_factory_pulse() -> void:
 
 
 func _set_factory_production_active(active: bool) -> void:
-	if active == _factory_animation_active:
+	_factory_animation_active = active
+	_sync_factory_level_animation()
+
+
+func _sync_factory_level_animation() -> void:
+	if _factory_level_visuals.is_empty():
+		_cache_factory_level_visuals()
+	if _factory_level_visuals.is_empty():
 		return
 
-	_factory_animation_active = active
-	if active:
-		play_animation(FACTORY_PRODUCTION_ANIMATION)
-	else:
-		play_idle()
+	var current_level := clampi(level, 1, IPS_MAX_LEVEL)
+	var active_index := clampi(
+		current_level - 1,
+		0,
+		_factory_level_visuals.size() - 1
+	)
+	var expected_animation := StringName(
+		FACTORY_ANIMATION_PREFIX + str(current_level)
+	)
+	for index in range(_factory_level_visuals.size()):
+		var factory_visual := _factory_level_visuals[index]
+		if factory_visual == null:
+			continue
+		var is_active := index == active_index
+		factory_visual.visible = is_active
+		if not is_active:
+			factory_visual.stop()
+			continue
+		if factory_visual.sprite_frames == null \
+				or not factory_visual.sprite_frames.has_animation(
+					expected_animation
+				):
+			continue
+		if factory_visual.animation != expected_animation \
+				or not factory_visual.is_playing():
+			factory_visual.play(expected_animation)
+
+
+func get_active_factory_visual() -> AnimatedSprite2D:
+	if _factory_level_visuals.is_empty():
+		_cache_factory_level_visuals()
+	if _factory_level_visuals.is_empty():
+		return null
+	var active_index := clampi(
+		level - 1,
+		0,
+		_factory_level_visuals.size() - 1
+	)
+	return _factory_level_visuals[active_index]
+
+
+func _cache_factory_level_visuals() -> void:
+	_factory_level_visuals.clear()
+	for visual_path in factory_level_visual_paths:
+		_factory_level_visuals.append(
+			get_node_or_null(visual_path) as AnimatedSprite2D
+		)
 
 
 func _get_level_balance_index() -> int:

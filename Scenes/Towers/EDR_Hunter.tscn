@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://bjwcs8augglup"]
 
-[ext_resource type="SpriteFrames" path="res://assets/Towers/EDR_Hunter/EDRHunterSpriteFrames.tres" id="1_frames"]
-[ext_resource type="Script" path="res://Scripts/Towers/edr_hunter.gd" id="2_script"]
+[ext_resource type="SpriteFrames" uid="uid://bloe07nrfou3x" path="res://assets/Towers/EDR_Hunter/EDRHunterSpriteFrames.tres" id="1_frames"]
+[ext_resource type="Script" uid="uid://c8s2baxnvm8l0" path="res://Scripts/Towers/edr_hunter.gd" id="2_script"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/EDR_Hunter_Drone.tscn" id="3_drone"]
 
 [sub_resource type="Curve2D" id="Curve2D_drone_patrol"]
@@ -10,62 +10,62 @@ _data = {
 }
 point_count = 9
 
-[node name="EDR_Hunter" type="Node2D" groups=["Defender", "OFFENSE_TOWER"]]
+[node name="EDR_Hunter" type="Node2D" unique_id=504631960 groups=["Defender", "OFFENSE_TOWER"]]
 scale = Vector2(0.11188765, 0.11188765)
 script = ExtResource("2_script")
 show_attack_range_preview = false
 defender_idle_visual_path = NodePath("RotatingVisual/LevelVisuals/LV1Visual")
 defender_summon_visual_path = NodePath("RotatingVisual/LevelVisuals/LV1Visual")
 defender_shoot_visual_path = NodePath("RotatingVisual/LevelVisuals/LV1Visual")
+summon_sfx_path = NodePath("Sounds/EDRHunterDeploySfx")
+defender_attack_sfx_path = NodePath("Sounds/EDRHunterSniperShootSfx")
 
-[node name="RotatingVisual" type="Node2D" parent="."]
+[node name="RotatingVisual" type="Node2D" parent="." unique_id=548379182]
 
-[node name="LevelVisuals" type="Node2D" parent="RotatingVisual"]
+[node name="LevelVisuals" type="Node2D" parent="RotatingVisual" unique_id=462360688]
 scale = Vector2(5.688889, 5.688889)
 
-[node name="LV1Visual" type="AnimatedSprite2D" parent="RotatingVisual/LevelVisuals"]
+[node name="LV1Visual" type="AnimatedSprite2D" parent="RotatingVisual/LevelVisuals" unique_id=257280134]
 sprite_frames = ExtResource("1_frames")
 animation = &"idle_lv1"
 autoplay = "idle_lv1"
 
-[node name="LV2Visual" type="AnimatedSprite2D" parent="RotatingVisual/LevelVisuals"]
+[node name="LV2Visual" type="AnimatedSprite2D" parent="RotatingVisual/LevelVisuals" unique_id=1359998435]
 visible = false
 sprite_frames = ExtResource("1_frames")
 animation = &"idle_lv2"
 
-[node name="LV3Visual" type="AnimatedSprite2D" parent="RotatingVisual/LevelVisuals"]
+[node name="LV3Visual" type="AnimatedSprite2D" parent="RotatingVisual/LevelVisuals" unique_id=199626133]
 visible = false
 sprite_frames = ExtResource("1_frames")
 animation = &"idle_lv3"
 
-[node name="LV4Visual" type="AnimatedSprite2D" parent="RotatingVisual/LevelVisuals"]
+[node name="LV4Visual" type="AnimatedSprite2D" parent="RotatingVisual/LevelVisuals" unique_id=2145277166]
 visible = false
 sprite_frames = ExtResource("1_frames")
 animation = &"idle_lv4"
 
-[node name="LV5Visual" type="AnimatedSprite2D" parent="RotatingVisual/LevelVisuals"]
+[node name="LV5Visual" type="AnimatedSprite2D" parent="RotatingVisual/LevelVisuals" unique_id=1898712947]
 visible = false
 sprite_frames = ExtResource("1_frames")
 animation = &"idle_lv5"
 
-[node name="DronePath" type="Path2D" parent="."]
+[node name="DronePath" type="Path2D" parent="." unique_id=862820676]
 curve = SubResource("Curve2D_drone_patrol")
 
-[node name="DronePathFollow" type="PathFollow2D" parent="DronePath"]
-loop = true
+[node name="DronePathFollow" type="PathFollow2D" parent="DronePath" unique_id=881533961]
+position = Vector2(700, -520)
 rotates = false
-cubic_interp = true
 
-[node name="EDR_Hunter_Drone" parent="DronePath/DronePathFollow" instance=ExtResource("3_drone")]
+[node name="EDR_Hunter_Drone" parent="DronePath/DronePathFollow" unique_id=842442362 instance=ExtResource("3_drone")]
 visible = false
 scale = Vector2(3.2, 3.2)
 
-[node name="DronePathFollow2" type="PathFollow2D" parent="DronePath"]
+[node name="DronePathFollow2" type="PathFollow2D" parent="DronePath" unique_id=1809313763]
+position = Vector2(-707.5386, 473.31516)
 progress = 2700.0
-loop = true
 rotates = false
-cubic_interp = true
 
-[node name="EDR_Hunter_Drone2" parent="DronePath/DronePathFollow2" instance=ExtResource("3_drone")]
+[node name="EDR_Hunter_Drone2" parent="DronePath/DronePathFollow2" unique_id=385079545 instance=ExtResource("3_drone")]
 visible = false
 scale = Vector2(3.2, 3.2)

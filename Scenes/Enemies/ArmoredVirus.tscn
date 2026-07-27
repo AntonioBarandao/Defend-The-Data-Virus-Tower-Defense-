@@ -1,21 +1,24 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://fuuy387fnlaj"]
 
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/ArmoredVirus/ArmoredVirusSpriteFrames.tres" id="1_frames"]
-[ext_resource type="Script" path="res://Scripts/Enemies/armored_virus.gd" id="2_script"]
-[ext_resource type="AudioStream" path="res://assets/sfx/virus_destroy.wav" id="3_destroy_sfx"]
+[ext_resource type="SpriteFrames" uid="uid://cuog0fhyrk0x6" path="res://assets/Enemies/ArmoredVirus/ArmoredVirusSpriteFrames.tres" id="1_frames"]
+[ext_resource type="Script" uid="uid://xjoju0rkju5e" path="res://Scripts/Enemies/armored_virus.gd" id="2_script"]
 
-[node name="ArmoredVirus" type="AnimatedSprite2D" groups=["EVOLVED_VIRUS"]]
+[node name="ArmoredVirus" type="AnimatedSprite2D" unique_id=1192718894 groups=["EVOLVED_VIRUS"]]
 scale = Vector2(0.11, 0.11)
+script = ExtResource("2_script")
+damage_flash_enabled = true
+max_health = 15
+cyberbuck_reward = 200
+destroy_sprite_path = NodePath("ArmorDestroyAnimation")
+destroy_sfx_path = NodePath("Sounds/ArmoredVirusDestroySfx")
+
+[node name="IdleAnimation" type="AnimatedSprite2D" parent="." unique_id=1504111973]
 sprite_frames = ExtResource("1_frames")
 animation = &"idle"
 autoplay = "idle"
-script = ExtResource("2_script")
-max_health = 5
-cyberbuck_reward = 200
-damage_flash_enabled = true
 
-[node name="Audio" type="Node" parent="."]
-
-[node name="DestroySfx" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource("3_destroy_sfx")
-volume_db = -20.0
+[node name="ArmorDestroyAnimation" type="AnimatedSprite2D" parent="." unique_id=854827906]
+visible = false
+scale = Vector2(1.8849863, 1.8849863)
+sprite_frames = ExtResource("1_frames")
+animation = &"armor_destroy"

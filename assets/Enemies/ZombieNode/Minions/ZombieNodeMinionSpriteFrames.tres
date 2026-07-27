@@ -1,0 +1,96 @@
+[gd_resource type="SpriteFrames" load_steps=10 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/Enemies/ZombieNode/Minions/Variants/ZombieNodeMinion_Angry.png" id="1_angry"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/ZombieNode/Minions/Variants/ZombieNodeMinion_Dizzy.png" id="2_dizzy"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/ZombieNode/Minions/Variants/ZombieNodeMinion_Jealous.png" id="3_jealous"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/ZombieNode/Minions/Variants/ZombieNodeMinion_Look.png" id="4_look"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/ZombieNode/Minions/Variants/ZombieNodeMinion_Rampage.png" id="5_rampage"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/ZombieNode/Minions/Variants/ZombieNodeMinion_Rip.png" id="6_rip"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/ZombieNode/Minions/Variants/ZombieNodeMinion_Sad.png" id="7_sad"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/ZombieNode/Minions/Variants/ZombieNodeMinion_Skull.png" id="8_skull"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/ZombieNode/Minions/Variants/ZombieNodeMinion_Surprised.png" id="9_surprised"]
+
+[resource]
+animations = [
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_angry")
+}],
+"loop": true,
+"name": &"angry",
+"speed": 1.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_dizzy")
+}],
+"loop": true,
+"name": &"dizzy",
+"speed": 1.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_jealous")
+}],
+"loop": true,
+"name": &"jealous",
+"speed": 1.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_look")
+}],
+"loop": true,
+"name": &"look",
+"speed": 1.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_rampage")
+}],
+"loop": true,
+"name": &"rampage",
+"speed": 1.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_rip")
+}],
+"loop": true,
+"name": &"rip",
+"speed": 1.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_sad")
+}],
+"loop": true,
+"name": &"sad",
+"speed": 1.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_skull")
+}],
+"loop": true,
+"name": &"skull",
+"speed": 1.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_surprised")
+}],
+"loop": true,
+"name": &"surprised",
+"speed": 1.0
+}
+]

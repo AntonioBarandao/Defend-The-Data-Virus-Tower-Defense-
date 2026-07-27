@@ -1,6 +1,11 @@
 class_name IPSIntrusionSpike
 extends Area2D
 
+const DEFAULT_SPIKE_ANIMATION := &"Animated_Spikes"
+const LEVEL_FIVE_SPIKE_ANIMATION := &"Animated_Spikes_LV5"
+const LEVEL_FIVE_SPIKE_FRAMES_PATH := \
+	"res://assets/Towers/IPS_Intrusion/IPSIntrusionSpikeLV5SpriteFrames.tres"
+
 @export var damage := 1
 @export var max_hits := 1
 @export_range(4.0, 160.0, 1.0) var hurt_radius := 42.0
@@ -8,6 +13,7 @@ extends Area2D
 
 var path_offset := 0.0
 var landed := false
+var tower_level := 1
 
 var _remaining_hits := 1
 var _hit_follows := {}
@@ -16,12 +22,16 @@ var _target_rotation := 0.0
 var _base_scale := Vector2.ONE
 var _deploy_tween: Tween
 var _animated_sprite: AnimatedSprite2D
+var _default_sprite_frames: SpriteFrames
+var _level_five_sprite_frames: SpriteFrames
 
 
 func _ready() -> void:
 	_base_scale = scale
 	_remaining_hits = maxi(1, max_hits)
 	_animated_sprite = get_node_or_null(animated_sprite_path) as AnimatedSprite2D
+	if _animated_sprite != null:
+		_default_sprite_frames = _animated_sprite.sprite_frames
 	_play_spike_animation()
 
 
@@ -33,6 +43,24 @@ func reset_spike() -> void:
 	scale = _base_scale
 	show()
 	_play_spike_animation()
+
+
+func configure_for_level(new_level: int, restore_health: bool = true) -> void:
+	tower_level = clampi(new_level, 1, 5)
+	max_hits = tower_level
+	if restore_health:
+		_remaining_hits = max_hits
+	else:
+		_remaining_hits = mini(_remaining_hits, max_hits)
+	_play_spike_animation()
+
+
+func get_remaining_hits() -> int:
+	return maxi(0, _remaining_hits)
+
+
+func is_landed() -> bool:
+	return landed and _remaining_hits > 0
 
 
 func start_deploy(start_position: Vector2, end_position: Vector2, end_rotation: float, travel_seconds: float) -> void:
@@ -119,7 +147,21 @@ func _get_follow_target_position(follow: PathFollow2D) -> Vector2:
 func _play_spike_animation() -> void:
 	if _animated_sprite == null or _animated_sprite.sprite_frames == null:
 		return
-	if not _animated_sprite.sprite_frames.has_animation(&"Animated_Spikes"):
+	var animation_name := (
+		LEVEL_FIVE_SPIKE_ANIMATION
+		if tower_level >= 5
+		else DEFAULT_SPIKE_ANIMATION
+	)
+	if tower_level >= 5:
+		if _level_five_sprite_frames == null:
+			_level_five_sprite_frames = load(
+				LEVEL_FIVE_SPIKE_FRAMES_PATH
+			) as SpriteFrames
+		if _level_five_sprite_frames != null:
+			_animated_sprite.sprite_frames = _level_five_sprite_frames
+	elif _default_sprite_frames != null:
+		_animated_sprite.sprite_frames = _default_sprite_frames
+	if not _animated_sprite.sprite_frames.has_animation(animation_name):
 		return
 
-	_animated_sprite.play(&"Animated_Spikes")
+	_animated_sprite.play(animation_name)

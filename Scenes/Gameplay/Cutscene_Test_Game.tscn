@@ -15,12 +15,9 @@
 [ext_resource type="FontFile" uid="uid://2u6nbvofsl5k" path="res://assets/Fonts/Cyber Crown/Cyber Crown.ttf" id="15_wq1r8"]
 [ext_resource type="PackedScene" uid="uid://fet10k45d4t6" path="res://Scenes/UI/UtilityOverlayHUD.tscn" id="16_demo_overlay"]
 [ext_resource type="Texture2D" uid="uid://bys5vnsudc4iq" path="res://tools/Cutscene.png" id="16_m0vd8"]
-[ext_resource type="AudioStream" uid="uid://bpts0mu1imbfp" path="res://assets/soundtrack/Virtual Business.wav" id="17_soundtrack"]
 [ext_resource type="PackedScene" uid="uid://bthmcxcu7ao8p" path="res://Scenes/UI/TextCutsceneHUD.tscn" id="18_cutscene"]
 [ext_resource type="Texture2D" uid="uid://bg30biooew5ch" path="res://assets/Towers/CyberGuardian/Display_CyberGuardian.png" id="19_4aenv"]
-[ext_resource type="PackedScene" uid="uid://bttc6spxk8xfs" path="res://Scenes/Enemies/ZombieNode.tscn" id="19_zombie_node"]
 [ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="20_4aenv"]
-[ext_resource type="Script" uid="uid://bl4stwlf88ctn" path="res://Scripts/Gameplay/cutscene_demo_director.gd" id="20_director"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/CutsceneDemoMenuHUD.tscn" id="21_demo_menu"]
 [ext_resource type="Texture2D" uid="uid://boaiqtkopvk4n" path="res://assets/Towers/Laser-Turret/Plates/Laser_Turret_LV1_Plate.png" id="21_qnrg6"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/AnnounceTextHUD.tscn" id="22_announce"]
@@ -45,6 +42,11 @@
 [ext_resource type="Resource" uid="uid://ciee7jdsbe0he" path="res://Resources/TowerShopCards/HoneypotProductionCard.tres" id="36_honeypot_card"]
 [ext_resource type="Texture2D" uid="uid://d26s2ivyd1ttd" path="res://assets/UI/TowerStoreArrowHex.svg" id="37_store_toggle"]
 [ext_resource type="PackedScene" uid="uid://c3y7m55tbgdll" path="res://Scenes/UI/SignalBoostHUD.tscn" id="38_signal_boost_hud"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/DefeatHUD.tscn" id="99_defeat_hud"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/XDR_Mech.tscn" id="39_xdr_mech"]
+[ext_resource type="Resource" path="res://Resources/TowerShopCards/XDRMechCard.tres" id="40_xdr_card"]
+[ext_resource type="Texture2D" path="res://assets/Towers/XDR_Mech/Display_XDR_Mech.png" id="41_xdr_display"]
+[ext_resource type="Script" path="res://Scripts/Gameplay/xdr_path_blocker.gd" id="42_xdr_path_blocker"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_question"]
 bg_color = Color(0.025, 0.032, 0.05, 0.94)
@@ -126,6 +128,20 @@ resource_local_to_scene = true
 size = Vector2(92.59923, 92.59923)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_store_toggle"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qnrg6"]
+bg_color = Color(0.017, 0.031, 0.055, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.78, 1, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.46)
+shadow_size = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syyru"]
 bg_color = Color(0.017, 0.031, 0.055, 0.96)
@@ -211,20 +227,6 @@ corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.46)
 shadow_size = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tcrod"]
-bg_color = Color(0.017, 0.031, 0.055, 0.96)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.25, 0.78, 1, 0.92)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-shadow_color = Color(0, 0, 0, 0.46)
-shadow_size = 8
-
 [sub_resource type="Curve2D" id="Curve2D_63v24"]
 _data = {
 "points": PackedVector2Array(0, 0, 0, 0, -58.81182, -26, 0, 0, 0, 0, 194.00346, -22, 0, 0, 0, 0, 220.31721, 20, 0, 0, 0, 0, 232.3777, 83, 0, 0, 0, 0, 315.7046, 82, 0, 0, 0, 0, 344.81555, -14, 0, 0, 0, 0, 365.0475, -38, 0, 0, 0, 0, 528.9263, -36, 0, 0, 0, 0, 563.32056, -74, 0, 0, 0, 0, 568.37854, -116, 0, 0, 0, 0, 586.5873, -137, 0, 0, 0, 0, 783.84875, -137, 0, 0, 0, 0, 811.1619, -107, 0, 0, 0, 0, 831.97675, -30, 0, 0, 0, 0, 869.4562, -2, 0, 0, 0, 0, 1112.6154, -9, 0, 0, 0, 0, 1129.9839, -71, 0, 0, 0, 0, 1168.3774, -113, 0, 0, 0, 0, 1400.567, -111, 0, 0, 0, 0, 1449.9302, -73, 0, 0, 0, 0, 1453.5262, 169, 0, 0, 0, 0, 1264.3575, 172, 0, 0, 0, 0, 1234.4933, 207, 0, 0, 0, 0, 1236.686, 352, 0, 0, 0, 0, 1204.8903, 388, 0, 0, 0, 0, 901.4508, 385, 0, 0, 0, 0, 855.7442, 401, 0, 0, 0, 0, 843.8605, 467, 0, 0, 0, 0, 793.5832, 488, 0, 0, 0, 0, 521.17175, 483, 0, 0, 0, 0, 476.37927, 447, 0, 0, 0, 0, 479.12164, 381, 0, 0, 0, 0, 480.03577, 301, 0, 0, 0, 0, 431.92365, 262, 0, 0, 0, 0, 197.29268, 261, 0, 0, 0, 0, 168.78612, 299, 0, 0, 0, 0, 158.91847, 434, 0, 0, 0, 0, 124.43828, 483, 0, 0, 0, 0, 64.6275, 502, 0, 0, 0, 0, 49.277817, 547, 0, 0, 0, 0, 12, 555)
@@ -237,11 +239,10 @@ point_count = 41
 script = ExtResource("1_on2he")
 virus_template_path = NodePath("")
 virus_spawn_path = NodePath("VirusElements/SpawnVirus")
+gameplay_soundtrack_path = NodePath("Music/CyberBusiness")
 show_path_guide = false
 
-[node name="AdminSandboxSoundtrack" type="AudioStreamPlayer" parent="." unique_id=662457559]
-stream = ExtResource("17_soundtrack")
-volume_db = -6.0
+[node name="Music" type="Node" parent="." unique_id=1762141767]
 
 [node name="CyberQuestionHUD" parent="." unique_id=923521268 instance=ExtResource("11_qhud")]
 visible = false
@@ -316,12 +317,15 @@ offset_bottom = 58.0
 scale = Vector2(1.2522548, 1.2522548)
 
 [node name="CutsceneDemoMenuHUD" parent="." unique_id=29047704 instance=ExtResource("21_demo_menu")]
+music_player_path = NodePath("../Music/CyberBusiness")
 
 [node name="WaveSetPanel" parent="CutsceneDemoMenuHUD/Root" index="3"]
 offset_left = -725.0
 offset_top = 83.0
 offset_right = -362.0
 offset_bottom = 159.0
+
+[node name="DefeatHUD" parent="." unique_id=192962941 instance=ExtResource("99_defeat_hud")]
 
 [node name="CutsceneCamera" type="Camera2D" parent="." unique_id=2005815930]
 position = Vector2(956, 544)
@@ -330,14 +334,6 @@ position = Vector2(956, 544)
 position = Vector2(961.4265, 541.5)
 scale = Vector2(1.1454227, 1.1509033)
 texture = ExtResource("6_agy0f")
-
-[node name="ZombieNode" parent="." unique_id=187820591 instance=ExtResource("19_zombie_node")]
-visible = false
-position = Vector2(954.00006, 454)
-scale = Vector2(2.0761907, 2.0761907)
-
-[node name="CutsceneDemoDirector" type="Node" parent="." unique_id=1486481276]
-script = ExtResource("20_director")
 
 [node name="TowerPlacementArea" type="Area2D" parent="." unique_id=817734020]
 script = ExtResource("15_place")
@@ -496,7 +492,7 @@ card_resource = ExtResource("30_cyber_card")
 tower_name = "Cyber Guardian"
 
 [node name="CardPanel" parent="TestDrag/CyberGuardianCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_syyru")
+theme_override_styles/panel = SubResource("StyleBoxFlat_qnrg6")
 
 [node name="DisplaySprite" parent="TestDrag/CyberGuardianCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1248978504, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 63.00006)
@@ -509,7 +505,7 @@ offset_bottom = 35.00006
 text = "Cyber Guardian"
 
 [node name="CostLabel" parent="TestDrag/CyberGuardianCard" index="3" unique_id=1790508198]
-text = "100"
+text = "FREE"
 
 [node name="InformationPopup" parent="TestDrag/CyberGuardianCard" index="5" unique_id=2022084967]
 visible = false
@@ -530,7 +526,7 @@ tower_name = "Laser Turret"
 deploy_cost = 125
 
 [node name="CardPanel" parent="TestDrag/LaserTurretCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_5iosg")
+theme_override_styles/panel = SubResource("StyleBoxFlat_syyru")
 
 [node name="DisplaySprite" parent="TestDrag/LaserTurretCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1774681448, 113385319) index="0" unique_id=590825140]
 position = Vector2(68, 59.00006)
@@ -560,7 +556,7 @@ card_resource = ExtResource("32_ids_card")
 tower_name = "IDS Scanner"
 
 [node name="CardPanel" parent="TestDrag/IDSScannerCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_cqx10")
+theme_override_styles/panel = SubResource("StyleBoxFlat_5iosg")
 
 [node name="DisplaySprite" parent="TestDrag/IDSScannerCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2136481415, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 58.00006)
@@ -592,7 +588,7 @@ tower_name = "EDR Hunter"
 deploy_cost = 175
 
 [node name="CardPanel" parent="TestDrag/EDRHunterCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_b1f5y")
+theme_override_styles/panel = SubResource("StyleBoxFlat_cqx10")
 
 [node name="DisplaySprite" parent="TestDrag/EDRHunterCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1058679109, 113385319) index="0" unique_id=590825140]
 position = Vector2(67, 59.00006)
@@ -626,7 +622,7 @@ tower_name = "SIEM Hawk"
 deploy_cost = 225
 
 [node name="CardPanel" parent="TestDrag/SIEMHawkCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_mljs0")
+theme_override_styles/panel = SubResource("StyleBoxFlat_b1f5y")
 
 [node name="DisplaySprite" parent="TestDrag/SIEMHawkCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2097101912, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 63.00006)
@@ -658,7 +654,7 @@ tower_name = "IPS Spike"
 deploy_cost = 200
 
 [node name="CardPanel" parent="TestDrag/IPSIntrusionCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_qunwk")
+theme_override_styles/panel = SubResource("StyleBoxFlat_mljs0")
 
 [node name="DisplaySprite" parent="TestDrag/IPSIntrusionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1750948893, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 61.00006)
@@ -690,7 +686,7 @@ tower_name = "Honeypot"
 deploy_cost = 250
 
 [node name="CardPanel" parent="TestDrag/HoneypotProductionCard" index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_tcrod")
+theme_override_styles/panel = SubResource("StyleBoxFlat_qunwk")
 
 [node name="DisplaySprite" parent="TestDrag/HoneypotProductionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1207325943, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 61.00006)
@@ -709,6 +705,35 @@ offset_left = -430.0
 offset_right = -10.0
 offset_bottom = 192.0
 
+[node name="XDRMechCard" parent="TestDrag" instance=ExtResource("29_shop_card")]
+z_index = 210
+z_as_relative = false
+layout_mode = 0
+offset_left = 1742.0
+offset_top = 794.0
+offset_right = 1900.0
+offset_bottom = 960.0
+card_resource = ExtResource("40_xdr_card")
+tower_name = "XDR Mech"
+deploy_cost = 0
+
+[node name="DisplaySprite" parent="TestDrag/XDRMechCard/DisplayImageContainer" index="0"]
+position = Vector2(69, 61)
+scale = Vector2(0.09, 0.09)
+texture = ExtResource("41_xdr_display")
+
+[node name="NameLabel" parent="TestDrag/XDRMechCard" index="2"]
+text = "XDR Mech"
+
+[node name="CostLabel" parent="TestDrag/XDRMechCard" index="3"]
+text = "FREE"
+
+[node name="InformationPopup" parent="TestDrag/XDRMechCard" index="5"]
+visible = false
+offset_left = -430.0
+offset_right = -10.0
+offset_bottom = 192.0
+
 [node name="PlatformHighlight" type="ColorRect" parent="." unique_id=477646041]
 offset_right = 126.0
 offset_bottom = 120.0
@@ -717,10 +742,12 @@ color = Color(1, 0.1, 0.08, 0.45)
 
 [node name="Otherground_Cutscene" type="ColorRect" parent="." unique_id=716042366]
 visible = false
+z_index = -1
 offset_left = -1611.0
 offset_top = 2.0
 offset_right = -1.0
 offset_bottom = 1083.0
+mouse_filter = 2
 color = Color(0.69358075, 0.8433318, 0.48097503, 0)
 
 [node name="CutsceneBack" type="Sprite2D" parent="Otherground_Cutscene" unique_id=2884933]
@@ -790,6 +817,10 @@ position = Vector2(1668, 839.00006)
 range_preview_fill_color = Color(0.27, 0.55, 1, 0.16)
 range_preview_outline_color = Color(0.48, 0.83, 1, 0.78)
 
+[node name="XDR_Mech" parent="Sprites" instance=ExtResource("39_xdr_mech")]
+visible = false
+position = Vector2(1827, 839.00006)
+
 [node name="WavesLabel" type="Label" parent="." unique_id=1834529841]
 offset_left = 1291.0
 offset_top = 18.0
@@ -816,6 +847,26 @@ position = Vector2(121.13758, 319)
 scale = Vector2(0.9885356, 1)
 curve = SubResource("Curve2D_63v24")
 
+[node name="XDRPathBlocker" type="Node2D" parent="."]
+z_index = 41
+editor_description = "Red editor-only corridor generated from VirusElements/Path2D. XDR Mechs cannot enter this route. Adjust Corridor Width in the Inspector."
+script = ExtResource("42_xdr_path_blocker")
+corridor_width = 60.0
+
+[node name="Trace" type="Line2D" parent="XDRPathBlocker"]
+editor_description = "Viewport preview of the XDR Mech collision corridor. This trace is hidden during gameplay unless Show Trace In Game is enabled on XDRPathBlocker."
+points = PackedVector2Array(63, 293, 312.9169, 297, 338.929, 339, 350.8512, 402, 433.2228, 401, 462, 305, 482, 281, 644, 283, 678, 245, 683, 203, 701, 182, 896, 182, 923, 212, 943.5762, 289, 980.626, 317, 1220.9976, 310, 1238.1669, 248, 1276.1202, 206, 1505.6479, 208, 1554.4452, 246, 1558, 488, 1371, 491, 1341.4781, 526, 1343.6458, 671, 1312.2145, 707, 1012.2538, 704, 967.0712, 720, 955.3237, 786, 905.6228, 807, 636.3344, 802, 592.0555, 766, 594.7664, 700, 595.67, 620, 548.1095, 581, 316.1684, 580, 287.9887, 618, 278.2342, 753, 244.1492, 802, 185.0242, 821, 169.8505, 866, 133, 874)
+width = 60.0
+default_color = Color(1, 0.08, 0.06, 0.3)
+joint_mode = 1
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="StaticBody2D" type="StaticBody2D" parent="XDRPathBlocker"]
+collision_layer = 1048576
+collision_mask = 0
+
 [node name="SpawnVirus" type="Marker2D" parent="VirusElements" unique_id=1524594111]
 position = Vector2(70, 289)
 
@@ -838,6 +889,7 @@ debug_color = Color(0.5323416, 0.5497722, 0.4333505, 0.41960785)
 [editable path="AnnounceTextHUD"]
 [editable path="CutsceneSkipHUD"]
 [editable path="CutsceneDemoMenuHUD"]
+[editable path="DefeatHUD"]
 [editable path="TestDrag/CyberGuardianCard"]
 [editable path="TestDrag/LaserTurretCard"]
 [editable path="TestDrag/IDSScannerCard"]
@@ -845,3 +897,4 @@ debug_color = Color(0.5323416, 0.5497722, 0.4333505, 0.41960785)
 [editable path="TestDrag/SIEMHawkCard"]
 [editable path="TestDrag/IPSIntrusionCard"]
 [editable path="TestDrag/HoneypotProductionCard"]
+[editable path="TestDrag/XDRMechCard"]

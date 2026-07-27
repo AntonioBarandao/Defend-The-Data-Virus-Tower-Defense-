@@ -1,6 +1,8 @@
 class_name IDSScannerTower
 extends AnimatedSprite2D
 
+const CentralAudioResolver := preload("res://Scripts/Audio/audio_player_resolver.gd")
+
 signal placed(scanner: IDSScannerTower)
 signal upgraded(scanner: IDSScannerTower, level: int)
 signal bounty_awarded(amount: int)
@@ -68,8 +70,9 @@ const BURNER_TICK_SECONDS := 1.0
 const BOUNTY_REWARD_PER_VIRUS := 5
 const QUARANTINE_SPEED_MULTIPLIER := 0.5
 const QUARANTINE_REFRESH_SECONDS := 0.25
-const SIGNAL_BOOST_RANGE_MULTIPLIER := 1.1
-const SIGNAL_BOOST_COOLDOWN_MULTIPLIER := 0.9
+const SIGNAL_BOOST_RANGE_MULTIPLIER := 1.15
+const SIGNAL_BOOST_COOLDOWN_MULTIPLIER := 1.0 / 1.15
+const SIGNAL_BOOST_DAMAGE_MULTIPLIER := 1.15
 const RADAR_SEGMENTS := 96
 const SWEEP_HALF_ANGLE := PI / 10.0
 const TOWER_GRAB_SIZE := Vector2(180, 180)
@@ -99,6 +102,15 @@ const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
 	set(value):
 		scanner_mode = _normalize_mode(value)
 		_apply_mode_visuals()
+@export_group("Audio")
+@export var deploy_sfx_path: NodePath = ^"Sounds/IDSScannerDeploySfx"
+@export var change_mode_sfx_path: NodePath = ^"Sounds/IDSScannerChangeModeSfx"
+@export var camo_scan_sfx_path: NodePath = ^"Sounds/IDSScannerCamoSfx"
+@export var burner_scan_sfx_path: NodePath = ^"Sounds/IDSScannerBurnerSfx"
+@export var bounty_scan_sfx_path: NodePath = ^"Sounds/IDSScannerBountySfx"
+@export var quarantine_scan_sfx_path: NodePath = ^"Sounds/IDSScannerSlownessSfx"
+@export var nullifier_scan_sfx_path: NodePath = ^"Sounds/IDSScannerNullifierSfx"
+@export_group("")
 
 var _radar_root: Node2D
 var _radar_fill: Polygon2D
@@ -116,10 +128,20 @@ var _platform_highlight: ColorRect
 var _base_modulate := Color.WHITE
 var _burner_elapsed_by_virus := {}
 var _bounty_scanned_viruses := {}
+var _nullifier_suppressed_targets: Dictionary = {}
+var _scan_contact_ids: Dictionary = {}
 var _virus_in_scan_radius := false
 var _signal_boost_active := false
 var _signal_boost_range_multiplier := SIGNAL_BOOST_RANGE_MULTIPLIER
 var _signal_boost_cooldown_multiplier := SIGNAL_BOOST_COOLDOWN_MULTIPLIER
+var _signal_boost_damage_multiplier := SIGNAL_BOOST_DAMAGE_MULTIPLIER
+var _deploy_sfx: AudioStreamPlayer
+var _change_mode_sfx: AudioStreamPlayer
+var _camo_scan_sfx: AudioStreamPlayer
+var _burner_scan_sfx: AudioStreamPlayer
+var _bounty_scan_sfx: AudioStreamPlayer
+var _quarantine_scan_sfx: AudioStreamPlayer
+var _nullifier_scan_sfx: AudioStreamPlayer
 
 
 func _ready() -> void:
@@ -129,6 +151,9 @@ func _ready() -> void:
 	_drag_start_position = _home_position
 	_base_modulate = modulate
 	_platform_highlight = get_node_or_null(platform_highlight_path) as ColorRect
+	_deploy_sfx = CentralAudioResolver.resolve(self, deploy_sfx_path)
+	_change_mode_sfx = CentralAudioResolver.resolve(self, change_mode_sfx_path)
+	_resolve_mode_scan_audio_players()
 	if _platform_highlight != null:
 		_platform_highlight.hide()
 	_ensure_radar_nodes()
@@ -186,9 +211,12 @@ func _input(event: InputEvent) -> void:
 
 
 func deploy() -> void:
+	var was_deployed := deployed
 	deployed = true
 	add_to_group("SUPPORT_TOWER")
 	_sync_deployed_state()
+	if not was_deployed:
+		_play_audio_player(_deploy_sfx)
 
 
 func is_deployed() -> bool:
@@ -250,6 +278,7 @@ func get_occupied_placement_shape() -> CollisionShape2D:
 
 
 func reset_tower() -> void:
+	_clear_nullifier_suppressed_targets()
 	level = 1
 	scanner_mode = MODE_CAMO
 	set_signal_boost_active(false)
@@ -262,6 +291,7 @@ func reset_tower() -> void:
 	_current_placement_shape = null
 	_burner_elapsed_by_virus.clear()
 	_bounty_scanned_viruses.clear()
+	_scan_contact_ids.clear()
 	_virus_in_scan_radius = false
 	_clear_drag_feedback()
 	if _platform_highlight != null:
@@ -283,13 +313,26 @@ func get_attack_range() -> float:
 
 
 func set_signal_boost_active(active: bool) -> void:
-	set_signal_boost_profile(active, SIGNAL_BOOST_RANGE_MULTIPLIER, SIGNAL_BOOST_COOLDOWN_MULTIPLIER)
+	set_signal_boost_profile(
+		active,
+		SIGNAL_BOOST_RANGE_MULTIPLIER,
+		SIGNAL_BOOST_COOLDOWN_MULTIPLIER,
+		1.0,
+		SIGNAL_BOOST_DAMAGE_MULTIPLIER
+	)
 
 
-func set_signal_boost_profile(active: bool, range_multiplier: float, cooldown_multiplier: float, _hawk_speed_multiplier: float = 1.0) -> void:
+func set_signal_boost_profile(
+	active: bool,
+	range_multiplier: float,
+	cooldown_multiplier: float,
+	_hawk_speed_multiplier: float = 1.0,
+	damage_multiplier: float = SIGNAL_BOOST_DAMAGE_MULTIPLIER
+) -> void:
 	if _signal_boost_active == active:
 		_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
 		_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
+		_signal_boost_damage_multiplier = maxf(0.0, damage_multiplier)
 		_rebuild_radar_geometry()
 		_sync_deployed_state()
 		return
@@ -297,6 +340,7 @@ func set_signal_boost_profile(active: bool, range_multiplier: float, cooldown_mu
 	_signal_boost_active = active
 	_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
 	_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
+	_signal_boost_damage_multiplier = maxf(0.0, damage_multiplier)
 	_rebuild_radar_geometry()
 	_sync_deployed_state()
 
@@ -307,6 +351,16 @@ func get_signal_boost_range_multiplier() -> float:
 
 func get_signal_boost_cooldown_multiplier() -> float:
 	return _signal_boost_cooldown_multiplier if _signal_boost_active else 1.0
+
+
+func get_signal_boost_damage_multiplier() -> float:
+	return _signal_boost_damage_multiplier if _signal_boost_active else 1.0
+
+
+func _get_signal_boosted_damage(base_damage: int) -> int:
+	if base_damage <= 0:
+		return base_damage
+	return maxi(1, roundi(float(base_damage) * get_signal_boost_damage_multiplier()))
 
 
 func _get_signal_boost_range_multiplier() -> float:
@@ -370,9 +424,22 @@ func set_scanner_mode(mode_id: StringName) -> bool:
 	if normalized_mode != scanner_mode and not can_change_mode():
 		return false
 
+	var mode_changed := normalized_mode != scanner_mode
+	if mode_changed and scanner_mode == MODE_NULLIFIER:
+		_clear_nullifier_suppressed_targets()
 	scanner_mode = normalized_mode
 	_apply_mode_visuals()
+	if mode_changed and deployed:
+		_play_audio_player(_change_mode_sfx)
 	return true
+
+
+func _play_audio_player(player: AudioStreamPlayer) -> void:
+	if player == null:
+		return
+
+	player.stop()
+	player.play()
 
 
 func can_upgrade() -> bool:
@@ -401,6 +468,8 @@ func upgrade() -> bool:
 func update_support_scan(active_viruses: Array[PathFollow2D], _delta: float) -> void:
 	if not deployed:
 		_virus_in_scan_radius = false
+		_scan_contact_ids.clear()
+		_clear_nullifier_suppressed_targets()
 		return
 
 	var effective_scan_radius := get_scan_radius()
@@ -409,44 +478,73 @@ func update_support_scan(active_viruses: Array[PathFollow2D], _delta: float) -> 
 	var viruses_in_burner_range := {}
 	var burn_damage_requests: Array[PathFollow2D] = []
 	var bounty_reward_count := 0
+	var current_nullifier_targets: Dictionary = {}
+	var current_scan_contact_ids: Dictionary = {}
 	for follow in active_viruses:
 		if not is_instance_valid(follow):
 			continue
 
 		var virus := _get_red_virus(follow)
-		if virus == null or virus.is_destroying():
+		var scan_target := _get_scan_target(follow, virus)
+		if scan_target == null:
+			continue
+		if virus != null and virus.is_destroying():
 			continue
 
-		if global_position.distance_squared_to(virus.global_position) > radius_squared:
+		if global_position.distance_squared_to(scan_target.global_position) > radius_squared:
 			continue
 
 		virus_in_scan_radius = true
-		var virus_id := virus.get_instance_id()
+		var target_id := scan_target.get_instance_id()
+		current_scan_contact_ids[target_id] = true
+		if not _scan_contact_ids.has(target_id):
+			_play_current_mode_scan_sfx()
 		match scanner_mode:
 			MODE_CAMO:
-				_apply_camo_scan(virus)
+				if virus != null:
+					_apply_camo_scan(virus)
 			MODE_BURNER:
-				viruses_in_burner_range[virus_id] = true
-				_update_burner_cycle(follow, virus_id, _delta, burn_damage_requests)
+				if virus != null:
+					viruses_in_burner_range[target_id] = true
+					_update_burner_cycle(follow, target_id, _delta, burn_damage_requests)
 			MODE_BOUNTY:
-				if _apply_bounty_scan(virus_id):
+				if virus != null and _apply_bounty_scan(target_id):
 					bounty_reward_count += 1
 			MODE_QUARANTINE:
-				virus.apply_scanner_speed_multiplier(QUARANTINE_SPEED_MULTIPLIER, QUARANTINE_REFRESH_SECONDS)
+				if virus != null:
+					virus.apply_scanner_speed_multiplier(
+						QUARANTINE_SPEED_MULTIPLIER,
+						QUARANTINE_REFRESH_SECONDS
+					)
 			MODE_NULLIFIER:
-				virus.nullify_abilities(self)
+				if _uses_temporary_nullifier_suppression(scan_target):
+					scan_target.call("set_nullifier_suppressed", self, true)
+					current_nullifier_targets[target_id] = scan_target
+				elif virus != null:
+					virus.nullify_abilities(self)
 
 	if scanner_mode == MODE_BURNER:
 		_prune_burner_cycles(viruses_in_burner_range)
+	_sync_nullifier_suppressed_targets(current_nullifier_targets)
+	_scan_contact_ids = current_scan_contact_ids
 
 	_virus_in_scan_radius = virus_in_scan_radius
 
 	for follow in burn_damage_requests:
 		if is_instance_valid(follow):
-			virus_damage_requested.emit(follow, BURNER_DAMAGE)
+			virus_damage_requested.emit(
+				follow,
+				_get_signal_boosted_damage(BURNER_DAMAGE)
+			)
 
 	if bounty_reward_count > 0:
 		bounty_awarded.emit(bounty_reward_count * BOUNTY_REWARD_PER_VIRUS)
+
+
+func clear_support_effects() -> void:
+	_virus_in_scan_radius = false
+	_scan_contact_ids.clear()
+	_clear_nullifier_suppressed_targets()
 
 
 func contains_global_point(pointer_position: Vector2) -> bool:
@@ -545,10 +643,13 @@ func _has_active_virus_in_scan_radius(active_viruses: Array[PathFollow2D]) -> bo
 			continue
 
 		var virus := _get_red_virus(follow)
-		if virus == null or virus.is_destroying():
+		var scan_target := _get_scan_target(follow, virus)
+		if scan_target == null:
+			continue
+		if virus != null and virus.is_destroying():
 			continue
 
-		if global_position.distance_squared_to(virus.global_position) <= radius_squared:
+		if global_position.distance_squared_to(scan_target.global_position) <= radius_squared:
 			return true
 
 	return false
@@ -824,3 +925,85 @@ func _get_red_virus(follow: PathFollow2D) -> RedVirus:
 			return virus
 
 	return null
+
+
+func _get_scan_target(
+	follow: PathFollow2D,
+	virus: RedVirus = null
+) -> Node2D:
+	if virus != null:
+		return virus
+	if follow.has_method("is_worm_boss_part") \
+			and bool(follow.call("is_worm_boss_part")):
+		return follow
+	return null
+
+
+func _uses_temporary_nullifier_suppression(target: Node) -> bool:
+	return target != null \
+		and target.has_method("set_nullifier_suppressed") \
+		and (
+			target is Adware \
+			or target is TrojanHorse \
+			or (
+				target.has_method("is_worm_boss_part") \
+				and bool(target.call("is_worm_boss_part"))
+			)
+		)
+
+
+func _sync_nullifier_suppressed_targets(current_targets: Dictionary) -> void:
+	for target_id in _nullifier_suppressed_targets.keys():
+		if current_targets.has(target_id):
+			continue
+		var target := _nullifier_suppressed_targets[target_id] as Node
+		if is_instance_valid(target) \
+				and target.has_method("set_nullifier_suppressed"):
+			target.call("set_nullifier_suppressed", self, false)
+	_nullifier_suppressed_targets = current_targets.duplicate()
+
+
+func _clear_nullifier_suppressed_targets() -> void:
+	_sync_nullifier_suppressed_targets({})
+
+
+func _resolve_mode_scan_audio_players() -> void:
+	_camo_scan_sfx = CentralAudioResolver.resolve(self, camo_scan_sfx_path)
+	_burner_scan_sfx = CentralAudioResolver.resolve(self, burner_scan_sfx_path)
+	_bounty_scan_sfx = CentralAudioResolver.resolve(self, bounty_scan_sfx_path)
+	_quarantine_scan_sfx = CentralAudioResolver.resolve(
+		self,
+		quarantine_scan_sfx_path
+	)
+	_nullifier_scan_sfx = CentralAudioResolver.resolve(
+		self,
+		nullifier_scan_sfx_path
+	)
+
+
+func _play_current_mode_scan_sfx() -> void:
+	var player := _get_current_mode_scan_sfx()
+	if player == null:
+		_resolve_mode_scan_audio_players()
+		player = _get_current_mode_scan_sfx()
+	if player != null and not player.playing:
+		player.play()
+
+
+func _get_current_mode_scan_sfx() -> AudioStreamPlayer:
+	match scanner_mode:
+		MODE_CAMO:
+			return _camo_scan_sfx
+		MODE_BURNER:
+			return _burner_scan_sfx
+		MODE_BOUNTY:
+			return _bounty_scan_sfx
+		MODE_QUARANTINE:
+			return _quarantine_scan_sfx
+		MODE_NULLIFIER:
+			return _nullifier_scan_sfx
+	return null
+
+
+func _exit_tree() -> void:
+	_clear_nullifier_suppressed_targets()

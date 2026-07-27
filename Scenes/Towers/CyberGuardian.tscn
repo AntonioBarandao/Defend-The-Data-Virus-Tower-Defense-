@@ -2,36 +2,10 @@
 
 [ext_resource type="SpriteFrames" uid="uid://r6uhqh3ktfcw" path="res://assets/Towers/CyberGuardian/CyberGuardianSpriteFrames.res" id="1_frames"]
 [ext_resource type="Script" uid="uid://bi54nma58lbdq" path="res://Scripts/Towers/cyber_guardian_idle_sprite.gd" id="2_script"]
-[ext_resource type="AudioStream" uid="uid://5t88uc81blnw" path="res://assets/sfx/cyberguardian_summon.wav" id="3_summon_sfx"]
 [ext_resource type="SpriteFrames" path="res://assets/Towers/CyberGuardian/Modes/SignalBoost/CyberGuardianSignalBoostSpriteFrames.tres" id="4_signal_boost_frames"]
-[ext_resource type="Texture2D" uid="uid://c52ke2x6eylyl" path="res://assets/Towers/CyberGuardian/Modes/Cyber_Guardian_Firewall_Sprite.png" id="5_firewall"]
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_firewall"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("5_firewall")
-}],
-"loop": 0,
-"name": &"ShootAnim",
-"speed": 1.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("5_firewall")
-}],
-"loop": 0,
-"name": &"SummonAnim",
-"speed": 1.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("5_firewall")
-}],
-"loop": 1,
-"name": &"idle",
-"speed": 1.0
-}]
+[ext_resource type="SpriteFrames" path="res://assets/Towers/CyberGuardian/Modes/Firewall/CyberGuardianFirewallSpriteFrames.tres" id="5_firewall_frames"]
+[ext_resource type="Texture2D" path="res://assets/Towers/CyberGuardian/Modes/Firewall/Field/Cyberguardian_Firewall.png" id="6_firewall_field"]
+[ext_resource type="PackedScene" path="res://Scenes/Effects/FirewallBurnVFX.tscn" id="7_burn_vfx"]
 
 [node name="Cybersec Guardian" type="Node2D" unique_id=1315436382 groups=["Defender", "OFFENSE_TOWER"]]
 scale = Vector2(0.3, 0.3)
@@ -79,27 +53,30 @@ animation = &"ShootAnim"
 
 [node name="FirewallIdle" type="AnimatedSprite2D" parent="Visuals" unique_id=1763574160]
 visible = false
-position = Vector2(0, -86.13333)
-scale = Vector2(0.3, 0.3)
-sprite_frames = SubResource("SpriteFrames_firewall")
+position = Vector2(0, -80)
+sprite_frames = ExtResource("5_firewall_frames")
 animation = &"idle"
+autoplay = "idle"
 
 [node name="FirewallSummon" type="AnimatedSprite2D" parent="Visuals" unique_id=1863574160]
 visible = false
-position = Vector2(0, -86.13333)
-scale = Vector2(0.3, 0.3)
-sprite_frames = SubResource("SpriteFrames_firewall")
+position = Vector2(0, -80)
+sprite_frames = ExtResource("5_firewall_frames")
 animation = &"SummonAnim"
 
 [node name="FirewallShoot" type="AnimatedSprite2D" parent="Visuals" unique_id=1963574160]
 visible = false
-position = Vector2(0, -86.13333)
-scale = Vector2(0.3, 0.3)
-sprite_frames = SubResource("SpriteFrames_firewall")
+position = Vector2(0, -80)
+sprite_frames = ExtResource("5_firewall_frames")
 animation = &"ShootAnim"
 
-[node name="Audio" type="Node" parent="." unique_id=1923395083]
+[node name="Effects" type="Node2D" parent="."]
 
-[node name="SummonSfx" type="AudioStreamPlayer" parent="Audio" unique_id=991284857]
-stream = ExtResource("3_summon_sfx")
-volume_db = -15.0
+[node name="FirewallFieldSpriteTemplate" type="Sprite2D" parent="Effects"]
+visible = false
+z_index = 58
+z_as_relative = false
+scale = Vector2(0.64, 0.64)
+texture = ExtResource("6_firewall_field")
+
+[node name="FirewallBurnVFXTemplate" parent="Effects" instance=ExtResource("7_burn_vfx")]

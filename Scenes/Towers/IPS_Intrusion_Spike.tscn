@@ -10,6 +10,7 @@ monitorable = false
 script = ExtResource("2_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(1.5, 1.5)
 sprite_frames = ExtResource("1_spike_frames")
 animation = &"Animated_Spikes"
 autoplay = "Animated_Spikes"

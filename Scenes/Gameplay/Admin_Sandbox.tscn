@@ -1,15 +1,35 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://Scenes/Gameplay/Normal_Game.tscn" id="1_normal_game"]
+[ext_resource type="AudioStream" uid="uid://bpts0mu1imbfp" path="res://assets/soundtrack/Virtual Business.wav" id="2_virtual_business"]
 
 [node name="AdminSandbox" instance=ExtResource("1_normal_game")]
 admin_mode = true
+
+[node name="CyberBusiness" parent="Music" index="0"]
+stream = ExtResource("2_virtual_business")
+autoplay = false
+bus = &"Music"
 
 [node name="TextCutsceneHUD" parent="." index="8"]
 play_on_ready = false
 
 [node name="CutsceneDemoMenuHUD" parent="." index="11"]
 visible = true
+wave_manager_max_wave = 25
 
 [node name="WaveSetPanel" parent="CutsceneDemoMenuHUD/Root" index="3"]
 visible = true
+
+[node name="WaveInput" parent="CutsceneDemoMenuHUD/Root/WaveSetPanel/Margin/Content" index="0"]
+tooltip_text = "Set the current wave from 0 to 25"
+placeholder_text = "0 - 25"
+max_length = 2
+
+[editable path="TestDrag/CyberGuardianCard"]
+[editable path="TestDrag/LaserTurretCard"]
+[editable path="TestDrag/IDSScannerCard"]
+[editable path="TestDrag/EDRHunterCard"]
+[editable path="TestDrag/SIEMHawkCard"]
+[editable path="TestDrag/IPSIntrusionCard"]
+[editable path="TestDrag/HoneypotProductionCard"]

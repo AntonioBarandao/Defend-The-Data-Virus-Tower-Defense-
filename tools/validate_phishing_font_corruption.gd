@@ -2,6 +2,7 @@ extends SceneTree
 
 const PhishingEmailScript := preload("res://Scripts/Enemies/phishing_email.gd")
 const CYBER_QUESTION_HUD := preload("res://Scenes/UI/CyberQuestionHud.tscn")
+const GAME_SCRIPT := preload("res://Scripts/Gameplay/game.gd")
 const TEST_FONT_ROOT := "res://assets/Fonts/naked_power"
 const LABEL_COLOR := Color(0.25, 0.78, 1.0, 1.0)
 const BUTTON_COLOR := Color(1.0, 0.82, 0.22, 1.0)
@@ -41,6 +42,10 @@ func _run() -> void:
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 42
+	for wave_number in range(1, PhishingEmailScript.GUARANTEED_TRIGGER_WAVE):
+		_check(not PhishingEmailScript.should_attack_wave(wave_number, rng), "Phishing triggered before wave 6 ended.")
+	for attempt in range(100):
+		_check(PhishingEmailScript.should_attack_wave(PhishingEmailScript.GUARANTEED_TRIGGER_WAVE, rng), "Wave 6 phishing was not guaranteed.")
 	PhishingEmailScript.apply_font_corruption(test_root, rng, TEST_FONT_ROOT)
 	await process_frame
 
@@ -86,12 +91,44 @@ func _run() -> void:
 	await process_frame
 	var answer_button := question_hud.get_node("Root/QuestionPanel/Margin/Content/QuestionView/AnswerButtons/AnswerButton1") as Button
 	var answer_font_size := answer_button.get_theme_font_size("font_size")
+	question_hud.begin_phishing_effect()
 	PhishingEmailScript.apply_font_corruption(question_hud, rng, TEST_FONT_ROOT)
 	_check(answer_button.get_node_or_null("PhishingLetterFontOverlay") != null, "Question round did not receive the phishing font effect.")
 	question_hud.call("_show_wrong_answer_review", 0)
 	await question_hud.question_solved
-	_check(answer_button.get_node_or_null("PhishingLetterFontOverlay") == null, "Question round kept phishing overlays after it ended.")
+	_check(answer_button.get_node_or_null("PhishingLetterFontOverlay") != null, "Question round ending removed the active phishing effect.")
+	question_hud.show_wave_question(2)
+	_check(answer_button.get_node_or_null("PhishingLetterFontOverlay") != null, "Opening the next question removed the active phishing effect.")
+	question_hud.end_phishing_effect()
+	_check(answer_button.get_node_or_null("PhishingLetterFontOverlay") == null, "Phishing overlays remained after all viruses were cleared.")
 	_check(answer_button.get_theme_font_size("font_size") == answer_font_size, "Question round cleanup changed the answer font size.")
+
+	var game := Node2D.new()
+	game.set_script(GAME_SCRIPT)
+	game.set("_question_hud", question_hud)
+	game.set("_phishing_effect_active", true)
+	question_hud.begin_phishing_effect()
+	var tracked_viruses := game.get("_active_viruses") as Array
+	var live_follow := PathFollow2D.new()
+	tracked_viruses.append(live_follow)
+	game.call("_end_phishing_effect_if_viruses_cleared")
+	_check(question_hud.is_phishing_effect_active(), "A live virus did not preserve the phishing effect.")
+	tracked_viruses.clear()
+	live_follow.free()
+	game.call("_end_phishing_effect_if_viruses_cleared")
+	_check(not question_hud.is_phishing_effect_active(), "Clearing the final virus did not end the phishing effect.")
+	var defeat_follow := PathFollow2D.new()
+	tracked_viruses.append(defeat_follow)
+	game.set("_phishing_effect_active", true)
+	question_hud.begin_phishing_effect()
+	PhishingEmailScript.apply_font_corruption(question_hud, rng, TEST_FONT_ROOT)
+	game.call("_clear_phishing_effect")
+	_check(not question_hud.is_phishing_effect_active(), "Defeat cleanup did not stop phishing while viruses remained active.")
+	_check(answer_button.get_node_or_null("PhishingLetterFontOverlay") == null, "Defeat cleanup left corrupted fonts on screen.")
+	tracked_viruses.clear()
+	defeat_follow.free()
+	game.free()
+
 	question_hud.queue_free()
 	await process_frame
 

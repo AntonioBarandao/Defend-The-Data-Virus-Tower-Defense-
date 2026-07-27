@@ -1,7 +1,7 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://cuog0fhyrk0x6"]
 
-[ext_resource type="Texture2D" uid="uid://bhvyq3armvrd" path="res://Assets/Enemies/ArmoredVirus/ArmoredVirus_Sprite.png" id="1_idle"]
-[ext_resource type="Texture2D" uid="uid://de2lrwg0f4l7r" path="res://Assets/Enemies/ArmoredVirus/ArmorDestroy/Armored_Virus_ArmorDestroy_atlas_24fps.png" id="2_atlas"]
+[ext_resource type="Texture2D" uid="uid://bhvyq3armvrd" path="res://assets/Enemies/ArmoredVirus/ArmoredVirus_Sprite.png" id="1_idle"]
+[ext_resource type="Texture2D" uid="uid://de2lrwg0f4l7r" path="res://assets/Enemies/ArmoredVirus/ArmorDestroy/Armored_Virus_ArmorDestroy_atlas_24fps.png" id="2_atlas"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_armor_destroy_000"]
 atlas = ExtResource("2_atlas")

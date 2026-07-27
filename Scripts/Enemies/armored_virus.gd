@@ -40,14 +40,11 @@ func can_be_targeted_by(attacker: Node) -> bool:
 
 func _play_armor_destroy_and_transform() -> void:
 	_clear_damage_flash()
-	self_modulate = Color.WHITE
+	set_visual_self_modulate(Color.WHITE)
 
-	if sprite_frames != null and sprite_frames.has_animation(armor_destroy_animation):
-		animation = armor_destroy_animation
-		frame = 0
-		frame_progress = 0.0
-		play()
-		await animation_finished
+	var armor_destroy_sprite := play_destroy_track(armor_destroy_animation)
+	if armor_destroy_sprite != null:
+		await armor_destroy_sprite.animation_finished
 
 	if not is_inside_tree():
 		return

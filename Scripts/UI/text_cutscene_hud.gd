@@ -1,6 +1,9 @@
 class_name TextCutsceneHUD
 extends CanvasLayer
 
+const CentralAudioResolver := preload("res://Scripts/Audio/audio_player_resolver.gd")
+const CYBER_BUSINESS_SOUNDTRACK := preload("res://assets/soundtrack/Cyber-Business-Soundtrack.wav")
+
 signal act_started(act_number: int)
 signal phase_started(act_number: int, phase_name: StringName)
 signal phase_finished(act_number: int, phase_name: StringName)
@@ -8,20 +11,26 @@ signal cutscene_finished
 
 const ACT_ONE := 1
 const ACT_WAVE_FIVE := 5
+const ACT_WAVE_TEN := 10
+const ACT_WAVE_ELEVEN := 11
+const ACT_WAVE_FIFTEEN := 15
+const ACT_WAVE_TWENTY := 20
+const ACT_ZOMBIE_NODE_DEFEAT := 150
+const ACT_WORM_BOSS_DEFEAT := 200
 const PHASE_ONE := &"phase_1"
 const PHASE_TWO := &"phase_2"
 const PHASE_THREE := &"phase_3"
 const PHASE_FOUR := &"phase_4"
 const PHASE_END := &"phase_end"
-const PHASE_ONE_DESTROY_SFX := preload("res://assets/sfx/virus_destroy.wav")
 
 @export var play_on_ready := true
 @export var cutscene_skip_hud_path: NodePath = ^"../CutsceneSkipHUD"
 @export var game_controls_hud_path: NodePath = ^"../GameControlsHUD"
+@export var gameplay_soundtrack_path: NodePath = ^"../Music/CyberBusiness"
 @export var dialogue_lines: PackedStringArray = [
-	"Our hardware is being under attack! Help us defeat the viruses and save our cpu!",
-	"Deploy cybersecurity towers onto safe platforms and stop the viruses before they breach the system.",
-	"After each wave, answer the security challenge to earn more Cyber Bucks. I will guide you through the first defense."
+	"Our hardware is under attack! Help me defeat the viruses and save our CPU!",
+	"Deploy cybersecurity towers onto safe platforms and stop the viruses before they breach the system!",
+	"After each wave, answer the security challenge to earn more Cyber Bucks! I will guide you through the first defense!"
 ]
 @export_group("Act 1 Phase 1")
 @export var cutscene_camera_path: NodePath = ^"../CutsceneCamera"
@@ -37,6 +46,7 @@ const PHASE_ONE_DESTROY_SFX := preload("res://assets/sfx/virus_destroy.wav")
 @export_range(2.0, 80.0, 1.0) var phase_one_virus_hover_distance := 18.0
 @export_range(0.1, 2.0, 0.05) var phase_one_virus_hover_half_duration := 0.48
 @export_range(0.0, 80.0, 1.0) var phase_one_virus_drift_distance := 26.0
+@export_range(0.0, 1.0, 0.01) var second_virus_destroy_sfx_delay := 0.2
 @export var enemy_camera_padding := Vector2(0, -40)
 @export var entrance_camera_padding := Vector2(260, -40)
 @export var red_alert_color := Color(1.0, 0.025, 0.025, 0.48)
@@ -54,10 +64,52 @@ const PHASE_ONE_DESTROY_SFX := preload("res://assets/sfx/virus_destroy.wav")
 @export_range(0.2, 6.0, 0.05) var wave5_trojan_hold_duration := 1.4
 @export_range(0.2, 5.0, 0.05) var wave5_invisible_hold_duration := 1.0
 @export var wave5_phase_two_lines: PackedStringArray = [
-	"A Trojan horse has entered the network. It hides inside normal traffic, then turns invisible so most towers cannot target it."
+	"Watch out! A Trojan horse has entered the network! It hides inside normal traffic, then turns invisible so most towers cannot target it."
 ]
 @export var wave5_phase_four_lines: PackedStringArray = [
-	"Use the IDS Scanner to reveal the camouflaged Trojan horse. Once it is detected, your defenses can lock on and destroy it."
+	"Use the IDS Scanner to reveal the camouflaged Trojan horse! Once it is detected, your defenses can lock on and destroy it!"
+]
+@export_group("Wave 10 Ransomware Cutscene")
+@export_range(0.0, 3.0, 0.05) var wave10_reveal_hold_duration := 0.75
+@export_range(1.0, 4.0, 0.05) var wave10_camera_zoom := 2.25
+@export var wave10_phase_two_lines: PackedStringArray = [
+	"I have been hit with ransomware! My systems are encrypted, and my deletion timer is already running!",
+	"Destroy the Ransomware before the countdown ends, or open my sidebar and pay the ransom! If the lock completes, I will be deleted and we will lose 500 Cyber Bucks!"
+]
+@export_group("Wave 11 Zombie Node Cutscene")
+@export var wave11_zombie_node_path: NodePath = ^"../ZombieNode"
+@export_range(0.0, 3.0, 0.05) var wave11_reveal_hold_duration := 0.65
+@export var wave11_phase_two_lines: PackedStringArray = [
+	"Warning! The Zombie Node is a progressive virus! It evolves as the waves advance, becoming a stronger threat at each new stage.",
+	"Track its evolution carefully! The longer it remains in the network, the more dangerous its next form will become!"
+]
+@export_group("Wave 15 Zombie Node Cutscene")
+@export_range(1.0, 8.0, 0.1) var wave15_focus_duration := 3.0
+@export_range(1.0, 4.0, 0.05) var wave15_camera_zoom := 2.25
+@export var wave15_phase_two_lines: PackedStringArray = [
+	"The Zombie Node has fully transformed! Its pipes are loose from the CPU, exposing the core to direct fire!",
+	"Only towers whose range reaches the core can damage it! Bring down the Zombie Node before its minion output overwhelms the network!"
+]
+@export_group("Zombie Node Defeat Cutscene")
+@export_range(1.0, 10.0, 0.1) var zombie_defeat_focus_duration := 5.0
+@export_range(1.0, 4.0, 0.05) var zombie_defeat_camera_zoom := 2.5
+@export var zombie_defeat_phase_two_lines: PackedStringArray = [
+	"We defeated the Zombie Node! But there is more work to be done to defend the data!"
+]
+@export_group("Wave 20 Cyber Worm Cutscene")
+@export var wave20_worm_boss_path: NodePath = ^"../WormBoss"
+@export var wave20_alternate_map_path: NodePath = ^"../Otherground_Cutscene"
+@export_range(0.2, 6.0, 0.05) var wave20_focus_duration := 1.6
+@export_range(0.5, 3.0, 0.05) var wave20_camera_zoom := 1.25
+@export var wave20_phase_two_lines: PackedStringArray = [
+	"That is the Cyber Worm! Its armored head and tail deflect every hit, but its five body segments share a vulnerable core!",
+	"Every offensive tower will prioritize the closest Worm segment inside its range! Keep firing until a body segment moves closer than its shields!",
+	"The Cyber Worm has 950 integrity and moves as slowly as a Trojan horse, but it is built to absorb sustained fire!"
+]
+@export_group("Cyber Worm Defeat Cutscene")
+@export var worm_defeat_phase_two_lines: PackedStringArray = [
+	"We did it! The CPU is safe! We destroyed the Cyber Worm before it could consume our data!",
+	"The core is secure again, but we must stay ready for whatever threat comes next!"
 ]
 @export_group("")
 
@@ -69,6 +121,10 @@ const PHASE_ONE_DESTROY_SFX := preload("res://assets/sfx/virus_destroy.wav")
 @onready var _speaker_label: Label = $Root/DialoguePanel/Margin/Content/SpeakerLabel
 @onready var _dialogue_label: Label = $Root/DialoguePanel/Margin/Content/DialogueLabel
 @onready var _continue_button: Button = $Root/DialoguePanel/Margin/Content/Footer/ContinueButton
+var _alarm_cutscene_fx: AudioStreamPlayer
+var _virus_destroy_sfx_1: AudioStreamPlayer
+var _virus_destroy_sfx_2: AudioStreamPlayer
+var _gameplay_soundtrack: AudioStreamPlayer
 
 var current_act := 0
 var current_phase: StringName = &""
@@ -97,15 +153,27 @@ var _phase_one_sequence_tweens: Array[Tween] = []
 var _phase_one_hover_start_positions := {}
 var _phase_one_initial_positions := {}
 var _phase_one_initial_modulates := {}
-var _phase_one_destroy_sfx_players: Array[AudioStreamPlayer] = []
 var _wave5_preview_trojan: TrojanHorse
-var _phase_one_target_visible_before_cutscene := true
+var _wave10_ransomware: Ransomware
+var _wave10_target: Node2D
+var _wave11_zombie_node: ZombieNode
+var _focused_zombie_node: ZombieNode
+var _focused_worm_boss: WormBoss
+var _phase_one_target_visible_before_cutscene := false
+var _wave20_alternate_map: CanvasItem
+var _wave20_alternate_map_was_visible := false
+var _wave20_alternate_map_active := false
+var _wave20_map_actor_visibility: Dictionary = {}
 var _last_handled_cutscene_input_event_id := 0
 var _skip_requested := false
 var _cutscene_finished_emitted := false
 
 
 func _ready() -> void:
+	_alarm_cutscene_fx = CentralAudioResolver.resolve(self, ^"Sounds/AlarmCutsceneSfx")
+	_virus_destroy_sfx_1 = CentralAudioResolver.resolve(self, ^"Sounds/CutsceneVirusDestroySfx1")
+	_virus_destroy_sfx_2 = CentralAudioResolver.resolve(self, ^"Sounds/CutsceneVirusDestroySfx2")
+	_gameplay_soundtrack = get_node_or_null(gameplay_soundtrack_path) as AudioStreamPlayer
 	visible = true
 	_continue_button.pressed.connect(_advance_dialogue)
 	_root.gui_input.connect(_on_root_gui_input)
@@ -145,6 +213,7 @@ func start_cutscene() -> void:
 	if _running:
 		return
 
+	_ensure_gameplay_soundtrack_playing(true)
 	_running = true
 	_skip_requested = false
 	_cutscene_finished_emitted = false
@@ -176,6 +245,7 @@ func start_wave5_cutscene() -> void:
 	if _running:
 		return
 
+	_ensure_gameplay_soundtrack_playing()
 	_running = true
 	_skip_requested = false
 	_cutscene_finished_emitted = false
@@ -207,8 +277,260 @@ func start_wave5_cutscene() -> void:
 	await _finish_cutscene()
 
 
+func start_wave11_cutscene() -> void:
+	if _running:
+		return
+
+	_ensure_gameplay_soundtrack_playing()
+	_running = true
+	_skip_requested = false
+	_cutscene_finished_emitted = false
+	visible = true
+	current_act = ACT_WAVE_ELEVEN
+	current_phase = &""
+	_current_phase_finished = false
+	act_started.emit(current_act)
+	_root.visible = true
+	_root.modulate = Color.WHITE
+	_root.mouse_filter = Control.MOUSE_FILTER_STOP
+	await get_tree().process_frame
+	_capture_ui_final_positions()
+	_prepare_all_overlays_hidden()
+
+	await _run_wave11_phase_one()
+	if _skip_requested or not _running:
+		return
+	await _run_dialogue_phase(PHASE_TWO, wave11_phase_two_lines, false)
+	if _skip_requested or not _running:
+		return
+	await _finish_cutscene()
+	_wave11_zombie_node = null
+
+
+func start_wave10_ransomware_cutscene(
+	ransomware: Ransomware,
+	target: Node2D
+) -> void:
+	if _running or not is_instance_valid(ransomware) or not is_instance_valid(target):
+		return
+
+	_ensure_gameplay_soundtrack_playing()
+	_running = true
+	_skip_requested = false
+	_cutscene_finished_emitted = false
+	visible = true
+	current_act = ACT_WAVE_TEN
+	current_phase = &""
+	_current_phase_finished = false
+	_wave10_ransomware = ransomware
+	_wave10_target = target
+	act_started.emit(current_act)
+	_root.visible = true
+	_root.modulate = Color.WHITE
+	_root.mouse_filter = Control.MOUSE_FILTER_STOP
+	await get_tree().process_frame
+	_capture_ui_final_positions()
+	_prepare_all_overlays_hidden()
+
+	await _run_wave10_ransomware_phase_one()
+	if _skip_requested or not _running:
+		return
+	await _run_dialogue_phase(PHASE_TWO, wave10_phase_two_lines, false)
+	if _skip_requested or not _running:
+		return
+	await _finish_cutscene()
+	_wave10_ransomware = null
+	_wave10_target = null
+
+
+func start_wave15_zombie_transform_cutscene() -> void:
+	if _running:
+		return
+
+	await _prepare_special_zombie_cutscene(ACT_WAVE_FIFTEEN)
+	if _skip_requested or not _running:
+		return
+	await _run_zombie_focus_phase(
+		wave15_focus_duration,
+		wave15_camera_zoom,
+		true,
+		false
+	)
+	if _skip_requested or not _running:
+		return
+	await _run_dialogue_phase(PHASE_TWO, wave15_phase_two_lines, false)
+	if _skip_requested or not _running:
+		return
+	await _finish_cutscene()
+	_focused_zombie_node = null
+
+
+func start_zombie_node_defeat_cutscene() -> void:
+	if _running:
+		return
+
+	await _prepare_special_zombie_cutscene(ACT_ZOMBIE_NODE_DEFEAT)
+	if _skip_requested or not _running:
+		return
+	await _run_zombie_focus_phase(
+		zombie_defeat_focus_duration,
+		zombie_defeat_camera_zoom,
+		false,
+		true
+	)
+	if _skip_requested or not _running:
+		return
+	await _run_dialogue_phase(
+		PHASE_TWO,
+		zombie_defeat_phase_two_lines,
+		false
+	)
+	if _skip_requested or not _running:
+		return
+	await _finish_cutscene()
+	_focused_zombie_node = null
+
+
+func start_wave20_worm_boss_cutscene() -> void:
+	if _running:
+		return
+
+	await _prepare_special_zombie_cutscene(ACT_WAVE_TWENTY)
+	if _skip_requested or not _running:
+		return
+	await _run_wave20_worm_focus_phase()
+	if _skip_requested or not _running:
+		return
+	await _run_dialogue_phase(
+		PHASE_TWO,
+		wave20_phase_two_lines,
+		false
+	)
+	if _skip_requested or not _running:
+		return
+	await _finish_cutscene()
+	_focused_worm_boss = null
+
+
+func start_worm_boss_defeat_cutscene() -> void:
+	if _running:
+		return
+
+	await _prepare_special_zombie_cutscene(ACT_WORM_BOSS_DEFEAT)
+	if _skip_requested or not _running:
+		return
+	await _run_dialogue_phase(
+		PHASE_TWO,
+		worm_defeat_phase_two_lines,
+		false
+	)
+	if _skip_requested or not _running:
+		return
+	await _finish_cutscene()
+
+
+func _prepare_special_zombie_cutscene(act_number: int) -> void:
+	_ensure_gameplay_soundtrack_playing()
+	_running = true
+	_skip_requested = false
+	_cutscene_finished_emitted = false
+	visible = true
+	current_act = act_number
+	current_phase = &""
+	_current_phase_finished = false
+	act_started.emit(current_act)
+	_root.visible = true
+	_root.modulate = Color.WHITE
+	_root.mouse_filter = Control.MOUSE_FILTER_STOP
+	await get_tree().process_frame
+	_capture_ui_final_positions()
+	_prepare_all_overlays_hidden()
+
+
+func _run_zombie_focus_phase(
+	focus_duration: float,
+	focus_zoom: float,
+	prepare_final_form: bool,
+	play_destroy_animation: bool
+) -> void:
+	_start_phase(PHASE_ONE)
+	_prepare_phase_one_camera()
+	_prepare_all_overlays_hidden()
+	_focused_zombie_node = get_node_or_null(
+		wave11_zombie_node_path
+	) as ZombieNode
+	if not is_instance_valid(_focused_zombie_node):
+		await get_tree().create_timer(focus_duration).timeout
+		if _skip_requested or not _running:
+			return
+		_finish_phase(PHASE_ONE)
+		return
+
+	if prepare_final_form:
+		_focused_zombie_node.prepare_evolution_for_cutscene()
+	await get_tree().process_frame
+	await _pan_camera_to_target(
+		_focused_zombie_node.global_position,
+		Vector2.ZERO,
+		focus_duration,
+		focus_zoom
+	)
+	if _skip_requested or not _running:
+		return
+	if prepare_final_form:
+		await _focused_zombie_node.play_evolution_to_level(
+			ZombieNode.MAX_LEVEL
+		)
+		if _skip_requested or not _running:
+			return
+	if play_destroy_animation:
+		await _focused_zombie_node.play_destroy_animation()
+		if _skip_requested or not _running:
+			return
+	await _return_camera_to_start()
+	if _skip_requested or not _running:
+		return
+	_finish_phase(PHASE_ONE)
+
+
+func _run_wave20_worm_focus_phase() -> void:
+	_show_wave20_alternate_map()
+	_start_phase(PHASE_ONE)
+	_prepare_phase_one_camera()
+	_prepare_all_overlays_hidden()
+	_focused_worm_boss = get_node_or_null(
+		wave20_worm_boss_path
+	) as WormBoss
+	if not is_instance_valid(_focused_worm_boss):
+		await get_tree().create_timer(wave20_focus_duration).timeout
+		if _skip_requested or not _running:
+			return
+		_restore_wave20_alternate_map()
+		_finish_phase(PHASE_ONE)
+		return
+
+	await get_tree().process_frame
+	await _pan_camera_to_target(
+		_focused_worm_boss.get_preview_center(),
+		Vector2.ZERO,
+		wave20_focus_duration,
+		wave20_camera_zoom
+	)
+	if _skip_requested or not _running:
+		return
+	await _focused_worm_boss.play_cutscene_part_showcase()
+	if _skip_requested or not _running:
+		return
+	await _return_camera_to_start()
+	if _skip_requested or not _running:
+		return
+	_restore_wave20_alternate_map()
+	_finish_phase(PHASE_ONE)
+
+
 func _run_act_one_phase_one() -> void:
 	_start_phase(PHASE_ONE)
+	_ensure_gameplay_soundtrack_playing()
 	_prepare_phase_one_camera()
 	_dim_overlay.hide()
 	_dialogue_panel.hide()
@@ -217,6 +539,7 @@ func _run_act_one_phase_one() -> void:
 	_alert_overlay.show()
 	_alert_overlay.color = Color(red_alert_color.r, red_alert_color.g, red_alert_color.b, 0.0)
 
+	_play_audio_player(_alarm_cutscene_fx)
 	await _play_red_alert()
 	if _skip_requested or not _running:
 		return
@@ -415,7 +738,14 @@ func skip_cutscene() -> void:
 	_stop_mascot_bob()
 	_stop_phase_one_sequence_tweens()
 	_stop_phase_one_virus_hover()
+	_stop_cutscene_sfx()
 	_cleanup_wave5_preview_trojan()
+	_finish_wave10_ransomware_visual()
+	_finish_wave11_zombie_visual()
+	if current_act == ACT_WAVE_FIFTEEN \
+			and is_instance_valid(_focused_zombie_node):
+		_focused_zombie_node.finish_evolution_immediately()
+	_restore_wave20_alternate_map()
 	_restore_cutscene_camera_to_start()
 	_set_phase_one_target_visible(false)
 	_dialogue_panel.global_position = _panel_final_global_position
@@ -478,6 +808,7 @@ func _finish_cutscene() -> void:
 	_mascot.global_position = _mascot_final_global_position
 	_prepare_all_overlays_hidden()
 	_cleanup_wave5_preview_trojan()
+	_restore_wave20_alternate_map()
 	_set_phase_one_target_visible(false)
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.hide()
@@ -511,6 +842,75 @@ func _run_wave5_phase_one() -> void:
 		return
 
 	_finish_phase(PHASE_ONE)
+
+
+func _run_wave11_phase_one() -> void:
+	_start_phase(PHASE_ONE)
+	_prepare_phase_one_camera()
+	_prepare_all_overlays_hidden()
+	_wave11_zombie_node = get_node_or_null(wave11_zombie_node_path) as ZombieNode
+	if not is_instance_valid(_wave11_zombie_node):
+		await get_tree().create_timer(wave11_reveal_hold_duration).timeout
+		if _skip_requested or not _running:
+			return
+		_finish_phase(PHASE_ONE)
+		return
+
+	_wave11_zombie_node.set_level(1)
+	_wave11_zombie_node.prepare_entrance()
+	await get_tree().process_frame
+	await _pan_camera_to_target(_wave11_zombie_node.global_position, Vector2.ZERO)
+	if _skip_requested or not _running:
+		return
+	await _wave11_zombie_node.play_entrance()
+	if _skip_requested or not _running:
+		return
+	if wave11_reveal_hold_duration > 0.0:
+		await get_tree().create_timer(wave11_reveal_hold_duration).timeout
+	if _skip_requested or not _running:
+		return
+
+	_finish_phase(PHASE_ONE)
+
+
+func _run_wave10_ransomware_phase_one() -> void:
+	_start_phase(PHASE_ONE)
+	_prepare_phase_one_camera()
+	_prepare_all_overlays_hidden()
+	if not is_instance_valid(_wave10_ransomware) \
+			or not is_instance_valid(_wave10_target):
+		_finish_phase(PHASE_ONE)
+		return
+
+	await _pan_camera_to_target(
+		_wave10_target.global_position,
+		Vector2.ZERO,
+		camera_pan_duration,
+		wave10_camera_zoom
+	)
+	if _skip_requested or not _running:
+		return
+	await _wave10_ransomware.play_appear()
+	if _skip_requested or not _running:
+		return
+	if wave10_reveal_hold_duration > 0.0:
+		await get_tree().create_timer(wave10_reveal_hold_duration).timeout
+	if _skip_requested or not _running:
+		return
+	_finish_phase(PHASE_ONE)
+
+
+func _finish_wave10_ransomware_visual() -> void:
+	if is_instance_valid(_wave10_ransomware):
+		_wave10_ransomware.finish_appear_immediately()
+	_wave10_ransomware = null
+	_wave10_target = null
+
+
+func _finish_wave11_zombie_visual() -> void:
+	if is_instance_valid(_wave11_zombie_node):
+		_wave11_zombie_node.finish_entrance_immediately()
+	_wave11_zombie_node = null
 
 
 func _run_wave5_phase_three() -> void:
@@ -581,16 +981,37 @@ func _pan_camera_to_phase_one_target() -> void:
 	await _pan_camera_to_target(_get_phase_one_target_center(), enemy_camera_padding)
 
 
-func _pan_camera_to_target(target_position: Vector2, camera_padding: Vector2) -> void:
+func _pan_camera_to_target(
+	target_position: Vector2,
+	camera_padding: Vector2,
+	duration: float = -1.0,
+	zoom_scale: float = -1.0
+) -> void:
+	var tween_duration := camera_pan_duration if duration <= 0.0 else duration
+	var target_zoom := (
+		phase_one_camera_zoom
+			if zoom_scale <= 0.0
+			else zoom_scale
+	)
 	if _cutscene_camera == null:
-		await get_tree().create_timer(camera_pan_duration).timeout
+		await get_tree().create_timer(tween_duration).timeout
 		return
 
 	_kill_tween(_camera_tween)
 	_camera_tween = create_tween()
 	_camera_tween.set_parallel(true)
-	_camera_tween.tween_property(_cutscene_camera, "global_position", target_position + camera_padding, camera_pan_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	_camera_tween.tween_property(_cutscene_camera, "zoom", Vector2.ONE * phase_one_camera_zoom, camera_pan_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	_camera_tween.tween_property(
+		_cutscene_camera,
+		"global_position",
+		target_position + camera_padding,
+		tween_duration
+	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	_camera_tween.tween_property(
+		_cutscene_camera,
+		"zoom",
+		Vector2.ONE * target_zoom,
+		tween_duration
+	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	await _camera_tween.finished
 	_camera_tween = null
 
@@ -649,6 +1070,51 @@ func _set_phase_one_target_visible(is_visible: bool, remember_current := true) -
 		target.visible = false
 
 
+func _show_wave20_alternate_map() -> void:
+	_restore_wave20_alternate_map()
+	_wave20_alternate_map = get_node_or_null(
+		wave20_alternate_map_path
+	) as CanvasItem
+	if _wave20_alternate_map == null:
+		return
+
+	_wave20_alternate_map_was_visible = _wave20_alternate_map.visible
+	_wave20_alternate_map_active = true
+	_wave20_map_actor_visibility.clear()
+	_capture_and_hide_wave20_map_actors(_wave20_alternate_map)
+	_wave20_alternate_map.show()
+
+
+func _restore_wave20_alternate_map() -> void:
+	if not _wave20_alternate_map_active:
+		return
+
+	if is_instance_valid(_wave20_alternate_map):
+		_wave20_alternate_map.visible = _wave20_alternate_map_was_visible
+	for actor_variant in _wave20_map_actor_visibility:
+		var actor := actor_variant as CanvasItem
+		if is_instance_valid(actor):
+			actor.visible = bool(_wave20_map_actor_visibility[actor_variant])
+
+	_wave20_map_actor_visibility.clear()
+	_wave20_alternate_map = null
+	_wave20_alternate_map_active = false
+
+
+func _capture_and_hide_wave20_map_actors(node: Node) -> void:
+	for child in node.get_children():
+		var canvas_item := child as CanvasItem
+		if canvas_item != null and (
+			child.name.begins_with("CutsceneVirus")
+			or child.name == &"Wave5CutsceneTrojanHorse"
+		):
+			_wave20_map_actor_visibility[canvas_item] = canvas_item.visible
+			canvas_item.hide()
+			continue
+
+		_capture_and_hide_wave20_map_actors(child)
+
+
 func _get_phase_one_visual_children() -> Array[CanvasItem]:
 	var visuals: Array[CanvasItem] = []
 	var target := get_node_or_null(phase_one_target_path)
@@ -699,6 +1165,10 @@ func _start_phase_one_virus_hover() -> void:
 	_stop_phase_one_virus_hover(false)
 
 	var visuals := _get_phase_one_visual_children()
+	if visuals.is_empty():
+		return
+
+	_play_phase_one_virus_movement_sfx()
 	for index in range(visuals.size()):
 		var canvas_item := visuals[index]
 		var start_position = canvas_item.global_position
@@ -818,27 +1288,80 @@ func _stop_phase_one_sequence_tweens() -> void:
 	_phase_one_sequence_tweens.clear()
 
 
-func _play_phase_one_virus_destroy_sfx(delay: float) -> void:
-	var player := AudioStreamPlayer.new()
-	player.name = "PhaseOneVirusDestroySfx"
-	player.stream = PHASE_ONE_DESTROY_SFX
-	add_child(player)
-	_phase_one_destroy_sfx_players.append(player)
-	player.finished.connect(func() -> void:
-		_phase_one_destroy_sfx_players.erase(player)
-		player.queue_free()
-	)
-
-	if delay <= 0.0:
-		player.play()
-		return
+func _play_phase_one_virus_movement_sfx() -> void:
+	_play_audio_player(_virus_destroy_sfx_1)
 
 	var sound_tween := create_tween()
-	sound_tween.tween_interval(delay)
+	_phase_one_sequence_tweens.append(sound_tween)
+	sound_tween.tween_interval(second_virus_destroy_sfx_delay)
 	sound_tween.tween_callback(func() -> void:
-		if is_instance_valid(player):
-			player.play()
+		_play_audio_player(_virus_destroy_sfx_2)
 	)
+	sound_tween.finished.connect(func() -> void:
+		_phase_one_sequence_tweens.erase(sound_tween)
+	)
+
+
+func _play_audio_player(player: AudioStreamPlayer) -> void:
+	if player == null:
+		return
+
+	player.stop()
+	player.play()
+
+
+func _ensure_gameplay_soundtrack_playing(restart_from_beginning: bool = false) -> void:
+	if _gameplay_soundtrack == null:
+		_gameplay_soundtrack = get_node_or_null(gameplay_soundtrack_path) as AudioStreamPlayer
+	if _gameplay_soundtrack == null:
+		_gameplay_soundtrack = _create_cutscene_soundtrack_player()
+	if _gameplay_soundtrack == null:
+		return
+
+	if _gameplay_soundtrack.stream == null:
+		_gameplay_soundtrack.stream = CYBER_BUSINESS_SOUNDTRACK
+	_gameplay_soundtrack.process_mode = Node.PROCESS_MODE_ALWAYS
+	_gameplay_soundtrack.stream_paused = false
+	_gameplay_soundtrack.bus = &"Music"
+	if _gameplay_soundtrack.stream is AudioStreamWAV:
+		(_gameplay_soundtrack.stream as AudioStreamWAV).loop_mode = AudioStreamWAV.LOOP_FORWARD
+	if restart_from_beginning:
+		_gameplay_soundtrack.stop()
+		_gameplay_soundtrack.play(0.0)
+	elif not _gameplay_soundtrack.playing:
+		_gameplay_soundtrack.play()
+
+
+func _create_cutscene_soundtrack_player() -> AudioStreamPlayer:
+	var game_root := get_parent()
+	if game_root == null:
+		return null
+
+	var music_container := game_root.get_node_or_null("Music")
+	if music_container == null:
+		music_container = Node.new()
+		music_container.name = "Music"
+		game_root.add_child(music_container)
+
+	var existing_player := music_container.get_node_or_null("CyberBusiness") as AudioStreamPlayer
+	if existing_player != null:
+		return existing_player
+
+	var player := AudioStreamPlayer.new()
+	player.name = "CyberBusiness"
+	player.process_mode = Node.PROCESS_MODE_ALWAYS
+	player.stream = CYBER_BUSINESS_SOUNDTRACK
+	player.volume_db = -6.0
+	player.bus = &"Music"
+	music_container.add_child(player)
+	player.add_to_group(&"Music")
+	return player
+
+
+func _stop_cutscene_sfx() -> void:
+	for player in [_alarm_cutscene_fx, _virus_destroy_sfx_1, _virus_destroy_sfx_2]:
+		if player != null:
+			player.stop()
 
 
 func _capture_ui_final_positions() -> void:

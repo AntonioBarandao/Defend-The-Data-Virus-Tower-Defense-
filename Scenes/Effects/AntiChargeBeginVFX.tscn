@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/BotnetNode/AntiCharge/AntiChargeBeginSpriteFrames.tres" id="1_frames"]
+
+[node name="AntiChargeBeginVFX" type="AnimatedSprite2D"]
+z_index = 190
+scale = Vector2(0.72, 0.72)
+sprite_frames = ExtResource("1_frames")
+animation = &"begin"

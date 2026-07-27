@@ -1,6 +1,7 @@
 class_name Adware
 extends RedVirus
 
+const AdwareAudioResolver := preload("res://Scripts/Audio/audio_player_resolver.gd")
 const POPUP_GROUP := "ADWARE"
 const CLOSE_BUTTON_ANIMATION := &"Adware_Exit_Press"
 const ADWARE_BODY_Z_INDEX := 3800
@@ -25,10 +26,19 @@ const POPUP_Z_INDEX_MAX := 4088
 @export var stack_offset := Vector2(5.0, 4.0)
 @export_group("Popup Close Button")
 @export var popup_close_button_template_path: NodePath = ^"Popups/RedButtonCollision"
+@export var popup_close_button_reference_path: NodePath = ^"Popups/Popup01"
 @export_range(0.05, 1.0, 0.01) var close_button_press_duration := 0.35
+@export_group("Hit Reactions")
+@export var damage_flash_color := Color(1.0, 0.08, 0.06, 1.0)
+@export var popup_shield_flash_color := Color(2.2, 2.2, 2.2, 1.0)
+@export_range(0.05, 1.0, 0.01) var damage_flash_duration := 0.16
+@export_range(0.05, 1.0, 0.01) var popup_shield_flash_duration := 0.22
 @export_group("Health Bar")
 @export var health_bar_root_path: NodePath = ^"MinibossHealthBar"
 @export var health_bar_offset := Vector2(0.0, -125.0)
+@export_group("")
+@export_group("Audio")
+@export var popup_sfx_path: NodePath = ^"Sounds/AdwarePopupSfx"
 @export_group("")
 
 var _popup_sprites: Array[Sprite2D] = []
@@ -44,15 +54,22 @@ var _popup_spawn_order: Array[int] = []
 var _popup_spawn_index := 0
 var _popup_spawn_cooldown := 0.0
 var _popup_burst_running := false
+var _popup_cycle_running := false
 var _popup_anchor_candidates: Array[Node2D] = []
-var _popup_anchor: Node2D
+var _popup_anchor_provider := Callable()
+var _popup_anchors := {}
 var _rng := RandomNumberGenerator.new()
 var _health_bar: TrojanHorseProgressBar
 var _close_button_template: Area2D
+var _close_button_authored_transform := Transform2D.IDENTITY
+var _close_button_authored_transform_ready := false
+var _hit_flash_tween: Tween
+var _popup_sfx: AudioStreamPlayer
 
 
 func _ready() -> void:
 	_rng.randomize()
+	_popup_sfx = AdwareAudioResolver.resolve(self, popup_sfx_path)
 	add_to_group(POPUP_GROUP)
 	super._ready()
 	_apply_popup_layering()
@@ -75,6 +92,7 @@ func _process(delta: float) -> void:
 
 func reset_for_spawn() -> void:
 	super.reset_for_spawn()
+	_stop_hit_flash()
 	_apply_popup_layering()
 	self_modulate = Color.WHITE
 	_collect_popup_sprites()
@@ -98,7 +116,6 @@ func start_popup_burst(
 		return
 
 	_popup_anchor_candidates = _filter_popup_anchors(anchor_candidates)
-	_popup_anchor = _select_popup_anchor()
 
 	var final_count := popup_burst_count if count <= 0 else count
 	var final_interval := popup_interval_seconds if interval_seconds <= 0.0 else interval_seconds
@@ -112,7 +129,59 @@ func start_popup_burst(
 	_popup_spawn_index = 0
 	_popup_spawn_cooldown = 0.0
 	popup_interval_seconds = final_interval
+	_popup_cycle_running = false
 	_popup_burst_running = true
+
+
+func start_popup_cycle(
+	variation_indices: Array = [],
+	interval_seconds := 4.0,
+	anchor_candidates: Array = [],
+	anchor_provider: Callable = Callable()
+) -> void:
+	_collect_popup_sprites()
+	_hide_all_popups()
+	if _popup_sprites.is_empty():
+		return
+
+	_popup_anchor_candidates = _filter_popup_anchors(anchor_candidates)
+	_popup_anchor_provider = anchor_provider
+	_popup_spawn_order.clear()
+	for variation_index in variation_indices:
+		_popup_spawn_order.append(
+			posmod(int(variation_index), _popup_sprites.size())
+		)
+	if _popup_spawn_order.is_empty():
+		for variation_index in range(_popup_sprites.size()):
+			_popup_spawn_order.append(variation_index)
+
+	_popup_spawn_index = 0
+	_popup_spawn_cooldown = 0.0
+	popup_interval_seconds = maxf(0.05, interval_seconds)
+	_popup_cycle_running = true
+	_popup_burst_running = true
+
+
+func has_active_popups() -> bool:
+	return not _active_popup_indices.is_empty()
+
+
+func get_active_popup_count() -> int:
+	return _active_popup_indices.size()
+
+
+func take_damage(amount: int) -> bool:
+	if has_active_popups() and not is_nullifier_suppressed():
+		_play_hit_flash(popup_shield_flash_color, popup_shield_flash_duration)
+		return false
+
+	var health_before := current_health
+	var destroyed := super.take_damage(amount)
+	if current_health < health_before:
+		_play_hit_flash(damage_flash_color, damage_flash_duration)
+	if destroyed:
+		_hide_all_popups()
+	return destroyed
 
 
 func setup(variation_index: int = -1) -> void:
@@ -150,11 +219,15 @@ func _update_popup_burst(delta: float) -> void:
 	if _popup_spawn_cooldown > 0.0:
 		return
 
-	if _popup_spawn_index >= _popup_spawn_order.size():
+	if not _popup_cycle_running \
+			and _popup_spawn_index >= _popup_spawn_order.size():
 		_popup_burst_running = false
 		return
 
-	_show_popup(_popup_spawn_order[_popup_spawn_index], _popup_spawn_index)
+	var variation_index := _popup_spawn_order[
+		_popup_spawn_index % _popup_spawn_order.size()
+	]
+	_show_popup(variation_index, _popup_spawn_index)
 	_popup_spawn_index += 1
 	_popup_spawn_cooldown = popup_interval_seconds
 
@@ -193,6 +266,7 @@ func _show_popup(variation_index: int, spawn_index: int) -> void:
 	_kill_popup_tween(popup_index)
 	_popup_closing_indices.erase(popup_index)
 	_popup_offsets[popup_index] = _get_popup_offset(_active_popup_indices.size())
+	_popup_anchors[popup_index] = _select_popup_anchor()
 	_active_popup_indices.append(popup_index)
 
 	sprite.top_level = true
@@ -204,6 +278,8 @@ func _show_popup(variation_index: int, spawn_index: int) -> void:
 	sprite.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	_position_popup(sprite, popup_index)
 	_configure_popup_close_button(popup_index, sprite)
+	if _popup_sfx != null:
+		_popup_sfx.play()
 
 	var tween := create_tween()
 	_popup_tweens[popup_index] = tween
@@ -253,12 +329,13 @@ func _update_popup_positions() -> void:
 
 func _position_popup(sprite: Sprite2D, popup_index: int) -> void:
 	var offset := _popup_offsets.get(popup_index, Vector2.ZERO) as Vector2
-	sprite.global_position = _get_popup_anchor_position() + offset
+	sprite.global_position = _get_popup_anchor_position(popup_index) + offset
 
 
-func _get_popup_anchor_position() -> Vector2:
-	if is_instance_valid(_popup_anchor):
-		return _popup_anchor.global_position + popup_anchor_offset
+func _get_popup_anchor_position(popup_index: int) -> Vector2:
+	var anchor := _popup_anchors.get(popup_index) as Node2D
+	if is_instance_valid(anchor):
+		return anchor.global_position + popup_anchor_offset
 
 	return global_position
 
@@ -273,10 +350,28 @@ func _filter_popup_anchors(anchor_candidates: Array) -> Array[Node2D]:
 
 
 func _select_popup_anchor() -> Node2D:
+	_refresh_popup_anchor_candidates()
 	if _popup_anchor_candidates.is_empty():
 		return null
 
-	return _popup_anchor_candidates[_rng.randi_range(0, _popup_anchor_candidates.size() - 1)]
+	var unused_anchors: Array[Node2D] = []
+	for anchor in _popup_anchor_candidates:
+		if is_instance_valid(anchor) and not _popup_anchors.values().has(anchor):
+			unused_anchors.append(anchor)
+	var candidates := (
+		unused_anchors
+		if not unused_anchors.is_empty()
+		else _popup_anchor_candidates
+	)
+	return candidates[_rng.randi_range(0, candidates.size() - 1)]
+
+
+func _refresh_popup_anchor_candidates() -> void:
+	if not _popup_anchor_provider.is_valid():
+		return
+	var candidates = _popup_anchor_provider.call()
+	if candidates is Array:
+		_popup_anchor_candidates = _filter_popup_anchors(candidates)
 
 
 func _hide_all_popups() -> void:
@@ -290,8 +385,10 @@ func _hide_all_popups() -> void:
 	_popup_spawn_index = 0
 	_popup_spawn_cooldown = 0.0
 	_popup_burst_running = false
+	_popup_cycle_running = false
 	_popup_anchor_candidates.clear()
-	_popup_anchor = null
+	_popup_anchor_provider = Callable()
+	_popup_anchors.clear()
 	for sprite in _popup_sprites:
 		if sprite == null:
 			continue
@@ -340,6 +437,7 @@ func _finalize_popup_hidden(popup_index: int) -> void:
 		_restore_popup_scene_transform(sprite, popup_index)
 
 	_popup_offsets.erase(popup_index)
+	_popup_anchors.erase(popup_index)
 	_active_popup_indices.erase(popup_index)
 	_popup_closing_indices.erase(popup_index)
 	_hide_popup_button(popup_index)
@@ -392,6 +490,15 @@ func _ensure_close_button_template() -> void:
 	_close_button_template.hide()
 	_close_button_template.monitoring = false
 	_close_button_template.input_pickable = false
+	var reference_popup := get_node_or_null(
+		popup_close_button_reference_path
+	) as Sprite2D
+	if is_instance_valid(reference_popup):
+		_close_button_authored_transform = (
+			reference_popup.global_transform.affine_inverse()
+			* _close_button_template.global_transform
+		)
+		_close_button_authored_transform_ready = true
 
 
 func _configure_popup_close_button(popup_index: int, sprite: Sprite2D) -> void:
@@ -431,6 +538,8 @@ func _get_popup_close_button(popup_index: int, sprite: Sprite2D) -> Area2D:
 
 	button.name = "RedButtonCollision"
 	sprite.add_child(button)
+	if _close_button_authored_transform_ready:
+		button.transform = _close_button_authored_transform
 	button.input_event.connect(Callable(self, "_on_popup_close_button_input_event").bind(button))
 	_popup_buttons[popup_index] = button
 	return button
@@ -533,6 +642,37 @@ func _close_popup_after_button_press(popup_index: int) -> void:
 func _on_health_changed(new_health: int, new_max_health: int) -> void:
 	_ensure_health_bar()
 	_set_health_bar_health(new_health, new_max_health, true)
+
+
+func _play_hit_flash(color: Color, duration: float) -> void:
+	_stop_hit_flash()
+	set_visual_self_modulate(Color.WHITE)
+	_hit_flash_tween = create_tween()
+	_hit_flash_tween.tween_property(
+		self,
+		"self_modulate",
+		color,
+		duration * 0.4
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_hit_flash_tween.tween_property(
+		self,
+		"self_modulate",
+		Color.WHITE,
+		duration * 0.6
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	_hit_flash_tween.tween_callback(Callable(self, "_finish_hit_flash"))
+
+
+func _finish_hit_flash() -> void:
+	_hit_flash_tween = null
+	_sync_nullifier_highlight()
+
+
+func _stop_hit_flash() -> void:
+	if _hit_flash_tween != null:
+		_hit_flash_tween.kill()
+		_hit_flash_tween = null
+	_sync_nullifier_highlight()
 
 
 func _ensure_health_bar() -> void:

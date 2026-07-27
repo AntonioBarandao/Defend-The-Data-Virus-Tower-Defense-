@@ -2,7 +2,7 @@ class_name CutsceneDemoMenuHUD
 extends CanvasLayer
 
 @export var game_path: NodePath = ^".."
-@export var music_player_path: NodePath = ^"../AdminSandboxSoundtrack"
+@export var music_player_path: NodePath = ^"../Music/CyberBusiness"
 @export var text_cutscene_hud_path: NodePath = ^"../TextCutsceneHUD"
 @export_file("*.tscn") var main_menu_scene_path := "res://Scenes/Menus/MainMenu.tscn"
 @export_group("Editable UI Paths")
@@ -19,6 +19,7 @@ extends CanvasLayer
 @export var wave_set_panel_path: NodePath = ^"Root/WaveSetPanel"
 @export var wave_input_path: NodePath = ^"Root/WaveSetPanel/Margin/Content/WaveInput"
 @export var wave_set_button_path: NodePath = ^"Root/WaveSetPanel/Margin/Content/SetWaveButton"
+@export_range(1, 100, 1) var wave_manager_max_wave := 25
 @export_group("")
 @export_group("Menu Animation")
 @export_range(80.0, 900.0, 1.0) var menu_slide_distance := 520.0
@@ -86,7 +87,8 @@ func _ready() -> void:
 	if _music_slider != null:
 		_music_slider.value_changed.connect(_set_music_volume)
 	if _sound_slider != null:
-		_sound_slider.value_changed.connect(func(value: float) -> void: _set_bus_volume("SFX", value))
+		_sound_slider.value_changed.connect(_set_sound_volume)
+	_route_audio_players()
 	_sync_slider_values()
 
 
@@ -193,7 +195,7 @@ func _apply_wave_set() -> void:
 	if _wave_input == null:
 		return
 
-	var wave_number := clampi(int(_wave_input.text), 0, 20)
+	var wave_number := clampi(int(_wave_input.text), 0, wave_manager_max_wave)
 	_wave_input.text = str(wave_number)
 	_game.call("set_current_wave_for_demo", wave_number)
 
@@ -228,20 +230,29 @@ func _get_bus_linear(bus_name: String) -> float:
 
 
 func _set_music_volume(linear_value: float) -> void:
-	if _music_player != null:
-		_music_player.volume_db = linear_to_db(maxf(linear_value, 0.001))
-
-	var music_bus := AudioServer.get_bus_index("Music")
-	if music_bus != -1:
-		AudioServer.set_bus_volume_db(music_bus, linear_to_db(maxf(linear_value, 0.001)))
-		AudioServer.set_bus_mute(music_bus, linear_value <= 0.001)
+	_route_audio_players()
+	_set_bus_volume("Music", linear_value)
 
 
 func _get_music_linear() -> float:
-	if _music_player != null:
-		return clampf(db_to_linear(_music_player.volume_db), 0.0, 1.0)
-
 	return _get_bus_linear("Music")
+
+
+func _set_sound_volume(linear_value: float) -> void:
+	_route_audio_players()
+	_set_bus_volume("SFX", linear_value)
+
+
+func _route_audio_players() -> void:
+	for candidate in get_tree().get_nodes_in_group(&"Sound"):
+		var player := candidate as AudioStreamPlayer
+		if player != null:
+			player.bus = &"SFX"
+
+	for candidate in get_tree().get_nodes_in_group(&"Music"):
+		var player := candidate as AudioStreamPlayer
+		if player != null:
+			player.bus = &"Music"
 
 
 func _create_menu_tween() -> Tween:

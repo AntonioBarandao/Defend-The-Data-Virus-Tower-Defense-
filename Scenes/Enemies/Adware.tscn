@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://quwu0gcjvxqd" path="res://Scripts/Enemies/adware.gd" id="1_script"]
 [ext_resource type="SpriteFrames" uid="uid://cyh67f2aijren" path="res://assets/Enemies/Adware/AdwareSpriteFrames.tres" id="2_frames"]
-[ext_resource type="AudioStream" uid="uid://8rhfrkf6hokf" path="res://assets/sfx/virus_destroy.wav" id="3_destroy_sfx"]
 [ext_resource type="Texture2D" uid="uid://kwy50u1556nl" path="res://assets/Enemies/Adware/Popups/Adware_Popup_01.png" id="4_popup_01"]
 [ext_resource type="Texture2D" uid="uid://c8layy0s3ug7y" path="res://assets/Enemies/Adware/Popups/Adware_Popup_02.png" id="5_popup_02"]
 [ext_resource type="Texture2D" uid="uid://cxd5cphtwlatg" path="res://assets/Enemies/Adware/Popups/Adware_Popup_03.png" id="6_popup_03"]
@@ -44,6 +43,8 @@ sprite_frames = ExtResource("2_frames")
 animation = &"idle"
 autoplay = "idle"
 script = ExtResource("1_script")
+lifespan_seconds = 0.0
+popup_interval_seconds = 4.0
 path_speed = 70.0
 max_health = 20
 cyberbuck_reward = 200
@@ -54,132 +55,132 @@ z_index = 4000
 scale = Vector2(3, 3)
 
 [node name="Popup01" type="Sprite2D" parent="Popups" unique_id=943322675]
-visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("4_popup_01")
 
 [node name="Popup02" type="Sprite2D" parent="Popups" unique_id=2051670321]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("5_popup_02")
 
 [node name="Popup03" type="Sprite2D" parent="Popups" unique_id=2036636313]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("6_popup_03")
 
 [node name="Popup04" type="Sprite2D" parent="Popups" unique_id=1258300372]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("7_popup_04")
 
 [node name="Popup05" type="Sprite2D" parent="Popups" unique_id=1407039788]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("8_popup_05")
 
 [node name="Popup06" type="Sprite2D" parent="Popups" unique_id=1327381514]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("9_popup_06")
 
 [node name="Popup07" type="Sprite2D" parent="Popups" unique_id=1920302307]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("10_popup_07")
 
 [node name="Popup08" type="Sprite2D" parent="Popups" unique_id=456505795]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("11_popup_08")
 
 [node name="Popup09" type="Sprite2D" parent="Popups" unique_id=287732975]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("12_popup_09")
 
 [node name="Popup10" type="Sprite2D" parent="Popups" unique_id=1395564621]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("13_popup_10")
 
 [node name="Popup11" type="Sprite2D" parent="Popups" unique_id=2145078525]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("14_popup_11")
 
 [node name="Popup12" type="Sprite2D" parent="Popups" unique_id=541816206]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("15_popup_12")
 
 [node name="Popup13" type="Sprite2D" parent="Popups" unique_id=1458644723]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("16_popup_13")
 
 [node name="Popup14" type="Sprite2D" parent="Popups" unique_id=325839475]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("17_popup_14")
 
 [node name="Popup15" type="Sprite2D" parent="Popups" unique_id=26449720]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("18_popup_15")
 
 [node name="Popup16" type="Sprite2D" parent="Popups" unique_id=1193228609]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("19_popup_16")
 
 [node name="Popup17" type="Sprite2D" parent="Popups" unique_id=346126149]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("20_popup_17")
 
 [node name="Popup18" type="Sprite2D" parent="Popups" unique_id=893730013]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("21_popup_18")
 
 [node name="Popup19" type="Sprite2D" parent="Popups" unique_id=1605369346]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("22_popup_19")
 
 [node name="Popup20" type="Sprite2D" parent="Popups" unique_id=1228981162]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("23_popup_20")
 
 [node name="Popup21" type="Sprite2D" parent="Popups" unique_id=1064267783]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("24_popup_21")
 
 [node name="Popup22" type="Sprite2D" parent="Popups" unique_id=956321622]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("25_popup_22")
 
 [node name="Popup23" type="Sprite2D" parent="Popups" unique_id=1494277224]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("26_popup_23")
 
 [node name="Popup24" type="Sprite2D" parent="Popups" unique_id=1381505245]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("27_popup_24")
 
 [node name="Popup25" type="Sprite2D" parent="Popups" unique_id=1292040855]
 visible = false
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("28_popup_25")
 
 [node name="RedButtonCollision" type="Area2D" parent="Popups" unique_id=480850441]
-position = Vector2(555.55554, -292.5926)
+position = Vector2(335.1852, -175.92592)
+scale = Vector2(0.6, 0.6)
 collision_mask = 0
 input_pickable = false
 monitoring = false
@@ -217,9 +218,3 @@ stretch_margin_bottom = 12
 texture_under = ExtResource("30_health_under")
 texture_over = ExtResource("32_health_over")
 texture_progress = ExtResource("31_health_progress")
-
-[node name="Audio" type="Node" parent="." unique_id=32976246]
-
-[node name="DestroySfx" type="AudioStreamPlayer" parent="Audio" unique_id=2054715299]
-stream = ExtResource("3_destroy_sfx")
-volume_db = -20.0

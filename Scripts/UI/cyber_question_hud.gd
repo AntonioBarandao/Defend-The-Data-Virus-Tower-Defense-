@@ -1,6 +1,8 @@
 class_name CyberQuestionHUD
 extends CanvasLayer
 
+const CentralAudioResolver := preload("res://Scripts/Audio/audio_player_resolver.gd")
+
 signal question_solved(reward: int)
 signal cyberbucks_changed(amount: int)
 signal phishing_decoy_selected
@@ -367,6 +369,7 @@ var _control_rest_modulates: Dictionary = {}
 var _control_tweens: Dictionary = {}
 var _phishing_rng := RandomNumberGenerator.new()
 var _phishing_decoy_answer_index := -1
+var _phishing_effect_active := false
 
 @onready var _input_blocker: Control = $Root/InputBlocker
 @onready var _question_panel: PanelContainer = $Root/QuestionPanel
@@ -390,9 +393,13 @@ var _phishing_decoy_answer_index := -1
 ]
 @onready var _feedback_label: Label = $Root/QuestionPanel/Margin/Content/QuestionView/FeedbackLabel
 @onready var _back_button: Button = $Root/QuestionPanel/Margin/Content/QuestionView/BackButton
+var _phishing_activate_sfx: AudioStreamPlayer
+var _phishing_displayed_sfx: AudioStreamPlayer
 
 
 func _ready() -> void:
+	_phishing_activate_sfx = CentralAudioResolver.resolve(self, ^"Sounds/PhishingEmailActivateSfx")
+	_phishing_displayed_sfx = CentralAudioResolver.resolve(self, ^"Sounds/PhishingEmailDisplayedSfx")
 	_question_panel.resized.connect(_sync_panel_bottom_pivot)
 	_apply_ui_scale()
 	_sync_panel_bottom_pivot()
@@ -635,17 +642,44 @@ func _apply_phishing_decoy(answers: Array, correct_index: int) -> int:
 
 func _trigger_phishing_decoy_failure() -> void:
 	_phishing_decoy_answer_index = -1
+	begin_phishing_effect()
+	_play_audio_player(_phishing_activate_sfx)
 	PhishingEmailScript.apply_font_corruption(get_tree().root, _phishing_rng)
+	_play_audio_player(_phishing_displayed_sfx)
 	phishing_decoy_selected.emit()
 
 
-func _clear_phishing_font_corruption() -> void:
+func _play_audio_player(player: AudioStreamPlayer) -> void:
+	if player == null:
+		return
+
+	player.stop()
+	player.play()
+
+
+func begin_phishing_effect() -> void:
+	_phishing_effect_active = true
+
+
+func end_phishing_effect() -> void:
+	_phishing_effect_active = false
+	_clear_phishing_font_corruption(true)
+
+
+func is_phishing_effect_active() -> bool:
+	return _phishing_effect_active
+
+
+func _clear_phishing_font_corruption(force := false) -> void:
+	if _phishing_effect_active and not force:
+		return
 	if is_inside_tree():
 		PhishingEmailScript.clear_font_corruption(get_tree().root)
 
 
 func _exit_tree() -> void:
-	_clear_phishing_font_corruption()
+	_phishing_effect_active = false
+	_clear_phishing_font_corruption(true)
 
 
 func _update_cyberbuck_amount() -> void:

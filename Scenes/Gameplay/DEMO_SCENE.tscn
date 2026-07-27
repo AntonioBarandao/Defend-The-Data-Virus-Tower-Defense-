@@ -25,6 +25,7 @@
 [ext_resource type="SpriteFrames" path="res://assets/Enemies/RedVirus/RedVirusSpriteFrames.res" id="24_c2bmv"]
 [ext_resource type="Script" path="res://Scripts/Enemies/red_virus.gd" id="25_j1qy7"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/SignalBoostHUD.tscn" id="26_signal_boost_hud"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/DefeatHUD.tscn" id="99_defeat_hud"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_counter"]
 bg_color = Color(0.025, 0.032, 0.05, 0.88)
@@ -1218,6 +1219,8 @@ script = ExtResource("14_u73lq")
 naked_power_font = ExtResource("13_ifm3f")
 cyber_bucks_texture = ExtResource("4_w5ywj")
 
+[node name="DefeatHUD" parent="." instance=ExtResource("99_defeat_hud")]
+
 [node name="CpuArena" type="Sprite2D" parent="." unique_id=1951202282]
 visible = false
 position = Vector2(1045, 540)
@@ -1332,3 +1335,4 @@ debug_color = Color(0.5323416, 0.5497722, 0.4333505, 0.41960785)
 [editable path="PerformanceHUD"]
 [editable path="ProgressHUD"]
 [editable path="SignalBoostHUD"]
+[editable path="DefeatHUD"]
