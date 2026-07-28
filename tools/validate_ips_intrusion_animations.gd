@@ -37,6 +37,10 @@ func _run() -> void:
 	tower.set("_placed", true)
 	await process_frame
 
+<<<<<<< HEAD
+	_check(tower.sprite_frames.has_animation(&"IPS_Intrusion_Factory_LV1"), "factory production track is available")
+	_check(tower.sprite_frames.get_frame_count(&"IPS_Intrusion_Factory_LV1") >= 1, "factory production visual is available")
+=======
 	var factory_visual_paths := [
 		^"FactoryVisual",
 		^"LV2FactoryVisual",
@@ -72,6 +76,7 @@ func _run() -> void:
 		"factory production track uses the optimized 73-frame 12 FPS loop"
 	)
 	_validate_upgrade_switch_speed(tower, factory_visuals)
+>>>>>>> 4c8daaffc01673569e6d46a60df2b56eb54c60d5
 	_validate_level_balance(tower)
 	tower.max_spikes = 1
 	var no_viruses: Array[PathFollow2D] = []
@@ -88,10 +93,16 @@ func _run() -> void:
 	_check(spikes.size() == 1, "factory spawns one spike at its configured limit")
 	if not spikes.is_empty():
 		var spike := spikes[0] as IPSIntrusionSpike
+<<<<<<< HEAD
+		var spike_visual := spike.get_node_or_null(^"Sprite2D") as Sprite2D
+		_check(spike_visual != null, "spawned spike uses the dedicated spike visual")
+		_check(spike_visual != null and spike_visual.texture != null, "spawned spike texture is available")
+=======
 		var spike_visual := spike.get_node_or_null(^"AnimatedSprite2D") as AnimatedSprite2D
 		_check(spike_visual != null, "spawned spike uses AnimatedSprite2D")
 		_check(spike_visual != null and spike_visual.sprite_frames.get_frame_count(&"Animated_Spikes") == 73, "spike animation uses the optimized 73-frame loop")
 		_check(spike_visual != null and spike_visual.animation == &"Animated_Spikes" and spike_visual.is_playing(), "spawned spike animation is playing")
+>>>>>>> 4c8daaffc01673569e6d46a60df2b56eb54c60d5
 
 	tower.update_spike_factory(0.0, no_viruses)
 	_check(

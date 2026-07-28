@@ -1,7 +1,12 @@
 [gd_scene format=3 uid="uid://chsujk1gbiabr"]
 
+<<<<<<< HEAD
+[ext_resource type="SpriteFrames" path="res://Assets/Towers/IPS_Intrusion/IPSIntrusionStaticSpriteFrames.tres" id="1_frames"]
+[ext_resource type="Script" path="res://Scripts/Towers/ips_intrusion.gd" id="2_script"]
+=======
 [ext_resource type="SpriteFrames" uid="uid://c2kvnalyux8l0" path="res://assets/Towers/IPS_Intrusion/IPSIntrusionSpriteFrames.tres" id="1_frames"]
 [ext_resource type="Script" uid="uid://bb3j26hkmst1q" path="res://Scripts/Towers/ips_intrusion.gd" id="2_script"]
+>>>>>>> 4c8daaffc01673569e6d46a60df2b56eb54c60d5
 [ext_resource type="PackedScene" path="res://Scenes/Towers/IPS_Intrusion_Spike.tscn" id="3_spike"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/IPS_Intrusion_Electricity_Link.tscn" id="4_electricity"]
 [ext_resource type="SpriteFrames" uid="uid://cq263m7mi18ro" path="res://assets/Towers/IPS_Intrusion/IPSIntrusionFactoryLV2SpriteFrames.tres" id="5_lv2_frames"]

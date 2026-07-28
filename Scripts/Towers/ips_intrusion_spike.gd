@@ -9,7 +9,6 @@ const LEVEL_FIVE_SPIKE_FRAMES_PATH := \
 @export var damage := 1
 @export var max_hits := 1
 @export_range(4.0, 160.0, 1.0) var hurt_radius := 42.0
-@export var animated_sprite_path: NodePath = ^"AnimatedSprite2D"
 
 var path_offset := 0.0
 var landed := false
@@ -21,18 +20,24 @@ var _target_position := Vector2.ZERO
 var _target_rotation := 0.0
 var _base_scale := Vector2.ONE
 var _deploy_tween: Tween
+<<<<<<< HEAD
+=======
 var _animated_sprite: AnimatedSprite2D
 var _default_sprite_frames: SpriteFrames
 var _level_five_sprite_frames: SpriteFrames
+>>>>>>> 4c8daaffc01673569e6d46a60df2b56eb54c60d5
 
 
 func _ready() -> void:
 	_base_scale = scale
 	_remaining_hits = maxi(1, max_hits)
+<<<<<<< HEAD
+=======
 	_animated_sprite = get_node_or_null(animated_sprite_path) as AnimatedSprite2D
 	if _animated_sprite != null:
 		_default_sprite_frames = _animated_sprite.sprite_frames
 	_play_spike_animation()
+>>>>>>> 4c8daaffc01673569e6d46a60df2b56eb54c60d5
 
 
 func reset_spike() -> void:
@@ -42,7 +47,6 @@ func reset_spike() -> void:
 	modulate = Color.WHITE
 	scale = _base_scale
 	show()
-	_play_spike_animation()
 
 
 func configure_for_level(new_level: int, restore_health: bool = true) -> void:
@@ -142,6 +146,8 @@ func _get_follow_target_position(follow: PathFollow2D) -> Vector2:
 			return virus.global_position
 
 	return follow.global_position
+<<<<<<< HEAD
+=======
 
 
 func _play_spike_animation() -> void:
@@ -165,3 +171,4 @@ func _play_spike_animation() -> void:
 		return
 
 	_animated_sprite.play(animation_name)
+>>>>>>> 4c8daaffc01673569e6d46a60df2b56eb54c60d5
