@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://clrcy35hxtg2"
-path="res://.godot/imported/Botnet.png-eb2b9154eae7870b68f7ca482fc45487.ctex"
+path="res://.godot/imported/Botnet.png-665fbf594992350509ef6f0f27198649.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/LoadingScreen/Botnet.png"
-dest_files=["res://.godot/imported/Botnet.png-eb2b9154eae7870b68f7ca482fc45487.ctex"]
+source_file="res://assets/LoadingScreen/Botnet.png"
+dest_files=["res://.godot/imported/Botnet.png-665fbf594992350509ef6f0f27198649.ctex"]
 
 [params]
 

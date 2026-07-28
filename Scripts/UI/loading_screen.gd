@@ -4,12 +4,15 @@ extends Control
 const LOADING_SCREEN_SCENE_PATH := "res://Scenes/UI/LoadingScreen.tscn"
 const TARGET_SCENE_META := &"loading_screen_target_scene"
 const ADWARE_POPUP_COUNT := 25
-const ADWARE_POPUP_PATH_FORMAT := "res://Assets/Enemies/Adware/Popups/Adware_Popup_%02d.png"
+const ADWARE_POPUP_PATH_FORMAT := "res://assets/Enemies/Adware/Popups/Adware_Popup_%02d.png"
 
 @export_file("*.tscn") var target_scene_path := "res://Scenes/Gameplay/Cutscene_Test_Game.tscn"
 @export_range(0.0, 5.0, 0.05) var minimum_visible_seconds := 0.8
 @export var use_sub_threads := false
-@export_range(10.0, 180.0, 1.0) var stall_timeout_seconds := 60.0
+@export_range(30.0, 600.0, 1.0) var stall_timeout_seconds := 180.0
+@export_group("Failure Recovery")
+@export_file("*.tscn") var fallback_scene_path := "res://Scenes/Menus/MainMenu.tscn"
+@export_range(0.5, 10.0, 0.1) var failure_return_delay_seconds := 3.0
 @export_group("Artwork Entrance")
 @export_node_path("Node2D") var towers_group_path := NodePath("ArtworkLayer/Towers")
 @export_node_path("Node2D") var viruses_group_path := NodePath("ArtworkLayer/Viruses")
@@ -27,6 +30,10 @@ var _load_complete := false
 var _transition_started := false
 var _artwork_entrance_finished := false
 var _last_progress_change_msec := 0
+var _last_reported_progress := -1.0
+var _failure_message := ""
+var _failure_return_remaining := 0.0
+var _failure_countdown_second := -1
 var _adware_jumpscare_active := false
 
 @onready var _loading_label: Label = $LoadingPanel/Margin/Content/LoadingLabel
@@ -51,6 +58,7 @@ static func open_game_scene(scene_tree: SceneTree, destination_path: String) -> 
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_adware_accept_button.pressed.connect(_on_adware_accept_pressed)
 	_apply_requested_target_scene()
 	_progress_bar.value = 0.0
@@ -62,7 +70,10 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if _load_failed or _transition_started:
+	if _load_failed:
+		_update_failure_return(delta)
+		return
+	if _transition_started:
 		return
 
 	_elapsed += delta
@@ -161,6 +172,7 @@ func _request_target_scene() -> void:
 		return
 	_load_requested = true
 	_last_progress_change_msec = Time.get_ticks_msec()
+	_last_reported_progress = -1.0
 
 
 func _apply_requested_target_scene() -> void:
@@ -211,9 +223,14 @@ func _poll_loading_progress() -> void:
 		ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 			if not _progress_data.is_empty():
 				var reported_progress := clampf(float(_progress_data[0]), 0.0, 1.0)
-				if reported_progress > _raw_progress + 0.0001:
-					_raw_progress = reported_progress
+				if _last_reported_progress < 0.0 \
+						or not is_equal_approx(
+							reported_progress,
+							_last_reported_progress
+						):
 					_last_progress_change_msec = Time.get_ticks_msec()
+					_last_reported_progress = reported_progress
+				_raw_progress = maxf(_raw_progress, reported_progress)
 			if (
 				_last_progress_change_msec > 0
 				and Time.get_ticks_msec() - _last_progress_change_msec >= int(stall_timeout_seconds * 1000.0)
@@ -260,9 +277,58 @@ func _transition_to_target_scene() -> void:
 
 
 func _fail_loading(message := "Loading Failed") -> void:
+	if _load_failed:
+		return
+
 	_load_failed = true
-	_loading_label.text = message
+	_transition_started = false
+	_failure_message = message
+	_failure_return_remaining = failure_return_delay_seconds
+	_failure_countdown_second = -1
 	_loading_label.add_theme_color_override("font_color", Color(1.0, 0.32, 0.26, 1.0))
-	_progress_bar.value = 0.0
 	if _progress_pulse != null:
 		_progress_pulse.hide()
+	_update_failure_return(0.0)
+
+
+func _update_failure_return(delta: float) -> void:
+	if not _load_failed or _transition_started:
+		return
+
+	_failure_return_remaining = maxf(
+		0.0,
+		_failure_return_remaining - maxf(0.0, delta)
+	)
+	var countdown_second := maxi(0, ceili(_failure_return_remaining))
+	if countdown_second != _failure_countdown_second:
+		_failure_countdown_second = countdown_second
+		_loading_label.text = "%s - Returning to Main Menu in %d..." % [
+			_failure_message,
+			countdown_second,
+		]
+	if _failure_return_remaining <= 0.0:
+		_return_to_fallback_scene()
+
+
+func _return_to_fallback_scene() -> void:
+	if _transition_started:
+		return
+	if fallback_scene_path.is_empty() \
+			or fallback_scene_path == LOADING_SCREEN_SCENE_PATH \
+			or not ResourceLoader.exists(fallback_scene_path):
+		_loading_label.text = "Unable to return to Main Menu"
+		push_error("Loading fallback scene is invalid: %s" % fallback_scene_path)
+		return
+
+	_transition_started = true
+	get_tree().paused = false
+	var change_error := get_tree().change_scene_to_file(fallback_scene_path)
+	if change_error == OK:
+		return
+
+	_transition_started = false
+	_loading_label.text = "Unable to return to Main Menu"
+	push_error(
+		"Could not open loading fallback scene %s (error %d)."
+			% [fallback_scene_path, change_error]
+	)

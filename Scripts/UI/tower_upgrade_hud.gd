@@ -1,6 +1,8 @@
 class_name TowerUpgradeHUD
 extends CanvasLayer
 
+const CentralAudioResolver := preload("res://Scripts/Audio/audio_player_resolver.gd")
+
 const TowerTooltips := preload("res://Scripts/UI/tower_tooltip_data.gd")
 
 signal laser_upgrade_pressed
@@ -11,9 +13,12 @@ signal edr_upgrade_pressed
 signal siem_upgrade_pressed
 signal siem_dispatch_pressed
 signal siem_land_pressed
+signal xdr_upgrade_pressed
+signal xdr_dispatch_pressed
 signal ips_upgrade_pressed
 signal honeypot_upgrade_pressed
 signal sell_pressed
+signal ransomware_payment_pressed
 
 enum MenuMode {
 	NONE,
@@ -22,6 +27,7 @@ enum MenuMode {
 	SCANNER,
 	EDR,
 	SIEM,
+	XDR,
 	IPS,
 	HONEYPOT
 }
@@ -34,12 +40,18 @@ const GUARDIAN_MODE_FIREWALL := &"firewall"
 @export var right_margin := 0.0
 @export var slide_hidden_offset := 36.0
 @export var slide_seconds := 0.24
+@export var content_swap_delay := 0.02
+@export var content_swap_fade_seconds := 0.1
 @export_group("")
 @export_group("Honeypot Displays")
 @export var honeypot_level_display_textures: Array[Texture2D] = []
 @export_group("")
+@export_group("Audio")
+@export var upgrade_sfx_path: NodePath = ^"Sounds/UIUpgradeSfx"
+@export_group("")
 
 @onready var _menu_panel: PanelContainer = $Root/MenuPanel
+@onready var _content: Control = $Root/MenuPanel/Margin/Content
 @onready var _title_label: Label = $Root/MenuPanel/Margin/Content/Title
 @onready var _portrait_row: Control = $Root/MenuPanel/Margin/Content/PortraitRow
 @onready var _guardian_mode_container: Control = $Root/MenuPanel/Margin/Content/VBoxContainer
@@ -71,6 +83,13 @@ const GUARDIAN_MODE_FIREWALL := &"firewall"
 @onready var _laser_cost_label: Label = $Root/MenuPanel/Margin/Content/VBoxContainer2/CostRow/CostAmount
 @onready var _laser_upgrade_button: Button = $Root/MenuPanel/Margin/Content/VBoxContainer2/ButtonPath4
 @onready var _sell_button: Button = $Root/MenuPanel/Margin/Content/SellButton
+@onready var _ransomware_section: Control = $Root/MenuPanel/Margin/Content/RansomwareSection
+@onready var _ransomware_timer_label: Label = $Root/MenuPanel/Margin/Content/RansomwareSection/TimerRow/TimerValue
+@onready var _ransomware_cost_label: Label = $Root/MenuPanel/Margin/Content/RansomwareSection/RansomCostRow/RansomCostAmount
+@onready var _ransomware_status_label: Label = $Root/MenuPanel/Margin/Content/RansomwareSection/StatusLabel
+@onready var _ransomware_payment_button: Button = $Root/MenuPanel/Margin/Content/RansomwareSection/PayRansomButton
+@onready var _spyware_section: Control = $Root/MenuPanel/Margin/Content/SpywareSection
+@onready var _upgrade_sfx: AudioStreamPlayer = CentralAudioResolver.resolve(self, upgrade_sfx_path)
 
 var _description_label: Label
 var _current_mode := MenuMode.NONE
@@ -92,8 +111,12 @@ var _scanner_mode_names := {
 	&"nullifier": "Nullifier"
 }
 var _menu_tween: Tween
+var _content_tween: Tween
 var _drawer_target_position := Vector2.ZERO
 var _drawer_hidden_position := Vector2.ZERO
+var _ransomware_locked := false
+var _ransomware_status_override := ""
+var _spyware_locked := false
 
 
 func _ready() -> void:
@@ -104,7 +127,10 @@ func _ready() -> void:
 	_cache_drawer_positions()
 	_menu_panel.position = _drawer_hidden_position
 	_laser_upgrade_button.pressed.connect(Callable(self, "_on_upgrade_button_pressed"))
-	_sell_button.pressed.connect(func() -> void: sell_pressed.emit())
+	_sell_button.pressed.connect(Callable(self, "_on_sell_button_pressed"))
+	_ransomware_payment_button.pressed.connect(
+		Callable(self, "_on_ransomware_payment_button_pressed")
+	)
 	_siem_dispatch_button.pressed.connect(Callable(self, "_on_siem_dispatch_button_pressed"))
 	_siem_land_button.pressed.connect(Callable(self, "_on_siem_land_button_pressed"))
 	for mode_id in _guardian_mode_buttons.keys():
@@ -290,8 +316,95 @@ func set_siem_dispatch_state(dispatched: bool, banked_knowledge: int, landing_to
 	_siem_banked_knowledge_label.text = "Banked Knowledge: %d" % maxi(0, banked_knowledge)
 
 
+func set_xdr_stats(level: int, max_level: int, dispatched: bool, can_upgrade: bool, upgrade_cost: int = 0) -> void:
+	_set_tower_description(&"xdr")
+	_scanner_mode_section.hide()
+	_siem_dispatch_section.show()
+	_siem_dispatch_button.text = "Stop Destination Mode" if dispatched else "Destination Mode"
+	_siem_land_button.hide()
+	_siem_banked_knowledge_label.text = "Click the arena to move the mech." if dispatched else "Enable dispatch to select a destination."
+	_laser_level_label.text = "Level %d / %d" % [level, max_level]
+	_laser_power_label.text = "Chassis: Reinforced" if level >= max_level else "Chassis: Standard"
+	_laser_range_label.text = "Movement: Destination Control"
+	_set_upgrade_button_state(&"xdr", level >= max_level, can_upgrade, upgrade_cost)
+
+
+func set_ransomware_lock(
+	active: bool,
+	formatted_time: String = "00:00",
+	payment_cost: int = 0,
+	can_afford: bool = false
+) -> void:
+	if active:
+		if not _ransomware_locked:
+			_ransomware_status_override = ""
+		_ransomware_locked = true
+		_spyware_locked = false
+		_spyware_section.hide()
+		_guardian_mode_container.hide()
+		_upgrade_path_container.hide()
+		_set_sell_available(false)
+		_ransomware_section.show()
+		_ransomware_timer_label.text = formatted_time
+		_ransomware_cost_label.text = str(maxi(0, payment_cost))
+		_ransomware_payment_button.disabled = not can_afford
+		_ransomware_payment_button.text = (
+			"Pay Ransom"
+				if can_afford
+				else "Insufficient Cyber Bucks"
+		)
+		_ransomware_status_label.text = (
+			_ransomware_status_override
+				if not _ransomware_status_override.is_empty()
+				else "Tower controls and combat systems are encrypted."
+		)
+		return
+
+	_ransomware_locked = false
+	_ransomware_status_override = ""
+	_ransomware_section.hide()
+	if not _spyware_locked:
+		_restore_current_mode_layout()
+
+
+func set_spyware_lock(active: bool) -> void:
+	_spyware_locked = active
+	if active:
+		_ransomware_locked = false
+		_ransomware_status_override = ""
+		_ransomware_section.hide()
+		_guardian_mode_container.hide()
+		_upgrade_path_container.hide()
+		_set_sell_available(false)
+		_spyware_section.show()
+		return
+
+	_spyware_section.hide()
+	if not _ransomware_locked:
+		_restore_current_mode_layout()
+
+
+func is_spyware_locked() -> bool:
+	return _spyware_locked
+
+
+func set_ransomware_status(message: String) -> void:
+	_ransomware_status_override = message
+	if _ransomware_status_label != null:
+		_ransomware_status_label.text = message
+
+
+func is_ransomware_lock_visible() -> bool:
+	return _menu_panel.visible and _ransomware_locked
+
+
+func is_ransomware_locked() -> bool:
+	return _ransomware_locked
+
+
 func show_guardian_panel() -> void:
 	_current_mode = MenuMode.GUARDIAN
+	_set_sell_available(false)
 	_title_label.text = TowerTooltips.tower_name(&"guardian")
 	_set_tower_description(&"guardian")
 	_portrait_row.show()
@@ -325,6 +438,7 @@ func menu_panel_has_point(screen_position: Vector2) -> bool:
 
 func show_laser_panel() -> void:
 	_current_mode = MenuMode.LASER
+	_set_sell_available(true)
 	_title_label.text = TowerTooltips.tower_name(&"laser")
 	_portrait_row.hide()
 	_guardian_mode_container.hide()
@@ -336,6 +450,7 @@ func show_laser_panel() -> void:
 
 func show_scanner_panel() -> void:
 	_current_mode = MenuMode.SCANNER
+	_set_sell_available(true)
 	_title_label.text = TowerTooltips.tower_name(&"scanner")
 	_portrait_row.hide()
 	_guardian_mode_container.hide()
@@ -347,6 +462,7 @@ func show_scanner_panel() -> void:
 
 func show_edr_panel() -> void:
 	_current_mode = MenuMode.EDR
+	_set_sell_available(true)
 	_title_label.text = TowerTooltips.tower_name(&"edr")
 	_portrait_row.hide()
 	_guardian_mode_container.hide()
@@ -358,17 +474,33 @@ func show_edr_panel() -> void:
 
 func show_siem_panel() -> void:
 	_current_mode = MenuMode.SIEM
+	_set_sell_available(true)
 	_title_label.text = TowerTooltips.tower_name(&"siem")
 	_portrait_row.hide()
 	_guardian_mode_container.hide()
 	_upgrade_path_container.show()
 	_scanner_mode_section.hide()
 	_siem_dispatch_section.show()
+	_siem_land_button.show()
+	_show_menu_panel_animated()
+
+
+func show_xdr_panel() -> void:
+	_current_mode = MenuMode.XDR
+	_set_sell_available(true)
+	_title_label.text = TowerTooltips.tower_name(&"xdr")
+	_portrait_row.hide()
+	_guardian_mode_container.hide()
+	_upgrade_path_container.show()
+	_scanner_mode_section.hide()
+	_siem_dispatch_section.show()
+	_siem_land_button.hide()
 	_show_menu_panel_animated()
 
 
 func show_ips_panel() -> void:
 	_current_mode = MenuMode.IPS
+	_set_sell_available(true)
 	_title_label.text = TowerTooltips.tower_name(&"ips")
 	_portrait_row.hide()
 	_guardian_mode_container.hide()
@@ -380,6 +512,7 @@ func show_ips_panel() -> void:
 
 func show_honeypot_panel() -> void:
 	_current_mode = MenuMode.HONEYPOT
+	_set_sell_available(true)
 	_title_label.text = TowerTooltips.tower_name(&"honeypot")
 	_portrait_row.hide()
 	_guardian_mode_container.hide()
@@ -441,6 +574,19 @@ func siem_panel_has_point(screen_position: Vector2) -> bool:
 	return is_siem_panel_visible() and _menu_panel.get_global_rect().has_point(screen_position)
 
 
+func hide_xdr_panel() -> void:
+	if _current_mode == MenuMode.XDR:
+		hide_all()
+
+
+func is_xdr_panel_visible() -> bool:
+	return _menu_panel.visible and _current_mode == MenuMode.XDR
+
+
+func xdr_panel_has_point(screen_position: Vector2) -> bool:
+	return is_xdr_panel_visible() and _menu_panel.get_global_rect().has_point(screen_position)
+
+
 func hide_ips_panel() -> void:
 	if _current_mode == MenuMode.IPS:
 		hide_all()
@@ -480,7 +626,29 @@ func hide_all() -> void:
 	_hide_menu_panel_animated()
 
 
+func is_sell_available() -> bool:
+	return _sell_button != null \
+		and _sell_button.visible \
+		and not _sell_button.disabled
+
+
+func _set_sell_available(value: bool) -> void:
+	if _sell_button == null:
+		return
+	var available := value and not _is_interaction_locked()
+	_sell_button.visible = available
+	_sell_button.disabled = not available
+
+
+func _on_sell_button_pressed() -> void:
+	if _is_interaction_locked() or _current_mode == MenuMode.GUARDIAN:
+		return
+	sell_pressed.emit()
+
+
 func _on_upgrade_button_pressed() -> void:
+	if _is_interaction_locked():
+		return
 	match _current_mode:
 		MenuMode.LASER:
 			laser_upgrade_pressed.emit()
@@ -490,35 +658,47 @@ func _on_upgrade_button_pressed() -> void:
 			edr_upgrade_pressed.emit()
 		MenuMode.SIEM:
 			siem_upgrade_pressed.emit()
+		MenuMode.XDR:
+			xdr_upgrade_pressed.emit()
 		MenuMode.IPS:
 			ips_upgrade_pressed.emit()
 		MenuMode.HONEYPOT:
 			honeypot_upgrade_pressed.emit()
 
 
-func _on_siem_dispatch_button_pressed() -> void:
-	if _current_mode != MenuMode.SIEM:
+func play_upgrade_sound() -> void:
+	if _upgrade_sfx == null:
 		return
 
-	siem_dispatch_pressed.emit()
+	_upgrade_sfx.stop()
+	_upgrade_sfx.play()
+
+
+func _on_siem_dispatch_button_pressed() -> void:
+	if _is_interaction_locked():
+		return
+	if _current_mode == MenuMode.SIEM:
+		siem_dispatch_pressed.emit()
+	elif _current_mode == MenuMode.XDR:
+		xdr_dispatch_pressed.emit()
 
 
 func _on_siem_land_button_pressed() -> void:
-	if _current_mode != MenuMode.SIEM:
+	if _is_interaction_locked() or _current_mode != MenuMode.SIEM:
 		return
 
 	siem_land_pressed.emit()
 
 
 func _emit_scanner_mode_pressed(mode_id: StringName) -> void:
-	if _current_mode != MenuMode.SCANNER:
+	if _is_interaction_locked() or _current_mode != MenuMode.SCANNER:
 		return
 
 	scanner_mode_pressed.emit(mode_id)
 
 
 func _emit_guardian_mode_pressed(mode_id: StringName) -> void:
-	if _current_mode != MenuMode.GUARDIAN:
+	if _is_interaction_locked() or _current_mode != MenuMode.GUARDIAN:
 		return
 
 	guardian_mode_pressed.emit(mode_id)
@@ -559,7 +739,6 @@ func _get_guardian_mode_unlock_level(mode_id: StringName, unlock_levels: Diction
 		return int(unlock_levels[mode_id])
 
 	return int(_guardian_mode_unlock_levels.get(mode_id, 1))
-
 
 func _hide_scanner_mode_notice() -> void:
 	if _scanner_mode_notice_label != null:
@@ -637,6 +816,7 @@ func _cache_drawer_positions() -> void:
 func _show_menu_panel_animated() -> void:
 	visible = true
 	_honeypot_display_section.visible = _current_mode == MenuMode.HONEYPOT
+	_begin_content_swap()
 	_cache_drawer_positions()
 	if _menu_tween != null:
 		_menu_tween.kill()
@@ -656,9 +836,85 @@ func _show_menu_panel_animated() -> void:
 	)
 
 
+func _begin_content_swap() -> void:
+	if _content_tween != null:
+		_content_tween.kill()
+		_content_tween = null
+	_content.modulate.a = 0.0
+	_content_tween = create_tween()
+	_content_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	_content_tween.tween_interval(maxf(0.0, content_swap_delay))
+	_content_tween.tween_property(
+		_content,
+		"modulate:a",
+		1.0,
+		maxf(0.0, content_swap_fade_seconds)
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_content_tween.tween_callback(func() -> void:
+		_content_tween = null
+	)
+
+
+func _on_ransomware_payment_button_pressed() -> void:
+	if not _ransomware_locked:
+		return
+	ransomware_payment_pressed.emit()
+
+
+func _restore_current_mode_layout() -> void:
+	_ransomware_section.hide()
+	_spyware_section.hide()
+	match _current_mode:
+		MenuMode.GUARDIAN:
+			_portrait_row.show()
+			_guardian_mode_container.show()
+			_upgrade_path_container.hide()
+			_scanner_mode_section.hide()
+			_siem_dispatch_section.hide()
+			_set_sell_available(false)
+		MenuMode.SCANNER:
+			_portrait_row.hide()
+			_guardian_mode_container.hide()
+			_upgrade_path_container.show()
+			_scanner_mode_section.show()
+			_siem_dispatch_section.hide()
+			_set_sell_available(true)
+		MenuMode.SIEM:
+			_portrait_row.hide()
+			_guardian_mode_container.hide()
+			_upgrade_path_container.show()
+			_scanner_mode_section.hide()
+			_siem_dispatch_section.show()
+			_siem_land_button.show()
+			_set_sell_available(true)
+		MenuMode.XDR:
+			_portrait_row.hide()
+			_guardian_mode_container.hide()
+			_upgrade_path_container.show()
+			_scanner_mode_section.hide()
+			_siem_dispatch_section.show()
+			_siem_land_button.hide()
+			_set_sell_available(true)
+		MenuMode.LASER, MenuMode.EDR, MenuMode.IPS, MenuMode.HONEYPOT:
+			_portrait_row.hide()
+			_guardian_mode_container.hide()
+			_upgrade_path_container.show()
+			_scanner_mode_section.hide()
+			_siem_dispatch_section.hide()
+			_set_sell_available(true)
+
+
+func _is_interaction_locked() -> bool:
+	return _ransomware_locked or _spyware_locked
+
+
 func _hide_menu_panel_animated() -> void:
 	if _menu_tween != null:
 		_menu_tween.kill()
+	if _content_tween != null:
+		_content_tween.kill()
+		_content_tween = null
+	_content.modulate.a = 1.0
 	if not _menu_panel.visible:
 		return
 

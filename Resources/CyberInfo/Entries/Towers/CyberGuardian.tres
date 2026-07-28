@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/Towers/CyberGuardian/Display_CyberGuardian.png" id="2_image"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"cyber_guardian"
+display_name = "Cyber Guardian"
+type_label = "Mode / Support Tower"
+description = "A free, unique guardian with three roles. Defender attacks visible threats. Signal Boost temporarily improves every tower's range and attack speed. Firewall places a timed path barrier that damages and burns viruses crossing it."
+images = Array[Texture2D]([ExtResource("2_image")])
+slide_labels = Array[String](["Defender"])

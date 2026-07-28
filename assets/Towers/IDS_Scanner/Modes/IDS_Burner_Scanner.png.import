@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cw724221uxq13"
-path="res://.godot/imported/IDS_Burner_Scanner.png-04086017ca0180821d926ef68bb7eaae.ctex"
+path="res://.godot/imported/IDS_Burner_Scanner.png-c8e2c2d6c0f4e8029e7933294c1de8bd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Towers/IDS_Scanner/Modes/IDS_Burner_Scanner.png"
-dest_files=["res://.godot/imported/IDS_Burner_Scanner.png-04086017ca0180821d926ef68bb7eaae.ctex"]
+source_file="res://assets/Towers/IDS_Scanner/Modes/IDS_Burner_Scanner.png"
+dest_files=["res://.godot/imported/IDS_Burner_Scanner.png-c8e2c2d6c0f4e8029e7933294c1de8bd.ctex"]
 
 [params]
 

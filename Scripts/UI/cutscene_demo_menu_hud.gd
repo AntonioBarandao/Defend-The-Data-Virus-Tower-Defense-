@@ -2,7 +2,7 @@ class_name CutsceneDemoMenuHUD
 extends CanvasLayer
 
 @export var game_path: NodePath = ^".."
-@export var music_player_path: NodePath = ^"../AdminSandboxSoundtrack"
+@export var music_player_path: NodePath = ^"../Music/CyberBusiness"
 @export var text_cutscene_hud_path: NodePath = ^"../TextCutsceneHUD"
 @export_file("*.tscn") var main_menu_scene_path := "res://Scenes/Menus/MainMenu.tscn"
 @export_group("Editable UI Paths")
@@ -11,14 +11,17 @@ extends CanvasLayer
 @export var menu_panel_path: NodePath = ^"Root/MenuPanel"
 @export var resume_button_path: NodePath = ^"Root/MenuPanel/Margin/Content/ResumeButton"
 @export var settings_button_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsButton"
+@export var cyber_info_button_path: NodePath = ^"Root/MenuPanel/Margin/Content/CyberInfoButton"
 @export var exit_button_path: NodePath = ^"Root/MenuPanel/Margin/Content/ExitButton"
 @export var settings_panel_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsPanel"
+@export var cyber_info_hud_path: NodePath = ^"CyberInfoHUD"
 @export var master_slider_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsPanel/Margin/Sliders/MasterRow/MasterSlider"
 @export var music_slider_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsPanel/Margin/Sliders/MusicRow/MusicSlider"
 @export var sound_slider_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsPanel/Margin/Sliders/SoundRow/SoundSlider"
 @export var wave_set_panel_path: NodePath = ^"Root/WaveSetPanel"
 @export var wave_input_path: NodePath = ^"Root/WaveSetPanel/Margin/Content/WaveInput"
 @export var wave_set_button_path: NodePath = ^"Root/WaveSetPanel/Margin/Content/SetWaveButton"
+@export_range(1, 100, 1) var wave_manager_max_wave := 25
 @export_group("")
 @export_group("Menu Animation")
 @export_range(80.0, 900.0, 1.0) var menu_slide_distance := 520.0
@@ -32,8 +35,10 @@ var _dim_overlay: ColorRect
 var _menu_panel: PanelContainer
 var _resume_button: Button
 var _settings_button: Button
+var _cyber_info_button: Button
 var _exit_button: Button
 var _settings_panel: PanelContainer
+var _cyber_info_hud: CyberInfoHUD
 var _master_slider: HSlider
 var _music_slider: HSlider
 var _sound_slider: HSlider
@@ -75,6 +80,8 @@ func _ready() -> void:
 		_resume_button.pressed.connect(_close_menu)
 	if _settings_button != null:
 		_settings_button.pressed.connect(_toggle_settings)
+	if _cyber_info_button != null:
+		_cyber_info_button.pressed.connect(_open_cyber_info)
 	if _exit_button != null:
 		_exit_button.pressed.connect(_return_to_main_menu)
 	if _wave_set_button != null:
@@ -86,7 +93,8 @@ func _ready() -> void:
 	if _music_slider != null:
 		_music_slider.value_changed.connect(_set_music_volume)
 	if _sound_slider != null:
-		_sound_slider.value_changed.connect(func(value: float) -> void: _set_bus_volume("SFX", value))
+		_sound_slider.value_changed.connect(_set_sound_volume)
+	_route_audio_players()
 	_sync_slider_values()
 
 
@@ -96,8 +104,10 @@ func _resolve_ui_nodes() -> void:
 	_menu_panel = get_node_or_null(menu_panel_path) as PanelContainer
 	_resume_button = get_node_or_null(resume_button_path) as Button
 	_settings_button = get_node_or_null(settings_button_path) as Button
+	_cyber_info_button = get_node_or_null(cyber_info_button_path) as Button
 	_exit_button = get_node_or_null(exit_button_path) as Button
 	_settings_panel = get_node_or_null(settings_panel_path) as PanelContainer
+	_cyber_info_hud = get_node_or_null(cyber_info_hud_path) as CyberInfoHUD
 	_master_slider = get_node_or_null(master_slider_path) as HSlider
 	_music_slider = get_node_or_null(music_slider_path) as HSlider
 	_sound_slider = get_node_or_null(sound_slider_path) as HSlider
@@ -182,6 +192,12 @@ func _toggle_settings() -> void:
 	_settings_panel.visible = not _settings_panel.visible
 
 
+func _open_cyber_info() -> void:
+	if _cyber_info_hud == null:
+		return
+	_cyber_info_hud.open(CyberInfoHUD.Page.TOWERS)
+
+
 func _return_to_main_menu() -> void:
 	get_tree().paused = false
 	get_tree().change_scene_to_file(main_menu_scene_path)
@@ -193,7 +209,7 @@ func _apply_wave_set() -> void:
 	if _wave_input == null:
 		return
 
-	var wave_number := clampi(int(_wave_input.text), 0, 20)
+	var wave_number := clampi(int(_wave_input.text), 0, wave_manager_max_wave)
 	_wave_input.text = str(wave_number)
 	_game.call("set_current_wave_for_demo", wave_number)
 
@@ -228,20 +244,29 @@ func _get_bus_linear(bus_name: String) -> float:
 
 
 func _set_music_volume(linear_value: float) -> void:
-	if _music_player != null:
-		_music_player.volume_db = linear_to_db(maxf(linear_value, 0.001))
-
-	var music_bus := AudioServer.get_bus_index("Music")
-	if music_bus != -1:
-		AudioServer.set_bus_volume_db(music_bus, linear_to_db(maxf(linear_value, 0.001)))
-		AudioServer.set_bus_mute(music_bus, linear_value <= 0.001)
+	_route_audio_players()
+	_set_bus_volume("Music", linear_value)
 
 
 func _get_music_linear() -> float:
-	if _music_player != null:
-		return clampf(db_to_linear(_music_player.volume_db), 0.0, 1.0)
-
 	return _get_bus_linear("Music")
+
+
+func _set_sound_volume(linear_value: float) -> void:
+	_route_audio_players()
+	_set_bus_volume("SFX", linear_value)
+
+
+func _route_audio_players() -> void:
+	for candidate in get_tree().get_nodes_in_group(&"Sound"):
+		var player := candidate as AudioStreamPlayer
+		if player != null:
+			player.bus = &"SFX"
+
+	for candidate in get_tree().get_nodes_in_group(&"Music"):
+		var player := candidate as AudioStreamPlayer
+		if player != null:
+			player.bus = &"Music"
 
 
 func _create_menu_tween() -> Tween:

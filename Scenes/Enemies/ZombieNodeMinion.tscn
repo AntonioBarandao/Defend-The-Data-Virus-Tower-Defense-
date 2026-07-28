@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/ZombieNode/Minions/ZombieNodeMinionSpriteFrames.tres" id="1_frames"]
+[ext_resource type="Script" path="res://Scripts/Enemies/zombie_node_minion.gd" id="2_script"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_contact"]
+radius = 420.0
+
+[node name="ZombieNodeMinion" type="AnimatedSprite2D" groups=["ZOMBIE_NODE_MINION", "VIRUS_ENEMY"]]
+scale = Vector2(0.1, 0.1)
+sprite_frames = ExtResource("1_frames")
+animation = &"angry"
+autoplay = "angry"
+script = ExtResource("2_script")
+path_speed = 180.0
+max_health = 1
+cyberbuck_reward = 5
+
+[node name="ContactArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ContactArea"]
+shape = SubResource("CircleShape2D_contact")

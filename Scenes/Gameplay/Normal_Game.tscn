@@ -1,17 +1,96 @@
 [gd_scene format=3 uid="uid://djw1fm0wta4mt"]
 
-[ext_resource type="PackedScene" uid="uid://nfjr7ke15kok" path="res://Scenes/Gameplay/Cutscene_Test_Game.tscn" id="1_game_base"]
-[ext_resource type="Texture2D" uid="uid://c0okywelrqut" path="res://assets/Towers/CyberGuardian/Modes/SignalBoost/Cyber_Guardian_SignalBoost_Icon.png" id="2_4isur"]
+[ext_resource type="PackedScene" uid="uid://bxc2ry5rgfr31" path="res://Scenes/Gameplay/Cutscene_Test_Game.tscn" id="1_game_base"]
+[ext_resource type="PackedScene" uid="uid://bttc6spxk8xfs" path="res://Scenes/Enemies/ZombieNode.tscn" id="3_w8x1g"]
+[ext_resource type="PackedScene" uid="uid://ds2au7hev63nm" path="res://Scenes/Enemies/BotnetNode.tscn" id="4_botnet"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Wave20ClearanceHUD.tscn" id="4_clearance"]
+[ext_resource type="Script" uid="uid://bl4stwlf88ctn" path="res://Scripts/Gameplay/cutscene_demo_director.gd" id="4_obgb4"]
+[ext_resource type="Texture2D" uid="uid://80e8xosb7uq1" path="res://assets/UI/Cutscene/Cyberguardian_Mascot.png" id="5_n2mrm"]
+[ext_resource type="Texture2D" uid="uid://dhhdvefco7kgs" path="res://assets/LoadingScreen/NewSprites/IDS_Scanner.png" id="5_pqf0i"]
+[ext_resource type="PackedScene" uid="uid://4jdofbj14ald" path="res://Scenes/Enemies/WormBoss.tscn" id="5_worm_boss"]
+[ext_resource type="Texture2D" uid="uid://dwo48cuitopbf" path="res://assets/LoadingScreen/SIEMHawk.png" id="6_n2mrm"]
+[ext_resource type="Texture2D" uid="uid://jelbl5xe6682" path="res://assets/LoadingScreen/NewSprites/IPS_Intrusion.png" id="7_s2uex"]
+[ext_resource type="Texture2D" uid="uid://l0qvd6hjspqm" path="res://assets/Towers/Honeypot_Production/Displays/Display_Honeypot_Factory_LV1.png" id="8_4m1ib"]
+[ext_resource type="Texture2D" uid="uid://boaiqtkopvk4n" path="res://assets/Towers/Laser-Turret/Plates/Laser_Turret_LV1_Plate.png" id="38_cfnki"]
+[ext_resource type="Texture2D" uid="uid://bwsgcf3yixwrq" path="res://assets/Towers/EDR_Hunter/Display_EDR_Hunter_LV1.png" id="40_ny6iy"]
+[ext_resource type="Texture2D" uid="uid://buhhmlishb4q0" path="res://assets/Towers/XDR_Mech/Display_XDR_Mech.png" id="44_ny6iy"]
+[ext_resource type="SpriteFrames" uid="uid://bfro7ahwf5sfk" path="res://assets/Enemies/RedVirus/RedVirusSpriteFrames.res" id="47_mljcx"]
+[ext_resource type="AudioStream" uid="uid://cyw3ynfmxrkcw" path="res://assets/soundtrack/Cyber-Business-Soundtrack.wav" id="music_cyber_business"]
+[ext_resource type="AudioStream" uid="uid://c130ih3py156c" path="res://assets/sfx/adware_popup.wav" id="sfx_adware_popup"]
+[ext_resource type="AudioStream" uid="uid://t1ipbpea1ik3" path="res://assets/sfx/Alarm_Cutscene_FX.wav" id="sfx_alarm"]
+[ext_resource type="AudioStream" uid="uid://b13q8eqiw0ie" path="res://assets/sfx/armored_virus_destroy.wav" id="sfx_armored_destroy"]
+[ext_resource type="AudioStream" uid="uid://bsqoek663td83" path="res://assets/sfx/explosion_armored_virus.wav" id="sfx_armored_explosion"]
+[ext_resource type="AudioStream" uid="uid://bx0pfeyf00lrf" path="res://assets/sfx/armored_virus_transform.wav" id="sfx_armored_transform"]
+[ext_resource type="AudioStream" uid="uid://ca35jj8jymnvl" path="res://assets/sfx/cyberguardian_defender_attack_alt.wav" id="sfx_cyber_attack"]
+[ext_resource type="AudioStream" uid="uid://cbbhos7gkwwe" path="res://assets/sfx/cyberguardian_defender_attack.wav" id="sfx_cyber_attack_original"]
+[ext_resource type="AudioStream" uid="uid://5t88uc81blnw" path="res://assets/sfx/cyberguardian_summon.wav" id="sfx_cyber_summon"]
+[ext_resource type="AudioStream" uid="uid://c2hf65f82dese" path="res://assets/sfx/edr_hunter_deploy.wav" id="sfx_edr_deploy"]
+[ext_resource type="AudioStream" uid="uid://jdec2yxhfttj" path="res://assets/sfx/edr_hunter_drone_shoot.wav" id="sfx_edr_drone"]
+[ext_resource type="AudioStream" uid="uid://c32ll62ssyefm" path="res://assets/sfx/edr_hunter_sniper_shoot.wav" id="sfx_edr_sniper"]
+[ext_resource type="AudioStream" uid="uid://chv3bd3hhgdv8" path="res://assets/sfx/cyberguardian-firewall-activate.wav" id="sfx_guardian_firewall_activate"]
+[ext_resource type="AudioStream" uid="uid://d0b2cs7yhn6ab" path="res://assets/sfx/cyberguardian-firewall-change.wav" id="sfx_guardian_firewall_change"]
+[ext_resource type="AudioStream" uid="uid://dwsimhh5qdtd2" path="res://assets/sfx/cyberguardian-signalboost-change.wav" id="sfx_guardian_signal_change"]
+[ext_resource type="AudioStream" uid="uid://brdaejsqovn1f" path="res://assets/sfx/honeypot__production_collect.wav" id="sfx_honeypot_collect"]
+[ext_resource type="AudioStream" uid="uid://c3eg7k1iqr2vp" path="res://assets/sfx/honeypot__production_deploy.wav" id="sfx_honeypot_deploy"]
+[ext_resource type="AudioStream" uid="uid://bkyjaoiq0fl2d" path="res://assets/sfx/ids_scanner_bounty.wav" id="sfx_ids_bounty"]
+[ext_resource type="AudioStream" uid="uid://dvc75cmon36b3" path="res://assets/sfx/ids_scanner_burner.wav" id="sfx_ids_burner"]
+[ext_resource type="AudioStream" uid="uid://cm13rmforoed5" path="res://assets/sfx/ids_scanner_camo.wav" id="sfx_ids_camo"]
+[ext_resource type="AudioStream" uid="uid://enmdm0pu8kee" path="res://assets/sfx/ids_scanner_deploy.wav" id="sfx_ids_deploy"]
+[ext_resource type="AudioStream" uid="uid://cn66j5y6i8235" path="res://assets/sfx/ids_scanner_change_mode.wav" id="sfx_ids_mode"]
+[ext_resource type="AudioStream" uid="uid://cebrnowmv0qh3" path="res://assets/sfx/ids_scanner_nullifier.wav" id="sfx_ids_nullifier"]
+[ext_resource type="AudioStream" uid="uid://cns67va1qk8x6" path="res://assets/sfx/ids_scanner_slowness.wav" id="sfx_ids_slowness"]
+[ext_resource type="AudioStream" uid="uid://bgguvec36136k" path="res://assets/sfx/ips_intrusion-electricity.wav" id="sfx_ips_electricity"]
+[ext_resource type="AudioStream" uid="uid://bvktfhhwexlpw" path="res://assets/sfx/ips_intrusion-spike.wav" id="sfx_ips_spike"]
+[ext_resource type="AudioStream" uid="uid://dsb4xo8x4wsm3" path="res://assets/sfx/laser_turret_deploy.wav" id="sfx_laser_deploy"]
+[ext_resource type="AudioStream" uid="uid://dptbxj6gd7jus" path="res://assets/sfx/laser_turret_lv1_shoot.wav" id="sfx_laser_lv1"]
+[ext_resource type="AudioStream" uid="uid://y5wfv2d5tv52" path="res://assets/sfx/laser_turret_lv2_shoot.wav" id="sfx_laser_lv2"]
+[ext_resource type="AudioStream" uid="uid://dwnw32gjs7h1t" path="res://assets/sfx/laser_turret_lv3_shoot.wav" id="sfx_laser_lv3"]
+[ext_resource type="AudioStream" uid="uid://7swqslpqu6ry" path="res://assets/sfx/laser_turret_lv4_shoot.wav" id="sfx_laser_lv4"]
+[ext_resource type="AudioStream" uid="uid://ccfo6bus8uwg" path="res://assets/sfx/laser_turret_lv5_shoot.wav" id="sfx_laser_lv5"]
+[ext_resource type="AudioStream" uid="uid://dpyu6uxidrsyl" path="res://assets/sfx/laser_turret_upgrade.wav" id="sfx_laser_upgrade"]
+[ext_resource type="AudioStream" uid="uid://cybhv36hv8u4i" path="res://assets/sfx/laser_turret_upgrade_lv5.wav" id="sfx_laser_upgrade_lv5"]
+[ext_resource type="AudioStream" uid="uid://jobm3283t0d1" path="res://assets/sfx/mutant_virus_destroy.wav" id="sfx_mutant_destroy"]
+[ext_resource type="AudioStream" uid="uid://b3j3ur6d6quls" path="res://assets/sfx/explosion_mutant_virus.wav" id="sfx_mutant_explosion"]
+[ext_resource type="AudioStream" uid="uid://b63s68pv3ycc5" path="res://assets/sfx/mutant_virus_mutated.wav" id="sfx_mutant_mutated"]
+[ext_resource type="AudioStream" uid="uid://dsx2l3pgo4hv2" path="res://assets/sfx/mutant_virus_transform.wav" id="sfx_mutant_transform"]
+[ext_resource type="AudioStream" uid="uid://cgcm3ngr3v6wj" path="res://assets/sfx/phising_email_activate.wav" id="sfx_phishing_activate"]
+[ext_resource type="AudioStream" uid="uid://bcva7ygms5wfj" path="res://assets/sfx/phising_email_displayed.wav" id="sfx_phishing_displayed"]
+[ext_resource type="AudioStream" uid="uid://bccuwpbmo625" path="res://assets/sfx/ransomware_appear.wav" id="sfx_ransomware_appear"]
+[ext_resource type="AudioStream" uid="uid://blsh6ujh5o6pl" path="res://assets/sfx/ransomware_deleted.wav" id="sfx_ransomware_deleted"]
+[ext_resource type="AudioStream" uid="uid://cx517ashypof0" path="res://assets/sfx/ransomware_paid.wav" id="sfx_ransomware_paid"]
+[ext_resource type="AudioStream" uid="uid://bjpp4wyrbhxu5" path="res://assets/sfx/siem_hawk_attack.wav" id="sfx_siem_attack"]
+[ext_resource type="AudioStream" uid="uid://cqaqrjx2ygbaw" path="res://assets/sfx/siem_hawk_tower_deploy.wav" id="sfx_siem_deploy"]
+[ext_resource type="AudioStream" uid="uid://dj25dohm7stn5" path="res://assets/sfx/siem_hawk_dispatch.wav" id="sfx_siem_dispatch"]
+[ext_resource type="AudioStream" uid="uid://ca8f65r0tt0s1" path="res://assets/sfx/siem_hawk_scan.wav" id="sfx_siem_scan"]
+[ext_resource type="AudioStream" uid="uid://b8kx0deki7w6a" path="res://assets/sfx/soundtrack_disable.wav" id="sfx_soundtrack_disable"]
+[ext_resource type="AudioStream" uid="uid://bda78qo0sm5vb" path="res://assets/sfx/spyware_destroy.wav" id="sfx_spyware_destroy"]
+[ext_resource type="AudioStream" uid="uid://csrfotdf47cw7" path="res://assets/sfx/spyware_hijack.wav" id="sfx_spyware_hijack"]
+[ext_resource type="AudioStream" uid="uid://cuse3hvt1ajdr" path="res://assets/sfx/trojan_horse_destroy.wav" id="sfx_trojan_destroy"]
+[ext_resource type="AudioStream" uid="uid://bfshg7mdbonis" path="res://assets/sfx/trojan_horse_enter.wav" id="sfx_trojan_enter"]
+[ext_resource type="AudioStream" uid="uid://bqlqgvivmaqt1" path="res://assets/sfx/trojan_horse_transform.wav" id="sfx_trojan_transform"]
+[ext_resource type="AudioStream" uid="uid://cxopritxmlhbk" path="res://assets/sfx/UI_select_sound.wav" id="sfx_ui_select"]
+[ext_resource type="AudioStream" uid="uid://diff78dtldcoh" path="res://assets/sfx/UI_upgrade_button_sound.wav" id="sfx_ui_upgrade"]
+[ext_resource type="AudioStream" uid="uid://8rhfrkf6hokf" path="res://assets/sfx/virus_destroy.wav" id="sfx_virus_destroy"]
+[ext_resource type="AudioStream" uid="uid://ckc3j8rxild3h" path="res://assets/sfx/cyberworm_destroy.wav" id="sfx_worm_destroy"]
+[ext_resource type="AudioStream" uid="uid://8km20qi201h0" path="res://assets/sfx/cyberworm_entrance.wav" id="sfx_worm_entrance"]
+[ext_resource type="AudioStream" uid="uid://nfjjhs6fpsal" path="res://assets/sfx/xdr-mech_cannon.wav" id="sfx_xdr_cannon"]
+[ext_resource type="AudioStream" uid="uid://tg2n6mfq3wo1" path="res://assets/sfx/xdr-mech_claw.wav" id="sfx_xdr_claw"]
+[ext_resource type="AudioStream" uid="uid://b6wsla5b583yg" path="res://assets/sfx/xdr-mech_deploy.wav" id="sfx_xdr_deploy"]
+[ext_resource type="AudioStream" uid="uid://b6pki4aq2j30n" path="res://assets/sfx/xdr-mech_minigun.wav" id="sfx_xdr_minigun"]
+[ext_resource type="AudioStream" uid="uid://d18vf7ql321vw" path="res://assets/sfx/zombie_node_activate.wav" id="sfx_zombie_activate"]
+[ext_resource type="AudioStream" uid="uid://jgp35dcvilwn" path="res://assets/sfx/zombie_node_destroy.wav" id="sfx_zombie_destroy"]
+[ext_resource type="AudioStream" uid="uid://d2f42lm34d8pu" path="res://assets/sfx/zombie_node_entrance.wav" id="sfx_zombie_entrance"]
+[ext_resource type="AudioStream" uid="uid://cxrpl7auybpfm" path="res://assets/sfx/zombie_node_evolution.wav" id="sfx_zombie_evolution"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_16a2y"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nr58j"]
 resource_local_to_scene = true
 size = Vector2(92.59923, 92.59923)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_4isur"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_01u4g"]
 resource_local_to_scene = true
 size = Vector2(92.59923, 92.59923)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cnfm4"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_inrcg"]
 bg_color = Color(0.017, 0.031, 0.055, 0.96)
 border_width_left = 2
 border_width_top = 2
@@ -25,7 +104,7 @@ corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.46)
 shadow_size = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vxbcp"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xspyg"]
 bg_color = Color(0.017, 0.031, 0.055, 0.96)
 border_width_left = 2
 border_width_top = 2
@@ -39,7 +118,7 @@ corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.46)
 shadow_size = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w8x1g"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_un0un"]
 bg_color = Color(0.017, 0.031, 0.055, 0.96)
 border_width_left = 2
 border_width_top = 2
@@ -53,7 +132,7 @@ corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.46)
 shadow_size = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_obgb4"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e2fwr"]
 bg_color = Color(0.017, 0.031, 0.055, 0.96)
 border_width_left = 2
 border_width_top = 2
@@ -67,7 +146,7 @@ corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.46)
 shadow_size = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d77ev"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_klrxh"]
 bg_color = Color(0.017, 0.031, 0.055, 0.96)
 border_width_left = 2
 border_width_top = 2
@@ -81,7 +160,7 @@ corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.46)
 shadow_size = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pqf0i"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0bv7j"]
 bg_color = Color(0.017, 0.031, 0.055, 0.96)
 border_width_left = 2
 border_width_top = 2
@@ -95,7 +174,7 @@ corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.46)
 shadow_size = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n2mrm"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ef056"]
 bg_color = Color(0.017, 0.031, 0.055, 0.96)
 border_width_left = 2
 border_width_top = 2
@@ -108,11 +187,356 @@ corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.46)
 shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0wjpt"]
+bg_color = Color(0.017, 0.031, 0.055, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.78, 1, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.46)
+shadow_size = 8
+
+[sub_resource type="FontFile" id="FontFile_nv7pv"]
+subpixel_positioning = 0
+msdf_pixel_range = 14
+msdf_size = 128
+cache/0/variation_coordinates = {}
+cache/0/face_index = 0
+cache/0/embolden = 0.0
+cache/0/transform = Transform2D(1, 0, 0, 1, 0, 0)
+cache/0/spacing_top = 0
+cache/0/spacing_bottom = 0
+cache/0/spacing_space = 0
+cache/0/spacing_glyph = 0
+cache/0/baseline_offset = 0.0
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/24/0/ascent = 0.0
+cache/0/24/0/descent = 0.0
+cache/0/24/0/underline_position = 0.0
+cache/0/24/0/underline_thickness = 0.0
+cache/0/24/0/scale = 1.0
 
 [node name="NormalGame" unique_id=435809193 instance=ExtResource("1_game_base")]
 
-[node name="CyberQuestionHUD" parent="." index="1" unique_id=923521268]
-visible = true
+[node name="Sounds" type="Node" parent="." index="0" unique_id=1725956979]
+process_mode = 3
+
+[node name="AlarmCutsceneSfx" type="AudioStreamPlayer" parent="Sounds" index="0" unique_id=1663351390 groups=["Sound"]]
+stream = ExtResource("sfx_alarm")
+volume_db = -26.001
+bus = &"SFX"
+
+[node name="AlarmCutsceneSfx2" type="AudioStreamPlayer" parent="Sounds" index="1" unique_id=1249589576 groups=["Sound"]]
+stream = ExtResource("sfx_alarm")
+volume_db = -34.926
+bus = &"SFX"
+
+[node name="CyberGuardianDefenderAttackOriginalSfx" type="AudioStreamPlayer" parent="Sounds" index="2" unique_id=1797252973 groups=["Sound"]]
+stream = ExtResource("sfx_cyber_attack_original")
+volume_db = -34.925
+bus = &"SFX"
+
+[node name="CyberGuardianDefenderAttackSfx" type="AudioStreamPlayer" parent="Sounds" index="3" unique_id=2032403271 groups=["Sound"]]
+stream = ExtResource("sfx_cyber_attack")
+bus = &"SFX"
+
+[node name="CyberGuardianSummonSfx" type="AudioStreamPlayer" parent="Sounds" index="4" unique_id=1617253693 groups=["Sound"]]
+stream = ExtResource("sfx_cyber_summon")
+volume_db = -15.0
+bus = &"SFX"
+
+[node name="EDRHunterDeploySfx" type="AudioStreamPlayer" parent="Sounds" index="5" unique_id=2109301644 groups=["Sound"]]
+stream = ExtResource("sfx_edr_deploy")
+bus = &"SFX"
+
+[node name="EDRHunterDroneShootSfx" type="AudioStreamPlayer" parent="Sounds" index="6" unique_id=1813909143 groups=["Sound"]]
+stream = ExtResource("sfx_edr_drone")
+bus = &"SFX"
+
+[node name="EDRHunterSniperShootSfx" type="AudioStreamPlayer" parent="Sounds" index="7" unique_id=64137979 groups=["Sound"]]
+stream = ExtResource("sfx_edr_sniper")
+bus = &"SFX"
+
+[node name="ArmoredVirusExplosionSfx" type="AudioStreamPlayer" parent="Sounds" index="8" unique_id=1140699482 groups=["Sound"]]
+stream = ExtResource("sfx_armored_explosion")
+bus = &"SFX"
+
+[node name="MutantVirusExplosionSfx" type="AudioStreamPlayer" parent="Sounds" index="9" unique_id=30538069 groups=["Sound"]]
+stream = ExtResource("sfx_mutant_explosion")
+bus = &"SFX"
+
+[node name="HoneypotProductionCollectSfx" type="AudioStreamPlayer" parent="Sounds" index="10" unique_id=950974256 groups=["Sound"]]
+stream = ExtResource("sfx_honeypot_collect")
+bus = &"SFX"
+
+[node name="HoneypotProductionDeploySfx" type="AudioStreamPlayer" parent="Sounds" index="11" unique_id=795066782 groups=["Sound"]]
+stream = ExtResource("sfx_honeypot_deploy")
+volume_db = -15.91
+bus = &"SFX"
+
+[node name="IDSScannerChangeModeSfx" type="AudioStreamPlayer" parent="Sounds" index="12" unique_id=1133581425 groups=["Sound"]]
+stream = ExtResource("sfx_ids_mode")
+bus = &"SFX"
+
+[node name="IDSScannerDeploySfx" type="AudioStreamPlayer" parent="Sounds" index="13" unique_id=1264643143 groups=["Sound"]]
+stream = ExtResource("sfx_ids_deploy")
+bus = &"SFX"
+
+[node name="LaserTurretDeploySfx" type="AudioStreamPlayer" parent="Sounds" index="14" unique_id=1758609128 groups=["Sound"]]
+stream = ExtResource("sfx_laser_deploy")
+volume_db = -10.0
+bus = &"SFX"
+
+[node name="LaserTurretShootLv1Sfx" type="AudioStreamPlayer" parent="Sounds" index="15" unique_id=2060486641 groups=["Sound"]]
+stream = ExtResource("sfx_laser_lv1")
+volume_db = -10.0
+bus = &"SFX"
+
+[node name="LaserTurretShootLv2Sfx" type="AudioStreamPlayer" parent="Sounds" index="16" unique_id=204741204 groups=["Sound"]]
+stream = ExtResource("sfx_laser_lv2")
+volume_db = -10.0
+bus = &"SFX"
+
+[node name="LaserTurretShootLv3Sfx" type="AudioStreamPlayer" parent="Sounds" index="17" unique_id=590139528 groups=["Sound"]]
+stream = ExtResource("sfx_laser_lv3")
+volume_db = -15.0
+pitch_scale = 0.8
+bus = &"SFX"
+
+[node name="LaserTurretShootLv4Sfx" type="AudioStreamPlayer" parent="Sounds" index="18" unique_id=776115354 groups=["Sound"]]
+stream = ExtResource("sfx_laser_lv4")
+volume_db = -15.0
+pitch_scale = 0.8
+bus = &"SFX"
+
+[node name="LaserTurretShootLv5Sfx" type="AudioStreamPlayer" parent="Sounds" index="19" unique_id=244936878 groups=["Sound"]]
+stream = ExtResource("sfx_laser_lv5")
+volume_db = -10.0
+bus = &"SFX"
+
+[node name="LaserTurretUpgradeSfx" type="AudioStreamPlayer" parent="Sounds" index="20" unique_id=341341703 groups=["Sound"]]
+stream = ExtResource("sfx_laser_upgrade")
+volume_db = -10.0
+bus = &"SFX"
+
+[node name="LaserTurretUpgradeLv5Sfx" type="AudioStreamPlayer" parent="Sounds" index="21" unique_id=70736436 groups=["Sound"]]
+stream = ExtResource("sfx_laser_upgrade_lv5")
+volume_db = -5.0
+bus = &"SFX"
+
+[node name="PhishingEmailActivateSfx" type="AudioStreamPlayer" parent="Sounds" index="22" unique_id=1932246772 groups=["Sound"]]
+stream = ExtResource("sfx_phishing_activate")
+bus = &"SFX"
+
+[node name="PhishingEmailDisplayedSfx" type="AudioStreamPlayer" parent="Sounds" index="23" unique_id=558637287 groups=["Sound"]]
+stream = ExtResource("sfx_phishing_displayed")
+bus = &"SFX"
+
+[node name="SIEMHawkDispatchSfx" type="AudioStreamPlayer" parent="Sounds" index="24" unique_id=962046947 groups=["Sound"]]
+stream = ExtResource("sfx_siem_dispatch")
+bus = &"SFX"
+
+[node name="SIEMHawkDeploySfx" type="AudioStreamPlayer" parent="Sounds" index="25" unique_id=137353164 groups=["Sound"]]
+stream = ExtResource("sfx_siem_deploy")
+bus = &"SFX"
+
+[node name="SoundtrackDisableSfx" type="AudioStreamPlayer" parent="Sounds" index="26" unique_id=542473084 groups=["Sound"]]
+stream = ExtResource("sfx_soundtrack_disable")
+bus = &"SFX"
+
+[node name="TrojanHorseDestroySfx" type="AudioStreamPlayer" parent="Sounds" index="27" unique_id=755408245 groups=["Sound"]]
+stream = ExtResource("sfx_trojan_destroy")
+bus = &"SFX"
+
+[node name="TrojanHorseEnterSfx" type="AudioStreamPlayer" parent="Sounds" index="28" unique_id=1838758297 groups=["Sound"]]
+stream = ExtResource("sfx_trojan_enter")
+volume_db = -15.0
+bus = &"SFX"
+
+[node name="TrojanHorseTransformSfx" type="AudioStreamPlayer" parent="Sounds" index="29" unique_id=273454998 groups=["Sound"]]
+stream = ExtResource("sfx_trojan_transform")
+volume_db = -15.0
+bus = &"SFX"
+
+[node name="UISelectSfx" type="AudioStreamPlayer" parent="Sounds" index="30" unique_id=2105875592 groups=["Sound"]]
+stream = ExtResource("sfx_ui_select")
+volume_db = -5.821
+max_polyphony = 4
+bus = &"SFX"
+
+[node name="UIUpgradeSfx" type="AudioStreamPlayer" parent="Sounds" index="31" unique_id=945415965 groups=["Sound"]]
+stream = ExtResource("sfx_ui_upgrade")
+bus = &"SFX"
+
+[node name="VirusDestroySfx" type="AudioStreamPlayer" parent="Sounds" index="32" unique_id=1517902406 groups=["Sound"]]
+stream = ExtResource("sfx_virus_destroy")
+volume_db = -20.0
+max_polyphony = 3
+bus = &"SFX"
+
+[node name="CutsceneVirusDestroySfx1" type="AudioStreamPlayer" parent="Sounds" index="33" unique_id=308186715 groups=["Sound"]]
+stream = ExtResource("sfx_virus_destroy")
+volume_db = -20.0
+bus = &"SFX"
+
+[node name="CutsceneVirusDestroySfx2" type="AudioStreamPlayer" parent="Sounds" index="34" unique_id=214845464 groups=["Sound"]]
+stream = ExtResource("sfx_virus_destroy")
+volume_db = -20.0
+bus = &"SFX"
+
+[node name="SIEMHawkAttackSfx" type="AudioStreamPlayer" parent="Sounds" index="35" unique_id=875030092 groups=["Sound"]]
+stream = ExtResource("sfx_siem_attack")
+bus = &"SFX"
+
+[node name="SIEMHawkScanSfx" type="AudioStreamPlayer" parent="Sounds" index="36" unique_id=1136528798 groups=["Sound"]]
+stream = ExtResource("sfx_siem_scan")
+bus = &"SFX"
+
+[node name="IPSIntrusionSpikeSfx" type="AudioStreamPlayer" parent="Sounds" index="37" unique_id=2048744616 groups=["Sound"]]
+stream = ExtResource("sfx_ips_spike")
+bus = &"SFX"
+
+[node name="IPSIntrusionElectricitySfx" type="AudioStreamPlayer" parent="Sounds" index="38" unique_id=1729277488 groups=["Sound"]]
+stream = ExtResource("sfx_ips_electricity")
+bus = &"SFX"
+
+[node name="XDRMechDeploySfx" type="AudioStreamPlayer" parent="Sounds" index="39" unique_id=1609403415 groups=["Sound"]]
+stream = ExtResource("sfx_xdr_deploy")
+bus = &"SFX"
+
+[node name="CyberGuardianFirewallActivateSfx" type="AudioStreamPlayer" parent="Sounds" index="40" unique_id=8509485 groups=["Sound"]]
+stream = ExtResource("sfx_guardian_firewall_activate")
+bus = &"SFX"
+
+[node name="CyberGuardianFirewallChangeSfx" type="AudioStreamPlayer" parent="Sounds" index="41" unique_id=197206505 groups=["Sound"]]
+stream = ExtResource("sfx_guardian_firewall_change")
+bus = &"SFX"
+
+[node name="CyberGuardianSignalBoostChangeSfx" type="AudioStreamPlayer" parent="Sounds" index="42" unique_id=1031696326 groups=["Sound"]]
+stream = ExtResource("sfx_guardian_signal_change")
+bus = &"SFX"
+
+[node name="IDSScannerCamoSfx" type="AudioStreamPlayer" parent="Sounds" index="43" unique_id=514377871 groups=["Sound"]]
+stream = ExtResource("sfx_ids_camo")
+bus = &"SFX"
+
+[node name="IDSScannerBurnerSfx" type="AudioStreamPlayer" parent="Sounds" index="44" unique_id=30332315 groups=["Sound"]]
+stream = ExtResource("sfx_ids_burner")
+bus = &"SFX"
+
+[node name="IDSScannerBountySfx" type="AudioStreamPlayer" parent="Sounds" index="45" unique_id=713789268 groups=["Sound"]]
+stream = ExtResource("sfx_ids_bounty")
+bus = &"SFX"
+
+[node name="IDSScannerSlownessSfx" type="AudioStreamPlayer" parent="Sounds" index="46" unique_id=1101623915 groups=["Sound"]]
+stream = ExtResource("sfx_ids_slowness")
+bus = &"SFX"
+
+[node name="IDSScannerNullifierSfx" type="AudioStreamPlayer" parent="Sounds" index="47" unique_id=1355216178 groups=["Sound"]]
+stream = ExtResource("sfx_ids_nullifier")
+bus = &"SFX"
+
+[node name="MutantVirusDestroySfx" type="AudioStreamPlayer" parent="Sounds" index="48" unique_id=454529127 groups=["Sound"]]
+stream = ExtResource("sfx_mutant_destroy")
+max_polyphony = 3
+bus = &"SFX"
+
+[node name="MutantVirusTransformSfx" type="AudioStreamPlayer" parent="Sounds" index="49" unique_id=172834360 groups=["Sound"]]
+stream = ExtResource("sfx_mutant_transform")
+bus = &"SFX"
+
+[node name="MutantVirusMutatedSfx" type="AudioStreamPlayer" parent="Sounds" index="50" unique_id=1442847248 groups=["Sound"]]
+stream = ExtResource("sfx_mutant_mutated")
+bus = &"SFX"
+
+[node name="ArmoredVirusDestroySfx" type="AudioStreamPlayer" parent="Sounds" index="51" unique_id=256299279 groups=["Sound"]]
+stream = ExtResource("sfx_armored_destroy")
+max_polyphony = 3
+bus = &"SFX"
+
+[node name="ArmoredVirusTransformSfx" type="AudioStreamPlayer" parent="Sounds" index="52" unique_id=1822174585 groups=["Sound"]]
+stream = ExtResource("sfx_armored_transform")
+bus = &"SFX"
+
+[node name="CyberWormEntranceSfx" type="AudioStreamPlayer" parent="Sounds" index="53" unique_id=322739862 groups=["Sound"]]
+stream = ExtResource("sfx_worm_entrance")
+bus = &"SFX"
+
+[node name="CyberWormDestroySfx" type="AudioStreamPlayer" parent="Sounds" index="54" unique_id=1318776948 groups=["Sound"]]
+stream = ExtResource("sfx_worm_destroy")
+bus = &"SFX"
+
+[node name="ZombieNodeEntranceSfx" type="AudioStreamPlayer" parent="Sounds" index="55" unique_id=986488089 groups=["Sound"]]
+stream = ExtResource("sfx_zombie_entrance")
+bus = &"SFX"
+
+[node name="ZombieNodeActivateSfx" type="AudioStreamPlayer" parent="Sounds" index="56" unique_id=1901536665 groups=["Sound"]]
+stream = ExtResource("sfx_zombie_activate")
+bus = &"SFX"
+
+[node name="ZombieNodeDestroySfx" type="AudioStreamPlayer" parent="Sounds" index="57" unique_id=1627244637 groups=["Sound"]]
+stream = ExtResource("sfx_zombie_destroy")
+bus = &"SFX"
+
+[node name="ZombieNodeEvolutionSfx" type="AudioStreamPlayer" parent="Sounds" index="58" unique_id=1316762833 groups=["Sound"]]
+stream = ExtResource("sfx_zombie_evolution")
+bus = &"SFX"
+
+[node name="RansomwareAppearSfx" type="AudioStreamPlayer" parent="Sounds" index="59" unique_id=1054389034 groups=["Sound"]]
+stream = ExtResource("sfx_ransomware_appear")
+bus = &"SFX"
+
+[node name="RansomwarePaidSfx" type="AudioStreamPlayer" parent="Sounds" index="60" unique_id=1601495794 groups=["Sound"]]
+stream = ExtResource("sfx_ransomware_paid")
+bus = &"SFX"
+
+[node name="RansomwareDeletedSfx" type="AudioStreamPlayer" parent="Sounds" index="61" unique_id=150551420 groups=["Sound"]]
+stream = ExtResource("sfx_ransomware_deleted")
+bus = &"SFX"
+
+[node name="AdwarePopupSfx" type="AudioStreamPlayer" parent="Sounds" index="62" unique_id=1473932442 groups=["Sound"]]
+stream = ExtResource("sfx_adware_popup")
+max_polyphony = 5
+bus = &"SFX"
+
+[node name="SpywareHijackSfx" type="AudioStreamPlayer" parent="Sounds" index="63" unique_id=1044745355 groups=["Sound"]]
+stream = ExtResource("sfx_spyware_hijack")
+bus = &"SFX"
+
+[node name="SpywareDestroySfx" type="AudioStreamPlayer" parent="Sounds" index="64" unique_id=1374234377 groups=["Sound"]]
+stream = ExtResource("sfx_spyware_destroy")
+bus = &"SFX"
+
+[node name="XDRMechClawSfx" type="AudioStreamPlayer" parent="Sounds" index="65" unique_id=1707929180 groups=["Sound"]]
+stream = ExtResource("sfx_xdr_claw")
+volume_db = -23.672
+bus = &"SFX"
+
+[node name="XDRMechCannonSfx" type="AudioStreamPlayer" parent="Sounds" index="66" unique_id=603644662 groups=["Sound"]]
+stream = ExtResource("sfx_xdr_cannon")
+volume_db = -22.896
+bus = &"SFX"
+
+[node name="XDRMechMinigunSfx" type="AudioStreamPlayer" parent="Sounds" index="67" unique_id=2142894614 groups=["Sound"]]
+stream = ExtResource("sfx_xdr_minigun")
+volume_db = -25.224
+bus = &"SFX"
+
+[node name="CyberBusiness" type="AudioStreamPlayer" parent="Music" parent_id_path=PackedInt32Array(1762141767) index="0" unique_id=1582677594 groups=["Music"]]
+process_mode = 3
+stream = ExtResource("music_cyber_business")
+volume_db = -6.0
+bus = &"Music"
 
 [node name="QuestionPanel" parent="CyberQuestionHUD/Root" parent_id_path=PackedInt32Array(923521268, 1715806035) index="1" unique_id=1626758872]
 offset_left = -804.0
@@ -120,104 +544,259 @@ offset_top = -299.0
 offset_right = 448.79993
 offset_bottom = -6.0
 
+[node name="PerformanceHUD" parent="." index="3" unique_id=1039250105]
+visible = true
+
 [node name="AbilitySlot" parent="SignalBoostHUD/Root" parent_id_path=PackedInt32Array(1966753094, 1920354202) index="0" unique_id=1043464847]
 offset_left = 14.0
-offset_top = 476.0
+offset_top = 716.0
 offset_right = 194.0
-offset_bottom = 695.0
+offset_bottom = 935.0
 tooltip_text = ""
 mouse_filter = 1
 mouse_default_cursor_shape = 0
 
-[node name="ActivationButton" parent="SignalBoostHUD/Root/AbilitySlot/Margin/Content/IconFrame" parent_id_path=PackedInt32Array(1966753094, 2003845464) index="0" unique_id=375932501]
-custom_minimum_size = Vector2(136, 136)
-layout_mode = 0
-offset_left = -43.0
-offset_top = -29.0
-offset_right = 188.0
-offset_bottom = 202.0
+[node name="SignalBoostIcon" parent="SignalBoostHUD/Root/AbilitySlot/Margin/Content/IconFrame" parent_id_path=PackedInt32Array(1966753094, 2003845464) index="0" unique_id=375932501]
 tooltip_text = "Activate Signal Boost"
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("2_4isur")
-ignore_texture_size = true
-stretch_mode = 5
+
+[node name="FirewallAbilitySlot" parent="SignalBoostHUD/Root" parent_id_path=PackedInt32Array(1966753094, 1920354202) index="1"]
+offset_left = 14.0
+offset_top = 716.0
+offset_right = 194.0
+offset_bottom = 935.0
+tooltip_text = ""
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+
+[node name="FirewallIcon" parent="SignalBoostHUD/Root/FirewallAbilitySlot/Margin/Content/IconFrame" index="0"]
+tooltip_text = "Activate Firewall"
+mouse_default_cursor_shape = 2
 
 [node name="MainMenuButton" parent="GameControlsHUD/Root" parent_id_path=PackedInt32Array(772842743, 1956639417) index="3" unique_id=1814937485]
+visible = false
+
+[node name="CutsceneDemoMenuHUD" parent="." index="12" unique_id=29047704]
 visible = false
 
 [node name="WaveSetPanel" parent="CutsceneDemoMenuHUD/Root" index="3"]
 visible = false
 
-[node name="CpuArena" parent="." index="13" unique_id=1951202282]
+[node name="DefeatHUD" parent="." index="13" unique_id=192962941]
+visible = false
+
+[node name="ZombieNode" parent="." index="15" unique_id=187820591 instance=ExtResource("3_w8x1g")]
+visible = false
+position = Vector2(954, 454.00003)
+scale = Vector2(2.0761907, 2.0761907)
+
+[node name="ZombieNodeCombatTarget" type="PathFollow2D" parent="." index="16" unique_id=249195168]
+visible = false
+position = Vector2(954, 454.00003)
+rotates = false
+loop = false
+
+[node name="BotnetNode" parent="." index="17" unique_id=2054453529 instance=ExtResource("4_botnet")]
+visible = false
+position = Vector2(954.00006, 454)
+
+[node name="BotnetNodeCombatTarget" type="PathFollow2D" parent="." index="18" unique_id=911850473]
+position = Vector2(954.00006, 454)
+rotates = false
+loop = false
+
+[node name="WormBoss" parent="." index="19" unique_id=1127474079 instance=ExtResource("5_worm_boss")]
+editor_description = "Move this root in the viewport to set the Wave 20 Cyber Worm cutscene placement. Path movement takes over only after the introduction."
+position = Vector2(-305, 301)
+
+[node name="Wave20ClearanceHUD" parent="." index="20" unique_id=1875540791 instance=ExtResource("4_clearance")]
+visible = false
+
+[node name="CutsceneDemoDirector" type="Node" parent="." index="21" unique_id=1486481276]
+script = ExtResource("4_obgb4")
+
+[node name="CpuArena" parent="." index="22" unique_id=1951202282]
 position = Vector2(957.99994, 541.5)
 scale = Vector2(1.1495215, 1.1509033)
 
 [node name="PlacementSlot1" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="0" unique_id=1417027579]
 position = Vector2(387, 221)
-shape = SubResource("RectangleShape2D_16a2y")
+shape = SubResource("RectangleShape2D_nr58j")
 
 [node name="PlacementSlot2" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="1" unique_id=48627030]
 position = Vector2(1432, 398)
-shape = SubResource("RectangleShape2D_4isur")
+shape = SubResource("RectangleShape2D_01u4g")
 
 [node name="PlacementSlot3" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="2" unique_id=137045265]
-shape = SubResource("RectangleShape2D_4isur")
+shape = SubResource("RectangleShape2D_01u4g")
 
 [node name="PlacementSlot4" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="3" unique_id=1305535456]
 position = Vector2(584, 472)
-shape = SubResource("RectangleShape2D_4isur")
+shape = SubResource("RectangleShape2D_01u4g")
 
 [node name="PlacementSlot5" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="4" unique_id=391813529]
 position = Vector2(790, 91)
-shape = SubResource("RectangleShape2D_4isur")
+shape = SubResource("RectangleShape2D_01u4g")
 
 [node name="PlacementSlot6" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="5" unique_id=1249310685]
 position = Vector2(1082, 216)
-shape = SubResource("RectangleShape2D_4isur")
+shape = SubResource("RectangleShape2D_01u4g")
 
 [node name="PlacementSlot7" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="6" unique_id=1482182287]
-shape = SubResource("RectangleShape2D_4isur")
+shape = SubResource("RectangleShape2D_01u4g")
 
 [node name="PlacementSlot8" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="7" unique_id=982379324]
-shape = SubResource("RectangleShape2D_4isur")
+shape = SubResource("RectangleShape2D_01u4g")
 
 [node name="PlacementSlot9" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="8" unique_id=1772379268]
 position = Vector2(1464, 716)
-shape = SubResource("RectangleShape2D_4isur")
+shape = SubResource("RectangleShape2D_01u4g")
 
 [node name="PlacementSlot10" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="9" unique_id=1444550936]
-shape = SubResource("RectangleShape2D_4isur")
+shape = SubResource("RectangleShape2D_01u4g")
 
 [node name="PlacementSlot11" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="10" unique_id=1353559619]
 position = Vector2(185, 572)
-shape = SubResource("RectangleShape2D_4isur")
+shape = SubResource("RectangleShape2D_01u4g")
 
 [node name="PlacementSlot12" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="11" unique_id=1465608734]
-shape = SubResource("RectangleShape2D_4isur")
+shape = SubResource("RectangleShape2D_01u4g")
 
 [node name="PlacementSlot13" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="12" unique_id=918020816]
-shape = SubResource("RectangleShape2D_4isur")
+shape = SubResource("RectangleShape2D_01u4g")
+
+[node name="TestDrag" parent="." index="25" unique_id=1456189078]
+metadata/_edit_use_anchors_ = true
 
 [node name="CardPanel" parent="TestDrag/CyberGuardianCard" parent_id_path=PackedInt32Array(1248978504) index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_cnfm4")
+theme_override_styles/panel = SubResource("StyleBoxFlat_inrcg")
+
+[node name="DisplaySprite" parent="TestDrag/CyberGuardianCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1248978504, 113385319) index="0" unique_id=590825140]
+position = Vector2(72.000046, 61.000057)
+scale = Vector2(0.07248045, 0.07248045)
+texture = ExtResource("5_n2mrm")
+
+[node name="PopupSprite" parent="TestDrag/CyberGuardianCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1248978504, 1733699289) index="0" unique_id=522427816]
+texture = ExtResource("5_n2mrm")
 
 [node name="CardPanel" parent="TestDrag/LaserTurretCard" parent_id_path=PackedInt32Array(1774681448) index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_vxbcp")
+theme_override_styles/panel = SubResource("StyleBoxFlat_xspyg")
+
+[node name="PopupSprite" parent="TestDrag/LaserTurretCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1774681448, 1733699289) index="0" unique_id=522427816]
+texture = ExtResource("38_cfnki")
 
 [node name="CardPanel" parent="TestDrag/IDSScannerCard" parent_id_path=PackedInt32Array(2136481415) index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_w8x1g")
+theme_override_styles/panel = SubResource("StyleBoxFlat_un0un")
+
+[node name="DisplaySprite" parent="TestDrag/IDSScannerCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2136481415, 113385319) index="0" unique_id=590825140]
+texture = ExtResource("5_pqf0i")
+
+[node name="PopupSprite" parent="TestDrag/IDSScannerCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(2136481415, 1733699289) index="0" unique_id=522427816]
+texture = ExtResource("5_pqf0i")
 
 [node name="CardPanel" parent="TestDrag/EDRHunterCard" parent_id_path=PackedInt32Array(1058679109) index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_obgb4")
+theme_override_styles/panel = SubResource("StyleBoxFlat_e2fwr")
+
+[node name="PopupSprite" parent="TestDrag/EDRHunterCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1058679109, 1733699289) index="0" unique_id=522427816]
+texture = ExtResource("40_ny6iy")
 
 [node name="CardPanel" parent="TestDrag/SIEMHawkCard" parent_id_path=PackedInt32Array(2097101912) index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_d77ev")
+theme_override_styles/panel = SubResource("StyleBoxFlat_klrxh")
+
+[node name="DisplaySprite" parent="TestDrag/SIEMHawkCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2097101912, 113385319) index="0" unique_id=590825140]
+position = Vector2(70, 59.000053)
+scale = Vector2(0.11234042, 0.11234043)
+texture = ExtResource("6_n2mrm")
+
+[node name="PopupSprite" parent="TestDrag/SIEMHawkCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(2097101912, 1733699289) index="0" unique_id=522427816]
+texture = ExtResource("6_n2mrm")
 
 [node name="CardPanel" parent="TestDrag/IPSIntrusionCard" parent_id_path=PackedInt32Array(1750948893) index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_pqf0i")
+theme_override_styles/panel = SubResource("StyleBoxFlat_0bv7j")
+
+[node name="DisplaySprite" parent="TestDrag/IPSIntrusionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1750948893, 113385319) index="0" unique_id=590825140]
+position = Vector2(68.999954, 63.000053)
+scale = Vector2(0.1055319, 0.1055319)
+texture = ExtResource("7_s2uex")
+flip_h = true
+
+[node name="PopupSprite" parent="TestDrag/IPSIntrusionCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1750948893, 1733699289) index="0" unique_id=522427816]
+texture = ExtResource("7_s2uex")
 
 [node name="CardPanel" parent="TestDrag/HoneypotProductionCard" parent_id_path=PackedInt32Array(1207325943) index="0" unique_id=1171323138]
-theme_override_styles/panel = SubResource("StyleBoxFlat_n2mrm")
+theme_override_styles/panel = SubResource("StyleBoxFlat_ef056")
+
+[node name="DisplaySprite" parent="TestDrag/HoneypotProductionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1207325943, 113385319) index="0" unique_id=590825140]
+position = Vector2(70.000046, 68.000046)
+scale = Vector2(0.27734375, 0.27734375)
+texture = ExtResource("8_4m1ib")
+
+[node name="PopupSprite" parent="TestDrag/HoneypotProductionCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1207325943, 1733699289) index="0" unique_id=522427816]
+texture = ExtResource("8_4m1ib")
+
+[node name="CardPanel" parent="TestDrag/XDRMechCard" index="0" unique_id=1171323138]
+theme_override_styles/panel = SubResource("StyleBoxFlat_0wjpt")
+
+[node name="DisplaySprite" parent="TestDrag/XDRMechCard/DisplayImageContainer" index="0" unique_id=590825140]
+position = Vector2(67.000015, 63.00008)
+scale = Vector2(0.19083351, 0.19083351)
+
+[node name="PopupSprite" parent="TestDrag/XDRMechCard/InformationPopup/PopupCard/ImagePanel" index="0" unique_id=522427816]
+texture = ExtResource("44_ny6iy")
+
+[node name="Otherground_Cutscene" parent="." index="27" unique_id=716042366]
+visible = true
+
+[node name="CutsceneVirus1" parent="Otherground_Cutscene/CutsceneBack" parent_id_path=PackedInt32Array(2884933) index="1" unique_id=1302363223]
+sprite_frames = ExtResource("47_mljcx")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="CutsceneVirus2" parent="Otherground_Cutscene/CutsceneBack" parent_id_path=PackedInt32Array(2884933) index="2" unique_id=1813834031]
+sprite_frames = ExtResource("47_mljcx")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="CutsceneVirus3" parent="Otherground_Cutscene/CutsceneBack" parent_id_path=PackedInt32Array(2884933) index="3" unique_id=484007123]
+sprite_frames = ExtResource("47_mljcx")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="CutsceneVirus4" parent="Otherground_Cutscene/CutsceneBack" parent_id_path=PackedInt32Array(2884933) index="4" unique_id=302736285]
+sprite_frames = ExtResource("47_mljcx")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="CutsceneVirus5" parent="Otherground_Cutscene/CutsceneBack" parent_id_path=PackedInt32Array(2884933) index="5" unique_id=1708868175]
+sprite_frames = ExtResource("47_mljcx")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="XDR_Mech" parent="Sprites" parent_id_path=PackedInt32Array(1360860051) index="7"]
+level_1_head_path = NodePath("")
+
+[node name="WaveTimerLabel" type="Label" parent="." index="31" unique_id=748525816]
+offset_left = 14.0
+offset_top = 180.0
+offset_right = 75.0
+offset_bottom = 214.0
+theme_override_colors/font_color = Color(0.84740216, 0, 0.27653462, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0)
+theme_override_colors/font_outline_color = Color(0.86557156, 0.7852431, 0.73393023, 1)
+theme_override_fonts/font = SubResource("FontFile_nv7pv")
+theme_override_font_sizes/font_size = 24
+text = "00:00"
+metadata/_edit_use_anchors_ = true
+
+[node name="XDRPathBlocker" parent="." index="33"]
+editor_description = "Editable XDR no-walk corridor. Select Trace to see the red pathway footprint in the Normal Game viewport."
+
+[node name="Trace" parent="XDRPathBlocker" index="0"]
+points = PackedVector2Array(63.000004, 293, 65.80669, 293.04492, 69.177765, 293.09888, 73.73862, 293.17188, 76.43662, 293.21506, 79.39775, 293.26245, 82.610565, 293.31387, 86.06363, 293.36914, 89.74548, 293.42807, 93.64472, 293.49048, 97.74988, 293.55618, 102.049515, 293.625, 106.53221, 293.69675, 111.18649, 293.77124, 116.00096, 293.8483, 118.46466, 293.88773, 120.964134, 293.92773, 123.49792, 293.9683, 126.0646, 294.00937, 128.66273, 294.05096, 131.2909, 294.09302, 133.94766, 294.13553, 136.6316, 294.1785, 139.34128, 294.22186, 142.07527, 294.26563, 144.83215, 294.30975, 147.61047, 294.35422, 150.40881, 294.39902, 153.22574, 294.4441, 156.05984, 294.48944, 158.90965, 294.53506, 161.77379, 294.5809, 164.65077, 294.62695, 167.53922, 294.6732, 170.43765, 294.71957, 173.34468, 294.7661, 176.25885, 294.81274, 179.17874, 294.85947, 182.10294, 294.90628, 185.02998, 294.95313, 187.95845, 295, 190.88693, 295.04688, 193.81396, 295.09372, 196.73816, 295.14053, 199.65805, 295.18726, 202.57224, 295.2339, 205.47925, 295.28043, 208.3777, 295.3268, 211.26614, 295.37305, 214.14313, 295.4191, 217.00726, 295.46494, 219.85707, 295.51056, 222.69116, 295.5559, 225.5081, 295.60098, 228.30646, 295.64578, 231.08478, 295.69025, 233.84164, 295.73438, 236.57562, 295.77814, 239.28531, 295.8215, 241.96925, 295.86447, 244.626, 295.90698, 247.25418, 295.94904, 249.85233, 295.99063, 252.419, 296.0317, 254.95279, 296.07227, 257.45227, 296.11227, 259.91595, 296.1517, 264.7304, 296.22876, 269.3847, 296.30325, 273.86737, 296.375, 278.16702, 296.44382, 282.2722, 296.50952, 286.17142, 296.57193, 289.85327, 296.63086, 293.30637, 296.68613, 296.51917, 296.73755, 299.4803, 296.78494, 302.17828, 296.82813, 306.73914, 296.90112, 310.11023, 296.95508, 312.9169, 297, 314.0346, 298.8047, 315.31744, 300.87598, 316.98132, 303.5625, 318.94998, 306.7412, 321.1473, 310.28906, 323.49704, 314.083, 325.92297, 318, 328.34888, 321.917, 330.6986, 325.71094, 332.8959, 329.2588, 334.8646, 332.4375, 336.52847, 335.12402, 337.81128, 337.1953, 338.929, 339, 339.44125, 341.70703, 340.0292, 344.81396, 340.79184, 348.84375, 341.69415, 353.61182, 342.18677, 356.21503, 342.70126, 358.9336, 343.2332, 361.74445, 343.77823, 364.6245, 344.33197, 367.55072, 344.8901, 370.5, 345.4482, 373.44928, 346.002, 376.3755, 346.54703, 379.25555, 347.07895, 382.0664, 347.5934, 384.78497, 348.08606, 387.38818, 348.98837, 392.15625, 349.75098, 396.18604, 350.33893, 399.29297, 350.8512, 402, 354.39063, 401.95703, 358.45288, 401.9077, 360.95157, 401.87738, 363.7218, 401.84375, 366.73328, 401.8072, 369.95596, 401.76807, 373.35962, 401.72675, 376.9141, 401.6836, 380.58923, 401.63898, 384.35486, 401.59326, 388.18082, 401.5468, 392.037, 401.5, 395.89316, 401.4532, 399.71912, 401.40674, 403.48477, 401.36102, 407.1599, 401.3164, 410.7144, 401.27325, 414.11807, 401.23193, 417.34073, 401.1928, 420.35223, 401.15625, 423.1224, 401.12262, 425.62112, 401.0923, 429.6834, 401.04297, 433.2228, 401, 434.45932, 396.875, 435.87848, 392.14063, 436.75146, 389.22852, 437.71924, 386, 438.77136, 382.49023, 439.89722, 378.73438, 441.0863, 374.76758, 442.3281, 370.625, 443.61203, 366.3418, 444.92758, 361.95313, 446.26422, 357.49414, 447.61142, 353, 448.95862, 348.50586, 450.29523, 344.04688, 451.61078, 339.6582, 452.89474, 335.375, 454.13654, 331.23242, 455.32562, 327.26563, 456.45145, 323.50977, 457.50357, 320, 458.47134, 316.77148, 459.3443, 313.85938, 460.7635, 309.125, 462.00003, 305, 465.125, 301.25, 466.63873, 299.4336, 468.32816, 297.40625, 470.13474, 295.23828, 472, 293, 473.86523, 290.76172, 475.67188, 288.59375, 477.36133, 286.5664, 478.875, 284.75, 482, 281, 483.8193, 281.02246, 486.00452, 281.04944, 488.96094, 281.08594, 492.6293, 281.13123, 496.9502, 281.18457, 501.86438, 281.24524, 504.52542, 281.27808, 507.31247, 281.3125, 510.21823, 281.3484, 513.2352, 281.38562, 516.356, 281.42413, 519.57324, 281.46387, 522.87946, 281.5047, 526.2673, 281.5465, 529.7292, 281.58923, 533.2579, 281.6328, 536.8458, 281.67712, 540.4857, 281.72205, 544.17017, 281.76752, 547.8916, 281.81348, 551.64276, 281.8598, 555.41614, 281.90637, 559.20435, 281.95313, 563, 282, 566.79565, 282.04688, 570.5839, 282.09363, 574.3573, 282.1402, 578.10846, 282.18652, 581.8299, 282.23248, 585.5143, 282.27795, 589.1542, 282.32288, 592.7422, 282.3672, 596.27094, 282.41077, 599.7328, 282.4535, 603.12054, 282.4953, 606.4268, 282.53613, 609.644, 282.57587, 612.7648, 282.61438, 615.7818, 282.6516, 618.68756, 282.6875, 621.4747, 282.72192, 624.1356, 282.75476, 629.0498, 282.81543, 633.3707, 282.86877, 637.03906, 282.91406, 639.9955, 282.95056, 642.18066, 282.97754, 644, 283, 645.46094, 281.3672, 647.13776, 279.49316, 649.31256, 277.0625, 651.88574, 274.18652, 654.7578, 270.97656, 657.8291, 267.54395, 661, 264, 664.17084, 260.45605, 667.2422, 257.02344, 670.11426, 253.81348, 672.6875, 250.9375, 674.8623, 248.50684, 676.539, 246.63281, 678, 245, 678.2148, 243.19531, 678.7812, 238.4375, 679.1596, 235.25879, 679.582, 231.71094, 680.0336, 227.91699, 680.5, 224, 680.9663, 220.08301, 681.4179, 216.28906, 681.8403, 212.74121, 682.21875, 209.5625, 682.7852, 204.80469, 683, 203, 685.81244, 199.71875, 688.6953, 196.35547, 690.32135, 194.4585, 692, 192.5, 693.67865, 190.5415, 695.3047, 188.64453, 698.1875, 185.28125, 701, 182, 703.1899, 182, 705.82025, 182, 709.3788, 182, 713.79443, 182, 716.3012, 182, 718.9956, 182, 721.8684, 182, 724.91077, 182, 728.11395, 182, 731.46875, 182, 734.96643, 182, 738.59796, 182, 742.3545, 182, 746.22705, 182, 750.20667, 182, 754.28455, 182, 758.4517, 182, 762.69916, 182, 767.01807, 182, 771.3995, 182, 775.8344, 182, 780.3139, 182, 784.82916, 182, 789.3712, 182, 793.93115, 182, 798.49994, 182, 803.0687, 182, 807.6287, 182, 812.1708, 182, 816.68604, 182, 821.1656, 182, 825.60046, 182, 829.9819, 182, 834.3008, 182, 838.5482, 182, 842.7154, 182, 846.7933, 182, 850.7729, 182, 854.64545, 182, 858.402, 182, 862.0335, 182, 865.5312, 182, 868.88605, 182, 872.0892, 182, 875.13153, 182, 878.0044, 182, 880.69867, 182, 883.20544, 182, 887.62103, 182, 891.17975, 182, 893.81, 182, 895.99994, 182, 897.1601, 183.28906, 900.2187, 186.6875, 902.2622, 188.95801, 904.54297, 191.49219, 906.98193, 194.20215, 909.5, 197, 912.01807, 199.79785, 914.45703, 202.50781, 916.7378, 205.04199, 918.7813, 207.3125, 921.8398, 210.71094, 923, 212, 923.88403, 215.3086, 924.8988, 219.10596, 925.523, 221.44171, 926.21497, 224.03125, 926.9673, 226.84637, 927.7723, 229.85889, 928.6225, 233.04059, 929.5105, 236.36328, 930.42847, 239.79877, 931.36914, 243.31885, 932.3248, 246.89532, 933.2881, 250.5, 934.2514, 254.10468, 935.2071, 257.68115, 936.14764, 261.20123, 937.06573, 264.63672, 937.9537, 267.9594, 938.80383, 271.1411, 939.6088, 274.15363, 940.36115, 276.96875, 941.05316, 279.5583, 941.67725, 281.89404, 942.6921, 285.6914, 943.5762, 289, 945.1683, 290.20313, 946.9953, 291.58398, 949.3652, 293.375, 952.16925, 295.49414, 955.29895, 297.85938, 958.64575, 300.38867, 962.101, 303, 965.5564, 305.61133, 968.9032, 308.14063, 972.03284, 310.50586, 974.83685, 312.625, 977.20685, 314.41602, 979.03394, 315.79688, 980.6259, 317, 983.32544, 316.9214, 986.5677, 316.82697, 990.9544, 316.69922, 993.54944, 316.62366, 996.39734, 316.5407, 999.48755, 316.4507, 1002.8086, 316.354, 1006.35, 316.2509, 1010.1003, 316.14166, 1014.0485, 316.02667, 1018.184, 315.90625, 1022.4955, 315.7807, 1026.972, 315.65033, 1031.6025, 315.51547, 1036.3761, 315.37646, 1041.2819, 315.2336, 1043.7808, 315.16083, 1046.3086, 315.08722, 1048.8639, 315.01282, 1051.4452, 314.93762, 1054.0515, 314.86172, 1056.681, 314.78516, 1059.3326, 314.70795, 1062.0049, 314.63013, 1064.6962, 314.55173, 1067.4055, 314.47284, 1070.1313, 314.39346, 1072.8724, 314.31363, 1075.6272, 314.23343, 1078.3942, 314.15283, 1081.1722, 314.07193, 1083.9602, 313.99075, 1086.7561, 313.90933, 1089.559, 313.8277, 1092.3673, 313.7459, 1095.1799, 313.664, 1097.9951, 313.58203, 1100.8118, 313.5, 1103.6284, 313.41797, 1106.4436, 313.336, 1109.2561, 313.2541, 1112.0645, 313.1723, 1114.8673, 313.09067, 1117.6633, 313.00925, 1120.451, 312.92807, 1123.2292, 312.84717, 1125.9962, 312.76657, 1128.7511, 312.68637, 1131.4921, 312.60654, 1134.2179, 312.52716, 1136.9271, 312.44827, 1139.6187, 312.36987, 1142.2908, 312.29205, 1144.9425, 312.21484, 1147.5719, 312.13828, 1150.1781, 312.06238, 1152.7595, 311.98718, 1155.3148, 311.91278, 1157.8427, 311.83917, 1160.3416, 311.7664, 1165.2472, 311.62354, 1170.0209, 311.48453, 1174.6514, 311.34967, 1179.1279, 311.2193, 1183.4393, 311.09375, 1187.5748, 310.97333, 1191.5232, 310.85834, 1195.2734, 310.7491, 1198.8148, 310.646, 1202.1359, 310.5493, 1205.226, 310.4593, 1208.074, 310.37634, 1210.669, 310.30078, 1215.0558, 310.17303, 1218.298, 310.0786, 1220.9974, 310, 1221.7352, 307.33594, 1222.582, 304.27832, 1223.68, 300.3125, 1224.9796, 295.62012, 1225.689, 293.05823, 1226.4299, 290.3828, 1227.196, 287.61658, 1227.981, 284.78223, 1228.7783, 281.90247, 1229.582, 279, 1230.3859, 276.09753, 1231.1833, 273.21777, 1231.9684, 270.38342, 1232.7344, 267.6172, 1233.4752, 264.94177, 1234.1847, 262.37988, 1235.4841, 257.6875, 1236.5823, 253.72168, 1237.4291, 250.66406, 1238.1669, 248, 1239.7977, 246.19531, 1241.6693, 244.12402, 1244.097, 241.4375, 1246.9695, 238.25879, 1250.1755, 234.71094, 1251.8689, 232.83704, 1253.6039, 230.91699, 1255.3668, 228.96619, 1257.1436, 227, 1258.9204, 225.03381, 1260.6832, 223.08301, 1262.4182, 221.16296, 1264.1116, 219.28906, 1267.3175, 215.74121, 1270.19, 212.5625, 1272.6177, 209.87598, 1274.4895, 207.80469, 1276.1202, 206, 1278.6979, 206.02246, 1281.7941, 206.04944, 1285.9828, 206.08594, 1288.4608, 206.10751, 1291.1802, 206.13123, 1294.1309, 206.15695, 1297.3024, 206.18457, 1300.6837, 206.21404, 1304.2649, 206.24524, 1308.035, 206.27809, 1311.984, 206.3125, 1316.101, 206.34837, 1320.3755, 206.38562, 1324.7971, 206.42415, 1329.3553, 206.46387, 1334.0398, 206.50468, 1338.8397, 206.54651, 1343.7446, 206.58925, 1346.2334, 206.61093, 1348.7441, 206.63281, 1351.2762, 206.65488, 1353.8278, 206.67711, 1356.3978, 206.69951, 1358.9849, 206.72205, 1361.5879, 206.74474, 1364.2052, 206.76753, 1366.8357, 206.79045, 1369.4779, 206.81348, 1372.1307, 206.8366, 1374.7927, 206.85979, 1377.4625, 206.88304, 1380.139, 206.90637, 1382.8207, 206.92973, 1385.5062, 206.95314, 1388.1945, 206.97656, 1390.8842, 207, 1393.5735, 207.02344, 1396.2618, 207.04686, 1398.9475, 207.07027, 1401.6293, 207.09363, 1404.3055, 207.11696, 1406.9756, 207.14021, 1409.6375, 207.1634, 1412.2903, 207.18652, 1414.9325, 207.20955, 1417.5629, 207.23247, 1420.1803, 207.25526, 1422.7831, 207.27795, 1425.3701, 207.30049, 1427.9402, 207.32289, 1430.4921, 207.34512, 1433.0239, 207.36719, 1435.5349, 207.38907, 1438.0234, 207.41075, 1442.9285, 207.45349, 1447.7284, 207.49532, 1452.4126, 207.53613, 1456.9711, 207.57585, 1461.3927, 207.61438, 1465.6672, 207.65163, 1469.7842, 207.6875, 1473.7332, 207.72191, 1477.5033, 207.75476, 1481.0844, 207.78596, 1484.466, 207.81543, 1487.6372, 207.84306, 1490.5879, 207.86877, 1493.3075, 207.89247, 1495.7854, 207.91406, 1499.9741, 207.95056, 1503.0702, 207.97754, 1505.648, 208, 1507.7448, 209.63281, 1510.1511, 211.50684, 1513.2726, 213.9375, 1516.9657, 216.81348, 1518.9819, 218.38367, 1521.0878, 220.02344, 1523.2648, 221.71887, 1525.4956, 223.45605, 1527.7622, 225.22107, 1530.0465, 227, 1532.3309, 228.77893, 1534.5974, 230.54395, 1536.8281, 232.28113, 1539.0054, 233.97656, 1541.1111, 235.61633, 1543.1274, 237.18652, 1546.8206, 240.0625, 1549.9419, 242.49316, 1552.3484, 244.36719, 1554.4452, 246, 1554.4851, 248.71777, 1554.533, 251.98206, 1554.5979, 256.39844, 1554.6361, 259.011, 1554.6783, 261.8783, 1554.724, 264.98932, 1554.7731, 268.333, 1554.8254, 271.89825, 1554.881, 275.67395, 1554.9395, 279.64905, 1555.0005, 283.8125, 1555.0645, 288.1532, 1555.1306, 292.66003, 1555.199, 297.32196, 1555.2697, 302.12793, 1555.3422, 307.06683, 1555.3793, 309.58264, 1555.4165, 312.12756, 1555.4543, 314.70016, 1555.4926, 317.29907, 1555.5309, 319.9229, 1555.57, 322.5703, 1555.6091, 325.23987, 1555.6487, 327.93018, 1555.6885, 330.63986, 1555.7285, 333.36755, 1555.7688, 336.11188, 1555.8093, 338.8714, 1555.8501, 341.6448, 1555.8909, 344.43066, 1555.9321, 347.2276, 1555.9733, 350.03424, 1556.0146, 352.84915, 1556.0562, 355.67102, 1556.0978, 358.4984, 1556.1394, 361.32996, 1556.1809, 364.1643, 1556.2225, 367, 1556.2643, 369.8357, 1556.3058, 372.67, 1556.3473, 375.5016, 1556.3892, 378.32898, 1556.4304, 381.15085, 1556.4718, 383.96576, 1556.513, 386.7724, 1556.554, 389.56934, 1556.595, 392.3552, 1556.6359, 395.1286, 1556.6764, 397.88812, 1556.7167, 400.63245, 1556.7567, 403.36014, 1556.7965, 406.06982, 1556.8359, 408.76013, 1556.8752, 411.4297, 1556.9141, 414.0771, 1556.9526, 416.70093, 1556.9907, 419.29984, 1557.0287, 421.87244, 1557.0662, 424.41736, 1557.1029, 426.93317, 1557.1754, 431.87207, 1557.2462, 436.67804, 1557.3147, 441.33997, 1557.3809, 445.84683, 1557.4446, 450.1875, 1557.5056, 454.35092, 1557.5641, 458.32605, 1557.6195, 462.10178, 1557.6719, 465.667, 1557.7211, 469.01068, 1557.7667, 472.1217, 1557.8088, 474.989, 1557.8473, 477.60156, 1557.9121, 482.01794, 1557.9601, 485.28223, 1558, 488, 1555.8998, 488.0337, 1553.3774, 488.07416, 1549.9648, 488.1289, 1545.7305, 488.19684, 1543.3264, 488.2354, 1540.7427, 488.27686, 1537.9877, 488.32104, 1535.0701, 488.36786, 1531.9984, 488.4171, 1528.7814, 488.46875, 1525.4271, 488.52258, 1521.9445, 488.57843, 1518.3422, 488.63623, 1514.6283, 488.6958, 1510.8119, 488.75702, 1506.9015, 488.81976, 1502.9052, 488.88385, 1498.8319, 488.94922, 1494.6904, 489.0157, 1490.4886, 489.08307, 1486.2357, 489.1513, 1481.9398, 489.2202, 1477.6099, 489.28967, 1473.2542, 489.35956, 1468.8813, 489.4297, 1464.5, 489.5, 1460.1185, 489.5703, 1455.7457, 489.64044, 1451.39, 489.71033, 1447.06, 489.7798, 1442.7643, 489.8487, 1438.5112, 489.91693, 1434.3096, 489.9843, 1430.168, 490.05078, 1426.0948, 490.11612, 1422.0985, 490.18024, 1418.188, 490.24298, 1414.3716, 490.3042, 1410.6578, 490.36377, 1407.0553, 490.42157, 1403.573, 490.47745, 1400.2186, 490.53125, 1397.0016, 490.58286, 1393.9298, 490.63214, 1391.0122, 490.67896, 1388.2573, 490.72314, 1385.6736, 490.7646, 1383.2695, 490.80316, 1379.0352, 490.8711, 1375.6226, 490.92584, 1373.1, 490.9663, 1371, 491, 1369.7314, 492.5039, 1368.2755, 494.22998, 1366.3871, 496.46875, 1364.1528, 499.11768, 1361.659, 502.07422, 1358.9924, 505.23584, 1356.239, 508.5, 1353.4857, 511.76416, 1350.8191, 514.9258, 1348.3252, 517.8823, 1346.091, 520.53125, 1344.2025, 522.77, 1342.7466, 524.4961, 1341.4781, 526, 1341.5024, 527.6284, 1341.5713, 532.23047, 1341.6202, 535.51385, 1341.6782, 539.38135, 1341.7438, 543.77985, 1341.8169, 548.65625, 1341.8557, 551.2571, 1341.896, 553.95746, 1341.9379, 556.7508, 1341.981, 559.6304, 1342.025, 562.5896, 1342.0703, 565.6219, 1342.1167, 568.7205, 1342.164, 571.8789, 1342.212, 575.0904, 1342.2606, 578.3483, 1342.3099, 581.6461, 1342.3597, 584.97705, 1342.4098, 588.33453, 1342.4604, 591.712, 1342.5112, 595.10266, 1342.5619, 598.5, 1342.6127, 601.89734, 1342.6635, 605.288, 1342.7139, 608.66547, 1342.7642, 612.02295, 1342.8138, 615.3539, 1342.863, 618.6517, 1342.9117, 621.9096, 1342.9598, 625.1211, 1343.0071, 628.2795, 1343.0533, 631.3781, 1343.0989, 634.4104, 1343.1431, 637.3696, 1343.1859, 640.24927, 1343.2277, 643.04254, 1343.2682, 645.7429, 1343.3071, 648.34375, 1343.38, 653.22015, 1343.4457, 657.61865, 1343.5035, 661.48615, 1343.5526, 664.76953, 1343.6213, 669.3716, 1343.6458, 671, 1342.295, 672.5469, 1340.7451, 674.32227, 1338.7346, 676.625, 1336.3558, 679.3496, 1333.7008, 682.3906, 1330.8615, 685.6426, 1327.9302, 689, 1324.9987, 692.3574, 1322.1595, 695.6094, 1319.5044, 698.6504, 1317.1256, 701.375, 1315.1151, 703.67773, 1313.5651, 705.4531, 1312.2145, 707, 1308.8458, 706.9663, 1304.7996, 706.92584, 1302.2343, 706.90015, 1299.3253, 706.8711, 1296.0873, 706.83875, 1292.5332, 706.80316, 1288.677, 706.7646, 1284.5325, 706.72314, 1280.1134, 706.67896, 1275.4333, 706.63214, 1270.5062, 706.5829, 1267.9542, 706.5574, 1265.3457, 706.53125, 1262.6821, 706.50464, 1259.9653, 706.4774, 1257.197, 706.44977, 1254.379, 706.4216, 1251.513, 706.3929, 1248.6005, 706.3638, 1245.6437, 706.3342, 1242.6437, 706.3042, 1239.6023, 706.2738, 1236.5216, 706.243, 1233.4032, 706.2118, 1230.2489, 706.18024, 1227.06, 706.1484, 1223.8386, 706.1161, 1220.5864, 706.0836, 1217.305, 706.0508, 1213.996, 706.0177, 1210.6615, 705.9844, 1207.3027, 705.95074, 1203.9218, 705.91693, 1200.5201, 705.8829, 1197.0996, 705.8487, 1193.662, 705.81433, 1190.209, 705.7798, 1186.7422, 705.7451, 1183.2633, 705.7103, 1179.7742, 705.6754, 1176.2765, 705.64044, 1172.7719, 705.6054, 1169.2621, 705.5703, 1165.7491, 705.53516, 1162.2341, 705.5, 1158.7192, 705.46484, 1155.206, 705.4297, 1151.6963, 705.3946, 1148.1918, 705.35956, 1144.6941, 705.3246, 1141.205, 705.2897, 1137.7262, 705.2549, 1134.2593, 705.2202, 1130.8062, 705.18567, 1127.3685, 705.1513, 1123.9481, 705.1171, 1120.5465, 705.08307, 1117.1655, 705.0492, 1113.8068, 705.0156, 1110.4722, 704.9823, 1107.1632, 704.9492, 1103.8817, 704.9164, 1100.6295, 704.8839, 1097.4081, 704.8517, 1094.2194, 704.81976, 1091.0648, 704.7882, 1087.9465, 704.757, 1084.866, 704.7262, 1081.8248, 704.6958, 1078.825, 704.6658, 1075.8677, 704.6362, 1072.9553, 704.6071, 1070.0892, 704.5784, 1067.2712, 704.55023, 1064.5029, 704.5226, 1061.7863, 704.49536, 1059.1227, 704.46875, 1056.514, 704.4427, 1053.962, 704.4171, 1049.0349, 704.36786, 1044.3549, 704.32104, 1039.9357, 704.27686, 1035.7911, 704.2354, 1031.935, 704.19684, 1028.381, 704.1613, 1025.1427, 704.1289, 1022.234, 704.0998, 1019.6686, 704.07416, 1015.6225, 704.0337, 1012.2538, 704, 1010.3123, 704.6875, 1008.08405, 705.47656, 1005.19403, 706.5, 1001.7744, 707.71094, 997.9577, 709.0625, 993.8763, 710.5078, 989.6625, 712, 985.44867, 713.4922, 981.3673, 714.9375, 977.55054, 716.28906, 974.131, 717.5, 971.2409, 718.52344, 969.0126, 719.3125, 967.07117, 720, 966.56635, 722.83594, 965.98706, 726.0908, 965.23566, 730.3125, 964.80615, 732.72546, 964.3465, 735.3076, 963.8611, 738.0348, 963.3541, 740.8828, 962.8301, 743.8275, 962.293, 746.8447, 961.7474, 749.9103, 961.19745, 753, 960.6475, 756.0897, 960.1018, 759.1553, 959.56476, 762.1725, 959.0407, 765.1172, 958.5337, 767.9652, 958.0483, 770.6924, 957.58875, 773.27454, 957.1592, 775.6875, 956.40784, 779.9092, 955.8284, 783.16406, 955.32367, 786, 953.1882, 786.90234, 950.73706, 787.938, 947.5579, 789.28125, 943.7963, 790.8706, 939.598, 792.64453, 935.1084, 794.5415, 932.8, 795.5169, 930.4732, 796.5, 928.14655, 797.4831, 925.838, 798.4585, 921.3485, 800.35547, 917.15015, 802.1294, 913.38855, 803.71875, 910.2094, 805.062, 907.75836, 806.09766, 905.6228, 807, 902.59863, 806.94385, 898.96625, 806.8764, 894.05176, 806.78516, 891.1447, 806.7312, 887.954, 806.67194, 884.49225, 806.60767, 880.7715, 806.5386, 876.8042, 806.4649, 872.6027, 806.3869, 868.1795, 806.3048, 863.5465, 806.21875, 858.7164, 806.129, 856.2312, 806.0829, 853.7013, 806.03595, 851.12823, 805.98816, 848.5137, 805.93964, 845.85895, 805.8904, 843.1658, 805.84033, 840.4355, 805.7896, 837.67004, 805.7383, 834.8705, 805.6863, 832.0386, 805.6337, 829.17584, 805.58057, 826.2839, 805.52686, 823.3642, 805.47266, 820.4183, 805.41797, 817.4477, 805.3628, 814.45404, 805.30725, 811.4388, 805.2512, 808.4035, 805.1949, 805.34973, 805.1382, 802.279, 805.0812, 799.1929, 805.02386, 796.09296, 804.9663, 792.9806, 804.9085, 789.8575, 804.8505, 786.7251, 804.79236, 783.585, 804.7341, 780.4388, 804.67566, 777.288, 804.6172, 774.13403, 804.5586, 770.97864, 804.5, 767.8231, 804.4414, 764.6692, 804.3829, 761.5184, 804.32434, 758.3721, 804.2659, 755.2321, 804.20764, 752.0997, 804.1495, 748.9766, 804.0915, 745.86426, 804.0337, 742.76434, 803.9762, 739.6781, 803.9188, 736.6075, 803.8618, 733.5537, 803.8051, 730.5184, 803.7488, 727.5032, 803.69275, 724.50946, 803.6372, 721.53894, 803.58203, 718.593, 803.52734, 715.6733, 803.47314, 712.7813, 803.41943, 709.9186, 803.3663, 707.08673, 803.3137, 704.28723, 803.2617, 701.5216, 803.2104, 698.79144, 803.15967, 696.0982, 803.1096, 693.44354, 803.06036, 690.8289, 803.0118, 688.25586, 802.96405, 685.7261, 802.9171, 683.2409, 802.871, 678.4107, 802.78125, 673.77783, 802.6952, 669.35443, 802.6131, 665.15295, 802.5351, 661.1857, 802.4614, 657.465, 802.39233, 654.0032, 802.32806, 650.8125, 802.2688, 647.9054, 802.21484, 642.991, 802.1236, 639.35864, 802.05615, 636.3344, 802, 634.43176, 800.4531, 632.24805, 798.67773, 629.4159, 796.375, 626.06464, 793.6504, 622.3243, 790.6094, 620.3487, 789.0032, 618.3245, 787.3574, 616.26776, 785.6853, 614.19495, 784, 612.122, 782.3147, 610.06537, 780.6426, 608.0412, 778.9968, 606.06555, 777.3906, 602.3252, 774.3496, 598.974, 771.625, 596.1417, 769.32227, 593.95807, 767.5469, 592.0554, 766, 592.17194, 763.16406, 592.3056, 759.9092, 592.479, 755.6875, 592.6842, 750.6924, 592.7962, 747.9652, 592.9132, 745.1172, 593.0342, 742.1725, 593.15814, 739.1553, 593.284, 736.0897, 593.4109, 733, 593.53784, 729.9103, 593.66376, 726.8447, 593.78766, 723.8275, 593.9086, 720.8828, 594.0256, 718.0348, 594.13763, 715.3076, 594.34283, 710.3125, 594.51624, 706.0908, 594.6499, 702.83594, 594.76636, 700, 594.8052, 696.5625, 594.8498, 692.6172, 594.8772, 690.1904, 594.9076, 687.5, 594.9406, 684.5752, 594.976, 681.4453, 595.01324, 678.13965, 595.0523, 674.6875, 595.0926, 671.11816, 595.1339, 667.46094, 595.1759, 663.7451, 595.2182, 660, 595.2605, 656.2549, 595.30255, 652.53906, 595.34375, 648.88184, 595.3841, 645.3125, 595.4231, 641.86035, 595.46045, 638.5547, 595.4958, 635.4248, 595.5289, 632.5, 595.5592, 629.8096, 595.5867, 627.3828, 595.6312, 623.4375, 595.67004, 620, 593.6264, 618.3242, 591.28094, 616.4009, 588.23865, 613.90625, 584.63916, 610.9546, 582.6739, 609.3431, 580.6216, 607.66016, 578.4995, 605.9201, 576.3253, 604.1372, 574.1163, 602.32574, 571.8898, 600.5, 569.66327, 598.67426, 567.4542, 596.8628, 565.2799, 595.0799, 563.15796, 593.33984, 561.1056, 591.6569, 559.1404, 590.0454, 555.54083, 587.09375, 552.4986, 584.5991, 550.1531, 582.6758, 548.1095, 581, 545.50464, 580.9888, 542.3761, 580.9753, 538.14325, 580.95703, 535.6393, 580.9462, 532.8912, 580.9344, 529.9094, 580.9215, 526.7048, 580.9077, 523.2877, 580.89294, 519.66895, 580.8774, 515.8591, 580.86096, 511.86868, 580.84375, 507.7084, 580.8258, 503.3889, 580.8072, 498.92072, 580.78796, 494.31454, 580.76807, 489.58093, 580.7477, 484.73056, 580.72675, 482.26486, 580.7161, 479.774, 580.7054, 477.25922, 580.6945, 474.7219, 580.6836, 472.16324, 580.6726, 469.58478, 580.66144, 466.98773, 580.65027, 464.3734, 580.639, 461.7432, 580.6276, 459.09833, 580.6162, 456.44022, 580.60474, 453.77017, 580.59326, 451.08948, 580.58167, 448.39948, 580.57007, 445.70157, 580.5585, 442.99704, 580.5468, 440.28717, 580.53516, 437.57324, 580.52344, 434.85678, 580.5117, 432.13895, 580.5, 429.4211, 580.4883, 426.7046, 580.47656, 423.99075, 580.46484, 421.28085, 580.4532, 418.5763, 580.4415, 415.87836, 580.42993, 413.18842, 580.41833, 410.50772, 580.40674, 407.83765, 580.3952, 405.17957, 580.3838, 402.5347, 580.3724, 399.90442, 580.361, 397.29013, 580.34973, 394.69308, 580.33856, 392.1146, 580.3274, 389.556, 580.3164, 387.01865, 580.3055, 384.5039, 580.2946, 382.013, 580.2839, 379.5473, 580.27325, 374.69696, 580.2523, 369.96335, 580.23193, 365.35715, 580.21204, 360.88898, 580.1928, 356.56946, 580.1742, 352.4092, 580.15625, 348.41882, 580.13904, 344.60892, 580.1226, 340.99017, 580.10706, 337.57312, 580.0923, 334.36844, 580.0785, 331.38672, 580.0656, 328.63858, 580.0538, 326.13464, 580.04297, 321.90182, 580.0247, 318.77322, 580.0112, 316.16843, 580, 314.95758, 581.6328, 313.56784, 583.50684, 311.76532, 585.9375, 309.63257, 588.8135, 307.25217, 592.02344, 304.70663, 595.45605, 302.07855, 599, 299.45044, 602.54395, 296.9049, 605.97656, 294.5245, 609.1865, 292.39175, 612.0625, 290.58923, 614.49316, 289.1995, 616.3672, 287.98868, 618, 287.87912, 619.5161, 287.56952, 623.8008, 287.34866, 626.8577, 287.08847, 630.4585, 286.79257, 634.55365, 286.46454, 639.09375, 286.10788, 644.02936, 285.91998, 646.63, 285.72626, 649.31104, 285.5272, 652.06616, 285.32318, 654.88934, 285.11475, 657.7743, 284.90225, 660.71484, 284.68622, 663.70483, 284.46707, 666.7381, 284.2452, 669.8085, 284.02112, 672.90967, 283.79526, 676.03564, 283.56805, 679.1801, 283.33994, 682.337, 283.11142, 685.5, 282.88284, 688.663, 282.65475, 691.8199, 282.42755, 694.96436, 282.2017, 698.09033, 281.9776, 701.1915, 281.75577, 704.2619, 281.53656, 707.29517, 281.32053, 710.28516, 281.10806, 713.2257, 280.89963, 716.11066, 280.69562, 718.93384, 280.49655, 721.68896, 280.30283, 724.37, 280.1149, 726.97064, 279.7583, 731.90625, 279.43024, 736.44635, 279.13434, 740.5415, 278.87418, 744.1423, 278.6533, 747.1992, 278.3437, 751.4839, 278.23413, 753, 276.76956, 755.10547, 275.0886, 757.522, 272.9084, 760.65625, 270.3287, 764.36475, 268.9203, 766.38947, 267.44946, 768.5039, 265.9287, 770.6901, 264.37048, 772.9302, 262.78735, 775.2061, 261.19168, 777.5, 259.59604, 779.7939, 258.01288, 782.0698, 256.45468, 784.3099, 254.93393, 786.4961, 253.4631, 788.61053, 252.05469, 790.63525, 249.475, 794.34375, 247.29477, 797.478, 245.61383, 799.89453, 244.14925, 802, 241.6087, 802.8164, 238.69287, 803.7534, 234.91095, 804.96875, 230.43616, 806.40674, 227.99307, 807.19183, 225.4417, 808.0117, 222.80374, 808.85944, 220.10081, 809.728, 217.35458, 810.61053, 214.5867, 811.5, 211.81882, 812.38947, 209.0726, 813.272, 206.36967, 814.14056, 203.7317, 814.9883, 201.18036, 815.80817, 198.73726, 816.59326, 194.26245, 818.03125, 190.48053, 819.2466, 187.5647, 820.1836, 185.02417, 821, 184.37216, 822.9336, 183.62386, 825.15283, 182.65327, 828.03125, 181.50488, 831.437, 180.22311, 835.2383, 178.85243, 839.3032, 177.43732, 843.5, 176.02219, 847.6968, 174.65152, 851.7617, 173.36975, 855.563, 172.22134, 858.96875, 171.25076, 861.84717, 170.50244, 864.0664, 169.85046, 866, 168.26703, 866.34375, 164.09258, 867.25, 161.30359, 867.85547, 158.19075, 868.53125, 154.86197, 869.2539, 151.42523, 870, 147.9885, 870.7461, 144.65973, 871.46875, 141.54686, 872.14453, 138.75789, 872.75, 134.58342, 873.65625, 133, 874)
+
+[node name="CollisionShape2D" parent="Area2D" parent_id_path=PackedInt32Array(595350600) index="0" unique_id=1514158457]
+visible = true
+debug_color = Color(0.527329, 0.55088747, 0.4387471, 0.41960785)
 
 [editable path="CyberQuestionHUD"]
 [editable path="PerformanceHUD"]
@@ -230,6 +809,10 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_n2mrm")
 [editable path="AnnounceTextHUD"]
 [editable path="CutsceneSkipHUD"]
 [editable path="CutsceneDemoMenuHUD"]
+[editable path="DefeatHUD"]
+[editable path="BotnetNode"]
+[editable path="WormBoss"]
+[editable path="Wave20ClearanceHUD"]
 [editable path="TestDrag/CyberGuardianCard"]
 [editable path="TestDrag/LaserTurretCard"]
 [editable path="TestDrag/IDSScannerCard"]
@@ -237,3 +820,4 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_n2mrm")
 [editable path="TestDrag/SIEMHawkCard"]
 [editable path="TestDrag/IPSIntrusionCard"]
 [editable path="TestDrag/HoneypotProductionCard"]
+[editable path="TestDrag/XDRMechCard"]

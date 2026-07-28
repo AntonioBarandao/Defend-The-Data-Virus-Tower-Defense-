@@ -1,41 +1,139 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://Scripts/Enemies/spyware.gd" id="1_script"]
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/Spyware/SpywareSpriteFrames.tres" id="2_frames"]
-[ext_resource type="FontFile" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="3_font"]
-[ext_resource type="AudioStream" path="res://assets/sfx/virus_destroy.wav" id="4_destroy_sfx"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/Spyware/Animations/SpywareWalkingSpriteFrames.tres" id="2_walking"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/Spyware/Animations/SpywareVFXAppearSpriteFrames.tres" id="3_appear"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/Spyware/Animations/SpywareVFXActiveSpriteFrames.tres" id="4_active"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/Spyware/Animations/SpywareVFXDisappearSpriteFrames.tres" id="5_disappear"]
+[ext_resource type="Script" path="res://Scripts/UI/spyware_progress_bar.gd" id="6_health_script"]
+[ext_resource type="FontFile" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="7_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_under"]
+bg_color = Color(0.16, 0.025, 0.035, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.54, 0.59, 0.66, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.72)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_fill"]
+bg_color = Color(0.008, 0.01, 0.016, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.15, 0.17, 0.21, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_header"]
+bg_color = Color(0.012, 0.014, 0.02, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.38, 0.44, 0.94)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [node name="Spyware" type="AnimatedSprite2D" groups=["SPYWARE"]]
 script = ExtResource("1_script")
 path_speed = 100.0
-max_health = 8
+max_health = 25
 cyberbuck_reward = 200
-destroy_duration = 0.5
+destroy_duration = 3.041667
+idle_sprite_path = NodePath("WalkingVisual")
+destroy_sprite_path = NodePath("WalkingVisual")
 
-[node name="SpywareVisual" type="AnimatedSprite2D" parent="."]
-scale = Vector2(0.2, 0.2)
-sprite_frames = ExtResource("2_frames")
-animation = &"idle"
-autoplay = "idle"
+[node name="WalkingVisual" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.82, 0.82)
+sprite_frames = ExtResource("2_walking")
+animation = &"walking"
+autoplay = "walking"
 
-[node name="StolenKnowledgeLabel" type="Label" parent="."]
+[node name="AppearVFX" type="AnimatedSprite2D" parent="."]
 visible = false
-z_index = 10
-offset_left = -110.0
-offset_top = -170.0
-offset_right = 110.0
-offset_bottom = -124.0
-theme_override_colors/font_color = Color(0.86, 0.7, 1, 1)
-theme_override_colors/font_outline_color = Color(0.055, 0.015, 0.09, 1)
-theme_override_constants/outline_size = 5
-theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 24
-text = "Stolen KP: 10"
+z_index = 2
+scale = Vector2(0.95, 0.95)
+sprite_frames = ExtResource("3_appear")
+animation = &"vfx_appear"
+
+[node name="ActiveVFX" type="AnimatedSprite2D" parent="."]
+visible = false
+z_index = 2
+scale = Vector2(0.95, 0.95)
+sprite_frames = ExtResource("4_active")
+animation = &"vfx_active"
+
+[node name="DisappearVFX" type="AnimatedSprite2D" parent="."]
+visible = false
+z_index = 3
+scale = Vector2(0.95, 0.95)
+sprite_frames = ExtResource("5_disappear")
+animation = &"vfx_disappear"
+
+[node name="MinibossHealthBar" type="Node2D" parent="."]
+z_index = 710
+position = Vector2(0, -92)
+script = ExtResource("6_health_script")
+
+[node name="HeaderPanel" type="Panel" parent="MinibossHealthBar"]
+offset_left = -82.0
+offset_top = -18.0
+offset_right = 82.0
+offset_bottom = 2.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_health_header")
+
+[node name="Header" type="Label" parent="MinibossHealthBar/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.78, 0.81, 0.88, 1)
+theme_override_fonts/font = ExtResource("7_font")
+theme_override_font_sizes/font_size = 13
+text = "SPYWARE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Audio" type="Node" parent="."]
+[node name="ProgressBar" type="ProgressBar" parent="MinibossHealthBar"]
+offset_left = -112.0
+offset_top = 5.0
+offset_right = 112.0
+offset_bottom = 27.0
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_health_under")
+theme_override_styles/fill = SubResource("StyleBoxFlat_health_fill")
+value = 100.0
+show_percentage = false
 
-[node name="DestroySfx" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource("4_destroy_sfx")
-volume_db = -20.0
+[node name="DrainLabel" type="Label" parent="."]
+visible = false
+z_index = 711
+offset_left = -92.0
+offset_top = -145.0
+offset_right = 92.0
+offset_bottom = -112.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.78, 0.68, 1, 1)
+theme_override_colors/font_outline_color = Color(0.015, 0.012, 0.024, 1)
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("7_font")
+theme_override_font_sizes/font_size = 19
+text = "HIJACKED  -1 KP / SEC"
+horizontal_alignment = 1
+vertical_alignment = 1

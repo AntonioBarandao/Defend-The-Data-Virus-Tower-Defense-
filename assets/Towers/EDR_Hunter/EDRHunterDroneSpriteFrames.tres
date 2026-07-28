@@ -1,7 +1,7 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://c1hemsl4kdr3d"]
 
-[ext_resource type="Texture2D" uid="uid://cu4d4m2j6gr5r" path="res://Assets/Towers/EDR_Hunter/Animations/Drone/EDR_Hunter_Drone_Idle_atlas_24fps_p01.png" id="1_m54mm"]
-[ext_resource type="Texture2D" uid="uid://dqb46apglvktt" path="res://Assets/Towers/EDR_Hunter/Animations/Drone/EDR_Hunter_Drone_Shoot_atlas_24fps_p01.png" id="2_3goaf"]
+[ext_resource type="Texture2D" uid="uid://cu4d4m2j6gr5r" path="res://assets/Towers/EDR_Hunter/Animations/Drone/EDR_Hunter_Drone_Idle_atlas_24fps_p01.png" id="1_m54mm"]
+[ext_resource type="Texture2D" uid="uid://dqb46apglvktt" path="res://assets/Towers/EDR_Hunter/Animations/Drone/EDR_Hunter_Drone_Shoot_atlas_24fps_p01.png" id="2_3goaf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8tcwu"]
 atlas = ExtResource("1_m54mm")

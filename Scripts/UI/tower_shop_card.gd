@@ -49,6 +49,10 @@ const INFORMATION_POPUP_CANVAS_LAYER := 12000
 @export var information_type_label_path: NodePath = ^"InformationPopup/PopupCard/TypeLabel"
 @export var information_upgrade_costs_label_path: NodePath = ^"InformationPopup/PopupCard/UpgradeCostsLabel"
 @export_group("")
+@export_group("Editable Display Sprites")
+@export var preserve_authored_sprite_textures := true
+@export var auto_center_information_sprite := false
+@export_group("")
 @export_group("Information Popup Animation")
 @export_range(0.0, 800.0, 1.0) var information_popup_slide_offset := 260.0
 @export_range(0.01, 1.0, 0.01) var information_popup_enter_seconds := 0.24
@@ -89,6 +93,7 @@ func _ready() -> void:
 	_cache_card_panel_styles()
 	_connect_information_buttons()
 	_setup_information_popup()
+	_sync_sprite_texture_fallbacks()
 	_sync_text()
 
 
@@ -153,7 +158,8 @@ func _setup_information_popup() -> void:
 		information_popup.top_level = true
 		information_popup.z_as_relative = false
 		information_popup.z_index = RenderingServer.CANVAS_ITEM_Z_MAX
-		information_popup.hide()
+		if not Engine.is_editor_hint():
+			information_popup.hide()
 	if _information_popup_layer != null:
 		_information_popup_layer.visible = false
 
@@ -232,7 +238,10 @@ func get_tower_type() -> String:
 
 
 func get_upgrade_costs() -> Array[int]:
-	return card_resource.upgrade_costs if card_resource != null else []
+	if card_resource != null:
+		return card_resource.upgrade_costs
+	var no_upgrade_costs: Array[int] = []
+	return no_upgrade_costs
 
 
 func set_store_state(can_afford: bool, deployed: bool) -> void:
@@ -362,8 +371,7 @@ func _sync_text() -> void:
 		else:
 			cost_label.text = resolved_free_text if resolved_cost <= 0 else str(resolved_cost)
 			cost_label.add_theme_color_override("font_color", normal_cost_color if _can_afford else unaffordable_cost_color)
-	if display_sprite != null and card_resource != null and card_resource.display_texture != null:
-		display_sprite.texture = card_resource.display_texture
+	_sync_sprite_texture_fallbacks()
 	if information_popup != null and information_popup.visible:
 		_sync_information_popup()
 	_sync_visual_state()
@@ -416,8 +424,7 @@ func _sync_card_panel_style() -> void:
 
 
 func _sync_information_popup() -> void:
-	if information_popup_image != null:
-		information_popup_image.texture = card_resource.display_texture if card_resource != null else null
+	_sync_sprite_texture_fallbacks()
 	if information_header_label != null:
 		information_header_label.text = get_information_header()
 	if information_description_label != null:
@@ -440,10 +447,27 @@ func _sync_information_popup_layout() -> void:
 		return
 
 	_cache_information_popup_card_rest_transform()
-	if information_popup_image != null:
+	if information_popup_image != null and auto_center_information_sprite:
 		var image_panel := information_popup_image.get_parent() as Control
 		if image_panel != null:
 			information_popup_image.position = image_panel.size * 0.5
+
+
+func _sync_sprite_texture_fallbacks() -> void:
+	var resource_texture: Texture2D = card_resource.display_texture if card_resource != null else null
+	if display_sprite != null and resource_texture != null:
+		if not preserve_authored_sprite_textures or display_sprite.texture == null:
+			display_sprite.texture = resource_texture
+
+	if information_popup_image == null:
+		return
+	if preserve_authored_sprite_textures and information_popup_image.texture != null:
+		return
+
+	if display_sprite != null and display_sprite.texture != null:
+		information_popup_image.texture = display_sprite.texture
+	elif resource_texture != null:
+		information_popup_image.texture = resource_texture
 
 
 func _cache_information_popup_card_rest_transform() -> void:

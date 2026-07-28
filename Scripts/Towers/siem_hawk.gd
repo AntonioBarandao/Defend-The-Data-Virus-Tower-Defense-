@@ -1,6 +1,8 @@
 class_name SIEMHawkTower
 extends Node2D
 
+const CentralAudioResolver := preload("res://Scripts/Audio/audio_player_resolver.gd")
+
 signal placed(tower: SIEMHawkTower)
 signal dispatch_mode_changed(dispatched: bool)
 signal knowledge_bank_changed(banked_points: int)
@@ -11,10 +13,8 @@ const IDLE_ANIMATION := &"idle"
 const SUMMON_ANIMATION := &"SummonAnim"
 const SHOOT_ANIMATION := &"ShootAnim"
 const SIEM_MAX_LEVEL := 5
-const SIEM_DAMAGE := 10
-const SIEM_ATTACK_RANGE := 360.0
-const SIEM_COOLDOWN := 3.0
-const SIEM_LASER_WIDTH := 12.0
+const SIEM_DAMAGE := 1
+const SIEM_ATTACK_COOLDOWNS_BY_LEVEL := [0.0, 1.0, 0.5, 0.2, 0.05]
 const SIEM_UPGRADE_COSTS := [0, 0, 0, 0, 0]
 const RED_VIRUS_KNOWLEDGE_POINTS := 1
 const TROJAN_HORSE_KNOWLEDGE_POINTS := 5
@@ -28,9 +28,10 @@ const DESTINATION_MARKER_SEGMENTS := 48
 const GRAB_SIZE := Vector2(220, 220)
 const PLACEMENT_HIGHLIGHT_SIZE := Vector2(180, 120)
 const PLACEMENT_SLOT_PREFIX := "placementslot"
-const SIGNAL_BOOST_RANGE_MULTIPLIER := 1.1
-const SIGNAL_BOOST_COOLDOWN_MULTIPLIER := 0.9
-const SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER := 1.2
+const SIGNAL_BOOST_RANGE_MULTIPLIER := 1.15
+const SIGNAL_BOOST_COOLDOWN_MULTIPLIER := 1.0 / 1.15
+const SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER := 1.15
+const SIGNAL_BOOST_DAMAGE_MULTIPLIER := 1.15
 const SHOT_RETURN_DELAY := 3.0
 const RANGE_PREVIEW_SEGMENTS := 96
 const RANGE_PREVIEW_FILL_COLOR := Color(0.27, 0.55, 1.0, 0.16)
@@ -54,6 +55,11 @@ const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
 @export var level_3_visual_path: NodePath = ^"LevelVisuals/LV3Visual"
 @export var level_4_visual_path: NodePath = ^"LevelVisuals/LV4Visual"
 @export var level_5_visual_path: NodePath = ^"LevelVisuals/LV5Visual"
+@export_group("Attack Visuals")
+@export var level_2_attack_visual_path: NodePath = ^"LV2AttackVisual"
+@export var level_3_attack_visual_path: NodePath = ^"LV3AttackVisual"
+@export var level_4_attack_visual_path: NodePath = ^"LV4AttackVisual"
+@export var level_5_attack_visual_path: NodePath = ^"LV5AttackVisual"
 @export_group("Base")
 @export var base_sprite_path: NodePath = ^"BaseSprite"
 @export var base_global_rotation := 0.0
@@ -83,15 +89,21 @@ const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
 @export var knowledge_label_offset := Vector2(-76.0, -96.0)
 @export_range(0.0, 12.0, 0.1) var scan_arc_pulse_speed := 2.2
 @export_group("Audio")
-@export var summon_sfx_path: NodePath = ^"Audio/SummonSfx"
+@export var summon_sfx_path: NodePath = ^"Sounds/SIEMHawkDeploySfx"
+@export var attack_sfx_path: NodePath = ^"Sounds/SIEMHawkAttackSfx"
+@export var scan_sfx_path: NodePath = ^"Sounds/SIEMHawkScanSfx"
 @export_group("")
 
 var _level_visuals: Array[AnimatedSprite2D] = []
+var _attack_visuals: Array[AnimatedSprite2D] = []
+var _attack_visual_active := false
 var _base_sprite: Sprite2D
 var _scan_arc_fill: Polygon2D
 var _scan_arc_outline: Line2D
 var _knowledge_label: Label
 var _summon_sfx: AudioStreamPlayer
+var _attack_sfx: AudioStreamPlayer
+var _scan_sfx: AudioStreamPlayer
 var _platform_highlight: ColorRect
 var _home_position := Vector2.ZERO
 var _dragging := false
@@ -128,6 +140,7 @@ var _scan_arc_phase := 0.0
 var _signal_boost_range_multiplier := SIGNAL_BOOST_RANGE_MULTIPLIER
 var _signal_boost_cooldown_multiplier := SIGNAL_BOOST_COOLDOWN_MULTIPLIER
 var _signal_boost_hawk_speed_multiplier := SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER
+var _signal_boost_damage_multiplier := SIGNAL_BOOST_DAMAGE_MULTIPLIER
 var _last_visible_state := true
 
 
@@ -142,7 +155,9 @@ func _ready() -> void:
 	z_index = tower_visual_z_index
 	z_as_relative = false
 	_platform_highlight = get_node_or_null(platform_highlight_path) as ColorRect
-	_summon_sfx = get_node_or_null(summon_sfx_path) as AudioStreamPlayer
+	_summon_sfx = CentralAudioResolver.resolve(self, summon_sfx_path)
+	_attack_sfx = CentralAudioResolver.resolve(self, attack_sfx_path)
+	_scan_sfx = CentralAudioResolver.resolve(self, scan_sfx_path)
 	_base_sprite = get_node_or_null(base_sprite_path) as Sprite2D
 	if _base_sprite != null:
 		_base_sprite.top_level = true
@@ -157,6 +172,7 @@ func _ready() -> void:
 	if _platform_highlight != null:
 		_platform_highlight.hide()
 	_collect_level_visuals()
+	_collect_attack_visuals()
 	_configure_top_level_scanner_nodes()
 	_configure_destination_marker()
 	_sync_level_visuals(true)
@@ -171,6 +187,7 @@ func _process(delta: float) -> void:
 	if visible != _last_visible_state:
 		_last_visible_state = visible
 		_sync_level_visuals()
+		_sync_attack_visuals()
 	_update_attack_range_preview()
 	_sync_base_sprite()
 	_update_scan_arc_visual(delta)
@@ -180,6 +197,10 @@ func _process(delta: float) -> void:
 
 func is_placed() -> bool:
 	return _placed
+
+
+func is_spyware_knowledge_source() -> bool:
+	return is_placed()
 
 
 func is_dragging() -> bool:
@@ -256,6 +277,7 @@ func reset_tower() -> void:
 	_clear_drag_feedback()
 	_shot_cooldown_remaining = 0.0
 	_shot_pose_active = false
+	_set_attack_visual_active(false)
 	if _shot_return_tween != null:
 		_shot_return_tween.kill()
 		_shot_return_tween = null
@@ -284,6 +306,8 @@ func set_dispatched(value: bool) -> void:
 		return
 
 	_dispatched = value
+	if not _dispatched:
+		_set_attack_visual_active(false)
 	_landing_to_headquarters = false
 	_clear_dispatch_destination()
 	_extraction_elapsed = 0.0
@@ -358,6 +382,7 @@ func land_to_headquarters() -> void:
 		return
 
 	_landing_to_headquarters = true
+	_set_attack_visual_active(false)
 	_dispatched = true
 	_clear_dispatch_destination()
 	_extraction_elapsed = 0.0
@@ -403,14 +428,18 @@ func get_shot_power() -> int:
 	if level <= 1:
 		return 0
 
-	return SIEM_DAMAGE
+	return _get_signal_boosted_damage(SIEM_DAMAGE)
 
 
 func get_attack_range() -> float:
 	if level <= 1:
 		return 0.0
 
-	return SIEM_ATTACK_RANGE * _get_signal_boost_range_multiplier()
+	return get_scan_arc_radius()
+
+
+func get_scan_arc_radius() -> float:
+	return scan_arc_radius * _get_signal_boost_range_multiplier()
 
 
 func set_menu_range_preview_active(active: bool) -> void:
@@ -435,11 +464,14 @@ func _exit_tree() -> void:
 
 
 func get_shot_cooldown() -> float:
-	return SIEM_COOLDOWN * _get_signal_boost_cooldown_multiplier()
-
-
-func get_laser_width() -> float:
-	return SIEM_LASER_WIDTH
+	var level_index := clampi(
+		level - 1,
+		0,
+		SIEM_ATTACK_COOLDOWNS_BY_LEVEL.size() - 1
+	)
+	return float(
+		SIEM_ATTACK_COOLDOWNS_BY_LEVEL[level_index]
+	) * _get_signal_boost_cooldown_multiplier()
 
 
 func get_dispatch_speed() -> float:
@@ -480,6 +512,7 @@ func upgrade() -> bool:
 	if not can_upgrade():
 		return false
 
+	_set_attack_visual_active(false)
 	level += 1
 	_sync_level_visuals(true)
 	play_idle()
@@ -495,7 +528,8 @@ func set_signal_boost_active(active: bool) -> void:
 		active,
 		SIGNAL_BOOST_RANGE_MULTIPLIER,
 		SIGNAL_BOOST_COOLDOWN_MULTIPLIER,
-		SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER
+		SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER,
+		SIGNAL_BOOST_DAMAGE_MULTIPLIER
 	)
 
 
@@ -503,12 +537,14 @@ func set_signal_boost_profile(
 	active: bool,
 	range_multiplier: float,
 	cooldown_multiplier: float,
-	hawk_speed_multiplier: float = SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER
+	hawk_speed_multiplier: float = SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER,
+	damage_multiplier: float = SIGNAL_BOOST_DAMAGE_MULTIPLIER
 ) -> void:
 	if _signal_boost_active == active:
 		_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
 		_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
 		_signal_boost_hawk_speed_multiplier = maxf(0.0, hawk_speed_multiplier)
+		_signal_boost_damage_multiplier = maxf(0.0, damage_multiplier)
 		_range_preview_radius = -1.0
 		_update_attack_range_preview()
 		return
@@ -517,6 +553,7 @@ func set_signal_boost_profile(
 	_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
 	_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
 	_signal_boost_hawk_speed_multiplier = maxf(0.0, hawk_speed_multiplier)
+	_signal_boost_damage_multiplier = maxf(0.0, damage_multiplier)
 	_range_preview_radius = -1.0
 	_update_attack_range_preview()
 
@@ -537,27 +574,58 @@ func get_signal_boost_hawk_speed_multiplier() -> float:
 	return _signal_boost_hawk_speed_multiplier if _signal_boost_active else 1.0
 
 
+func get_signal_boost_damage_multiplier() -> float:
+	return _signal_boost_damage_multiplier if _signal_boost_active else 1.0
+
+
+func _get_signal_boosted_damage(base_damage: int) -> int:
+	if base_damage <= 0:
+		return base_damage
+	return maxi(1, roundi(float(base_damage) * get_signal_boost_damage_multiplier()))
+
+
 func update_attack(delta: float, active_viruses: Array[PathFollow2D]) -> PathFollow2D:
-	if level <= 1 or not _dispatched or _landing_to_headquarters or _has_dispatch_destination:
+	if not is_scan_attack_enabled():
+		_set_attack_visual_active(false)
 		if not _should_preserve_hawk_rotation():
 			_return_to_rest_state_if_not_shooting()
 		return null
 	if not _placed:
+		_set_attack_visual_active(false)
 		_return_to_rest_state_if_not_shooting()
 		return null
 
 	_shot_cooldown_remaining = maxf(0.0, _shot_cooldown_remaining - delta)
-	if _shot_cooldown_remaining > 0.0:
-		_return_to_rest_state_if_not_shooting()
-		return null
-
 	var target := _find_nearest_virus_in_range(active_viruses)
 	if target == null:
+		_set_attack_visual_active(false)
 		_return_to_rest_state_if_not_shooting()
+		return null
+	_set_attack_visual_active(true)
+	if _shot_cooldown_remaining > 0.0:
 		return null
 
 	_shot_cooldown_remaining = get_shot_cooldown()
 	return target
+
+
+func has_attack_target_in_scan(
+	active_viruses: Array[PathFollow2D]
+) -> bool:
+	if not is_scan_attack_enabled():
+		return false
+	return _find_nearest_virus_in_range(active_viruses) != null
+
+
+func is_scan_attack_enabled() -> bool:
+	return level >= 2 \
+		and _placed \
+		and not _landing_to_headquarters \
+		and not _is_at_headquarters()
+
+
+func is_stationary_scan_attack_enabled() -> bool:
+	return is_scan_attack_enabled() and not _has_dispatch_destination
 
 
 func contains_global_point(pointer_position: Vector2) -> bool:
@@ -605,6 +673,8 @@ func get_headquarters_rect() -> Rect2:
 
 
 func aim_at(target_position: Vector2) -> void:
+	if _has_dispatch_destination or _turning_to_destination:
+		return
 	var direction := target_position - global_position
 	if direction.length_squared() > 0.0:
 		global_rotation = direction.angle() - forward_rotation_offset
@@ -626,16 +696,19 @@ func play_animation(animation_name: StringName) -> void:
 
 
 func play_summon() -> void:
+	_set_attack_visual_active(false)
 	_play_audio_player(_summon_sfx)
 	play_animation(SUMMON_ANIMATION)
 
 
 func play_idle() -> void:
+	_set_attack_visual_active(false)
 	play_animation(IDLE_ANIMATION)
 
 
 func play_shoot() -> void:
-	play_animation(SHOOT_ANIMATION)
+	_set_attack_visual_active(true)
+	_play_audio_player_if_idle(_attack_sfx)
 	_schedule_return_to_rest_state()
 
 
@@ -654,6 +727,22 @@ func _collect_level_visuals() -> void:
 		visual.animation_finished.connect(_on_level_visual_animation_finished.bind(visual))
 
 
+func _collect_attack_visuals() -> void:
+	_attack_visuals = [
+		null,
+		get_node_or_null(level_2_attack_visual_path) as AnimatedSprite2D,
+		get_node_or_null(level_3_attack_visual_path) as AnimatedSprite2D,
+		get_node_or_null(level_4_attack_visual_path) as AnimatedSprite2D,
+		get_node_or_null(level_5_attack_visual_path) as AnimatedSprite2D
+	]
+	for visual in _attack_visuals:
+		if visual == null:
+			continue
+		visual.stop()
+		visual.hide()
+		visual.z_index = maxi(visual.z_index, 1)
+
+
 func _sync_level_visuals(force_idle := false) -> void:
 	for index in range(_level_visuals.size()):
 		var visual := _level_visuals[index]
@@ -661,7 +750,9 @@ func _sync_level_visuals(force_idle := false) -> void:
 			continue
 
 		var visual_level := index + 1
-		visual.visible = visible and visual_level == level
+		visual.visible = visible \
+			and visual_level == level \
+			and not _attack_visual_active
 		if visual.visible:
 			var idle_animation := _get_level_animation_name(IDLE_ANIMATION)
 			if force_idle and visual.sprite_frames != null and visual.sprite_frames.has_animation(idle_animation):
@@ -670,6 +761,43 @@ func _sync_level_visuals(force_idle := false) -> void:
 				visual.play()
 		else:
 			visual.stop()
+
+
+func _sync_attack_visuals() -> void:
+	for index in range(_attack_visuals.size()):
+		var visual := _attack_visuals[index]
+		if visual == null:
+			continue
+		var visual_level := index + 1
+		var should_show := visible \
+			and _attack_visual_active \
+			and visual_level == level
+		visual.visible = should_show
+		if not should_show:
+			visual.stop()
+			continue
+
+		var animation_name := StringName("attack_lv%d" % visual_level)
+		if visual.sprite_frames == null \
+				or not visual.sprite_frames.has_animation(animation_name):
+			visual.hide()
+			continue
+		if visual.animation != animation_name:
+			visual.animation = animation_name
+			visual.frame = 0
+			visual.frame_progress = 0.0
+		if not visual.is_playing():
+			visual.play()
+
+
+func _set_attack_visual_active(active: bool) -> void:
+	var next_active := active and level >= 2
+	if _attack_visual_active == next_active:
+		_sync_attack_visuals()
+		return
+	_attack_visual_active = next_active
+	_sync_level_visuals()
+	_sync_attack_visuals()
 
 
 func _get_active_visual() -> AnimatedSprite2D:
@@ -704,8 +832,7 @@ func _on_level_visual_animation_finished(visual: AnimatedSprite2D) -> void:
 func _find_nearest_virus_in_range(active_viruses: Array[PathFollow2D]) -> PathFollow2D:
 	var best_target: PathFollow2D
 	var best_distance_squared := INF
-	var attack_range := get_attack_range()
-	var range_squared := attack_range * attack_range
+	var best_is_worm_target := false
 
 	for follow in active_viruses:
 		if not is_instance_valid(follow):
@@ -715,13 +842,35 @@ func _find_nearest_virus_in_range(active_viruses: Array[PathFollow2D]) -> PathFo
 
 		var target_position := _get_follow_target_position(follow)
 		var distance_squared := global_position.distance_squared_to(target_position)
-		if distance_squared > range_squared or distance_squared >= best_distance_squared:
+		if not _is_follow_in_attack_scan(follow, target_position):
+			continue
+		var is_worm_target := _is_worm_boss_target(follow)
+		if best_is_worm_target and not is_worm_target:
+			continue
+		if is_worm_target and not best_is_worm_target:
+			best_target = null
+			best_distance_squared = INF
+			best_is_worm_target = true
+		if distance_squared >= best_distance_squared:
 			continue
 
 		best_target = follow
 		best_distance_squared = distance_squared
 
 	return best_target
+
+
+func _is_follow_in_attack_scan(
+	follow: PathFollow2D,
+	target_position: Vector2
+) -> bool:
+	if _is_position_in_scan_arc(target_position):
+		return true
+
+	var virus := _get_follow_virus(follow)
+	return virus != null \
+		and _scanned_virus_ids.has(virus.get_instance_id()) \
+		and _is_position_in_scan_radius(target_position)
 
 
 func _can_target_follow(follow: PathFollow2D) -> bool:
@@ -735,6 +884,12 @@ func _get_follow_target_position(follow: PathFollow2D) -> Vector2:
 		return virus.global_position
 
 	return follow.global_position
+
+
+func _is_worm_boss_target(follow: PathFollow2D) -> bool:
+	return is_instance_valid(follow) \
+		and follow.has_meta("worm_boss_part") \
+		and bool(follow.get_meta("worm_boss_part"))
 
 
 func _should_preserve_hawk_rotation() -> bool:
@@ -812,6 +967,7 @@ func _scan_viruses_in_arc(active_viruses: Array[PathFollow2D]) -> void:
 		var knowledge_value := _get_virus_knowledge_value(virus)
 		_banked_knowledge_points += knowledge_value
 		knowledge_bank_changed.emit(_banked_knowledge_points)
+		_play_audio_player_if_idle(_scan_sfx)
 
 
 func _extract_banked_knowledge(delta: float) -> void:
@@ -847,17 +1003,27 @@ func _get_virus_knowledge_value(virus: RedVirus) -> int:
 
 
 func _is_virus_in_scan_arc(virus: RedVirus) -> bool:
+	return _is_position_in_scan_arc(virus.global_position)
+
+
+func _is_position_in_scan_arc(target_position: Vector2) -> bool:
 	var scan_origin := _get_scan_origin_global_position()
-	var offset := virus.global_position - scan_origin
+	var offset := target_position - scan_origin
 	var distance_squared := offset.length_squared()
 	if distance_squared <= 0.0:
 		return true
-	if distance_squared > scan_arc_radius * scan_arc_radius:
+	if not _is_position_in_scan_radius(target_position):
 		return false
 
 	var forward_angle := global_rotation + forward_rotation_offset
 	var half_angle := deg_to_rad(scan_arc_degrees) * 0.5
 	return absf(angle_difference(forward_angle, offset.angle())) <= half_angle
+
+
+func _is_position_in_scan_radius(target_position: Vector2) -> bool:
+	var effective_radius := get_scan_arc_radius()
+	return _get_scan_origin_global_position().distance_squared_to(target_position) \
+		<= effective_radius * effective_radius
 
 
 func _configure_top_level_scanner_nodes() -> void:
@@ -1077,7 +1243,9 @@ func _build_arc_points() -> PackedVector2Array:
 	for index in range(ARC_SEGMENTS + 1):
 		var t := float(index) / float(ARC_SEGMENTS)
 		var angle := forward_rotation_offset - half_angle + (half_angle * 2.0 * t)
-		points.append(Vector2(cos(angle), sin(angle)) * scan_arc_radius)
+		points.append(
+			Vector2(cos(angle), sin(angle)) * get_scan_arc_radius()
+		)
 
 	return points
 
@@ -1294,6 +1462,12 @@ func _play_audio_player(player: AudioStreamPlayer) -> void:
 	player.play()
 
 
+func _play_audio_player_if_idle(player: AudioStreamPlayer) -> void:
+	if player == null or player.playing:
+		return
+	player.play()
+
+
 func _schedule_return_to_rest_state() -> void:
 	if _shot_return_tween != null:
 		_shot_return_tween.kill()
@@ -1312,6 +1486,7 @@ func _return_to_rest_state_if_not_shooting() -> void:
 
 
 func _return_to_rest_state() -> void:
+	_set_attack_visual_active(false)
 	if _should_preserve_hawk_rotation():
 		_shot_pose_active = false
 		if _is_current_level_animation(SHOOT_ANIMATION):

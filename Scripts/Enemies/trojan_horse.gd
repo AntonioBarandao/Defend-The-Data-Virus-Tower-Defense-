@@ -27,8 +27,8 @@ const HORSE_DESTROY_ANIMATION := &"Horse_Destroy"
 @export_range(-360.0, 360.0, 0.1) var path_rotation_offset_degrees := 0.0
 @export_group("")
 @export_group("Audio")
-@export var enter_sfx_path: NodePath = ^"Audio/EnterSfx"
-@export var transform_sfx_path: NodePath = ^"Audio/TransformSfx"
+@export var enter_sfx_path: NodePath = ^"Sounds/TrojanHorseEnterSfx"
+@export var transform_sfx_path: NodePath = ^"Sounds/TrojanHorseTransformSfx"
 @export_group("")
 
 var _deployed := false
@@ -229,7 +229,7 @@ func can_be_targeted_by(attacker: Node) -> bool:
 	if not super.can_be_targeted_by(attacker):
 		return false
 
-	if cloaked and not are_abilities_nullified() and not _attacker_has_scanner(attacker):
+	if cloaked and not is_nullifier_suppressed():
 		return false
 
 	return true
@@ -240,17 +240,8 @@ func should_remain_active_during_destroy() -> bool:
 
 
 func nullify_abilities(source: Node = null) -> void:
-	if are_abilities_nullified():
-		return
-
 	super.nullify_abilities(source)
-	_scanner_revealed = true
 	_cloak_elapsed = 0.0
-	if _destroying or _destroy_cutscene_active:
-		return
-
-	if cloaked and not _transforming:
-		reveal_from_scanner(source)
 
 
 func _start_cloak_transform() -> void:
@@ -317,12 +308,6 @@ func _play_animation(animation_name: StringName) -> void:
 
 func _has_animation(animation_name: StringName) -> bool:
 	return sprite_frames != null and sprite_frames.has_animation(animation_name)
-
-
-func _attacker_has_scanner(attacker: Node) -> bool:
-	return attacker != null \
-		and attacker.has_method("can_scan_cloaked_viruses") \
-		and attacker.call("can_scan_cloaked_viruses") == true
 
 
 func _on_health_changed(new_health: int, new_max_health: int) -> void:
@@ -443,8 +428,9 @@ func _update_path_rotation() -> void:
 
 
 func _cache_audio_players() -> void:
-	_enter_sfx = get_node_or_null(enter_sfx_path) as AudioStreamPlayer
-	_transform_sfx = get_node_or_null(transform_sfx_path) as AudioStreamPlayer
+	_enter_sfx = CentralAudioResolver.resolve(self, enter_sfx_path)
+	_transform_sfx = CentralAudioResolver.resolve(self, transform_sfx_path)
+	_destroy_sfx = CentralAudioResolver.resolve(self, destroy_sfx_path)
 
 
 func _play_audio_player(player: AudioStreamPlayer) -> void:

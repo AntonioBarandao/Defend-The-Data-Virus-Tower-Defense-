@@ -1,13 +1,63 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://chsujk1gbiabr"]
 
+<<<<<<< HEAD
 [ext_resource type="SpriteFrames" path="res://Assets/Towers/IPS_Intrusion/IPSIntrusionStaticSpriteFrames.tres" id="1_frames"]
 [ext_resource type="Script" path="res://Scripts/Towers/ips_intrusion.gd" id="2_script"]
+=======
+[ext_resource type="SpriteFrames" uid="uid://c2kvnalyux8l0" path="res://assets/Towers/IPS_Intrusion/IPSIntrusionSpriteFrames.tres" id="1_frames"]
+[ext_resource type="Script" uid="uid://bb3j26hkmst1q" path="res://Scripts/Towers/ips_intrusion.gd" id="2_script"]
+>>>>>>> 4c8daaffc01673569e6d46a60df2b56eb54c60d5
 [ext_resource type="PackedScene" path="res://Scenes/Towers/IPS_Intrusion_Spike.tscn" id="3_spike"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/IPS_Intrusion_Electricity_Link.tscn" id="4_electricity"]
+[ext_resource type="SpriteFrames" uid="uid://cq263m7mi18ro" path="res://assets/Towers/IPS_Intrusion/IPSIntrusionFactoryLV2SpriteFrames.tres" id="5_lv2_frames"]
+[ext_resource type="SpriteFrames" uid="uid://52rn6ni7voe5" path="res://assets/Towers/IPS_Intrusion/IPSIntrusionFactoryLV3SpriteFrames.tres" id="6_lv3_frames"]
+[ext_resource type="SpriteFrames" uid="uid://cehibts7qv77x" path="res://assets/Towers/IPS_Intrusion/IPSIntrusionFactoryLV4SpriteFrames.tres" id="7_lv4_frames"]
+[ext_resource type="SpriteFrames" uid="uid://cwsnvldq805ke" path="res://assets/Towers/IPS_Intrusion/IPSIntrusionFactoryLV5SpriteFrames.tres" id="8_lv5_frames"]
 
-[node name="IPS_Intrusion" type="AnimatedSprite2D" groups=["Defender", "OFFENSE_TOWER"]]
+[node name="IPS_Intrusion" type="Node2D" unique_id=1848468663 groups=["Defender", "OFFENSE_TOWER"]]
 scale = Vector2(0.479, 0.479)
-sprite_frames = ExtResource("1_frames")
-animation = &"idle"
-autoplay = "idle"
 script = ExtResource("2_script")
 spike_scene = ExtResource("3_spike")
+electricity_link_scene = ExtResource("4_electricity")
+defender_idle_visual_path = NodePath("FactoryVisual")
+defender_summon_visual_path = NodePath("FactoryVisual")
+defender_shoot_visual_path = NodePath("FactoryVisual")
+
+[node name="FactoryVisual" type="AnimatedSprite2D" parent="." unique_id=760134486]
+scale = Vector2(1.875, 1.875)
+sprite_frames = ExtResource("1_frames")
+animation = &"IPS_Intrusion_Factory_LV1"
+autoplay = "IPS_Intrusion_Factory_LV1"
+
+[node name="LV2FactoryVisual" type="AnimatedSprite2D" parent="." unique_id=493469308]
+visible = false
+scale = Vector2(1.875, 1.875)
+sprite_frames = ExtResource("5_lv2_frames")
+animation = &"IPS_Intrusion_Factory_LV2"
+autoplay = "IPS_Intrusion_Factory_LV2"
+frame = 27
+frame_progress = 0.3269781
+
+[node name="LV3FactoryVisual" type="AnimatedSprite2D" parent="." unique_id=1544875970]
+visible = false
+scale = Vector2(1.875, 1.875)
+sprite_frames = ExtResource("6_lv3_frames")
+animation = &"IPS_Intrusion_Factory_LV3"
+autoplay = "IPS_Intrusion_Factory_LV3"
+frame_progress = 0.32653874
+
+[node name="LV4FactoryVisual" type="AnimatedSprite2D" parent="." unique_id=1793471137]
+visible = false
+scale = Vector2(1.875, 1.875)
+sprite_frames = ExtResource("7_lv4_frames")
+animation = &"IPS_Intrusion_Factory_LV4"
+autoplay = "IPS_Intrusion_Factory_LV4"
+frame_progress = 0.39069623
+
+[node name="LV5FactoryVisual" type="AnimatedSprite2D" parent="." unique_id=1485113453]
+visible = false
+scale = Vector2(1.875, 1.875)
+sprite_frames = ExtResource("8_lv5_frames")
+animation = &"IPS_Intrusion_Factory_LV5"
+autoplay = "IPS_Intrusion_Factory_LV5"
+frame_progress = 0.6853448

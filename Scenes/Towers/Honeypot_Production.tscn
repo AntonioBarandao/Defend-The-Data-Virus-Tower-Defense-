@@ -12,6 +12,7 @@ range_preview_outline_color = Color(0.42, 1, 0.78, 0.78)
 defender_idle_visual_path = NodePath("LevelVisuals/LV1Visual")
 defender_summon_visual_path = NodePath("LevelVisuals/LV1Visual")
 defender_shoot_visual_path = NodePath("LevelVisuals/LV1Visual")
+summon_sfx_path = NodePath("Sounds/HoneypotProductionDeploySfx")
 
 [node name="LevelVisuals" type="Node2D" parent="."]
 scale = Vector2(4.2666664, 4.2666664)

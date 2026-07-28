@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://w84lgguasvp7" path="res://Scenes/UI/TowerUpgradeHud.tscn" id="14_upgrades"]
 [ext_resource type="Script" uid="uid://d1ugiseg13u06" path="res://Scripts/Gameplay/tower_placement_area.gd" id="15_place"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/SignalBoostHUD.tscn" id="16_signal_boost_hud"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/DefeatHUD.tscn" id="99_defeat_hud"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_question"]
 bg_color = Color(0.025, 0.032, 0.05, 0.94)
@@ -115,6 +116,8 @@ layer = 120
 [node name="TowerUpgradeHUD" parent="." unique_id=1569560659 instance=ExtResource("14_upgrades")]
 layer = 80
 
+[node name="DefeatHUD" parent="." instance=ExtResource("99_defeat_hud")]
+
 [node name="TowerPlacementArea" type="Area2D" parent="." unique_id=817734020]
 position = Vector2(502.29962, 275.29962)
 script = ExtResource("15_place")
@@ -215,3 +218,4 @@ texture = ExtResource("2_ao6wq")
 [editable path="PerformanceHUD"]
 [editable path="ProgressHUD"]
 [editable path="SignalBoostHUD"]
+[editable path="DefeatHUD"]

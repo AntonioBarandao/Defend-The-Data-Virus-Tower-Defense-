@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://Scripts/UI/cutscene_demo_menu_hud.gd" id="1_script"]
 [ext_resource type="FontFile" path="res://assets/Fonts/space-armor/SPACE ARMOR.otf" id="2_font"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/CyberInfoHUD.tscn" id="3_cyber_info"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(0.025, 0.032, 0.05, 0.93)
@@ -40,6 +41,34 @@ corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cyber_info"]
+bg_color = Color(0.115, 0.04, 0.2, 0.97)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.7, 0.34, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.32, 0.08, 0.58, 0.5)
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cyber_info_hover"]
+bg_color = Color(0.2, 0.07, 0.34, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.92, 0.72, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.52, 0.2, 0.88, 0.72)
+shadow_size = 8
 
 [node name="CutsceneDemoMenuHUD" type="CanvasLayer"]
 layer = 980
@@ -128,9 +157,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -310.0
-offset_top = -250.0
+offset_top = -320.0
 offset_right = 310.0
-offset_bottom = 250.0
+offset_bottom = 320.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 0
@@ -166,6 +195,17 @@ theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button")
 text = "Settings"
+
+[node name="CyberInfoButton" type="Button" parent="Root/MenuPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.9, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_cyber_info")
+theme_override_styles/hover = SubResource("StyleBoxFlat_cyber_info_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_cyber_info_hover")
+text = "Cyber-Info"
 
 [node name="SettingsPanel" type="PanelContainer" parent="Root/MenuPanel/Margin/Content"]
 layout_mode = 2
@@ -280,3 +320,5 @@ theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button")
 text = "Set Wave"
+
+[node name="CyberInfoHUD" parent="." instance=ExtResource("3_cyber_info")]

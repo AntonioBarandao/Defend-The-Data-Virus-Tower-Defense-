@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TowerShopCardResource" format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/tower_shop_card_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/Towers/XDR_Mech/Display_XDR_Mech.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://Scenes/Towers/XDR_Mech.tscn" id="3_scene"]
+
+[resource]
+script = ExtResource("1_script")
+tower_id = &"xdr_mech"
+display_name = "XDR Mech"
+deploy_cost = 0
+display_texture = ExtResource("2_texture")
+tower_scene = ExtResource("3_scene")
+info_header = "XDR Mech"
+info_description = "Mobile response mech. Deploy it on a tower platform, enable dispatch mode, then click anywhere on the arena to set its destination. The mech turns toward the destination before walking and can be redirected while deployed. Levels 1-4 use the standard chassis; level 5 switches to the reinforced head and leg set."
+tower_type = "Mobile Offense Tower"
+upgrade_costs = Array[int]([0, 0, 0, 0])

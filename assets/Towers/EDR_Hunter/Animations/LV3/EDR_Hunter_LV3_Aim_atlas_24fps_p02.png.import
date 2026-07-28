@@ -3,8 +3,8 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://co6jn6qkaj5rq"
-path.s3tc="res://.godot/imported/EDR_Hunter_LV3_Aim_atlas_24fps_p02.png-047c4c0ed8f3a458cb0ae0d88bd18fc5.s3tc.ctex"
-path.etc2="res://.godot/imported/EDR_Hunter_LV3_Aim_atlas_24fps_p02.png-047c4c0ed8f3a458cb0ae0d88bd18fc5.etc2.ctex"
+path.s3tc="res://.godot/imported/EDR_Hunter_LV3_Aim_atlas_24fps_p02.png-d21f37f1ddc26db59a2768398aeb6cdf.s3tc.ctex"
+path.etc2="res://.godot/imported/EDR_Hunter_LV3_Aim_atlas_24fps_p02.png-d21f37f1ddc26db59a2768398aeb6cdf.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
@@ -12,8 +12,8 @@ metadata={
 
 [deps]
 
-source_file="res://Assets/Towers/EDR_Hunter/Animations/LV3/EDR_Hunter_LV3_Aim_atlas_24fps_p02.png"
-dest_files=["res://.godot/imported/EDR_Hunter_LV3_Aim_atlas_24fps_p02.png-047c4c0ed8f3a458cb0ae0d88bd18fc5.s3tc.ctex", "res://.godot/imported/EDR_Hunter_LV3_Aim_atlas_24fps_p02.png-047c4c0ed8f3a458cb0ae0d88bd18fc5.etc2.ctex"]
+source_file="res://assets/Towers/EDR_Hunter/Animations/LV3/EDR_Hunter_LV3_Aim_atlas_24fps_p02.png"
+dest_files=["res://.godot/imported/EDR_Hunter_LV3_Aim_atlas_24fps_p02.png-d21f37f1ddc26db59a2768398aeb6cdf.s3tc.ctex", "res://.godot/imported/EDR_Hunter_LV3_Aim_atlas_24fps_p02.png-d21f37f1ddc26db59a2768398aeb6cdf.etc2.ctex"]
 
 [params]
 

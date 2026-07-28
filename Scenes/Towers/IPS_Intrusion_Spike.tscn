@@ -9,8 +9,16 @@ monitoring = false
 monitorable = false
 script = ExtResource("2_script")
 
+<<<<<<< HEAD
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_spike")
+=======
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(1.5, 1.5)
+sprite_frames = ExtResource("1_spike_frames")
+animation = &"Animated_Spikes"
+autoplay = "Animated_Spikes"
+>>>>>>> 4c8daaffc01673569e6d46a60df2b56eb54c60d5
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(0, -620, 260, -430, 545, -180, 560, 260, 260, 525, -260, 525, -560, 260, -545, -180, -260, -430)

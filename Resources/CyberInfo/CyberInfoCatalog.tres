@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="CyberInfoCatalog" format=3 uid="uid://bli5a267t3vie"]
+
+[ext_resource type="Script" uid="uid://crsuux6wxn1c6" path="res://Scripts/UI/cyber_info_catalog.gd" id="1_catalog"]
+[ext_resource type="Script" uid="uid://c5xx4wfm8ud7j" path="res://Scripts/UI/cyber_info_entry.gd" id="2_entry"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/CyberGuardian.tres" id="3_cyber_guardian"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/LaserTurret.tres" id="4_laser_turret"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/IDSScanner.tres" id="5_ids_scanner"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/EDRHunter.tres" id="6_edr_hunter"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/HoneypotProduction.tres" id="7_honeypot"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/IPSIntrusion.tres" id="8_ips"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/SIEMHawk.tres" id="9_siem"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/XDRMech.tres" id="10_xdr"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/RedVirus.tres" id="11_red"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/ArmoredVirus.tres" id="12_armored"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/MutantVirus.tres" id="13_mutant"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/TrojanHorse.tres" id="14_trojan"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/Adware.tres" id="15_adware"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/Spyware.tres" id="16_spyware"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/Ransomware.tres" id="17_ransomware"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/ZombieNode.tres" id="18_zombie"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/BotnetNode.tres" id="19_botnet"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/CyberWorm.tres" id="20_worm"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/PhishingEmail.tres" id="21_phishing"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/AntiCyberguardian.tres" id="22_anti_guardian"]
+
+[resource]
+script = ExtResource("1_catalog")
+tower_entries = Array[ExtResource("2_entry")]([ExtResource("3_cyber_guardian"), ExtResource("4_laser_turret"), ExtResource("5_ids_scanner"), ExtResource("6_edr_hunter"), ExtResource("7_honeypot"), ExtResource("8_ips"), ExtResource("9_siem"), ExtResource("10_xdr")])
+virus_entries = Array[ExtResource("2_entry")]([ExtResource("11_red"), ExtResource("12_armored"), ExtResource("13_mutant"), ExtResource("14_trojan"), ExtResource("15_adware"), ExtResource("16_spyware"), ExtResource("17_ransomware"), ExtResource("18_zombie"), ExtResource("19_botnet"), ExtResource("20_worm"), ExtResource("21_phishing"), ExtResource("22_anti_guardian")])

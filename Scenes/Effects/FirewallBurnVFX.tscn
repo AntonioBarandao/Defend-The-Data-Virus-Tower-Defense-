@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Effects/firewall_burn_vfx.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://assets/Effects/FirewallBurn/FirewallBurnSpriteFrames.tres" id="2_frames"]
+
+[node name="FirewallBurnVFX" type="Node2D"]
+visible = false
+z_index = 190
+z_as_relative = false
+script = ExtResource("1_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+scale = Vector2(0.48, 0.48)
+sprite_frames = ExtResource("2_frames")
+autoplay = "default"

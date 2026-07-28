@@ -1,0 +1,176 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/wave_20_clearance_hud.gd" id="1_script"]
+[ext_resource type="FontFile" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="2_font"]
+[ext_resource type="FontFile" path="res://assets/Fonts/space-armor/SPACE ARMOR.otf" id="3_header"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.02, 0.027, 0.043, 0.98)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.82, 0.08, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.72)
+shadow_size = 22
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
+bg_color = Color(0.045, 0.072, 0.105, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.32, 0.78, 1, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+bg_color = Color(0.09, 0.115, 0.12, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.82, 0.08, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(1, 0.82, 0.08, 0.24)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
+bg_color = Color(0.12, 0.1, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.9, 0.3, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_divider"]
+bg_color = Color(1, 0.82, 0.08, 0.76)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="Wave20ClearanceHUD" type="CanvasLayer"]
+layer = 3200
+script = ExtResource("1_script")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DimOverlay" type="ColorRect" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.025, 0.03, 0.045, 0.82)
+
+[node name="ClearancePanel" type="PanelContainer" parent="Root"]
+custom_minimum_size = Vector2(900, 420)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -450.0
+offset_top = -210.0
+offset_right = 450.0
+offset_bottom = 210.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="Root/ClearancePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 54
+theme_override_constants/margin_top = 42
+theme_override_constants/margin_right = 54
+theme_override_constants/margin_bottom = 42
+
+[node name="Content" type="VBoxContainer" parent="Root/ClearancePanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="ClassifiedLabel" type="Label" parent="Root/ClearancePanel/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.82, 0.08, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 24
+text = "CLEARANCE OVERRIDE // CLASSIFIED"
+horizontal_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="Root/ClearancePanel/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.98, 1, 1)
+theme_override_fonts/font = ExtResource("3_header")
+theme_override_font_sizes/font_size = 39
+text = "CPU CLEARANCE COMPLETE"
+horizontal_alignment = 1
+
+[node name="Divider" type="Panel" parent="Root/ClearancePanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_divider")
+
+[node name="MessageLabel" type="Label" parent="Root/ClearancePanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.84, 0.93, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 32
+text = "You completed the CPU clearance, but more threats are waiting ahead.\nContinue into the quarantined network?"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Choices" type="HBoxContainer" parent="Root/ClearancePanel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 28
+alignment = 1
+
+[node name="YesButton" type="Button" parent="Root/ClearancePanel/Margin/Content/Choices"]
+custom_minimum_size = Vector2(240, 64)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.98, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+text = "YES"
+
+[node name="NoButton" type="Button" parent="Root/ClearancePanel/Margin/Content/Choices"]
+custom_minimum_size = Vector2(240, 64)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.98, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+text = "NO"

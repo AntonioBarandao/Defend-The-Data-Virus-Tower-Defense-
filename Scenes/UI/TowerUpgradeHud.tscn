@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" path="res://assets/Towers/Honeypot_Production/Displays/Display_Honeypot_Factory_LV3.png" id="6_honeypot_lv3"]
 [ext_resource type="Texture2D" path="res://assets/Towers/Honeypot_Production/Displays/Display_Honeypot_Factory_LV4.png" id="7_honeypot_lv4"]
 [ext_resource type="Texture2D" path="res://assets/Towers/Honeypot_Production/Displays/Display_Honeypot_Factory_LV5.png" id="8_honeypot_lv5"]
+[ext_resource type="FontFile" path="res://assets/Fonts/mini-pixel-7/mini_pixel-7.ttf" id="9_digital"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_guardian"]
 bg_color = Color(0.035, 0.047, 0.07, 0.94)
@@ -32,6 +33,58 @@ corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ransom_button"]
+bg_color = Color(0.025, 0.16, 0.09, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 1, 0.42, 0.9)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ransom_button_hover"]
+bg_color = Color(0.045, 0.26, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.58, 1, 0.72, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+shadow_color = Color(0.08, 1, 0.4, 0.24)
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ransom_button_disabled"]
+bg_color = Color(0.12, 0.045, 0.045, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.66, 0.18, 0.16, 0.7)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_spyware_lock"]
+bg_color = Color(0.004, 0.005, 0.008, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.32, 0.38, 0.94)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.7)
+shadow_size = 8
 
 [node name="TowerUpgradeHUD" type="CanvasLayer" unique_id=1108907542]
 layer = 240
@@ -265,6 +318,137 @@ custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 focus_mode = 0
 text = "Upgrade"
+
+[node name="RansomwareSection" type="VBoxContainer" parent="Root/MenuPanel/Margin/Content"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="AlertHeader" type="Label" parent="Root/MenuPanel/Margin/Content/RansomwareSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.27, 1, 0.5, 1)
+theme_override_colors/font_shadow_color = Color(0, 0.2, 0.04, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("9_digital")
+theme_override_font_sizes/font_size = 24
+text = "RANSOMWARE LOCK"
+horizontal_alignment = 1
+
+[node name="Divider" type="HSeparator" parent="Root/MenuPanel/Margin/Content/RansomwareSection"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TimerRow" type="HBoxContainer" parent="Root/MenuPanel/Margin/Content/RansomwareSection"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="TimerTitle" type="Label" parent="Root/MenuPanel/Margin/Content/RansomwareSection/TimerRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.8, 0.84, 1)
+theme_override_font_sizes/font_size = 17
+text = "DECRYPTION DEADLINE"
+
+[node name="TimerValue" type="Label" parent="Root/MenuPanel/Margin/Content/RansomwareSection/TimerRow"]
+custom_minimum_size = Vector2(96, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.52, 1)
+theme_override_fonts/font = ExtResource("9_digital")
+theme_override_font_sizes/font_size = 27
+text = "00:30"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RansomCostRow" type="HBoxContainer" parent="Root/MenuPanel/Margin/Content/RansomwareSection"]
+layout_mode = 2
+theme_override_constants/separation = 9
+alignment = 1
+
+[node name="CyberBuckIcon" type="TextureRect" parent="Root/MenuPanel/Margin/Content/RansomwareSection/RansomCostRow"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("3_bucks")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RansomCostAmount" type="Label" parent="Root/MenuPanel/Margin/Content/RansomwareSection/RansomCostRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.18, 1)
+theme_override_font_sizes/font_size = 23
+text = "500"
+vertical_alignment = 1
+
+[node name="PayRansomButton" type="Button" parent="Root/MenuPanel/Margin/Content/RansomwareSection"]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.88, 1, 0.92, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_disabled_color = Color(1, 0.5, 0.46, 0.86)
+theme_override_font_sizes/font_size = 19
+theme_override_styles/normal = SubResource("StyleBoxFlat_ransom_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ransom_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ransom_button_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ransom_button_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_ransom_button_disabled")
+text = "Pay Ransom"
+
+[node name="StatusLabel" type="Label" parent="Root/MenuPanel/Margin/Content/RansomwareSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.74, 0.9, 0.8, 0.94)
+theme_override_font_sizes/font_size = 15
+text = "Tower controls and combat systems are encrypted."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="SpywareSection" type="PanelContainer" parent="Root/MenuPanel/Margin/Content"]
+visible = false
+custom_minimum_size = Vector2(0, 210)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_spyware_lock")
+
+[node name="Margin" type="MarginContainer" parent="Root/MenuPanel/Margin/Content/SpywareSection"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 18
+
+[node name="Content" type="VBoxContainer" parent="Root/MenuPanel/Margin/Content/SpywareSection/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 13
+alignment = 1
+
+[node name="Header" type="Label" parent="Root/MenuPanel/Margin/Content/SpywareSection/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.9, 0.96, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("9_digital")
+theme_override_font_sizes/font_size = 24
+text = "SPYWARE HIJACK"
+horizontal_alignment = 1
+
+[node name="Divider" type="HSeparator" parent="Root/MenuPanel/Margin/Content/SpywareSection/Margin/Content"]
+layout_mode = 2
+
+[node name="DrainRate" type="Label" parent="Root/MenuPanel/Margin/Content/SpywareSection/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.68, 1, 1)
+theme_override_fonts/font = ExtResource("9_digital")
+theme_override_font_sizes/font_size = 27
+text = "-1 KP / SECOND"
+horizontal_alignment = 1
+
+[node name="Status" type="Label" parent="Root/MenuPanel/Margin/Content/SpywareSection/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.7, 0.76, 1)
+theme_override_font_sizes/font_size = 16
+text = "Knowledge systems are compromised.\nDestroy the Spyware to restore tower controls."
+horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="SellButton" type="Button" parent="Root/MenuPanel/Margin/Content"]
 custom_minimum_size = Vector2(0, 48)

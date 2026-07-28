@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/WormBoss/WormHeadStatic.png" id="2_head"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/WormBoss/WormBody.png" id="3_body"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/WormBoss/WormTail.png" id="4_tail"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"cyber_worm"
+category = 1
+display_name = "Cyber Worm"
+type_label = "Priority Boss Virus"
+description = "A segmented wave boss that emerges gradually from its tunnel. Towers prioritize the closest worm segment, but only the five body sections take damage. Its head and tail are shielded unless Nullifier suppresses that defense in range."
+images = Array[Texture2D]([ExtResource("2_head"), ExtResource("3_body"), ExtResource("4_tail")])
+slide_labels = Array[String](["Shielded Head", "Damageable Body", "Shielded Tail"])

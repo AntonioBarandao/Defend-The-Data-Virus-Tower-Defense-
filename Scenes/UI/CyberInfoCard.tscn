@@ -1,0 +1,177 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_card.gd" id="1_script"]
+[ext_resource type="FontFile" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="2_heading_font"]
+[ext_resource type="FontFile" path="res://assets/Fonts/space-armor/SPACE ARMOR.otf" id="3_body_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_card"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.16, 0.72, 1, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_image"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.16, 0.72, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_arrow"]
+bg_color = Color(0.07, 0.09, 0.14, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.52, 0.68, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_arrow_hover"]
+bg_color = Color(0.12, 0.17, 0.27, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95, 0.77, 0.25, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="CyberInfoCard" type="PanelContainer"]
+custom_minimum_size = Vector2(300, 570)
+size_flags_horizontal = 3
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBox_card")
+script = ExtResource("1_script")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 20
+
+[node name="Content" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ImageAspect" type="AspectRatioContainer" parent="Margin/Content"]
+custom_minimum_size = Vector2(0, 258)
+layout_mode = 2
+ratio = 1.0
+stretch_mode = 2
+
+[node name="ImageFrame" type="PanelContainer" parent="Margin/Content/ImageAspect"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_image")
+
+[node name="DisplayImage" type="TextureRect" parent="Margin/Content/ImageAspect/ImageFrame"]
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Slideshow" type="HBoxContainer" parent="Margin/Content"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="PreviousButton" type="Button" parent="Margin/Content/Slideshow"]
+custom_minimum_size = Vector2(38, 34)
+layout_mode = 2
+tooltip_text = "Previous variant"
+theme_override_colors/font_color = Color(0.9, 0.96, 1, 1)
+theme_override_fonts/font = ExtResource("3_body_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBox_arrow")
+theme_override_styles/hover = SubResource("StyleBox_arrow_hover")
+theme_override_styles/pressed = SubResource("StyleBox_arrow_hover")
+text = "<"
+
+[node name="SlideLabel" type="Label" parent="Margin/Content/Slideshow"]
+custom_minimum_size = Vector2(176, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.76, 0.84, 0.92, 1)
+theme_override_fonts/font = ExtResource("3_body_font")
+theme_override_font_sizes/font_size = 13
+text = "1 / 2  VARIANT"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+
+[node name="NextButton" type="Button" parent="Margin/Content/Slideshow"]
+custom_minimum_size = Vector2(38, 34)
+layout_mode = 2
+tooltip_text = "Next variant"
+theme_override_colors/font_color = Color(0.9, 0.96, 1, 1)
+theme_override_fonts/font = ExtResource("3_body_font")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBox_arrow")
+theme_override_styles/hover = SubResource("StyleBox_arrow_hover")
+theme_override_styles/pressed = SubResource("StyleBox_arrow_hover")
+text = ">"
+
+[node name="NameLabel" type="Label" parent="Margin/Content"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.98, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("2_heading_font")
+theme_override_font_sizes/font_size = 30
+text = "ENTRY NAME"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="TypeLabel" type="Label" parent="Margin/Content"]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.36, 0.82, 1, 1)
+theme_override_fonts/font = ExtResource("3_body_font")
+theme_override_font_sizes/font_size = 15
+text = "TOWER TYPE"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Divider" type="ColorRect" parent="Margin/Content"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.3, 0.43, 0.58, 0.65)
+
+[node name="DescriptionLabel" type="Label" parent="Margin/Content"]
+custom_minimum_size = Vector2(0, 126)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.82, 0.88, 0.94, 1)
+theme_override_fonts/font = ExtResource("2_heading_font")
+theme_override_font_sizes/font_size = 18
+text = "Description of the tower or virus."
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="SlideTimer" type="Timer" parent="."]
+wait_time = 3.5

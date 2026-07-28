@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/BotnetNode/Levels/BotnetNodeLV1.png" id="2_lv1"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/BotnetNode/Levels/BotnetNodeLV2.png" id="3_lv2"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/BotnetNode/Levels/BotnetNodeLV3.png" id="4_lv3"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"botnet_node"
+category = 1
+display_name = "Botnet Node"
+type_label = "Progressive Boss Virus"
+description = "A late-game progressive boss that evolves through three levels. It deploys airborne minions over the path; their red scan spotlight can transform Red, Armored, and Mutant viruses into double-health Anti-Charged forms."
+images = Array[Texture2D]([ExtResource("2_lv1"), ExtResource("3_lv2"), ExtResource("4_lv3")])
+slide_labels = Array[String](["LV1", "LV2", "LV3"])

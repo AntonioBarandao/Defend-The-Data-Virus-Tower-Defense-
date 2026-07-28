@@ -2,7 +2,8 @@ class_name PhishingEmail
 extends Node2D
 
 const GROUP_NAME := "PHISHING_EMAIL"
-const START_WAVE := 6
+const GUARANTEED_TRIGGER_WAVE := 6
+const RANDOM_TRIGGER_START_WAVE := 7
 const TRIGGER_CHANCE := 0.5
 const DEFAULT_FONT_ROOT := "res://assets/Fonts"
 const FONT_EXTENSIONS := ["otf", "ttf"]
@@ -29,7 +30,9 @@ func _ready() -> void:
 
 
 static func should_attack_wave(wave_number: int, rng: RandomNumberGenerator) -> bool:
-	if wave_number < START_WAVE:
+	if wave_number == GUARANTEED_TRIGGER_WAVE:
+		return true
+	if wave_number < RANDOM_TRIGGER_START_WAVE:
 		return false
 
 	return rng.randf() < TRIGGER_CHANCE

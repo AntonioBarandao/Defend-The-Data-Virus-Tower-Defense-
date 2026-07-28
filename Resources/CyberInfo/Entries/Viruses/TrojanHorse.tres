@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" format=3 uid="uid://drdjysv880xa8"]
+
+[ext_resource type="Script" uid="uid://c5xx4wfm8ud7j" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" uid="uid://b1mc5x8h7h85k" path="res://assets/Enemies/TrojanHorse/Horse_Move/Horse_Move_atlas_30fps.png" id="2_base"]
+[ext_resource type="Texture2D" uid="uid://ddy1mlvfui0ob" path="res://assets/Enemies/TrojanHorse/Cloaked_Horse_Move/Cloaked_Horse_Move_atlas_30fps.png" id="3_cloaked"]
+
+[sub_resource type="AtlasTexture" id="Atlas_base"]
+atlas = ExtResource("2_base")
+region = Rect2(0, 0, 720, 720)
+
+[sub_resource type="AtlasTexture" id="Atlas_cloaked"]
+atlas = ExtResource("3_cloaked")
+region = Rect2(0, 0, 720, 720)
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"trojan_horse"
+category = 1
+display_name = "Trojan Horse"
+type_label = "Camo Miniboss Virus"
+description = "A slow miniboss that transforms into a cloaked state after deployment. Standard towers cannot target it while cloaked. Camo scanning reveals it; Nullifier only permits attacks while the Trojan remains inside that scanner's radius."
+images = Array[Texture2D]([SubResource("Atlas_base"), SubResource("Atlas_cloaked")])
+slide_labels = Array[String](["Base Form", "Cloaked Form"])

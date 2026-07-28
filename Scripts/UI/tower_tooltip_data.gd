@@ -32,6 +32,12 @@ const TOWER_DETAILS := {
 		"upgrade": "Improves hawk combat stats and knowledge pressure.",
 		"tooltip": "SIEM Hawk\nEnter Destination Mode, then select a map location for the Hawk. Freeze it to scan in place or land at HQ to bank knowledge."
 	},
+	&"xdr": {
+		"name": "XDR Mech",
+		"summary": "Mobile response mech that walks to player-selected destinations.",
+		"upgrade": "Levels 1-4 use the standard chassis; level 5 equips the reinforced head and legs.",
+		"tooltip": "XDR Mech\nEnable Destination Mode, then select a map location. The mech turns toward the marker and walks there."
+	},
 	&"ips": {
 		"name": "IPS Intrusion",
 		"summary": "Path-control tower that manufactures damaging intrusion spikes.",

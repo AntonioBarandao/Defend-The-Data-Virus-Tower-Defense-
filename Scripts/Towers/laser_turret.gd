@@ -1,6 +1,8 @@
 class_name LaserTurret
 extends Node2D
 
+const CentralAudioResolver := preload("res://Scripts/Audio/audio_player_resolver.gd")
+
 signal placed(turret: LaserTurret)
 signal upgraded(turret: LaserTurret, level: int)
 
@@ -16,8 +18,9 @@ const LEVEL_RANGES := [260.0, 310.0, 450.0, 650.0, 800.0]
 const LEVEL_COOLDOWNS := [0.82, 0.62, 0.52, 0.32, 0.05]
 const LEVEL_LASER_WIDTHS := [7.0, 8.5, 10.0, 11.5, 13.0]
 const LEVEL_UPGRADE_COSTS := [0, 0, 0, 0, 0]
-const SIGNAL_BOOST_RANGE_MULTIPLIER := 1.1
-const SIGNAL_BOOST_COOLDOWN_MULTIPLIER := 0.9
+const SIGNAL_BOOST_RANGE_MULTIPLIER := 1.15
+const SIGNAL_BOOST_COOLDOWN_MULTIPLIER := 1.0 / 1.15
+const SIGNAL_BOOST_DAMAGE_MULTIPLIER := 1.15
 const LASER_COLOR := Color(0.1, 1.0, 0.72, 1.0)
 const SHOT_RETURN_DELAY := 3.0
 const RANGE_PREVIEW_SEGMENTS := 96
@@ -61,14 +64,14 @@ const LEVEL_PLATE_NODE_NAMES := [
 @export_range(0.05, 4.0, 0.01) var beam_fx_scale_multiplier := 1.0
 @export_group("")
 @export_group("Audio")
-@export var deploy_sfx_path: NodePath = ^"Audio/DeploySfx"
-@export var upgrade_sfx_path: NodePath = ^"Audio/UpgradeSfx"
-@export var upgrade_lv5_sfx_path: NodePath = ^"Audio/UpgradeLv5Sfx"
-@export var shoot_lv1_sfx_path: NodePath = ^"Audio/ShootLv1Sfx"
-@export var shoot_lv2_sfx_path: NodePath = ^"Audio/ShootLv2Sfx"
-@export var shoot_lv3_sfx_path: NodePath = ^"Audio/ShootLv3Sfx"
-@export var shoot_lv4_sfx_path: NodePath = ^"Audio/ShootLv4Sfx"
-@export var shoot_lv5_sfx_path: NodePath = ^"Audio/ShootLv5Sfx"
+@export var deploy_sfx_path: NodePath = ^"Sounds/LaserTurretDeploySfx"
+@export var upgrade_sfx_path: NodePath = ^"Sounds/LaserTurretUpgradeSfx"
+@export var upgrade_lv5_sfx_path: NodePath = ^"Sounds/LaserTurretUpgradeLv5Sfx"
+@export var shoot_lv1_sfx_path: NodePath = ^"Sounds/LaserTurretShootLv1Sfx"
+@export var shoot_lv2_sfx_path: NodePath = ^"Sounds/LaserTurretShootLv2Sfx"
+@export var shoot_lv3_sfx_path: NodePath = ^"Sounds/LaserTurretShootLv3Sfx"
+@export var shoot_lv4_sfx_path: NodePath = ^"Sounds/LaserTurretShootLv4Sfx"
+@export var shoot_lv5_sfx_path: NodePath = ^"Sounds/LaserTurretShootLv5Sfx"
 @export_group("")
 
 var _home_position := Vector2.ZERO
@@ -105,6 +108,7 @@ var _base_modulate := Color.WHITE
 var _signal_boost_active := false
 var _signal_boost_range_multiplier := SIGNAL_BOOST_RANGE_MULTIPLIER
 var _signal_boost_cooldown_multiplier := SIGNAL_BOOST_COOLDOWN_MULTIPLIER
+var _signal_boost_damage_multiplier := SIGNAL_BOOST_DAMAGE_MULTIPLIER
 
 
 func _ready() -> void:
@@ -297,6 +301,10 @@ func get_max_level() -> int:
 
 
 func get_shot_power() -> int:
+	return _get_signal_boosted_damage(LEVEL_POWERS[level - 1])
+
+
+func get_simultaneous_target_count() -> int:
 	return LEVEL_POWERS[level - 1]
 
 
@@ -339,13 +347,26 @@ func get_laser_color() -> Color:
 
 
 func set_signal_boost_active(active: bool) -> void:
-	set_signal_boost_profile(active, SIGNAL_BOOST_RANGE_MULTIPLIER, SIGNAL_BOOST_COOLDOWN_MULTIPLIER)
+	set_signal_boost_profile(
+		active,
+		SIGNAL_BOOST_RANGE_MULTIPLIER,
+		SIGNAL_BOOST_COOLDOWN_MULTIPLIER,
+		1.0,
+		SIGNAL_BOOST_DAMAGE_MULTIPLIER
+	)
 
 
-func set_signal_boost_profile(active: bool, range_multiplier: float, cooldown_multiplier: float, _hawk_speed_multiplier: float = 1.0) -> void:
+func set_signal_boost_profile(
+	active: bool,
+	range_multiplier: float,
+	cooldown_multiplier: float,
+	_hawk_speed_multiplier: float = 1.0,
+	damage_multiplier: float = SIGNAL_BOOST_DAMAGE_MULTIPLIER
+) -> void:
 	if _signal_boost_active == active:
 		_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
 		_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
+		_signal_boost_damage_multiplier = maxf(0.0, damage_multiplier)
 		_range_preview_radius = -1.0
 		_update_attack_range_preview()
 		return
@@ -353,6 +374,7 @@ func set_signal_boost_profile(active: bool, range_multiplier: float, cooldown_mu
 	_signal_boost_active = active
 	_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
 	_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
+	_signal_boost_damage_multiplier = maxf(0.0, damage_multiplier)
 	_range_preview_radius = -1.0
 	_update_attack_range_preview()
 
@@ -363,6 +385,16 @@ func get_signal_boost_range_multiplier() -> float:
 
 func get_signal_boost_cooldown_multiplier() -> float:
 	return _signal_boost_cooldown_multiplier if _signal_boost_active else 1.0
+
+
+func get_signal_boost_damage_multiplier() -> float:
+	return _signal_boost_damage_multiplier if _signal_boost_active else 1.0
+
+
+func _get_signal_boosted_damage(base_damage: int) -> int:
+	if base_damage <= 0:
+		return base_damage
+	return maxi(1, roundi(float(base_damage) * get_signal_boost_damage_multiplier()))
 
 
 func _get_signal_boost_range_multiplier() -> float:
@@ -449,7 +481,10 @@ func update_attack(delta: float, active_viruses: Array[PathFollow2D]) -> Array[P
 		_return_to_rest_state_if_not_shooting()
 		return targets
 
-	targets = _find_nearest_viruses_in_range(active_viruses, get_shot_power())
+	targets = _find_nearest_viruses_in_range(
+		active_viruses,
+		get_simultaneous_target_count()
+	)
 	if targets.is_empty():
 		_return_to_rest_state_if_not_shooting()
 		return targets
@@ -539,15 +574,15 @@ func _apply_level_visual_visibility() -> void:
 
 
 func _cache_audio_players() -> void:
-	_deploy_sfx = get_node_or_null(deploy_sfx_path) as AudioStreamPlayer
-	_upgrade_sfx = get_node_or_null(upgrade_sfx_path) as AudioStreamPlayer
-	_upgrade_lv5_sfx = get_node_or_null(upgrade_lv5_sfx_path) as AudioStreamPlayer
+	_deploy_sfx = CentralAudioResolver.resolve(self, deploy_sfx_path)
+	_upgrade_sfx = CentralAudioResolver.resolve(self, upgrade_sfx_path)
+	_upgrade_lv5_sfx = CentralAudioResolver.resolve(self, upgrade_lv5_sfx_path)
 	_shoot_sfx_players = [
-		get_node_or_null(shoot_lv1_sfx_path) as AudioStreamPlayer,
-		get_node_or_null(shoot_lv2_sfx_path) as AudioStreamPlayer,
-		get_node_or_null(shoot_lv3_sfx_path) as AudioStreamPlayer,
-		get_node_or_null(shoot_lv4_sfx_path) as AudioStreamPlayer,
-		get_node_or_null(shoot_lv5_sfx_path) as AudioStreamPlayer
+		CentralAudioResolver.resolve(self, shoot_lv1_sfx_path),
+		CentralAudioResolver.resolve(self, shoot_lv2_sfx_path),
+		CentralAudioResolver.resolve(self, shoot_lv3_sfx_path),
+		CentralAudioResolver.resolve(self, shoot_lv4_sfx_path),
+		CentralAudioResolver.resolve(self, shoot_lv5_sfx_path)
 	]
 
 
@@ -887,6 +922,7 @@ func _find_nearest_virus_in_range_excluding(
 ) -> PathFollow2D:
 	var best_target: PathFollow2D
 	var best_distance_squared := INF
+	var best_is_worm_target := false
 	var range := get_attack_range()
 	var range_squared := range * range
 
@@ -898,7 +934,16 @@ func _find_nearest_virus_in_range_excluding(
 
 		var target_position := _get_follow_target_position(follow)
 		var distance_squared := global_position.distance_squared_to(target_position)
-		if distance_squared > range_squared or distance_squared >= best_distance_squared:
+		if distance_squared > range_squared:
+			continue
+		var is_worm_target := _is_worm_boss_target(follow)
+		if best_is_worm_target and not is_worm_target:
+			continue
+		if is_worm_target and not best_is_worm_target:
+			best_target = null
+			best_distance_squared = INF
+			best_is_worm_target = true
+		if distance_squared >= best_distance_squared:
 			continue
 
 		best_target = follow
@@ -927,6 +972,12 @@ func _get_follow_target_position(follow: PathFollow2D) -> Vector2:
 		return virus.global_position
 
 	return follow.global_position
+
+
+func _is_worm_boss_target(follow: PathFollow2D) -> bool:
+	return is_instance_valid(follow) \
+		and follow.has_meta("worm_boss_part") \
+		and bool(follow.get_meta("worm_boss_part"))
 
 
 func _get_game_root() -> Node:

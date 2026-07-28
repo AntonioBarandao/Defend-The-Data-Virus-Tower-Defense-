@@ -27,9 +27,17 @@ func _play_damage_flash() -> void:
 	if _damage_flash_tween != null:
 		_damage_flash_tween.kill()
 
-	self_modulate = damage_flash_color
+	set_visual_self_modulate(damage_flash_color)
 	_damage_flash_tween = create_tween()
-	_damage_flash_tween.tween_property(self, "self_modulate", Color.WHITE, damage_flash_seconds).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_damage_flash_tween.set_parallel(true)
+	for visual in _get_visual_tracks():
+		_damage_flash_tween.tween_property(
+			visual,
+			"self_modulate",
+			Color.WHITE,
+			damage_flash_seconds
+		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_damage_flash_tween.set_parallel(false)
 	_damage_flash_tween.tween_callback(func() -> void:
 		_damage_flash_tween = null
 	)
@@ -39,4 +47,4 @@ func _clear_damage_flash() -> void:
 	if _damage_flash_tween != null:
 		_damage_flash_tween.kill()
 		_damage_flash_tween = null
-	self_modulate = Color.WHITE
+	set_visual_self_modulate(Color.WHITE)

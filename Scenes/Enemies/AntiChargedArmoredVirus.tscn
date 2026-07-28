@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Enemies/anti_charged_armored_virus.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/BotnetNode/AntiCharge/ArmoredVirusAntiCharged.png" id="2_idle"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/ArmoredVirus/ArmoredVirusSpriteFrames.tres" id="3_armor_destroy"]
+[ext_resource type="PackedScene" path="res://Scenes/Enemies/AntiChargedRedVirus.tscn" id="4_red"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_anti_armored"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_idle")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 1.0
+}]
+
+[node name="AntiChargedArmoredVirus" type="AnimatedSprite2D" groups=["ANTI_CHARGED_VIRUS", "EVOLVED_VIRUS"]]
+scale = Vector2(0.18, 0.18)
+sprite_frames = SubResource("SpriteFrames_anti_armored")
+animation = &"idle"
+autoplay = "idle"
+script = ExtResource("1_script")
+damage_flash_enabled = true
+max_health = 30
+cyberbuck_reward = 400
+destroy_sprite_path = NodePath("ArmorDestroyAnimation")
+destroy_sfx_path = NodePath("Sounds/ArmoredVirusDestroySfx")
+red_virus_scene = ExtResource("4_red")
+red_virus_spawn_scale = Vector2(0.2, 0.2)
+transformed_virus_name = "SpawnedAntiChargedRedVirus"
+
+[node name="ArmorDestroyAnimation" type="AnimatedSprite2D" parent="."]
+visible = false
+scale = Vector2(0.666667, 0.666667)
+sprite_frames = ExtResource("3_armor_destroy")
+animation = &"armor_destroy"

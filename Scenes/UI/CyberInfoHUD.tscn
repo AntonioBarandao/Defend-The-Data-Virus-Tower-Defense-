@@ -1,0 +1,1379 @@
+[gd_scene format=3 uid="uid://m1elnce84sey"]
+
+[ext_resource type="Script" uid="uid://jug6lrfxwdyv" path="res://Scripts/UI/cyber_info_hud.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/CyberInfoCard.tscn" id="2_card"]
+[ext_resource type="Resource" uid="uid://bli5a267t3vie" path="res://Resources/CyberInfo/CyberInfoCatalog.tres" id="3_catalog"]
+[ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="4_heading_font"]
+[ext_resource type="FontFile" uid="uid://cc0f3h2ru1hiv" path="res://assets/Fonts/space-armor/SPACE ARMOR.otf" id="5_body_font"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/CyberGuardian.tres" id="6_cyber_guardian"]
+[ext_resource type="Texture2D" uid="uid://bg30biooew5ch" path="res://assets/Towers/CyberGuardian/Display_CyberGuardian.png" id="7_cvnjm"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/LaserTurret.tres" id="7_laser_turret"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/IDSScanner.tres" id="8_ids_scanner"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/EDRHunter.tres" id="9_edr_hunter"]
+[ext_resource type="Texture2D" uid="uid://boaiqtkopvk4n" path="res://assets/Towers/Laser-Turret/Plates/Laser_Turret_LV1_Plate.png" id="9_uoqtx"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/HoneypotProduction.tres" id="10_honeypot"]
+[ext_resource type="Texture2D" uid="uid://c8of0u74k2p15" path="res://assets/Towers/IDS_Scanner/IDS_Scanner_test_transparent.png" id="11_dy1lc"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/IPSIntrusion.tres" id="11_ips"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/SIEMHawk.tres" id="12_siem"]
+[ext_resource type="Texture2D" uid="uid://bwsgcf3yixwrq" path="res://assets/Towers/EDR_Hunter/Display_EDR_Hunter_LV1.png" id="13_0d8td"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Towers/XDRMech.tres" id="13_xdr"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/RedVirus.tres" id="14_red"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/ArmoredVirus.tres" id="15_armored"]
+[ext_resource type="Texture2D" uid="uid://q8if1fggrajq" path="res://assets/Towers/Honeypot_Production/Honeypot_Production_LV1.png" id="15_uoqtx"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/MutantVirus.tres" id="16_mutant"]
+[ext_resource type="Texture2D" uid="uid://ppmwosf12rw" path="res://assets/Towers/IPS_Intrusion/IPS_Intrusion_LV1.png" id="17_jwf3q"]
+[ext_resource type="Resource" uid="uid://drdjysv880xa8" path="res://Resources/CyberInfo/Entries/Viruses/TrojanHorse.tres" id="17_trojan"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/Adware.tres" id="18_adware"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/Spyware.tres" id="19_spyware"]
+[ext_resource type="Texture2D" uid="uid://bqdusmrw3lfhu" path="res://assets/Towers/SIEM_Hawk/SIEM_Hawk_LV1.png" id="19_wpgrk"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/Ransomware.tres" id="20_ransomware"]
+[ext_resource type="Texture2D" uid="uid://buhhmlishb4q0" path="res://assets/Towers/XDR_Mech/Display_XDR_Mech.png" id="21_6uym6"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/ZombieNode.tres" id="21_zombie"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/BotnetNode.tres" id="22_botnet"]
+[ext_resource type="Texture2D" uid="uid://dc8lak5yodm7w" path="res://assets/LoadingScreen/RedVirus.png" id="23_ryu87"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/CyberWorm.tres" id="23_worm"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/PhishingEmail.tres" id="24_phishing"]
+[ext_resource type="Resource" path="res://Resources/CyberInfo/Entries/Viruses/AntiCyberguardian.tres" id="25_anti_guardian"]
+[ext_resource type="Texture2D" uid="uid://bhvyq3armvrd" path="res://assets/Enemies/ArmoredVirus/ArmoredVirus_Sprite.png" id="25_x77jg"]
+[ext_resource type="Texture2D" uid="uid://cqvms7mutantv" path="res://assets/Enemies/MutantVirus/MutantVirus_Sprite.png" id="27_q504g"]
+[ext_resource type="Texture2D" uid="uid://b1mc5x8h7h85k" path="res://assets/Enemies/TrojanHorse/Horse_Move/Horse_Move_atlas_30fps.png" id="29_wufm8"]
+[ext_resource type="Texture2D" uid="uid://5xrddehgy3be" path="res://assets/Enemies/Adware/Adware_Sprite.png" id="31_4apei"]
+[ext_resource type="Texture2D" uid="uid://b408qvpb23icx" path="res://assets/Enemies/Spyware/Spyware_Sprite.png" id="33_wq25m"]
+[ext_resource type="Texture2D" uid="uid://boljmje447wd6" path="res://assets/Enemies/Ransomware/RansomwareFrontHead.png" id="35_8a327"]
+[ext_resource type="Texture2D" uid="uid://c3k6hkpmphig5" path="res://assets/Enemies/ZombieNode/Levels/ZombieNodeLV1.png" id="37_xwkao"]
+[ext_resource type="Texture2D" uid="uid://l8v876m3felm" path="res://assets/Enemies/BotnetNode/Levels/BotnetNodeLV1.png" id="39_ogx7b"]
+[ext_resource type="Texture2D" uid="uid://cvxw2a0gygqhb" path="res://assets/Enemies/WormBoss/WormHeadStatic.png" id="41_4oxiq"]
+[ext_resource type="Texture2D" uid="uid://bnvl32sdm0in7" path="res://assets/UI/CyberInfo/PhishingEmail.png" id="43_yhkyv"]
+[ext_resource type="Texture2D" uid="uid://c1a7phqtkaeey" path="res://assets/Enemies/AntiCyberguardian/Animations/AntiCyberguardianAbilityIdleAtlas.webp" id="45_jrcmf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_panel"]
+bg_color = Color(0.012, 0.022, 0.038, 0.985)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.34, 0.78, 1, 0.95)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.72)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_close"]
+bg_color = Color(0.25, 0.035, 0.05, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_close_hover"]
+bg_color = Color(0.48, 0.045, 0.07, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.68, 0.28, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tab"]
+bg_color = Color(0.045, 0.07, 0.11, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.28, 0.4, 0.56, 0.85)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tower_selected"]
+bg_color = Color(0.035, 0.19, 0.31, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.16, 0.72, 1, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_virus_selected"]
+bg_color = Color(0.27, 0.035, 0.06, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dy1lc"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.16, 0.72, 1, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0d8td"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.16, 0.72, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2ao6i"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.16, 0.72, 1, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jwf3q"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.16, 0.72, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wpgrk"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.16, 0.72, 1, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6uym6"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.16, 0.72, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ryu87"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.16, 0.72, 1, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x77jg"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.16, 0.72, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q504g"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.16, 0.72, 1, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wufm8"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.16, 0.72, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4apei"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.16, 0.72, 1, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wq25m"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.16, 0.72, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8a327"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.16, 0.72, 1, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xwkao"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.16, 0.72, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ogx7b"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.16, 0.72, 1, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4oxiq"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.16, 0.72, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yhkyv"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.2, 0.25, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jrcmf"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xkiaw"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.2, 0.25, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_llg3i"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jf480"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.2, 0.25, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wp0v4"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k681y"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.2, 0.25, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_omg4h"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="AtlasTexture" id="Atlas_base"]
+atlas = ExtResource("29_wufm8")
+region = Rect2(0, 0, 720, 720)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qpfar"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.2, 0.25, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3r4r2"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6c0ni"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.2, 0.25, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nmq1l"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wn3ab"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.2, 0.25, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sjhhx"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uda4p"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.2, 0.25, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3tah2"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_181fm"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.2, 0.25, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v8cjs"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7nitw"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.2, 0.25, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nkaku"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_57e8f"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.2, 0.25, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cadb6"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_83ffk"]
+bg_color = Color(0.025, 0.038, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.2, 0.25, 0.72)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fhrhx"]
+bg_color = Color(0.008, 0.014, 0.025, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="AtlasTexture" id="Atlas_anti"]
+atlas = ExtResource("45_jrcmf")
+region = Rect2(0, 0, 512, 512)
+
+[node name="CyberInfoHUD" type="CanvasLayer" unique_id=1205340101]
+layer = 4000
+script = ExtResource("1_script")
+catalog = ExtResource("3_catalog")
+
+[node name="Root" type="Control" parent="." unique_id=1623231751]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DimOverlay" type="ColorRect" parent="Root" unique_id=287847179]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.022, 0.035, 0.88)
+
+[node name="Panel" type="PanelContainer" parent="Root" unique_id=1976270649]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 52.0
+offset_top = 40.0
+offset_right = -52.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBox_panel")
+
+[node name="Margin" type="MarginContainer" parent="Root/Panel" unique_id=2012308995]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 26
+
+[node name="Layout" type="VBoxContainer" parent="Root/Panel/Margin" unique_id=656277119]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Header" type="HBoxContainer" parent="Root/Panel/Margin/Layout" unique_id=40179258]
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Root/Panel/Margin/Layout/Header" unique_id=993042230]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.91, 0.97, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.08, 0.4, 0.62, 0.8)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_fonts/font = ExtResource("4_heading_font")
+theme_override_font_sizes/font_size = 42
+text = "CYBER-INFO  /  TOWERS"
+vertical_alignment = 1
+
+[node name="CloseButton" type="Button" parent="Root/Panel/Margin/Layout/Header" unique_id=2054915136]
+custom_minimum_size = Vector2(58, 52)
+layout_mode = 2
+tooltip_text = "Close Cyber-Info"
+theme_override_colors/font_color = Color(1, 0.92, 0.92, 1)
+theme_override_fonts/font = ExtResource("5_body_font")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBox_close")
+theme_override_styles/pressed = SubResource("StyleBox_close_hover")
+theme_override_styles/hover = SubResource("StyleBox_close_hover")
+text = "X"
+
+[node name="HeaderDivider" type="ColorRect" parent="Root/Panel/Margin/Layout" unique_id=1259301840]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.25, 0.58, 0.76, 0.72)
+
+[node name="Tabs" type="HBoxContainer" parent="Root/Panel/Margin/Layout" unique_id=1654147134]
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TowerTab" type="Button" parent="Root/Panel/Margin/Layout/Tabs" unique_id=1450865002]
+custom_minimum_size = Vector2(240, 54)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.94, 1, 1)
+theme_override_fonts/font = ExtResource("5_body_font")
+theme_override_font_sizes/font_size = 19
+theme_override_styles/normal = SubResource("StyleBox_tab")
+theme_override_styles/normal_mirrored = SubResource("StyleBox_tower_selected")
+theme_override_styles/pressed = SubResource("StyleBox_tower_selected")
+theme_override_styles/hover = SubResource("StyleBox_tower_selected")
+theme_override_styles/hover_pressed = SubResource("StyleBox_tower_selected")
+toggle_mode = true
+button_pressed = true
+text = "TOWERS  (8)"
+
+[node name="VirusTab" type="Button" parent="Root/Panel/Margin/Layout/Tabs" unique_id=471315972]
+custom_minimum_size = Vector2(240, 54)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.86, 1)
+theme_override_fonts/font = ExtResource("5_body_font")
+theme_override_font_sizes/font_size = 19
+theme_override_styles/normal = SubResource("StyleBox_tab")
+theme_override_styles/normal_mirrored = SubResource("StyleBox_virus_selected")
+theme_override_styles/pressed = SubResource("StyleBox_virus_selected")
+theme_override_styles/hover = SubResource("StyleBox_virus_selected")
+theme_override_styles/hover_pressed = SubResource("StyleBox_virus_selected")
+toggle_mode = true
+text = "VIRUSES (12)"
+
+[node name="HintLabel" type="Label" parent="Root/Panel/Margin/Layout/Tabs" unique_id=600377385]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.5, 0.62, 0.73, 1)
+theme_override_fonts/font = ExtResource("4_heading_font")
+theme_override_font_sizes/font_size = 18
+text = "Use arrows on variant cards to inspect evolved forms."
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="Root/Panel/Margin/Layout" unique_id=791609629]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Pages" type="VBoxContainer" parent="Root/Panel/Margin/Layout/Scroll" unique_id=1340835121]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 30
+
+[node name="TowerSection" type="VBoxContainer" parent="Root/Panel/Margin/Layout/Scroll/Pages" unique_id=1231439161]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SectionLabel" type="Label" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection" unique_id=1152347931]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.36, 0.82, 1, 1)
+theme_override_fonts/font = ExtResource("4_heading_font")
+theme_override_font_sizes/font_size = 24
+text = "TOWERS"
+
+[node name="TowerGrid" type="GridContainer" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection" unique_id=2000738015]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 18
+theme_override_constants/v_separation = 18
+columns = 4
+
+[node name="CyberGuardianCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid" unique_id=1442429086 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dy1lc")
+entry = ExtResource("6_cyber_guardian")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/CyberGuardianCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_0d8td")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/CyberGuardianCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("7_cvnjm")
+
+[node name="Slideshow" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/CyberGuardianCard/Margin/Content" index="1"]
+visible = false
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/CyberGuardianCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 1  Defender"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/CyberGuardianCard/Margin/Content" index="2"]
+text = "Cyber Guardian"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/CyberGuardianCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(0.31120002, 0.77040005, 1, 1)
+text = "MODE / SUPPORT TOWER"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/CyberGuardianCard/Margin/Content" index="5"]
+text = "A free, unique guardian with three roles. Defender attacks visible threats. Signal Boost temporarily improves every tower's range and attack speed. Firewall places a timed path barrier that damages and burns viruses crossing it."
+
+[node name="LaserTurretCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid" unique_id=2023553468 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_2ao6i")
+entry = ExtResource("7_laser_turret")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/LaserTurretCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_jwf3q")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/LaserTurretCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("9_uoqtx")
+
+[node name="Slideshow" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/LaserTurretCard/Margin/Content" index="1"]
+visible = false
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/LaserTurretCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 1  LV1"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/LaserTurretCard/Margin/Content" index="2"]
+text = "Laser Turret"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/LaserTurretCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(0.31120002, 0.77040005, 1, 1)
+text = "OFFENSE TOWER"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/LaserTurretCard/Margin/Content" index="5"]
+text = "A focused offense tower with five levels. Upgrades increase damage, range, and firing speed. Its rotating turret tracks targets while the matching base plate remains stationary."
+
+[node name="IDSScannerCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid" unique_id=1514349349 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wpgrk")
+entry = ExtResource("8_ids_scanner")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IDSScannerCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_6uym6")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IDSScannerCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("11_dy1lc")
+
+[node name="Slideshow" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IDSScannerCard/Margin/Content" index="1"]
+visible = false
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IDSScannerCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 1  Camo Mode"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IDSScannerCard/Margin/Content" index="2"]
+text = "IDS Scanner"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IDSScannerCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(0.31120002, 0.77040005, 1, 1)
+text = "SUPPORT / SCANNER TOWER"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IDSScannerCard/Margin/Content" index="5"]
+text = "Switches among Camo, Burner, Bounty, Quarantine, and Nullifier modes as upgrades unlock them. It can reveal cloaks, damage, earn Cyber Bucks, slow threats, or temporarily suppress special defenses inside its radius."
+
+[node name="EDRHunterCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid" unique_id=1886258818 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ryu87")
+entry = ExtResource("9_edr_hunter")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/EDRHunterCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_x77jg")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/EDRHunterCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("13_0d8td")
+
+[node name="Slideshow" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/EDRHunterCard/Margin/Content" index="1"]
+visible = false
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/EDRHunterCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 1  LV1"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/EDRHunterCard/Margin/Content" index="2"]
+text = "EDR Hunter"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/EDRHunterCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(0.31120002, 0.77040005, 1, 1)
+text = "GLOBAL OFFENSE TOWER"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/EDRHunterCard/Margin/Content" index="5"]
+text = "A long-range marksman that can attack visible viruses anywhere on the map. Higher levels gain new attack visuals, and LV4 deploys a stationary patrol drone with its own rapid low-damage shot."
+
+[node name="HoneypotProductionCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid" unique_id=1645133709 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_q504g")
+entry = ExtResource("10_honeypot")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/HoneypotProductionCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_wufm8")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/HoneypotProductionCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("15_uoqtx")
+
+[node name="Slideshow" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/HoneypotProductionCard/Margin/Content" index="1"]
+visible = false
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/HoneypotProductionCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 1  LV1"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/HoneypotProductionCard/Margin/Content" index="2"]
+text = "Honeypot Production"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/HoneypotProductionCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(0.31120002, 0.77040005, 1, 1)
+text = "CYBER BUCKS / KNOWLEDGE TOWER"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/HoneypotProductionCard/Margin/Content" index="5"]
+text = "Generates Cyber Bucks while viruses are inside its radius and stores them until collected. Ten nearby viruses overload it temporarily. Higher levels improve production and storage, with Knowledge Point production unlocking at LV3."
+
+[node name="IPSIntrusionCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid" unique_id=63714036 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4apei")
+entry = ExtResource("11_ips")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IPSIntrusionCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_wq25m")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IPSIntrusionCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("17_jwf3q")
+
+[node name="Slideshow" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IPSIntrusionCard/Margin/Content" index="1"]
+visible = false
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IPSIntrusionCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 1  LV1"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IPSIntrusionCard/Margin/Content" index="2"]
+text = "IPS Intrusion"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IPSIntrusionCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(0.31120002, 0.77040005, 1, 1)
+text = "TRAP / OFFENSE TOWER"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IPSIntrusionCard/Margin/Content" index="5"]
+text = "Manufactures non-overlapping spikes on the nearest valid pathway. Spikes can hit camouflaged viruses, gain durability with upgrades, and connected higher-level spikes create damaging electricity between them."
+
+[node name="SIEMHawkCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid" unique_id=1805927015 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_8a327")
+entry = ExtResource("12_siem")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/SIEMHawkCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_xwkao")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/SIEMHawkCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("19_wpgrk")
+
+[node name="Slideshow" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/SIEMHawkCard/Margin/Content" index="1"]
+visible = false
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/SIEMHawkCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 1  LV1"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/SIEMHawkCard/Margin/Content" index="2"]
+text = "SIEM Hawk"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/SIEMHawkCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(0.31120002, 0.77040005, 1, 1)
+text = "KNOWLEDGE TOWER"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/SIEMHawkCard/Margin/Content" index="5"]
+text = "Dispatches from its headquarters to scan viruses in a forward arc and collect temporary Knowledge Points. Landing deposits those points into the player's Knowledge Level. LV2 and above can also attack while dispatched or frozen."
+
+[node name="XDRMechCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid" unique_id=1111538507 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ogx7b")
+entry = ExtResource("13_xdr")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/XDRMechCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_4oxiq")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/XDRMechCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("21_6uym6")
+
+[node name="Slideshow" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/XDRMechCard/Margin/Content" index="1"]
+visible = false
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/XDRMechCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 1  LV1 Chassis"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/XDRMechCard/Margin/Content" index="2"]
+text = "XDR Mech"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/XDRMechCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(0.31120002, 0.77040005, 1, 1)
+text = "MOBILE OFFENSE TOWER"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/XDRMechCard/Margin/Content" index="5"]
+text = "A destination-driven mobile mech with level-specific claw, cannon, and minigun attacks. Its movement respects the protected virus path. At LV5, a blocked mech can use its jetpack to clear the path barrier and continue toward its destination."
+
+[node name="VirusSection" type="VBoxContainer" parent="Root/Panel/Margin/Layout/Scroll/Pages" unique_id=1853891194]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SectionLabel" type="Label" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection" unique_id=1701732753]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.28, 0.34, 1)
+theme_override_fonts/font = ExtResource("4_heading_font")
+theme_override_font_sizes/font_size = 24
+text = "VIRUSES"
+
+[node name="VirusGrid" type="GridContainer" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection" unique_id=708027400]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 18
+theme_override_constants/v_separation = 18
+columns = 4
+
+[node name="RedVirusCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid" unique_id=1437412740 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_yhkyv")
+entry = ExtResource("14_red")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RedVirusCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_jrcmf")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RedVirusCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("23_ryu87")
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RedVirusCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 2  Standard"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RedVirusCard/Margin/Content" index="2"]
+text = "Red Virus"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RedVirusCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(1, 0.344, 0.385, 1)
+text = "VIRUS / ANTI-CHARGED VARIANT"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RedVirusCard/Margin/Content" index="5"]
+text = "The standard pathway threat. It is fast to deploy in groups but has low health. Botnet minions can convert it into an Anti-Charged form with double its normal health."
+
+[node name="ArmoredVirusCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid" unique_id=978989091 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_xkiaw")
+entry = ExtResource("15_armored")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ArmoredVirusCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_llg3i")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ArmoredVirusCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("25_x77jg")
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ArmoredVirusCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 2  Armored"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ArmoredVirusCard/Margin/Content" index="2"]
+text = "Armored Virus"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ArmoredVirusCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(1, 0.344, 0.385, 1)
+text = "ARMORED VIRUS / ANTI-CHARGED VARIANT"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ArmoredVirusCard/Margin/Content" index="5"]
+text = "Carries a durable armor layer. Breaking the armor plays its destruction sequence and releases a standard Red Virus onto the path. Its Anti-Charged form doubles the armored health."
+
+[node name="MutantVirusCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid" unique_id=1872783072 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_jf480")
+entry = ExtResource("16_mutant")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/MutantVirusCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_wp0v4")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/MutantVirusCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("27_q504g")
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/MutantVirusCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 2  Mutant"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/MutantVirusCard/Margin/Content" index="2"]
+text = "Mutant Virus"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/MutantVirusCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(1, 0.344, 0.385, 1)
+text = "EVOLVED VIRUS / ANTI-CHARGED VARIANT"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/MutantVirusCard/Margin/Content" index="5"]
+text = "An evolved threat with more health and a larger Cyber Buck reward. Zombie minions can transform stopped Red Viruses into Mutants, and Botnet minions can produce a tougher Anti-Charged variant."
+
+[node name="TrojanHorseCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid" unique_id=1758729912 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_k681y")
+entry = ExtResource("17_trojan")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/TrojanHorseCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_omg4h")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/TrojanHorseCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = SubResource("Atlas_base")
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/TrojanHorseCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 2  Base Form"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/TrojanHorseCard/Margin/Content" index="2"]
+text = "Trojan Horse"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/TrojanHorseCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(1, 0.344, 0.385, 1)
+text = "CAMO MINIBOSS VIRUS"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/TrojanHorseCard/Margin/Content" index="5"]
+text = "A slow miniboss that transforms into a cloaked state after deployment. Standard towers cannot target it while cloaked. Camo scanning reveals it; Nullifier only permits attacks while the Trojan remains inside that scanner's radius."
+
+[node name="AdwareCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid" unique_id=135864278 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qpfar")
+entry = ExtResource("18_adware")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AdwareCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_3r4r2")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AdwareCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("31_4apei")
+
+[node name="Slideshow" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AdwareCard/Margin/Content" index="1"]
+visible = false
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AdwareCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 1  Adware"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AdwareCard/Margin/Content" index="2"]
+text = "Adware"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AdwareCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(1, 0.344, 0.385, 1)
+text = "POPUP MINIBOSS VIRUS"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AdwareCard/Margin/Content" index="5"]
+text = "Covers deployed towers with interactive popup ads at timed intervals, up to five at once. The ads must be closed with their red buttons before Adware can normally take damage; Nullifier can suppress that protection in its radius."
+
+[node name="SpywareCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid" unique_id=646706772 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_6c0ni")
+entry = ExtResource("19_spyware")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/SpywareCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_nmq1l")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/SpywareCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("33_wq25m")
+
+[node name="Slideshow" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/SpywareCard/Margin/Content" index="1"]
+visible = false
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/SpywareCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 1  Spyware"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/SpywareCard/Margin/Content" index="2"]
+text = "Spyware"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/SpywareCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(1, 0.344, 0.385, 1)
+text = "KNOWLEDGE HIJACKER VIRUS"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/SpywareCard/Margin/Content" index="5"]
+text = "Leaves the pathway near a Knowledge-producing tower, walks directly to it, and hijacks it with a black lock effect. While attached, it drains Knowledge Points every second and becomes a high-priority target."
+
+[node name="RansomwareCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid" unique_id=494749279 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wn3ab")
+entry = ExtResource("20_ransomware")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RansomwareCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_sjhhx")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RansomwareCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("35_8a327")
+
+[node name="Slideshow" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RansomwareCard/Margin/Content" index="1"]
+visible = false
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RansomwareCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 1  Ransomware"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RansomwareCard/Margin/Content" index="2"]
+text = "Ransomware"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RansomwareCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(1, 0.344, 0.385, 1)
+text = "OFF-MAP INTERRUPTION / MINIBOSS"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RansomwareCard/Margin/Content" index="5"]
+text = "Locks a targeted tower behind a ransom timer and disables its controls. Pay the ransom or destroy the low-priority Ransomware before time expires; otherwise the locked tower or Cyber Bucks are lost."
+
+[node name="ZombieNodeCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid" unique_id=228902284 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_uda4p")
+entry = ExtResource("21_zombie")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ZombieNodeCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_3tah2")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ZombieNodeCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("37_xwkao")
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ZombieNodeCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 3  LV1"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ZombieNodeCard/Margin/Content" index="2"]
+text = "Zombie Node"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ZombieNodeCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(1, 0.344, 0.385, 1)
+text = "PROGRESSIVE BOSS VIRUS"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ZombieNodeCard/Margin/Content" index="5"]
+text = "A stationary boss that evolves with later waves and periodically activates to deploy faster minions from separate markers. Its final form becomes targetable, gains a large health bar, and accelerates minion production as its health falls."
+
+[node name="BotnetNodeCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid" unique_id=853668180 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_181fm")
+entry = ExtResource("22_botnet")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/BotnetNodeCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_v8cjs")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/BotnetNodeCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("39_ogx7b")
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/BotnetNodeCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 3  LV1"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/BotnetNodeCard/Margin/Content" index="2"]
+text = "Botnet Node"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/BotnetNodeCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(1, 0.344, 0.385, 1)
+text = "PROGRESSIVE BOSS VIRUS"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/BotnetNodeCard/Margin/Content" index="5"]
+text = "A late-game progressive boss that evolves through three levels. It deploys airborne minions over the path; their red scan spotlight can transform Red, Armored, and Mutant viruses into double-health Anti-Charged forms."
+
+[node name="CyberWormCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid" unique_id=1505620480 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_7nitw")
+entry = ExtResource("23_worm")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/CyberWormCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_nkaku")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/CyberWormCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("41_4oxiq")
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/CyberWormCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 3  Shielded Head"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/CyberWormCard/Margin/Content" index="2"]
+text = "Cyber Worm"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/CyberWormCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(1, 0.344, 0.385, 1)
+text = "PRIORITY BOSS VIRUS"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/CyberWormCard/Margin/Content" index="5"]
+text = "A segmented wave boss that emerges gradually from its tunnel. Towers prioritize the closest worm segment, but only the five body sections take damage. Its head and tail are shielded unless Nullifier suppresses that defense in range."
+
+[node name="PhishingEmailCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid" unique_id=1568787914 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_57e8f")
+entry = ExtResource("24_phishing")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/PhishingEmailCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_cadb6")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/PhishingEmailCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = ExtResource("43_yhkyv")
+
+[node name="Slideshow" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/PhishingEmailCard/Margin/Content" index="1"]
+visible = false
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/PhishingEmailCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 1  Phishing Email"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/PhishingEmailCard/Margin/Content" index="2"]
+text = "Phishing Email"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/PhishingEmailCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(1, 0.344, 0.385, 1)
+text = "QUESTION INTERRUPTION VIRUS"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/PhishingEmailCard/Margin/Content" index="5"]
+text = "Corrupts an end-of-wave cybersecurity question by replacing a wrong option with a subtly misspelled copy of the correct answer. Choosing the decoy triggers a per-letter font glitch and releases a large virus surge."
+
+[node name="AntiCyberguardianCard" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid" unique_id=414879508 instance=ExtResource("2_card")]
+process_mode = 3
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_83ffk")
+entry = ExtResource("25_anti_guardian")
+
+[node name="ImageFrame" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AntiCyberguardianCard/Margin/Content/ImageAspect" index="0"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_fhrhx")
+
+[node name="DisplayImage" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AntiCyberguardianCard/Margin/Content/ImageAspect/ImageFrame" index="0"]
+texture = SubResource("Atlas_anti")
+
+[node name="Slideshow" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AntiCyberguardianCard/Margin/Content" index="1"]
+visible = false
+
+[node name="SlideLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AntiCyberguardianCard/Margin/Content/Slideshow" index="1"]
+text = "1 / 1  Ability Active"
+
+[node name="NameLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AntiCyberguardianCard/Margin/Content" index="2"]
+text = "Anti-Cyberguardian"
+
+[node name="TypeLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AntiCyberguardianCard/Margin/Content" index="3"]
+theme_override_colors/font_color = Color(1, 0.344, 0.385, 1)
+text = "FINAL BOSS SUPPORT VIRUS"
+
+[node name="DescriptionLabel" parent="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AntiCyberguardianCard/Margin/Content" index="5"]
+text = "The wave-25 support boss mounts the Cyber Worm and continuously Anti-Charges eligible viruses while it remains alive. Its link makes every Worm segment absolutely invincible, even inside Nullifier range, until the 500-integrity LV3 Botnet is destroyed."
+
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/CyberGuardianCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/LaserTurretCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IDSScannerCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/EDRHunterCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/HoneypotProductionCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/IPSIntrusionCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/SIEMHawkCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/TowerSection/TowerGrid/XDRMechCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RedVirusCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ArmoredVirusCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/MutantVirusCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/TrojanHorseCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AdwareCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/SpywareCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/RansomwareCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/ZombieNodeCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/BotnetNodeCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/CyberWormCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/PhishingEmailCard"]
+[editable path="Root/Panel/Margin/Layout/Scroll/Pages/VirusSection/VirusGrid/AntiCyberguardianCard"]

@@ -1,0 +1,410 @@
+[gd_scene format=3 uid="uid://borxrlv45s1mo"]
+
+[ext_resource type="Script" uid="uid://45t3pdq5hsi8" path="res://Scripts/Towers/xdr_mech.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dbupchutd72d2" path="res://assets/Towers/XDR_Mech/XDR_Mech_LV1_Head_Idle.png" id="2_lv1_head"]
+[ext_resource type="SpriteFrames" uid="uid://dobqqrmyu77gu" path="res://assets/Towers/XDR_Mech/XDRMechLegSpriteFrames.tres" id="3_leg"]
+[ext_resource type="Texture2D" uid="uid://b8s0lfnnh446y" path="res://assets/Towers/XDR_Mech/XDR_Mech_LV5_Head_Idle.png" id="4_lv5_head"]
+[ext_resource type="SpriteFrames" uid="uid://lb5s6oygnvt7" path="res://assets/Towers/XDR_Mech/XDRMechLV5LegSpriteFrames.tres" id="5_lv5_leg"]
+[ext_resource type="Texture2D" uid="uid://bw2t1wrip27hr" path="res://assets/Towers/XDR_Mech/XDR_Mech_LV2_Head_Idle.png" id="6_lv2_head"]
+[ext_resource type="Texture2D" uid="uid://cm3ylfr24qt6l" path="res://assets/Towers/XDR_Mech/XDR_Mech_LV3_Head_Idle.png" id="7_lv3_head"]
+[ext_resource type="Texture2D" uid="uid://cm5ik760etf2y" path="res://assets/Towers/XDR_Mech/XDR_Mech_LV4_Head_Idle.png" id="8_lv4_head"]
+[ext_resource type="SpriteFrames" uid="uid://f35susjeujug" path="res://assets/Towers/XDR_Mech/Animations/Hit/XDRMechLV1HitSpriteFrames.tres" id="9_lv1_hit"]
+[ext_resource type="SpriteFrames" uid="uid://c07gm2mimldnm" path="res://assets/Towers/XDR_Mech/Animations/Hit/XDRMechLV2HitSpriteFrames.tres" id="10_lv2_hit"]
+[ext_resource type="SpriteFrames" uid="uid://dlnp0sclmbofj" path="res://assets/Towers/XDR_Mech/Animations/Hit/XDRMechLV3HitSpriteFrames.tres" id="11_lv3_hit"]
+[ext_resource type="SpriteFrames" uid="uid://d3136xes3mimx" path="res://assets/Towers/XDR_Mech/Animations/Hit/XDRMechLV4HitSpriteFrames.tres" id="12_lv4_hit"]
+[ext_resource type="SpriteFrames" uid="uid://mg6vp3tiwqm3" path="res://assets/Towers/XDR_Mech/Animations/Hit/XDRMechLV5HitSpriteFrames.tres" id="13_lv5_hit"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_right_arm"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_left_arm"]
+
+[sub_resource type="Gradient" id="Gradient_cannon_trail"]
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(0.05, 0.35, 1, 0, 0.08, 0.64, 1, 0.48, 0.75, 0.96, 1, 0.95)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_minigun_projectile"]
+size = Vector2(96, 56)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xdr_movement"]
+size = Vector2(78, 78)
+
+[node name="XDR_Mech" type="Node2D" unique_id=1847974583 groups=["Defender", "OFFENSE_TOWER"]]
+z_index = 82
+scale = Vector2(0.36, 0.36)
+script = ExtResource("1_script")
+
+[node name="RightArmHitbox" type="CollisionShape2D" parent="." unique_id=266580328]
+position = Vector2(-219.44453, 197.22237)
+scale = Vector2(10, 10)
+shape = SubResource("RectangleShape2D_right_arm")
+debug_color = Color(0.90526885, 3.3450872e-06, 1.1551381e-06, 0.41960785)
+
+[node name="LeftArmHitbox" type="CollisionShape2D" parent="." unique_id=1465056782]
+position = Vector2(227.77776, 197.22237)
+scale = Vector2(10, 10)
+shape = SubResource("RectangleShape2D_left_arm")
+debug_color = Color(0.90526885, 3.3450872e-06, 1.1551381e-06, 0.41960785)
+
+[node name="Level2CannonOrigin" type="Marker2D" parent="." unique_id=1779846082]
+editor_description = "Editable muzzle position for the level 2 cannon arm."
+position = Vector2(-219.44453, 197.22237)
+gizmo_extents = 20.0
+
+[node name="Level3LeftCannonOrigin" type="Marker2D" parent="." unique_id=2042321856]
+editor_description = "Editable muzzle position for the level 3 left cannon."
+position = Vector2(-219.44453, 197.22237)
+gizmo_extents = 20.0
+
+[node name="Level3RightCannonOrigin" type="Marker2D" parent="." unique_id=2026522386]
+editor_description = "Editable muzzle position for the level 3 right cannon."
+position = Vector2(227.77776, 197.22237)
+gizmo_extents = 20.0
+
+[node name="Level4MinigunOrigin" type="Marker2D" parent="." unique_id=1098448600]
+editor_description = "Editable muzzle position for the level 4 minigun."
+position = Vector2(-219.44453, 197.22237)
+gizmo_extents = 20.0
+
+[node name="Level4CannonOrigin" type="Marker2D" parent="." unique_id=1053433931]
+editor_description = "Editable muzzle position for the level 4 opposite-arm cannon."
+position = Vector2(227.77776, 197.22237)
+gizmo_extents = 20.0
+
+[node name="Level4MinigunMuzzleVFX" type="Node2D" parent="." unique_id=46304489]
+editor_description = "Editable curved blue muzzle accents for the level 4 minigun volley."
+visible = false
+z_index = 95
+position = Vector2(-219.44453, 197.22237)
+scale = Vector2(2, 2)
+
+[node name="OuterLeftArc" type="Line2D" parent="Level4MinigunMuzzleVFX" unique_id=448517534]
+points = PackedVector2Array(-24, 3, -38, 19, -40, 48, -27, 82)
+width = 5.0
+default_color = Color(0.06, 0.55, 1, 0.92)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="OuterRightArc" type="Line2D" parent="Level4MinigunMuzzleVFX" unique_id=1119895759]
+points = PackedVector2Array(24, 3, 38, 19, 40, 48, 27, 82)
+width = 5.0
+default_color = Color(0.06, 0.55, 1, 0.92)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="InnerLeftArc" type="Line2D" parent="Level4MinigunMuzzleVFX" unique_id=1812246390]
+points = PackedVector2Array(-12, 9, -21, 30, -17, 67)
+width = 3.0
+default_color = Color(0.48, 0.9, 1, 0.95)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="InnerRightArc" type="Line2D" parent="Level4MinigunMuzzleVFX" unique_id=231820079]
+points = PackedVector2Array(12, 9, 21, 30, 17, 67)
+width = 3.0
+default_color = Color(0.48, 0.9, 1, 0.95)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="Level5LeftMinigunOrigin" type="Marker2D" parent="." unique_id=1184670943]
+editor_description = "Editable muzzle position for the level 5 left minigun."
+position = Vector2(-219.44453, 197.22237)
+gizmo_extents = 20.0
+
+[node name="Level5RightMinigunOrigin" type="Marker2D" parent="." unique_id=1267640598]
+editor_description = "Editable muzzle position for the level 5 right minigun."
+position = Vector2(227.77776, 197.22237)
+gizmo_extents = 20.0
+
+[node name="Level5LeftMinigunMuzzleVFX" type="Node2D" parent="." unique_id=132250573]
+editor_description = "Editable curved blue muzzle accents for the level 5 left minigun."
+visible = false
+z_index = 95
+position = Vector2(-219.44453, 197.22237)
+scale = Vector2(2, 2)
+
+[node name="OuterLeftArc" type="Line2D" parent="Level5LeftMinigunMuzzleVFX" unique_id=1282207088]
+points = PackedVector2Array(-24, 3, -38, 19, -40, 48, -27, 82)
+width = 5.0
+default_color = Color(0.06, 0.55, 1, 0.92)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="OuterRightArc" type="Line2D" parent="Level5LeftMinigunMuzzleVFX" unique_id=893193502]
+points = PackedVector2Array(24, 3, 38, 19, 40, 48, 27, 82)
+width = 5.0
+default_color = Color(0.06, 0.55, 1, 0.92)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="InnerLeftArc" type="Line2D" parent="Level5LeftMinigunMuzzleVFX" unique_id=1065973573]
+points = PackedVector2Array(-12, 9, -21, 30, -17, 67)
+width = 3.0
+default_color = Color(0.48, 0.9, 1, 0.95)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="InnerRightArc" type="Line2D" parent="Level5LeftMinigunMuzzleVFX" unique_id=493873166]
+points = PackedVector2Array(12, 9, 21, 30, 17, 67)
+width = 3.0
+default_color = Color(0.48, 0.9, 1, 0.95)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="Level5RightMinigunMuzzleVFX" type="Node2D" parent="." unique_id=2076651331]
+editor_description = "Editable curved blue muzzle accents for the level 5 right minigun."
+visible = false
+z_index = 95
+position = Vector2(227.77776, 197.22237)
+scale = Vector2(2, 2)
+
+[node name="OuterLeftArc" type="Line2D" parent="Level5RightMinigunMuzzleVFX" unique_id=105921732]
+points = PackedVector2Array(-24, 3, -38, 19, -40, 48, -27, 82)
+width = 5.0
+default_color = Color(0.06, 0.55, 1, 0.92)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="OuterRightArc" type="Line2D" parent="Level5RightMinigunMuzzleVFX" unique_id=774000282]
+points = PackedVector2Array(24, 3, 38, 19, 40, 48, 27, 82)
+width = 5.0
+default_color = Color(0.06, 0.55, 1, 0.92)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="InnerLeftArc" type="Line2D" parent="Level5RightMinigunMuzzleVFX" unique_id=1709399597]
+points = PackedVector2Array(-12, 9, -21, 30, -17, 67)
+width = 3.0
+default_color = Color(0.48, 0.9, 1, 0.95)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="InnerRightArc" type="Line2D" parent="Level5RightMinigunMuzzleVFX" unique_id=1501427412]
+points = PackedVector2Array(12, 9, 21, 30, 17, 67)
+width = 3.0
+default_color = Color(0.48, 0.9, 1, 0.95)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="Visuals" type="Node2D" parent="." unique_id=853880992]
+scale = Vector2(2, 2)
+
+[node name="XDRLeg" type="AnimatedSprite2D" parent="Visuals" unique_id=1481319619]
+sprite_frames = ExtResource("3_leg")
+animation = &"walk"
+autoplay = "idle"
+frame_progress = 0.15586512
+
+[node name="LV5Leg" type="AnimatedSprite2D" parent="Visuals" unique_id=769104259]
+visible = false
+sprite_frames = ExtResource("5_lv5_leg")
+animation = &"walk"
+autoplay = "idle"
+frame_progress = 0.1462572
+
+[node name="XDRHead" type="Sprite2D" parent="Visuals" unique_id=1103426835]
+visible = false
+z_index = 1
+texture = ExtResource("2_lv1_head")
+
+[node name="LV2Head" type="Sprite2D" parent="Visuals" unique_id=1085717046]
+visible = false
+z_index = 1
+position = Vector2(0, -19.444445)
+texture = ExtResource("6_lv2_head")
+
+[node name="LV3Head" type="Sprite2D" parent="Visuals" unique_id=950194934]
+visible = false
+z_index = 1
+texture = ExtResource("7_lv3_head")
+
+[node name="LV4Head" type="Sprite2D" parent="Visuals" unique_id=341639385]
+visible = false
+z_index = 1
+texture = ExtResource("8_lv4_head")
+
+[node name="LV5Head" type="Sprite2D" parent="Visuals" unique_id=1439489926]
+visible = false
+z_index = 1
+texture = ExtResource("4_lv5_head")
+
+[node name="LV1HitAnimation" type="AnimatedSprite2D" parent="Visuals" unique_id=1369940071]
+visible = false
+z_index = 2
+sprite_frames = ExtResource("9_lv1_hit")
+animation = &"hit_lv1"
+speed_scale = 2.0
+
+[node name="LV2HitAnimation" type="AnimatedSprite2D" parent="Visuals" unique_id=1805377492]
+visible = false
+z_index = 2
+position = Vector2(0, 2.7777777)
+sprite_frames = ExtResource("10_lv2_hit")
+animation = &"hit_lv2"
+speed_scale = 2.0
+
+[node name="LV3HitAnimation" type="AnimatedSprite2D" parent="Visuals" unique_id=2036884764]
+visible = false
+z_index = 2
+sprite_frames = ExtResource("11_lv3_hit")
+animation = &"hit_lv3"
+frame = 51
+frame_progress = 1.0
+
+[node name="LV4HitAnimation" type="AnimatedSprite2D" parent="Visuals" unique_id=245419456]
+visible = false
+z_index = 2
+sprite_frames = ExtResource("12_lv4_hit")
+animation = &"hit_lv4"
+frame = 22
+frame_progress = 1.0
+
+[node name="LV5HitAnimation" type="AnimatedSprite2D" parent="Visuals" unique_id=1422169468]
+z_index = 2
+sprite_frames = ExtResource("13_lv5_hit")
+animation = &"hit_lv5"
+frame = 72
+frame_progress = 1.0
+
+[node name="Level2CannonProjectile" type="Node2D" parent="." unique_id=1247683654]
+editor_description = "Reusable level 2 cannonball VFX. Edit its child shapes to restyle the projectile."
+visible = false
+top_level = true
+z_index = 96
+z_as_relative = false
+
+[node name="Trail" type="Line2D" parent="Level2CannonProjectile" unique_id=1751232839]
+points = PackedVector2Array(-38, 0, 0, 0)
+width = 16.0
+gradient = SubResource("Gradient_cannon_trail")
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="OuterGlow" type="Polygon2D" parent="Level2CannonProjectile" unique_id=2045122721]
+scale = Vector2(1.5, 1.5)
+color = Color(0.08, 0.52, 1, 0.3)
+polygon = PackedVector2Array(22, 0, 20.3253, 8.41904, 15.5563, 15.5563, 8.41904, 20.3253, 0, 22, -8.41904, 20.3253, -15.5563, 15.5563, -20.3253, 8.41904, -22, 0, -20.3253, -8.41904, -15.5563, -15.5563, -8.41904, -20.3253, 0, -22, 8.41904, -20.3253, 15.5563, -15.5563, 20.3253, -8.41904)
+
+[node name="Orb" type="Polygon2D" parent="Level2CannonProjectile" unique_id=1246631534]
+scale = Vector2(1.5, 1.5)
+color = Color(0.08, 0.66, 1, 0.92)
+polygon = PackedVector2Array(14, 0, 12.9343, 5.35757, 9.8995, 9.8995, 5.35757, 12.9343, 0, 14, -5.35757, 12.9343, -9.8995, 9.8995, -12.9343, 5.35757, -14, 0, -12.9343, -5.35757, -9.8995, -9.8995, -5.35757, -12.9343, 0, -14, 5.35757, -12.9343, 9.8995, -9.8995, 12.9343, -5.35757)
+
+[node name="Core" type="Polygon2D" parent="Level2CannonProjectile" unique_id=1122570023]
+scale = Vector2(1.5, 1.5)
+color = Color(0.82, 0.97, 1, 1)
+polygon = PackedVector2Array(7, 0, 6.46716, 2.67878, 4.94975, 4.94975, 2.67878, 6.46716, 0, 7, -2.67878, 6.46716, -4.94975, 4.94975, -6.46716, 2.67878, -7, 0, -6.46716, -2.67878, -4.94975, -4.94975, -2.67878, -6.46716, 0, -7, 2.67878, -6.46716, 4.94975, -4.94975, 6.46716, -2.67878)
+
+[node name="Level4MinigunProjectile" type="Area2D" parent="." unique_id=895048446]
+editor_description = "Reusable LV4/LV5 minigun round. Its editable CollisionShape2D is the authoritative gameplay hitbox."
+visible = false
+z_index = 97
+z_as_relative = false
+position = Vector2(3.0517578e-05, -2.777771)
+scale = Vector2(2.9152727, 2.9152727)
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Level4MinigunProjectile" unique_id=1987953963]
+shape = SubResource("RectangleShape2D_minigun_projectile")
+debug_color = Color(0.1, 0.72, 1, 0.42)
+
+[node name="Trail" type="Line2D" parent="Level4MinigunProjectile" unique_id=1501522730]
+points = PackedVector2Array(-82, 0, -34, -2, 0, 0)
+width = 8.0
+gradient = SubResource("Gradient_cannon_trail")
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="Glow" type="Polygon2D" parent="Level4MinigunProjectile" unique_id=961994465]
+color = Color(0.05, 0.5, 1, 0.34)
+polygon = PackedVector2Array(18, 0, 9, -9, -42, -6, -58, 0, -42, 6, 9, 9)
+
+[node name="Round" type="Polygon2D" parent="Level4MinigunProjectile" unique_id=1356251122]
+color = Color(0.08, 0.7, 1, 0.96)
+polygon = PackedVector2Array(14, 0, 7, -5, -7, -5, -12, 0, -7, 5, 7, 5)
+
+[node name="Core" type="Polygon2D" parent="Level4MinigunProjectile" unique_id=845704487]
+color = Color(0.78, 0.97, 1, 1)
+polygon = PackedVector2Array(9, 0, 4, -2.5, -5, -2.5, -8, 0, -5, 2.5, 4, 2.5)
+
+[node name="MovementCollision" type="Area2D" parent="." unique_id=1766839667]
+editor_description = "Editable XDR movement blocker footprint. Resize its CollisionShape2D rectangle to change the pathway collision check."
+visible = false
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MovementCollision" unique_id=101614755]
+shape = SubResource("RectangleShape2D_xdr_movement")
+debug_color = Color(1, 0.08, 0.06, 0.42)
+
+[node name="JetpackVFX" type="Node2D" parent="Visuals" unique_id=171401144]
+editor_description = "LV5 jetpack exhaust shown while the mech jumps across an XDRPathBlocker. Position and scale are editable."
+z_index = -2
+position = Vector2(0, -142.00009)
+
+[node name="LeftOuterFlame" type="Polygon2D" parent="Visuals/JetpackVFX" unique_id=867224334]
+position = Vector2(-28.666662, 18.666672)
+color = Color(0.04, 0.47, 1, 0.72)
+polygon = PackedVector2Array(-13, 0, 13, 0, 10, -28, 0, -60, -10, -28)
+
+[node name="LeftCoreFlame" type="Polygon2D" parent="Visuals/JetpackVFX" unique_id=743048056]
+position = Vector2(-28.666662, 18.666672)
+color = Color(0.7, 0.96, 1, 0.96)
+polygon = PackedVector2Array(-6, -2, 6, -2, 4, -23, 0, -43, -4, -23)
+
+[node name="RightOuterFlame" type="Polygon2D" parent="Visuals/JetpackVFX" unique_id=1176968029]
+position = Vector2(25.499998, 17.277782)
+color = Color(0.04, 0.47, 1, 0.72)
+polygon = PackedVector2Array(-13, 0, 13, 0, 10, -28, 0, -60, -10, -28)
+
+[node name="RightCoreFlame" type="Polygon2D" parent="Visuals/JetpackVFX" unique_id=241410972]
+position = Vector2(25.499998, 17.277782)
+color = Color(0.7, 0.96, 1, 0.96)
+polygon = PackedVector2Array(-6, -2, 6, -2, 4, -23, 0, -43, -4, -23)
+
+[node name="DestinationMarker" type="Node2D" parent="." unique_id=1851355762]
+visible = false
+top_level = true
+z_index = 78
+z_as_relative = false
+
+[node name="Fill" type="Polygon2D" parent="DestinationMarker" unique_id=448792387]
+color = Color(0.12, 0.58, 1, 0.18)
+
+[node name="Outline" type="Line2D" parent="DestinationMarker" unique_id=1689384391]
+width = 3.0
+default_color = Color(0.35, 0.84, 1, 0.92)
+joint_mode = 1
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true

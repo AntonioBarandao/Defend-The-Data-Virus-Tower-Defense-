@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/Towers/IPS_Intrusion/IPS_Intrusion_LV1.png" id="2_image"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"ips_intrusion"
+display_name = "IPS Intrusion"
+type_label = "Trap / Offense Tower"
+description = "Manufactures non-overlapping spikes on the nearest valid pathway. Spikes can hit camouflaged viruses, gain durability with upgrades, and connected higher-level spikes create damaging electricity between them."
+images = Array[Texture2D]([ExtResource("2_image")])
+slide_labels = Array[String](["LV1"])

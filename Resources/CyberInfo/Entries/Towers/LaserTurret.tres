@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/Towers/Laser-Turret/Plates/Laser_Turret_LV1_Plate.png" id="2_image"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"laser_turret"
+display_name = "Laser Turret"
+type_label = "Offense Tower"
+description = "A focused offense tower with five levels. Upgrades increase damage, range, and firing speed. Its rotating turret tracks targets while the matching base plate remains stationary."
+images = Array[Texture2D]([ExtResource("2_image")])
+slide_labels = Array[String](["LV1"])

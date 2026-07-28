@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/Towers/IDS_Scanner/Modes/IDS_Camo_Scanner.png" id="2_image"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"ids_scanner"
+display_name = "IDS Scanner"
+type_label = "Support / Scanner Tower"
+description = "Switches among Camo, Burner, Bounty, Quarantine, and Nullifier modes as upgrades unlock them. It can reveal cloaks, damage, earn Cyber Bucks, slow threats, or temporarily suppress special defenses inside its radius."
+images = Array[Texture2D]([ExtResource("2_image")])
+slide_labels = Array[String](["Camo Mode"])

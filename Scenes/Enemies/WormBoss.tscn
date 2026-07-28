@@ -1,0 +1,259 @@
+[gd_scene format=3 uid="uid://4jdofbj14ald"]
+
+[ext_resource type="SpriteFrames" uid="uid://xdcvevviiqd0" path="res://assets/Enemies/WormBoss/WormHeadSpriteFrames.tres" id="1_head_animation"]
+[ext_resource type="Texture2D" uid="uid://cvxw2a0gygqhb" path="res://assets/Enemies/WormBoss/WormHeadStatic.png" id="2_head_static"]
+[ext_resource type="Texture2D" uid="uid://drwwqrbskhun1" path="res://assets/Enemies/WormBoss/WormBody.png" id="3_body"]
+[ext_resource type="Texture2D" uid="uid://cwhbjrwkjussm" path="res://assets/Enemies/WormBoss/WormTail.png" id="4_tail"]
+[ext_resource type="Script" uid="uid://bwvwgccj508ls" path="res://Scripts/Enemies/worm_boss.gd" id="5_worm_script"]
+[ext_resource type="Script" uid="uid://djsk2stv6fbm" path="res://Scripts/UI/worm_boss_progress_bar.gd" id="6_health_script"]
+[ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="7_font"]
+[ext_resource type="SpriteFrames" uid="uid://skxdvrxe8s7v" path="res://assets/Enemies/WormBoss/WormHeadDestroySpriteFrames.tres" id="8_head_destroy"]
+[ext_resource type="SpriteFrames" uid="uid://c3xggwojbhceb" path="res://assets/Enemies/WormBoss/WormBodyDestroySpriteFrames.tres" id="9_body_destroy"]
+[ext_resource type="SpriteFrames" uid="uid://dqtayjwi8c27n" path="res://assets/Enemies/WormBoss/WormTailDestroySpriteFrames.tres" id="10_tail_destroy"]
+[ext_resource type="PackedScene" path="res://Scenes/Enemies/AntiCyberguardian.tscn" id="11_anti_guardian"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_boss_panel"]
+bg_color = Color(0.015, 0.022, 0.035, 0.97)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.58, 0.67, 0.76, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.72)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_track"]
+bg_color = Color(0.025, 0.035, 0.05, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.27, 0.34, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_fill"]
+bg_color = Color(0.88, 0.035, 0.055, 1)
+border_width_top = 2
+border_width_bottom = 2
+border_color = Color(1, 0.24, 0.16, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="WormBoss" type="Node2D" unique_id=2145734206]
+script = ExtResource("5_worm_script")
+
+[node name="Body_First" type="Sprite2D" parent="." unique_id=93518234]
+z_index = 10
+position = Vector2(31, 0)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_body")
+
+[node name="Body_First_Destroy" type="AnimatedSprite2D" parent="." unique_id=450996811]
+visible = false
+z_index = 10
+position = Vector2(31, 0)
+scale = Vector2(0.5, 0.5)
+sprite_frames = ExtResource("9_body_destroy")
+animation = &"body_destroy"
+
+[node name="Body_Second" type="Sprite2D" parent="." unique_id=1986000198]
+z_index = 10
+position = Vector2(-80.000015, 0)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_body")
+
+[node name="Body_Second_Destroy" type="AnimatedSprite2D" parent="." unique_id=286525638]
+visible = false
+z_index = 10
+position = Vector2(-80.000015, 0)
+scale = Vector2(0.5, 0.5)
+sprite_frames = ExtResource("9_body_destroy")
+animation = &"body_destroy"
+
+[node name="Body_Third" type="Sprite2D" parent="." unique_id=430195336]
+z_index = 10
+position = Vector2(-185, 0)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_body")
+
+[node name="Body_Third_Destroy" type="AnimatedSprite2D" parent="." unique_id=483044735]
+visible = false
+z_index = 10
+position = Vector2(-185, 0)
+scale = Vector2(0.5, 0.5)
+sprite_frames = ExtResource("9_body_destroy")
+animation = &"body_destroy"
+
+[node name="Body_Fourth" type="Sprite2D" parent="." unique_id=2147304294]
+z_index = 10
+position = Vector2(-287, 0)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_body")
+
+[node name="Body_Fourth_Destroy" type="AnimatedSprite2D" parent="." unique_id=1892788116]
+visible = false
+z_index = 10
+position = Vector2(-287, 0)
+scale = Vector2(0.5, 0.5)
+sprite_frames = ExtResource("9_body_destroy")
+animation = &"body_destroy"
+
+[node name="Body_Fifth" type="Sprite2D" parent="." unique_id=656839355]
+z_index = 10
+position = Vector2(-385, 0)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_body")
+
+[node name="Body_Fifth_Destroy" type="AnimatedSprite2D" parent="." unique_id=1961060057]
+visible = false
+z_index = 10
+position = Vector2(-385, 0)
+scale = Vector2(0.5, 0.5)
+sprite_frames = ExtResource("9_body_destroy")
+animation = &"body_destroy"
+
+[node name="HeadAnimation" type="AnimatedSprite2D" parent="." unique_id=231629067]
+z_index = 10
+position = Vector2(139, 0)
+scale = Vector2(0.60682464, 0.60682464)
+sprite_frames = ExtResource("1_head_animation")
+animation = &"head"
+autoplay = "head"
+frame_progress = 0.3995906
+
+[node name="AntiCyberGuardianSpot" type="Marker2D" parent="HeadAnimation" unique_id=1290939264]
+position = Vector2(-34.60638, -9.887535)
+
+[node name="AntiCyberguardian" parent="HeadAnimation/AntiCyberGuardianSpot" unique_id=139846117 instance=ExtResource("11_anti_guardian")]
+scale = Vector2(0.5603, 0.5603)
+
+[node name="Head_Destroy" type="AnimatedSprite2D" parent="." unique_id=792645119]
+visible = false
+z_index = 10
+position = Vector2(139, 0)
+scale = Vector2(0.60682464, 0.60682464)
+sprite_frames = ExtResource("8_head_destroy")
+animation = &"head_destroy"
+
+[node name="Tail" type="Sprite2D" parent="." unique_id=1546367262]
+z_index = 10
+position = Vector2(-507, 4.0000005)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_tail")
+
+[node name="Tail_Destroy" type="AnimatedSprite2D" parent="." unique_id=1003431847]
+visible = false
+z_index = 10
+position = Vector2(-507, 4.0000005)
+scale = Vector2(0.5, 0.5)
+sprite_frames = ExtResource("10_tail_destroy")
+animation = &"tail_destroy"
+
+[node name="HeadStatic" type="Sprite2D" parent="." unique_id=1362806601]
+visible = false
+z_index = 10
+position = Vector2(250, 0)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_head_static")
+
+[node name="BossHealthHUD" type="CanvasLayer" parent="." unique_id=424157359]
+layer = 145
+script = ExtResource("6_health_script")
+
+[node name="Root" type="Control" parent="BossHealthHUD" unique_id=683622758]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BossPanel" type="PanelContainer" parent="BossHealthHUD/Root" unique_id=1942445862]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -500.0
+offset_top = 30.0
+offset_right = 500.0
+offset_bottom = 160.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_boss_panel")
+
+[node name="Margin" type="MarginContainer" parent="BossHealthHUD/Root/BossPanel" unique_id=680772162]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="BossHealthHUD/Root/BossPanel/Margin" unique_id=1005811534]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Header" type="HBoxContainer" parent="BossHealthHUD/Root/BossPanel/Margin/Content" unique_id=717669527]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TitleLabel" type="Label" parent="BossHealthHUD/Root/BossPanel/Margin/Content/Header" unique_id=808372115]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.2, 0.16, 1)
+theme_override_fonts/font = ExtResource("7_font")
+theme_override_font_sizes/font_size = 27
+text = "CYBER WORM"
+
+[node name="ArmorLabel" type="Label" parent="BossHealthHUD/Root/BossPanel/Margin/Content/Header" unique_id=921552660]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.8, 0.9, 1)
+theme_override_fonts/font = ExtResource("7_font")
+theme_override_font_sizes/font_size = 17
+text = "SEGMENTED TANK"
+vertical_alignment = 1
+
+[node name="HealthLabel" type="Label" parent="BossHealthHUD/Root/BossPanel/Margin/Content/Header" unique_id=1579546565]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.97, 1, 1)
+theme_override_fonts/font = ExtResource("7_font")
+theme_override_font_sizes/font_size = 22
+text = "950 / 950"
+horizontal_alignment = 2
+
+[node name="HealthBar" type="ProgressBar" parent="BossHealthHUD/Root/BossPanel/Margin/Content" unique_id=1493224449]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_health_track")
+theme_override_styles/fill = SubResource("StyleBoxFlat_health_fill")
+max_value = 950.0
+value = 950.0
+show_percentage = false
+
+[node name="Footer" type="HBoxContainer" parent="BossHealthHUD/Root/BossPanel/Margin/Content" unique_id=1438760564]
+layout_mode = 2
+
+[node name="HintLabel" type="Label" parent="BossHealthHUD/Root/BossPanel/Margin/Content/Footer" unique_id=2012741761]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.72, 0.22, 1)
+theme_override_fonts/font = ExtResource("7_font")
+theme_override_font_sizes/font_size = 15
+text = "BODY CORE INTEGRITY"
+
+[node name="SegmentsLabel" type="Label" parent="BossHealthHUD/Root/BossPanel/Margin/Content/Footer" unique_id=462809157]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.85, 1, 1)
+theme_override_fonts/font = ExtResource("7_font")
+theme_override_font_sizes/font_size = 15
+text = "SEGMENTS ONLINE  0 / 7"
+horizontal_alignment = 2

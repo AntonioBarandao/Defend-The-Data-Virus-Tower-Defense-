@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/Adware/Adware_Sprite.png" id="2_image"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"adware"
+category = 1
+display_name = "Adware"
+type_label = "Popup Miniboss Virus"
+description = "Covers deployed towers with interactive popup ads at timed intervals, up to five at once. The ads must be closed with their red buttons before Adware can normally take damage; Nullifier can suppress that protection in its radius."
+images = Array[Texture2D]([ExtResource("2_image")])
+slide_labels = Array[String](["Adware"])

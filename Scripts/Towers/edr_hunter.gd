@@ -31,6 +31,9 @@ const DRONE_COOLDOWN := 1.0
 @export_range(0.0, 2000.0, 1.0) var drone_path_speed := 420.0
 @export_range(0.1, 10.0, 0.1) var drone_shot_cooldown := DRONE_COOLDOWN
 @export_group("")
+@export_group("Audio")
+@export var drone_shoot_sfx_path: NodePath = ^"Sounds/EDRHunterDroneShootSfx"
+@export_group("")
 
 var _rotating_visual: Node2D
 var _level_visuals: Array[AnimatedSprite2D] = []
@@ -41,6 +44,7 @@ var _rest_visual_rotation := 0.0
 var _hunter_is_aiming := false
 var _hunter_aim_remaining := 0.0
 var _drone_cooldown_remaining: Array[float] = []
+var _drone_shoot_sfx: AudioStreamPlayer
 
 
 func _ready() -> void:
@@ -89,7 +93,7 @@ func set_menu_range_preview_active(_active: bool) -> void:
 
 
 func get_shot_power() -> int:
-	return EDR_DAMAGE
+	return _get_signal_boosted_damage(EDR_DAMAGE)
 
 
 func get_attack_range() -> float:
@@ -251,7 +255,7 @@ func update_drone_attacks(delta: float, active_viruses: Array[PathFollow2D]) -> 
 
 
 func get_drone_shot_power() -> int:
-	return DRONE_DAMAGE
+	return _get_signal_boosted_damage(DRONE_DAMAGE)
 
 
 func get_drone_attack_origin(drone_index: int = 0) -> Vector2:
@@ -270,6 +274,7 @@ func fire_drone_at(target_position: Vector2, drone_index: int = 0) -> void:
 		return
 	drone.aim_at(target_position)
 	drone.play_shoot()
+	_play_audio_player(_drone_shoot_sfx)
 
 
 func is_drone_unlocked() -> bool:
@@ -287,6 +292,7 @@ func get_active_drone_count() -> int:
 
 func _cache_edr_nodes() -> void:
 	_rotating_visual = get_node_or_null(rotating_visual_path) as Node2D
+	_drone_shoot_sfx = CentralAudioResolver.resolve(self, drone_shoot_sfx_path)
 	_drone_path_follows = [
 		get_node_or_null(drone_path_follow_path) as PathFollow2D,
 		get_node_or_null(second_drone_path_follow_path) as PathFollow2D,
@@ -331,8 +337,15 @@ func _find_nearest_drone_target(active_viruses: Array[PathFollow2D], drone_index
 	var origin := get_drone_attack_origin(drone_index)
 	var nearest_target: PathFollow2D
 	var nearest_distance_squared := INF
+	var worm_target_present := false
+	for follow in active_viruses:
+		if _is_worm_boss_target(follow):
+			worm_target_present = true
+			break
 	for follow in active_viruses:
 		if not is_instance_valid(follow) or not _can_target_follow(follow):
+			continue
+		if worm_target_present and not _is_worm_boss_body_target(follow):
 			continue
 
 		var distance_squared := origin.distance_squared_to(_get_follow_target_position(follow))
@@ -342,6 +355,12 @@ func _find_nearest_drone_target(active_viruses: Array[PathFollow2D], drone_index
 		nearest_distance_squared = distance_squared
 
 	return nearest_target
+
+
+func _is_worm_boss_body_target(follow: PathFollow2D) -> bool:
+	return _is_worm_boss_target(follow) \
+		and follow.has_meta("worm_boss_body_part") \
+		and bool(follow.get_meta("worm_boss_body_part"))
 
 
 func _cancel_hunter_aim() -> void:

@@ -8,16 +8,45 @@ const LaserTurretScript := preload("res://Scripts/Towers/laser_turret.gd")
 const IDSScannerTowerScript := preload("res://Scripts/Towers/ids_scanner.gd")
 const EDRHunterTowerScript := preload("res://Scripts/Towers/edr_hunter.gd")
 const SIEMHawkTowerScript := preload("res://Scripts/Towers/siem_hawk.gd")
+const XDRMechTowerScript := preload("res://Scripts/Towers/xdr_mech.gd")
 const IPSIntrusionTowerScript := preload("res://Scripts/Towers/ips_intrusion.gd")
 const HoneypotProductionTowerScript := preload("res://Scripts/Towers/honeypot_production.gd")
+const SignalBoostBalanceScript := preload("res://Scripts/Towers/signal_boost_balance.gd")
 const RedVirusScript := preload("res://Scripts/Enemies/red_virus.gd")
-const RedVirusScene := preload("res://Scenes/Enemies/RedVirus.tscn")
-const TrojanHorseScene := preload("res://Scenes/Enemies/TrojanHorse.tscn")
-const AdwareScene := preload("res://Scenes/Enemies/Adware.tscn")
+var RedVirusScene: PackedScene = load("res://Scenes/Enemies/RedVirus.tscn") as PackedScene
+var TrojanHorseScene: PackedScene = load("res://Scenes/Enemies/TrojanHorse.tscn") as PackedScene
+var AdwareScene: PackedScene = load("res://Scenes/Enemies/Adware.tscn") as PackedScene
 const SpywareScript := preload("res://Scripts/Enemies/spyware.gd")
-const SpywareScene := preload("res://Scenes/Enemies/Spyware.tscn")
-const ArmoredVirusScene := preload("res://Scenes/Enemies/ArmoredVirus.tscn")
-const MutantVirusScene := preload("res://Scenes/Enemies/MutantVirus.tscn")
+var SpywareScene: PackedScene = load("res://Scenes/Enemies/Spyware.tscn") as PackedScene
+const ArmoredVirusScript := preload("res://Scripts/Enemies/armored_virus.gd")
+var ArmoredVirusScene: PackedScene = load("res://Scenes/Enemies/ArmoredVirus.tscn") as PackedScene
+var MutantVirusScene: PackedScene = load("res://Scenes/Enemies/MutantVirus.tscn") as PackedScene
+var ZombieNodeMinionScene: PackedScene = load("res://Scenes/Enemies/ZombieNodeMinion.tscn") as PackedScene
+var RedMutantTransformScene: PackedScene = load("res://Scenes/Enemies/RedMutantTransform.tscn") as PackedScene
+var BotnetMinionScene: PackedScene = load("res://Scenes/Enemies/BotnetMinion.tscn") as PackedScene
+var AntiChargedRedVirusScene: PackedScene = load(
+	"res://Scenes/Enemies/AntiChargedRedVirus.tscn"
+) as PackedScene
+var AntiChargedArmoredVirusScene: PackedScene = load(
+	"res://Scenes/Enemies/AntiChargedArmoredVirus.tscn"
+) as PackedScene
+var AntiChargedMutantVirusScene: PackedScene = load(
+	"res://Scenes/Enemies/AntiChargedMutantVirus.tscn"
+) as PackedScene
+var AntiChargeBeginVFXScene: PackedScene = load(
+	"res://Scenes/Effects/AntiChargeBeginVFX.tscn"
+) as PackedScene
+var AntiChargeEndVFXScene: PackedScene = load(
+	"res://Scenes/Effects/AntiChargeEndVFX.tscn"
+) as PackedScene
+var RedVirusAntiTransformScene: PackedScene = load(
+	"res://Scenes/Effects/RedVirusAntiTransform.tscn"
+) as PackedScene
+var ArmoredVirusAntiTransformScene: PackedScene = load(
+	"res://Scenes/Effects/ArmoredVirusAntiTransform.tscn"
+) as PackedScene
+var RansomwareScene: PackedScene = load("res://Scenes/Enemies/Ransomware.tscn") as PackedScene
+const WaveManagerScript := preload("res://Scripts/Gameplay/wave_manager.gd")
 const CyberQuestionHUDScript := preload("res://Scripts/UI/cyber_question_hud.gd")
 const PerformanceHUDScript := preload("res://Scripts/UI/performance_hud.gd")
 const GameControlsHUDScript := preload("res://Scripts/UI/game_controls_hud.gd")
@@ -25,62 +54,89 @@ const TowerUpgradeHUDScript := preload("res://Scripts/UI/tower_upgrade_hud.gd")
 const ProgressHUDScript := preload("res://Scripts/UI/progress_hud.gd")
 const UtilityOverlayHUDScript := preload("res://Scripts/UI/utility_overlay_hud.gd")
 const SignalBoostHUDScript := preload("res://Scripts/UI/signal_boost_hud.gd")
-const TowerShopCardScene := preload("res://Scenes/UI/TowerShopCard.tscn")
-const CyberGuardianCardResource := preload("res://Resources/TowerShopCards/CyberGuardianCard.tres")
-const LaserTurretCardResource := preload("res://Resources/TowerShopCards/LaserTurretCard.tres")
-const IDSScannerCardResource := preload("res://Resources/TowerShopCards/IDSScannerCard.tres")
-const EDRHunterCardResource := preload("res://Resources/TowerShopCards/EDRHunterCard.tres")
-const SIEMHawkCardResource := preload("res://Resources/TowerShopCards/SIEMHawkCard.tres")
-const IPSIntrusionCardResource := preload("res://Resources/TowerShopCards/IPSIntrusionCard.tres")
-const HoneypotProductionCardResource := preload("res://Resources/TowerShopCards/HoneypotProductionCard.tres")
-const CyberGuardianScene := preload("res://Scenes/Towers/CyberGuardian.tscn")
-const LaserTurretScene := preload("res://Scenes/Towers/LaserTurret.tscn")
-const IDSScannerScene := preload("res://Scenes/Towers/IDS_Scanner.tscn")
-const EDRHunterScene := preload("res://Scenes/Towers/EDR_Hunter.tscn")
-const SIEMHawkScene := preload("res://Scenes/Towers/SIEM_Hawk.tscn")
-const IPSIntrusionScene := preload("res://Scenes/Towers/IPS_Intrusion.tscn")
-const HoneypotProductionScene := preload("res://Scenes/Towers/Honeypot_Production.tscn")
+const DefeatHUDScript := preload("res://Scripts/UI/defeat_hud.gd")
+const Wave20ClearanceHUDScript := preload("res://Scripts/UI/wave_20_clearance_hud.gd")
+var TowerShopCardScene: PackedScene = load("res://Scenes/UI/TowerShopCard.tscn") as PackedScene
+var CyberGuardianCardResource: TowerShopCardResource = load(
+	"res://Resources/TowerShopCards/CyberGuardianCard.tres"
+) as TowerShopCardResource
+var LaserTurretCardResource: TowerShopCardResource = load(
+	"res://Resources/TowerShopCards/LaserTurretCard.tres"
+) as TowerShopCardResource
+var IDSScannerCardResource: TowerShopCardResource = load(
+	"res://Resources/TowerShopCards/IDSScannerCard.tres"
+) as TowerShopCardResource
+var EDRHunterCardResource: TowerShopCardResource = load(
+	"res://Resources/TowerShopCards/EDRHunterCard.tres"
+) as TowerShopCardResource
+var SIEMHawkCardResource: TowerShopCardResource = load(
+	"res://Resources/TowerShopCards/SIEMHawkCard.tres"
+) as TowerShopCardResource
+var XDRMechCardResource: TowerShopCardResource = load(
+	"res://Resources/TowerShopCards/XDRMechCard.tres"
+) as TowerShopCardResource
+var IPSIntrusionCardResource: TowerShopCardResource = load(
+	"res://Resources/TowerShopCards/IPSIntrusionCard.tres"
+) as TowerShopCardResource
+var HoneypotProductionCardResource: TowerShopCardResource = load(
+	"res://Resources/TowerShopCards/HoneypotProductionCard.tres"
+) as TowerShopCardResource
+var CyberGuardianScene: PackedScene = load("res://Scenes/Towers/CyberGuardian.tscn") as PackedScene
+var LaserTurretScene: PackedScene = load("res://Scenes/Towers/LaserTurret.tscn") as PackedScene
+var IDSScannerScene: PackedScene = load("res://Scenes/Towers/IDS_Scanner.tscn") as PackedScene
+var EDRHunterScene: PackedScene = load("res://Scenes/Towers/EDR_Hunter.tscn") as PackedScene
+var SIEMHawkScene: PackedScene = load("res://Scenes/Towers/SIEM_Hawk.tscn") as PackedScene
+var XDRMechScene: PackedScene = load("res://Scenes/Towers/XDR_Mech.tscn") as PackedScene
+var IPSIntrusionScene: PackedScene = load("res://Scenes/Towers/IPS_Intrusion.tscn") as PackedScene
+var HoneypotProductionScene: PackedScene = load("res://Scenes/Towers/Honeypot_Production.tscn") as PackedScene
 const TARGET_FPS := 60
 const FPS_UPDATE_INTERVAL := 0.25
 const VIRUS_BATCH_SPACING := 10.0
-const WAVE_BASE_VIRUS_COUNT := 5
-const WAVE_VIRUS_COUNT_STEP := 2
-const WAVE_SPAWN_INTERVAL := 0.6
-const WAVE_MAX_COUNT := 20
+const WAVE_CLEARANCE_COUNT := 20
+const WAVE_MAX_COUNT := 25
 const WAVE_FIVE_CUTSCENE_WAVE := 5
-const ADWARE_WAVE := 11
-const SPYWARE_TEST_WAVE := 8
+const RANSOMWARE_GUARDIAN_WAVE := 10
+const RANSOMWARE_RANDOM_TOWER_WAVE := 14
+const WORM_BOSS_WAVE := 20
+const FINAL_BOSS_WAVE := 25
+const ANTI_CYBERGUARDIAN_SCAN_INTERVAL := 0.15
+const RANSOMWARE_GUARDIAN_TIMER_SECONDS := 30.0
+const RANSOMWARE_GUARDIAN_PAYMENT_COST := 500
+const RANSOMWARE_TIMEOUT_PENALTY := 500
+const RANSOMWARE_COST_TO_TIMER_DIVISOR := 10.0
+const RANSOMWARE_PAYMENT_MULTIPLIER := 10
 const SPYWARE_MAX_ACTIVE := 2
-const ARMORED_VIRUS_TEST_WAVE := 7
-const MUTANT_VIRUS_TEST_WAVE := 13
 const ADWARE_POPUP_COUNT := 5
 const ADWARE_VARIATION_COUNT := 25
-const ADWARE_POPUP_INTERVAL := 0.5
+const ADWARE_POPUP_INTERVAL := 4.0
 const LASER_DURATION := 0.24
 const GUARDIAN_CYBERBUCK_REWARD := 5
 const LASER_TURRET_CYBERBUCK_REWARD := 5
 const ADMIN_CYBERBUCK_GRANT := 500
 const TOWER_SELL_REFUND_RATE := 0.6
-const CYBER_GUARDIAN_DEPLOY_COST := 100
+const CYBER_GUARDIAN_DEPLOY_COST := 0
 const LASER_TURRET_DEPLOY_COST := 125
 const IDS_SCANNER_DEPLOY_COST := 150
 const EDR_HUNTER_DEPLOY_COST := 175
 const HONEYPOT_PRODUCTION_DEPLOY_COST := 250
 const IPS_INTRUSION_DEPLOY_COST := 200
 const SIEM_HAWK_DEPLOY_COST := 225
+const XDR_MECH_DEPLOY_COST := 0
 const TOWER_ID_CYBER_GUARDIAN := &"cyber_guardian"
 const TOWER_ID_LASER_TURRET := &"laser_turret"
 const TOWER_ID_IDS_SCANNER := &"ids_scanner"
 const TOWER_ID_EDR_HUNTER := &"edr_hunter"
 const TOWER_ID_SIEM_HAWK := &"siem_hawk"
+const TOWER_ID_XDR_MECH := &"xdr_mech"
 const TOWER_ID_IPS_INTRUSION := &"ips_intrusion"
 const TOWER_ID_HONEYPOT_PRODUCTION := &"honeypot_production"
-const DEFAULT_TOWER_CARD_RESOURCES := {
+var DEFAULT_TOWER_CARD_RESOURCES := {
 	TOWER_ID_CYBER_GUARDIAN: CyberGuardianCardResource,
 	TOWER_ID_LASER_TURRET: LaserTurretCardResource,
 	TOWER_ID_IDS_SCANNER: IDSScannerCardResource,
 	TOWER_ID_EDR_HUNTER: EDRHunterCardResource,
 	TOWER_ID_SIEM_HAWK: SIEMHawkCardResource,
+	TOWER_ID_XDR_MECH: XDRMechCardResource,
 	TOWER_ID_IPS_INTRUSION: IPSIntrusionCardResource,
 	TOWER_ID_HONEYPOT_PRODUCTION: HoneypotProductionCardResource
 }
@@ -88,11 +144,6 @@ const GUARDIAN_MODE_DEFENDER := &"defender"
 const GUARDIAN_MODE_SIGNAL_BOOST := &"signal_boost"
 const GUARDIAN_MODE_FIREWALL := &"firewall"
 const SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL := 1
-const SIGNAL_BOOST_RANGE_BASE_BONUS := 0.10
-const SIGNAL_BOOST_COOLDOWN_BASE_REDUCTION := 0.10
-const SIGNAL_BOOST_HAWK_SPEED_BASE_BONUS := 0.20
-const SIGNAL_BOOST_STEP_BONUS := 0.05
-const SIGNAL_BOOST_STEP_LEVELS := [4, 6, 7, 9, 10]
 const FIREWALL_UNLOCK_KNOWLEDGE_LEVEL := 1
 const FIREWALL_BURN_DURATION_SECONDS := 5.0
 const FIREWALL_BALANCE_BY_MIN_KNOWLEDGE_LEVEL := [
@@ -125,7 +176,11 @@ const DEFAULT_VIRUS_SPAWN_SCALE := Vector2(0.2, 0.2)
 const DEFAULT_EVOLVED_VIRUS_SPAWN_SCALE := Vector2(0.11, 0.11)
 const DEFAULT_TROJAN_HORSE_SPAWN_SCALE := Vector2(0.4, 0.4)
 const DEFAULT_ADWARE_SPAWN_SCALE := Vector2(0.18, 0.18)
-const STORE_TOGGLE_ICON := preload("res://assets/UI/TowerStoreArrowHex.svg")
+const BOTNET_MINION_PATH_SPACING := 64.0
+const ANTI_CHARGED_RED_SPAWN_SCALE := Vector2(0.2, 0.2)
+const ANTI_CHARGED_ARMORED_SPAWN_SCALE := Vector2(0.18, 0.18)
+const ANTI_CHARGED_MUTANT_SPAWN_SCALE := Vector2(0.18, 0.18)
+var STORE_TOGGLE_ICON: Texture2D = load("res://assets/UI/TowerStoreArrowHex.svg") as Texture2D
 const STORE_TOGGLE_SIZE := Vector2(64, 80)
 const STORE_TOGGLE_SCREEN_INSET := 8.0
 const STORE_PANEL_PADDING := Vector2(28, 28)
@@ -147,12 +202,19 @@ const STORE_DRAG_START_THRESHOLD := 12.0
 @export var ids_scanner_path: NodePath = ^"Sprites/IDS_Scanner"
 @export var edr_hunter_path: NodePath = ^"Sprites/EDR_Hunter"
 @export var siem_hawk_path: NodePath = ^"Sprites/SIEM_Hawk"
+@export var xdr_mech_path: NodePath = ^"Sprites/XDR_Mech"
 @export var ips_intrusion_path: NodePath = ^"Sprites/IPS_Intrusion"
 @export var honeypot_production_path: NodePath = ^"Sprites/Honeypot_Production"
 @export var virus_template_path: NodePath = ^"Sprites/BasicVirus"
 @export var virus_scene: PackedScene = RedVirusScene
 @export var virus_path_path: NodePath = ^"VirusElements/Path2D"
 @export var virus_spawn_path: NodePath = ^"VirusElements/Marker2D"
+@export var zombie_node_path: NodePath = ^"ZombieNode"
+@export var zombie_node_target_path: NodePath = ^"ZombieNodeCombatTarget"
+@export var botnet_node_path: NodePath = ^"BotnetNode"
+@export var botnet_node_target_path: NodePath = ^"BotnetNodeCombatTarget"
+@export var worm_boss_path: NodePath = ^"WormBoss"
+@export var wave_20_clearance_hud_path: NodePath = ^"Wave20ClearanceHUD"
 @export var question_hud_path: NodePath = ^"CyberQuestionHUD"
 @export var performance_hud_path: NodePath = ^"PerformanceHUD"
 @export var game_controls_hud_path: NodePath = ^"GameControlsHUD"
@@ -161,9 +223,14 @@ const STORE_DRAG_START_THRESHOLD := 12.0
 @export var utility_overlay_hud_path: NodePath = ^"UtilityOverlayHUD"
 @export var signal_boost_hud_path: NodePath = ^"SignalBoostHUD"
 @export var wave_label_path: NodePath = ^"WavesLabel"
+@export var wave_timer_label_path: NodePath = ^"WaveTimerLabel"
 @export var text_cutscene_hud_path: NodePath = ^"TextCutsceneHUD"
 @export var cutscene_skip_hud_path: NodePath = ^"CutsceneSkipHUD"
 @export var cutscene_demo_menu_hud_path: NodePath = ^"CutsceneDemoMenuHUD"
+@export var cutscene_demo_director_path: NodePath = ^"CutsceneDemoDirector"
+@export var defeat_hud_path: NodePath = ^"DefeatHUD"
+@export var sounds_path: NodePath = ^"Sounds"
+@export var gameplay_soundtrack_path: NodePath = ^"Music/CyberBusiness"
 @export var tower_store_panel_path: NodePath = ^"TestDrag"
 @export var tower_store_background_path: NodePath = ^"TestDrag/TowerTrayBackground"
 @export var tower_store_title_label_path: NodePath = ^"TestDrag/TowerShopTitle"
@@ -175,6 +242,7 @@ const STORE_DRAG_START_THRESHOLD := 12.0
 @export var ids_scanner_card_resource: TowerShopCardResource = IDSScannerCardResource
 @export var edr_hunter_card_resource: TowerShopCardResource = EDRHunterCardResource
 @export var siem_hawk_card_resource: TowerShopCardResource = SIEMHawkCardResource
+@export var xdr_mech_card_resource: TowerShopCardResource = XDRMechCardResource
 @export var ips_intrusion_card_resource: TowerShopCardResource = IPSIntrusionCardResource
 @export var honeypot_production_card_resource: TowerShopCardResource = HoneypotProductionCardResource
 @export var tower_store_card_resources: Array[Resource] = []
@@ -197,6 +265,7 @@ var _laser_turret: LaserTurretScript
 var _ids_scanner: IDSScannerTowerScript
 var _edr_hunter: EDRHunterTowerScript
 var _siem_hawk: SIEMHawkTowerScript
+var _xdr_mech: XDRMechTowerScript
 var _ips_intrusion: IPSIntrusionTowerScript
 var _honeypot_production: HoneypotProductionTowerScript
 var _guardian_store: CyberGuardianTowerScript
@@ -204,6 +273,7 @@ var _laser_turret_store: LaserTurretScript
 var _ids_scanner_store: IDSScannerTowerScript
 var _edr_hunter_store: EDRHunterTowerScript
 var _siem_hawk_store: SIEMHawkTowerScript
+var _xdr_mech_store: XDRMechTowerScript
 var _ips_intrusion_store: IPSIntrusionTowerScript
 var _honeypot_production_store: HoneypotProductionTowerScript
 var _guardians: Array[CyberGuardianTowerScript] = []
@@ -211,12 +281,20 @@ var _laser_turrets: Array[LaserTurretScript] = []
 var _ids_scanners: Array[IDSScannerTowerScript] = []
 var _edr_hunters: Array[EDRHunterTowerScript] = []
 var _siem_hawks: Array[SIEMHawkTowerScript] = []
+var _xdr_mechs: Array[XDRMechTowerScript] = []
 var _ips_intrusions: Array[IPSIntrusionTowerScript] = []
 var _honeypot_productions: Array[HoneypotProductionTowerScript] = []
 var _virus_template: RedVirusScript
 var _virus_templates: Array[RedVirusScript] = []
 var _virus_path: Path2D
 var _virus_spawn: Node2D
+var _zombie_node: ZombieNode
+var _zombie_node_target: PathFollow2D
+var _botnet_node: BotnetNode
+var _botnet_node_target: PathFollow2D
+var _worm_boss: WormBoss
+var _anti_cyberguardian: AntiCyberguardian
+var _wave_20_clearance_hud: Wave20ClearanceHUDScript
 var _question_hud: CyberQuestionHUDScript
 var _performance_hud: PerformanceHUDScript
 var _game_controls_hud: GameControlsHUDScript
@@ -225,9 +303,14 @@ var _progress_hud: ProgressHUDScript
 var _utility_overlay_hud: UtilityOverlayHUDScript
 var _signal_boost_hud: SignalBoostHUDScript
 var _wave_label: Label
+var _wave_timer_label: Label
 var _text_cutscene_hud: Node
 var _cutscene_skip_hud: Node
 var _cutscene_demo_menu_hud: Node
+var _cutscene_demo_director: CutsceneDemoDirector
+var _defeat_hud: DefeatHUDScript
+var _sounds: Node
+var _gameplay_soundtrack: AudioStreamPlayer
 var _path_guide_container: Node2D
 var _tower_store_panel: Control
 var _tower_store_background: ColorRect
@@ -258,21 +341,35 @@ var _restore_tower_store_after_upgrade_panel := false
 var _tower_store_restore_after_upgrade_waiting := false
 var _admin_add_bucks_button: Button
 var _active_viruses: Array[PathFollow2D] = []
+var _active_ransomware: Array[Ransomware] = []
 var _lives := 0
 var _game_over := false
 var _current_wave := 0
+var _wave_max_count := WAVE_CLEARANCE_COUNT
 var _wave_in_progress := false
 var _wave_question_pending := false
 var _wave_spawns_remaining := 0
-var _wave_spawn_cooldown_remaining := 0.0
+var _wave_spawn_elapsed_seconds := 0.0
+var _wave_minimum_spawn_time_remaining := 0.0
+var _wave_spawn_schedule: Array[Dictionary] = []
+var _wave_manager := WaveManagerScript.new()
+var _phishing_effect_active := false
 var _wave_five_cutscene_played := false
 var _wave_five_cutscene_running := false
+var _wave_ten_ransomware_triggered := false
+var _wave_ten_ransomware_cutscene_running := false
+var _wave_ten_ransomware_pending_guardian := false
+var _wave_fourteen_ransomware_triggered := false
+var _extended_waves_unlocked := false
+var _zombie_defeat_sequence_running := false
+var _worm_defeat_sequence_running := false
 var _adware_spawns_remaining := 0
 var _adware_spawn_cooldown_remaining := 0.0
 var _adware_spawned_count := 0
 var _adware_rng := RandomNumberGenerator.new()
 var _adware_variation_deck: Array[int] = []
 var _active_adware_popups: Array[Node2D] = []
+var _anti_cyberguardian_scan_elapsed := 0.0
 
 func _ready() -> void:
 	Engine.max_fps = TARGET_FPS
@@ -283,6 +380,7 @@ func _ready() -> void:
 	_ids_scanner = get_node_or_null(ids_scanner_path) as IDSScannerTowerScript
 	_edr_hunter = get_node_or_null(edr_hunter_path) as EDRHunterTowerScript
 	_siem_hawk = get_node_or_null(siem_hawk_path) as SIEMHawkTowerScript
+	_xdr_mech = get_node_or_null(xdr_mech_path) as XDRMechTowerScript
 	_ips_intrusion = get_node_or_null(ips_intrusion_path) as IPSIntrusionTowerScript
 	_honeypot_production = get_node_or_null(honeypot_production_path) as HoneypotProductionTowerScript
 	_guardian_store = _guardian
@@ -290,12 +388,25 @@ func _ready() -> void:
 	_ids_scanner_store = _ids_scanner
 	_edr_hunter_store = _edr_hunter
 	_siem_hawk_store = _siem_hawk
+	_xdr_mech_store = _xdr_mech
 	_ips_intrusion_store = _ips_intrusion
 	_honeypot_production_store = _honeypot_production
 	_virus_template = get_node_or_null(virus_template_path) as RedVirusScript
 	_collect_virus_templates()
 	_virus_path = get_node_or_null(virus_path_path) as Path2D
 	_virus_spawn = get_node_or_null(virus_spawn_path) as Node2D
+	_zombie_node = get_node_or_null(zombie_node_path) as ZombieNode
+	_zombie_node_target = get_node_or_null(
+		zombie_node_target_path
+	) as PathFollow2D
+	_botnet_node = get_node_or_null(botnet_node_path) as BotnetNode
+	_botnet_node_target = get_node_or_null(
+		botnet_node_target_path
+	) as PathFollow2D
+	_worm_boss = get_node_or_null(worm_boss_path) as WormBoss
+	if _worm_boss != null:
+		_anti_cyberguardian = _worm_boss.get_anti_cyberguardian()
+	_wave_20_clearance_hud = get_node_or_null(wave_20_clearance_hud_path) as Wave20ClearanceHUDScript
 	_question_hud = get_node_or_null(question_hud_path) as CyberQuestionHUDScript
 	_performance_hud = get_node_or_null(performance_hud_path) as PerformanceHUDScript
 	_game_controls_hud = get_node_or_null(game_controls_hud_path) as GameControlsHUDScript
@@ -304,9 +415,14 @@ func _ready() -> void:
 	_utility_overlay_hud = get_node_or_null(utility_overlay_hud_path) as UtilityOverlayHUDScript
 	_signal_boost_hud = get_node_or_null(signal_boost_hud_path) as SignalBoostHUDScript
 	_wave_label = get_node_or_null(wave_label_path) as Label
+	_wave_timer_label = get_node_or_null(wave_timer_label_path) as Label
 	_text_cutscene_hud = get_node_or_null(text_cutscene_hud_path)
 	_cutscene_skip_hud = get_node_or_null(cutscene_skip_hud_path)
 	_cutscene_demo_menu_hud = get_node_or_null(cutscene_demo_menu_hud_path)
+	_cutscene_demo_director = get_node_or_null(cutscene_demo_director_path) as CutsceneDemoDirector
+	_defeat_hud = get_node_or_null(defeat_hud_path) as DefeatHUDScript
+	_sounds = get_node_or_null(sounds_path)
+	_gameplay_soundtrack = get_node_or_null(gameplay_soundtrack_path) as AudioStreamPlayer
 	_tower_store_panel = get_node_or_null(tower_store_panel_path) as Control
 	_tower_store_background = get_node_or_null(tower_store_background_path) as ColorRect
 	_tower_store_title_label = get_node_or_null(tower_store_title_label_path) as Label
@@ -318,10 +434,30 @@ func _ready() -> void:
 	_tower_store_toggle_button_authored = _tower_store_toggle_button != null
 	if _virus_spawn == null:
 		_virus_spawn = get_node_or_null(^"VirusElements/Spawn2D") as Node2D
+	if _zombie_node != null:
+		_zombie_node.minion_spawn_requested.connect(Callable(self, "_on_zombie_minion_spawn_requested"))
+		_zombie_node.defeated.connect(Callable(self, "_on_zombie_node_defeated"))
+		_zombie_node.set_wave_active(false)
+	if _botnet_node != null:
+		_botnet_node.minion_spawn_requested.connect(
+			Callable(self, "_on_botnet_minion_spawn_requested")
+		)
+		_botnet_node.defeated.connect(
+			Callable(self, "_on_botnet_node_defeated")
+		)
+		_botnet_node.set_wave_active(false)
+	if _worm_boss != null:
+		_worm_boss.defeated.connect(Callable(self, "_on_worm_boss_defeated"))
+		_worm_boss.escaped.connect(Callable(self, "_on_worm_boss_escaped"))
+		_worm_boss.set_wave_active(false)
+	if _wave_20_clearance_hud != null:
+		_wave_20_clearance_hud.choice_made.connect(Callable(self, "_on_wave_20_clearance_choice"))
 
 	_setup_tower_store()
 	_cache_store_companion_ui_positions()
 	_setup_admin_currency_button()
+	_configure_audio_routing()
+	_start_gameplay_soundtrack()
 
 	if _guardian_store == null:
 		push_warning("Cybersec Guardian drag target was not found.")
@@ -331,6 +467,8 @@ func _ready() -> void:
 		push_warning("EDR Hunter drag target was not found.")
 	if _siem_hawk == null:
 		push_warning("SIEM Hawk drag target was not found.")
+	if _xdr_mech == null:
+		push_warning("XDR Mech drag target was not found.")
 	if _ips_intrusion == null:
 		push_warning("IPS Intrusion drag target was not found.")
 	if _honeypot_production == null:
@@ -358,6 +496,11 @@ func _ready() -> void:
 		_game_controls_hud.virus_batch_requested.connect(Callable(self, "spawn_virus_batch"))
 		_game_controls_hud.exit_pressed.connect(Callable(self, "_exit_game"))
 		_game_controls_hud.set_admin_mode(_is_admin_scene())
+	if _defeat_hud == null:
+		push_warning("DefeatHUD was not found.")
+	else:
+		_defeat_hud.play_again_requested.connect(Callable(self, "_play_again_after_defeat"))
+		_defeat_hud.quit_game_requested.connect(Callable(self, "_quit_game_after_defeat"))
 	_lives = maxi(1, starting_lives)
 	_update_lives_display()
 	if _tower_upgrade_hud == null:
@@ -371,15 +514,23 @@ func _ready() -> void:
 		_tower_upgrade_hud.siem_upgrade_pressed.connect(Callable(self, "_upgrade_siem_hawk"))
 		_tower_upgrade_hud.siem_dispatch_pressed.connect(Callable(self, "_toggle_siem_hawk_dispatch"))
 		_tower_upgrade_hud.siem_land_pressed.connect(Callable(self, "_land_siem_hawk_to_headquarters"))
+		_tower_upgrade_hud.xdr_upgrade_pressed.connect(Callable(self, "_upgrade_xdr_mech"))
+		_tower_upgrade_hud.xdr_dispatch_pressed.connect(Callable(self, "_toggle_xdr_mech_dispatch"))
 		_tower_upgrade_hud.ips_upgrade_pressed.connect(Callable(self, "_upgrade_ips_intrusion"))
 		_tower_upgrade_hud.honeypot_upgrade_pressed.connect(Callable(self, "_upgrade_honeypot_production"))
 		_tower_upgrade_hud.sell_pressed.connect(Callable(self, "_sell_selected_tower"))
+		_tower_upgrade_hud.ransomware_payment_pressed.connect(
+			Callable(self, "_pay_selected_tower_ransomware")
+		)
 	if _guardian != null:
 		_connect_placed_guardian(_guardian)
 	if _signal_boost_hud == null:
 		push_warning("SignalBoostHUD was not found.")
 	else:
 		_signal_boost_hud.activation_requested.connect(Callable(self, "_activate_guardian_signal_boost"))
+		_signal_boost_hud.firewall_activation_requested.connect(
+			Callable(self, "_activate_guardian_firewall")
+		)
 		_signal_boost_hud.set_guardian(_guardian)
 	if _siem_hawk != null:
 		_siem_hawk.dispatch_mode_changed.connect(Callable(self, "_on_siem_hawk_dispatch_mode_changed"))
@@ -407,8 +558,51 @@ func _ready() -> void:
 	_update_virus_count_label()
 	_update_wave_button()
 	_update_wave_label()
+	_update_wave_timer_label()
 	_apply_guardian_signal_boost_state()
 	_update_demo_upgrade_buttons()
+
+
+func _start_gameplay_soundtrack() -> void:
+	if _gameplay_soundtrack == null or _gameplay_soundtrack.stream == null:
+		return
+
+	_gameplay_soundtrack.process_mode = Node.PROCESS_MODE_ALWAYS
+	_gameplay_soundtrack.stream_paused = false
+	_gameplay_soundtrack.bus = &"Music"
+	if _gameplay_soundtrack.stream is AudioStreamWAV:
+		(_gameplay_soundtrack.stream as AudioStreamWAV).loop_mode = AudioStreamWAV.LOOP_FORWARD
+	_gameplay_soundtrack.stop()
+	_gameplay_soundtrack.play(0.0)
+
+
+func _configure_audio_routing() -> void:
+	_configure_sound_players_recursive(_sounds)
+	if _gameplay_soundtrack != null:
+		_gameplay_soundtrack.bus = &"Music"
+
+
+func _configure_sound_players_recursive(node: Node) -> void:
+	if node == null:
+		return
+
+	var player := node as AudioStreamPlayer
+	if player != null:
+		player.bus = &"SFX"
+
+	for child in node.get_children():
+		_configure_sound_players_recursive(child)
+
+
+func _play_named_sound(player_name: StringName) -> void:
+	if _sounds == null:
+		return
+	var player := _sounds.get_node_or_null(NodePath(String(player_name))) \
+		as AudioStreamPlayer
+	if player == null:
+		return
+	player.stop()
+	player.play()
 
 
 func _show_canvas_layers_for_runtime() -> void:
@@ -446,6 +640,12 @@ func _add_virus_template(template: RedVirusScript) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if _wave_20_clearance_hud != null \
+			and _wave_20_clearance_hud.is_cutscene_running():
+		if _wave_20_clearance_hud.handle_clearance_input(event):
+			get_viewport().set_input_as_handled()
+		return
+
 	if _is_act_input_locked():
 		if _cutscene_skip_hud != null \
 				and _cutscene_skip_hud.has_method("handle_cutscene_skip_input") \
@@ -514,6 +714,9 @@ func _input(event: InputEvent) -> void:
 			if _handle_siem_hawk_press(pointer_position, mouse_button.position):
 				return
 
+			if _handle_xdr_mech_press(pointer_position, mouse_button.position):
+				return
+
 			if _handle_ips_intrusion_press(pointer_position, mouse_button.position):
 				return
 
@@ -527,6 +730,10 @@ func _input(event: InputEvent) -> void:
 			if _try_set_siem_hawk_destination(pointer_position):
 				get_viewport().set_input_as_handled()
 				return
+
+			if _try_set_xdr_mech_destination(pointer_position):
+				get_viewport().set_input_as_handled()
+				return
 		elif _pending_store_drag_tower != null:
 			_clear_pending_store_tower_drag()
 			get_viewport().set_input_as_handled()
@@ -535,6 +742,8 @@ func _input(event: InputEvent) -> void:
 			return
 		elif _is_store_tower_dragging(_siem_hawk_store):
 			_finish_store_tower_drag(_siem_hawk_store)
+		elif _is_store_tower_dragging(_xdr_mech_store):
+			_finish_store_tower_drag(_xdr_mech_store)
 		elif _is_store_tower_dragging(_honeypot_production_store):
 			_finish_store_tower_drag(_honeypot_production_store)
 		elif _is_store_tower_dragging(_ips_intrusion_store):
@@ -565,6 +774,11 @@ func _input(event: InputEvent) -> void:
 	if _is_store_tower_dragging(_siem_hawk_store) and event is InputEventMouseMotion:
 		var siem_mouse_motion := event as InputEventMouseMotion
 		_update_store_tower_drag(_siem_hawk_store, _screen_to_canvas_position(siem_mouse_motion.position))
+		return
+
+	if _is_store_tower_dragging(_xdr_mech_store) and event is InputEventMouseMotion:
+		var xdr_mouse_motion := event as InputEventMouseMotion
+		_update_store_tower_drag(_xdr_mech_store, _screen_to_canvas_position(xdr_mouse_motion.position))
 		return
 
 	if _is_store_tower_dragging(_ips_intrusion_store) and event is InputEventMouseMotion:
@@ -642,6 +856,9 @@ func _input(event: InputEvent) -> void:
 			if _handle_siem_hawk_press(pointer_position, screen_touch.position):
 				return
 
+			if _handle_xdr_mech_press(pointer_position, screen_touch.position):
+				return
+
 			if _handle_ips_intrusion_press(pointer_position, screen_touch.position):
 				return
 
@@ -655,6 +872,10 @@ func _input(event: InputEvent) -> void:
 			if _try_set_siem_hawk_destination(pointer_position):
 				get_viewport().set_input_as_handled()
 				return
+
+			if _try_set_xdr_mech_destination(pointer_position):
+				get_viewport().set_input_as_handled()
+				return
 		elif _pending_store_drag_tower != null:
 			_clear_pending_store_tower_drag()
 			get_viewport().set_input_as_handled()
@@ -663,6 +884,8 @@ func _input(event: InputEvent) -> void:
 			return
 		elif _is_store_tower_dragging(_siem_hawk_store):
 			_finish_store_tower_drag(_siem_hawk_store)
+		elif _is_store_tower_dragging(_xdr_mech_store):
+			_finish_store_tower_drag(_xdr_mech_store)
 		elif _is_store_tower_dragging(_honeypot_production_store):
 			_finish_store_tower_drag(_honeypot_production_store)
 		elif _is_store_tower_dragging(_ips_intrusion_store):
@@ -693,6 +916,11 @@ func _input(event: InputEvent) -> void:
 	if _is_store_tower_dragging(_siem_hawk_store) and event is InputEventScreenDrag:
 		var siem_screen_drag := event as InputEventScreenDrag
 		_update_store_tower_drag(_siem_hawk_store, _screen_to_canvas_position(siem_screen_drag.position))
+		return
+
+	if _is_store_tower_dragging(_xdr_mech_store) and event is InputEventScreenDrag:
+		var xdr_screen_drag := event as InputEventScreenDrag
+		_update_store_tower_drag(_xdr_mech_store, _screen_to_canvas_position(xdr_screen_drag.position))
 		return
 
 	if _is_store_tower_dragging(_ips_intrusion_store) and event is InputEventScreenDrag:
@@ -739,8 +967,13 @@ func _process(delta: float) -> void:
 		_sync_tower_store_items(false)
 		_position_tower_store_toggle_button(0.0 if _tower_store_open else STORE_PANEL_SLIDE_DISTANCE)
 	_update_wave_spawner(delta)
+	if _botnet_node != null:
+		_botnet_node.update_boss(delta)
 	_update_adware_spawner(delta)
 	_update_active_viruses(delta)
+	_update_anti_cyberguardian_charge(delta)
+	_update_ransomware_interruptions(delta)
+	_try_start_pending_ransomware_for_current_wave()
 	if _game_over:
 		return
 	_update_spyware_invasions(delta)
@@ -755,14 +988,19 @@ func _process(delta: float) -> void:
 		_sync_edr_upgrade_panel()
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.is_siem_panel_visible():
 		_sync_siem_upgrade_panel()
+	if _tower_upgrade_hud != null and _tower_upgrade_hud.is_xdr_panel_visible():
+		_sync_xdr_upgrade_panel()
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.is_ips_panel_visible():
 		_sync_ips_upgrade_panel()
 	if _tower_upgrade_hud != null and _tower_upgrade_hud.is_honeypot_panel_visible():
 		_sync_honeypot_upgrade_panel()
+	_sync_selected_tower_ransomware_panel()
+	_sync_guardian_ransomware_lock_ui()
 	_update_tower_attack(delta)
 	_update_laser_turret_attack(delta)
 	_update_edr_hunter_attack(delta)
 	_update_siem_hawk_attack(delta)
+	_update_xdr_mech_attack(delta)
 	_update_demo_upgrade_buttons()
 
 	_update_fps_timer(delta)
@@ -810,6 +1048,7 @@ func _get_tower_store_items() -> Array[Dictionary]:
 	_add_tower_store_item(items, _ids_scanner_store, TOWER_ID_IDS_SCANNER, "IDS Scanner")
 	_add_tower_store_item(items, _edr_hunter_store, TOWER_ID_EDR_HUNTER, "EDR Hunter")
 	_add_tower_store_item(items, _siem_hawk_store, TOWER_ID_SIEM_HAWK, "SIEM Hawk")
+	_add_tower_store_item(items, _xdr_mech_store, TOWER_ID_XDR_MECH, "XDR Mech")
 	_add_tower_store_item(items, _ips_intrusion_store, TOWER_ID_IPS_INTRUSION, "IPS Spike")
 	_add_tower_store_item(items, _honeypot_production_store, TOWER_ID_HONEYPOT_PRODUCTION, "Honeypot")
 	return items
@@ -853,6 +1092,8 @@ func _get_configured_tower_card_resource_for_id(tower_id: StringName) -> TowerSh
 			return edr_hunter_card_resource
 		TOWER_ID_SIEM_HAWK:
 			return siem_hawk_card_resource
+		TOWER_ID_XDR_MECH:
+			return xdr_mech_card_resource
 		TOWER_ID_IPS_INTRUSION:
 			return ips_intrusion_card_resource
 		TOWER_ID_HONEYPOT_PRODUCTION:
@@ -1046,6 +1287,8 @@ func _get_tower_store_card_name(tower: Node2D, fallback_name: String) -> String:
 		return "EDRHunterCard"
 	if tower == _siem_hawk_store:
 		return "SIEMHawkCard"
+	if tower == _xdr_mech_store:
+		return "XDRMechCard"
 	if tower == _ips_intrusion_store:
 		return "IPSIntrusionCard"
 	if tower == _honeypot_production_store:
@@ -1562,6 +1805,7 @@ func _get_store_drag_order() -> Array:
 		_honeypot_production_store,
 		_edr_hunter_store,
 		_siem_hawk_store,
+		_xdr_mech_store,
 		_ids_scanner_store,
 		_laser_turret_store,
 		_guardian_store
@@ -1812,6 +2056,9 @@ func _restore_tower_store_after_completed_drag() -> void:
 
 
 func _get_tower_deploy_cost(tower: Node2D) -> int:
+	if _is_cyber_guardian_tower(tower):
+		return CYBER_GUARDIAN_DEPLOY_COST
+
 	var card := _tower_store_item_cards.get(tower) as TowerShopCard
 	if card != null and card.has_card_resource():
 		return card.get_deploy_cost()
@@ -1820,6 +2067,8 @@ func _get_tower_deploy_cost(tower: Node2D) -> int:
 
 
 func _get_default_tower_deploy_cost(tower: Node2D) -> int:
+	if tower is XDRMechTowerScript:
+		return XDR_MECH_DEPLOY_COST
 	if tower is LaserTurretScript:
 		return LASER_TURRET_DEPLOY_COST
 	if tower is IDSScannerTowerScript:
@@ -1868,6 +2117,8 @@ func _hide_legacy_store_title() -> void:
 
 
 func _get_tower_id(tower: Node) -> StringName:
+	if tower is XDRMechTowerScript:
+		return &"xdr"
 	if tower is HoneypotProductionTowerScript:
 		return &"honeypot"
 	if tower is IPSIntrusionTowerScript:
@@ -1883,6 +2134,10 @@ func _get_tower_id(tower: Node) -> StringName:
 	if tower is CyberGuardianTowerScript:
 		return &"guardian"
 	return &""
+
+
+func _is_cyber_guardian_tower(tower: Node) -> bool:
+	return is_instance_valid(tower) and _get_tower_id(tower) == &"guardian"
 
 
 func _setup_admin_currency_button() -> void:
@@ -1926,6 +2181,7 @@ func _connect_store_prototypes() -> void:
 	_connect_scanner_store_prototype(_ids_scanner_store)
 	_connect_edr_store_prototype(_edr_hunter_store)
 	_connect_siem_store_prototype(_siem_hawk_store)
+	_connect_xdr_store_prototype(_xdr_mech_store)
 	_connect_ips_store_prototype(_ips_intrusion_store)
 	_connect_honeypot_store_prototype(_honeypot_production_store)
 
@@ -1966,6 +2222,13 @@ func _connect_siem_store_prototype(tower: SIEMHawkTowerScript) -> void:
 		tower.placed.connect(_on_siem_store_tower_placed)
 
 
+func _connect_xdr_store_prototype(tower: XDRMechTowerScript) -> void:
+	if tower == null:
+		return
+	if not tower.placed.is_connected(_on_xdr_store_tower_placed):
+		tower.placed.connect(_on_xdr_store_tower_placed)
+
+
 func _connect_ips_store_prototype(tower: IPSIntrusionTowerScript) -> void:
 	if tower == null:
 		return
@@ -1990,6 +2253,10 @@ func _on_guardian_store_tower_placed(tower: CyberGuardianTowerScript) -> void:
 	_apply_guardian_signal_boost_state()
 	_sync_tower_store_items(true)
 	_update_demo_upgrade_buttons()
+	if _wave_ten_ransomware_pending_guardian \
+			and not _wave_ten_ransomware_triggered \
+			and _current_wave >= RANSOMWARE_GUARDIAN_WAVE:
+		call_deferred("_try_start_wave_ten_ransomware_for_current_state")
 
 
 func _on_laser_store_tower_placed(tower: LaserTurretScript) -> void:
@@ -2023,6 +2290,15 @@ func _on_siem_store_tower_placed(tower: SIEMHawkTowerScript) -> void:
 	_siem_hawk = tower
 	_connect_placed_siem(tower)
 	_spawn_replacement_siem()
+	_update_demo_upgrade_buttons()
+
+
+func _on_xdr_store_tower_placed(tower: XDRMechTowerScript) -> void:
+	_restore_placed_tower_scale(tower)
+	_xdr_mechs.append(tower)
+	_xdr_mech = tower
+	_connect_placed_xdr(tower)
+	_spawn_replacement_xdr()
 	_update_demo_upgrade_buttons()
 
 
@@ -2066,6 +2342,11 @@ func _spawn_replacement_edr() -> void:
 func _spawn_replacement_siem() -> void:
 	_siem_hawk_store = _spawn_store_replacement(SIEMHawkScene, _siem_hawk_store, "SIEM_Hawk") as SIEMHawkTowerScript
 	_connect_siem_store_prototype(_siem_hawk_store)
+
+
+func _spawn_replacement_xdr() -> void:
+	_xdr_mech_store = _spawn_store_replacement(XDRMechScene, _xdr_mech_store, "XDR_Mech") as XDRMechTowerScript
+	_connect_xdr_store_prototype(_xdr_mech_store)
 
 
 func _spawn_replacement_ips() -> void:
@@ -2127,6 +2408,18 @@ func _connect_placed_guardian(tower: CyberGuardianTowerScript) -> void:
 		tower.signal_boost_effect_changed.connect(_on_guardian_signal_boost_effect_changed)
 	if not tower.signal_boost_status_changed.is_connected(_on_guardian_signal_boost_status_changed):
 		tower.signal_boost_status_changed.connect(_on_guardian_signal_boost_status_changed)
+	if not tower.firewall_effect_changed.is_connected(
+		_on_guardian_firewall_effect_changed
+	):
+		tower.firewall_effect_changed.connect(
+			_on_guardian_firewall_effect_changed
+		)
+	if not tower.firewall_status_changed.is_connected(
+		_on_guardian_firewall_status_changed
+	):
+		tower.firewall_status_changed.connect(
+			_on_guardian_firewall_status_changed
+		)
 	if tower.has_signal("firewall_damage_requested") \
 			and not tower.firewall_damage_requested.is_connected(_on_guardian_firewall_damage_requested):
 		tower.firewall_damage_requested.connect(_on_guardian_firewall_damage_requested)
@@ -2141,6 +2434,25 @@ func _connect_placed_siem(tower: SIEMHawkTowerScript) -> void:
 		tower.knowledge_extracted.connect(_on_siem_hawk_knowledge_extracted)
 	if not tower.knowledge_bank_changed.is_connected(_on_siem_hawk_knowledge_bank_changed):
 		tower.knowledge_bank_changed.connect(_on_siem_hawk_knowledge_bank_changed)
+
+
+func _connect_placed_xdr(tower: XDRMechTowerScript) -> void:
+	if tower == null:
+		return
+	if not tower.dispatch_mode_changed.is_connected(_on_xdr_mech_dispatch_mode_changed):
+		tower.dispatch_mode_changed.connect(_on_xdr_mech_dispatch_mode_changed)
+	if not tower.claw_damage_requested.is_connected(
+		_on_xdr_claw_damage_requested
+	):
+		tower.claw_damage_requested.connect(
+			_on_xdr_claw_damage_requested
+		)
+	if not tower.cannon_damage_requested.is_connected(
+		_on_xdr_cannon_damage_requested
+	):
+		tower.cannon_damage_requested.connect(
+			_on_xdr_cannon_damage_requested
+		)
 
 
 func _connect_placed_ips(tower: IPSIntrusionTowerScript) -> void:
@@ -2242,10 +2554,38 @@ func _handle_siem_hawk_press(pointer_position: Vector2, screen_position: Vector2
 func _try_set_siem_hawk_destination(pointer_position: Vector2) -> bool:
 	if _siem_hawk == null or not is_instance_valid(_siem_hawk):
 		return false
+	if _is_tower_action_locked(_siem_hawk):
+		return false
 	if not _siem_hawk.can_accept_dispatch_destination():
 		return false
 
 	return _siem_hawk.set_dispatch_destination(pointer_position)
+
+
+func _handle_xdr_mech_press(pointer_position: Vector2, screen_position: Vector2) -> bool:
+	if _tower_upgrade_hud != null and _tower_upgrade_hud.xdr_panel_has_point(screen_position):
+		return true
+
+	var xdr_mech := _find_tower_at_point(_xdr_mechs, pointer_position) as XDRMechTowerScript
+	if xdr_mech != null:
+		_xdr_mech = xdr_mech
+		_show_xdr_upgrade_panel()
+		get_viewport().set_input_as_handled()
+		return true
+
+	if _tower_upgrade_hud != null and _tower_upgrade_hud.is_xdr_panel_visible():
+		_hide_xdr_upgrade_panel()
+	return false
+
+
+func _try_set_xdr_mech_destination(pointer_position: Vector2) -> bool:
+	if _xdr_mech == null or not is_instance_valid(_xdr_mech):
+		return false
+	if _is_tower_action_locked(_xdr_mech):
+		return false
+	if not _xdr_mech.can_accept_dispatch_destination():
+		return false
+	return _xdr_mech.set_dispatch_destination(pointer_position)
 
 
 func _handle_ips_intrusion_press(pointer_position: Vector2, screen_position: Vector2) -> bool:
@@ -2276,9 +2616,12 @@ func _handle_honeypot_production_press(pointer_position: Vector2, screen_positio
 		return false
 
 	_honeypot_production = honeypot_production
-	var collected := _honeypot_production.collect_production()
+	var action_locked := _is_tower_action_locked(_honeypot_production)
+	var collected := 0
 	var collected_knowledge := 0
-	if _progress_hud != null:
+	if not action_locked:
+		collected = _honeypot_production.collect_production()
+	if not action_locked and _progress_hud != null:
 		collected_knowledge = _honeypot_production.collect_knowledge_production()
 		if collected_knowledge > 0:
 			_progress_hud.add_knowledge_points(collected_knowledge, true)
@@ -2352,11 +2695,14 @@ func _reset_tower() -> void:
 		_edr_hunter_store.reset_tower()
 	if _siem_hawk_store != null:
 		_siem_hawk_store.reset_tower()
+	if _xdr_mech_store != null:
+		_xdr_mech_store.reset_tower()
 	if _ips_intrusion_store != null:
 		_ips_intrusion_store.reset_tower()
 	if _honeypot_production_store != null:
 		_honeypot_production_store.reset_tower()
 	_clear_adware_popups()
+	_clear_all_ransomware_interruptions()
 	for node in get_tree().get_nodes_in_group("Defender"):
 		if _is_store_prototype(node) or not is_instance_valid(node):
 			continue
@@ -2366,8 +2712,15 @@ func _reset_tower() -> void:
 	_ids_scanners.clear()
 	_edr_hunters.clear()
 	_siem_hawks.clear()
+	_xdr_mechs.clear()
 	_ips_intrusions.clear()
 	_honeypot_productions.clear()
+	_wave_ten_ransomware_triggered = _current_wave >= RANSOMWARE_GUARDIAN_WAVE
+	_wave_ten_ransomware_cutscene_running = false
+	_wave_ten_ransomware_pending_guardian = false
+	_wave_fourteen_ransomware_triggered = (
+		_current_wave >= RANSOMWARE_RANDOM_TOWER_WAVE
+	)
 	_guardian = _guardian_store
 	if _signal_boost_hud != null:
 		_signal_boost_hud.set_guardian(_guardian)
@@ -2375,6 +2728,7 @@ func _reset_tower() -> void:
 	_ids_scanner = _ids_scanner_store
 	_edr_hunter = _edr_hunter_store
 	_siem_hawk = _siem_hawk_store
+	_xdr_mech = _xdr_mech_store
 	_ips_intrusion = _ips_intrusion_store
 	_honeypot_production = _honeypot_production_store
 	if _tower_upgrade_hud != null:
@@ -2397,15 +2751,23 @@ func _is_store_prototype(node: Node) -> bool:
 		or node == _ids_scanner_store \
 		or node == _edr_hunter_store \
 		or node == _siem_hawk_store \
+		or node == _xdr_mech_store \
 		or node == _ips_intrusion_store \
 		or node == _honeypot_production_store
+
+
+func _play_upgrade_sound_if_successful(upgraded: bool) -> void:
+	if upgraded and _tower_upgrade_hud != null:
+		_tower_upgrade_hud.play_upgrade_sound()
 
 
 func _upgrade_guardian() -> void:
 	if _is_act_input_locked():
 		return
 
-	if _guardian == null or not _guardian.can_upgrade():
+	if _guardian == null \
+			or _is_tower_action_locked(_guardian) \
+			or not _guardian.can_upgrade():
 		return
 
 	var cost := _guardian.get_upgrade_cost()
@@ -2418,6 +2780,7 @@ func _upgrade_guardian() -> void:
 		return
 
 	var upgraded := _guardian.upgrade()
+	_play_upgrade_sound_if_successful(upgraded)
 	_sync_laser_upgrade_panel()
 	_sync_scanner_upgrade_panel()
 	_sync_edr_upgrade_panel()
@@ -2431,7 +2794,9 @@ func _upgrade_laser_turret() -> void:
 	if _is_act_input_locked():
 		return
 
-	if _laser_turret == null or not _laser_turret.can_upgrade():
+	if _laser_turret == null \
+			or _is_tower_action_locked(_laser_turret) \
+			or not _laser_turret.can_upgrade():
 		return
 
 	var cost := _laser_turret.get_upgrade_cost()
@@ -2444,6 +2809,7 @@ func _upgrade_laser_turret() -> void:
 		return
 
 	var upgraded := _laser_turret.upgrade()
+	_play_upgrade_sound_if_successful(upgraded)
 	_sync_laser_upgrade_panel()
 	_sync_scanner_upgrade_panel()
 	_sync_edr_upgrade_panel()
@@ -2458,7 +2824,9 @@ func _upgrade_ids_scanner() -> void:
 	if _is_act_input_locked():
 		return
 
-	if _ids_scanner == null or not _ids_scanner.can_upgrade():
+	if _ids_scanner == null \
+			or _is_tower_action_locked(_ids_scanner) \
+			or not _ids_scanner.can_upgrade():
 		return
 
 	var cost := _ids_scanner.get_upgrade_cost()
@@ -2471,6 +2839,7 @@ func _upgrade_ids_scanner() -> void:
 		return
 
 	var upgraded := _ids_scanner.upgrade()
+	_play_upgrade_sound_if_successful(upgraded)
 	_sync_laser_upgrade_panel()
 	_sync_scanner_upgrade_panel()
 	_sync_edr_upgrade_panel()
@@ -2484,7 +2853,9 @@ func _upgrade_edr_hunter() -> void:
 	if _is_act_input_locked():
 		return
 
-	if _edr_hunter == null or not _edr_hunter.can_upgrade():
+	if _edr_hunter == null \
+			or _is_tower_action_locked(_edr_hunter) \
+			or not _edr_hunter.can_upgrade():
 		return
 
 	var cost := _edr_hunter.get_upgrade_cost()
@@ -2497,6 +2868,7 @@ func _upgrade_edr_hunter() -> void:
 		return
 
 	var upgraded := _edr_hunter.upgrade()
+	_play_upgrade_sound_if_successful(upgraded)
 	_sync_laser_upgrade_panel()
 	_sync_scanner_upgrade_panel()
 	_sync_edr_upgrade_panel()
@@ -2510,7 +2882,9 @@ func _upgrade_siem_hawk() -> void:
 	if _is_act_input_locked():
 		return
 
-	if _siem_hawk == null or not _siem_hawk.can_upgrade():
+	if _siem_hawk == null \
+			or _is_tower_action_locked(_siem_hawk) \
+			or not _siem_hawk.can_upgrade():
 		return
 
 	var cost := _siem_hawk.get_upgrade_cost()
@@ -2523,6 +2897,7 @@ func _upgrade_siem_hawk() -> void:
 		return
 
 	var upgraded := _siem_hawk.upgrade()
+	_play_upgrade_sound_if_successful(upgraded)
 	_sync_laser_upgrade_panel()
 	_sync_scanner_upgrade_panel()
 	_sync_edr_upgrade_panel()
@@ -2532,11 +2907,30 @@ func _upgrade_siem_hawk() -> void:
 		_utility_overlay_hud.show_tower_upgrade_fx(_world_to_screen_position(_siem_hawk.global_position))
 
 
+func _upgrade_xdr_mech() -> void:
+	if _is_act_input_locked() \
+			or _xdr_mech == null \
+			or _is_tower_action_locked(_xdr_mech) \
+			or not _xdr_mech.can_upgrade():
+		return
+	var cost := _xdr_mech.get_upgrade_cost()
+	if not _spend_upgrade_cost(cost):
+		_sync_xdr_upgrade_panel()
+		return
+	var upgraded := _xdr_mech.upgrade()
+	_play_upgrade_sound_if_successful(upgraded)
+	_sync_xdr_upgrade_panel()
+	if upgraded and _utility_overlay_hud != null:
+		_utility_overlay_hud.show_tower_upgrade_fx(_world_to_screen_position(_xdr_mech.global_position))
+
+
 func _upgrade_ips_intrusion() -> void:
 	if _is_act_input_locked():
 		return
 
-	if _ips_intrusion == null or not _ips_intrusion.can_upgrade():
+	if _ips_intrusion == null \
+			or _is_tower_action_locked(_ips_intrusion) \
+			or not _ips_intrusion.can_upgrade():
 		return
 
 	var cost := _ips_intrusion.get_upgrade_cost()
@@ -2546,6 +2940,7 @@ func _upgrade_ips_intrusion() -> void:
 		return
 
 	var upgraded := _ips_intrusion.upgrade()
+	_play_upgrade_sound_if_successful(upgraded)
 	_sync_ips_upgrade_panel()
 	_update_demo_upgrade_buttons()
 	if upgraded and _utility_overlay_hud != null:
@@ -2556,7 +2951,9 @@ func _upgrade_honeypot_production() -> void:
 	if _is_act_input_locked():
 		return
 
-	if _honeypot_production == null or not _honeypot_production.can_upgrade():
+	if _honeypot_production == null \
+			or _is_tower_action_locked(_honeypot_production) \
+			or not _honeypot_production.can_upgrade():
 		return
 
 	var cost := _honeypot_production.get_upgrade_cost()
@@ -2566,6 +2963,7 @@ func _upgrade_honeypot_production() -> void:
 		return
 
 	var upgraded := _honeypot_production.upgrade()
+	_play_upgrade_sound_if_successful(upgraded)
 	_sync_honeypot_upgrade_panel()
 	_update_demo_upgrade_buttons()
 	if upgraded and _utility_overlay_hud != null:
@@ -2578,6 +2976,8 @@ func _sell_selected_tower() -> void:
 
 	var tower := _get_selected_tower() as Node2D
 	if tower == null or not is_instance_valid(tower):
+		return
+	if _is_tower_action_locked(tower) or not _is_tower_sellable(tower):
 		return
 
 	var tower_id := _get_tower_id(tower)
@@ -2595,6 +2995,11 @@ func _sell_selected_tower() -> void:
 	_update_demo_upgrade_buttons()
 
 
+func _is_tower_sellable(tower: Node) -> bool:
+	return is_instance_valid(tower) \
+		and not _is_cyber_guardian_tower(tower)
+
+
 func _get_selected_tower() -> Node2D:
 	if _tower_upgrade_hud.is_guardian_panel_visible():
 		return _guardian
@@ -2606,6 +3011,8 @@ func _get_selected_tower() -> Node2D:
 		return _edr_hunter
 	if _tower_upgrade_hud.is_siem_panel_visible():
 		return _siem_hawk
+	if _tower_upgrade_hud.is_xdr_panel_visible():
+		return _xdr_mech
 	if _tower_upgrade_hud.is_ips_panel_visible():
 		return _ips_intrusion
 	if _tower_upgrade_hud.is_honeypot_panel_visible():
@@ -2637,6 +3044,10 @@ func _remove_sold_tower_from_tracking(tower: Node2D, tower_id: StringName) -> vo
 			_siem_hawks.erase(tower)
 			if _siem_hawk == tower:
 				_siem_hawk = null
+		&"xdr":
+			_xdr_mechs.erase(tower)
+			if _xdr_mech == tower:
+				_xdr_mech = null
 		&"ips":
 			_ips_intrusions.erase(tower)
 			if _ips_intrusion == tower:
@@ -2650,7 +3061,7 @@ func _remove_sold_tower_from_tracking(tower: Node2D, tower_id: StringName) -> vo
 func _toggle_siem_hawk_dispatch() -> void:
 	if _is_act_input_locked():
 		return
-	if _siem_hawk == null:
+	if _siem_hawk == null or _is_tower_action_locked(_siem_hawk):
 		return
 
 	_siem_hawk.toggle_dispatch()
@@ -2670,10 +3081,29 @@ func _hide_siem_sidebar_for_destination_selection() -> void:
 	_set_tower_menu_radius_previews(false, false, false, false, false, false, false)
 
 
+func _toggle_xdr_mech_dispatch() -> void:
+	if _is_act_input_locked() \
+			or _xdr_mech == null \
+			or _is_tower_action_locked(_xdr_mech):
+		return
+	_xdr_mech.toggle_dispatch()
+	if _xdr_mech.is_dispatched():
+		_hide_xdr_sidebar_for_destination_selection()
+	_sync_xdr_upgrade_panel()
+
+
+func _hide_xdr_sidebar_for_destination_selection() -> void:
+	if _tower_upgrade_hud == null or not _tower_upgrade_hud.is_xdr_panel_visible():
+		return
+	_restore_tower_store_after_upgrade_panel = false
+	_tower_upgrade_hud.hide_xdr_panel()
+	_set_tower_menu_radius_previews(false, false, false, false, false, false, false)
+
+
 func _land_siem_hawk_to_headquarters() -> void:
 	if _is_act_input_locked():
 		return
-	if _siem_hawk == null:
+	if _siem_hawk == null or _is_tower_action_locked(_siem_hawk):
 		return
 
 	_siem_hawk.land_to_headquarters()
@@ -2683,7 +3113,7 @@ func _land_siem_hawk_to_headquarters() -> void:
 func _set_ids_scanner_mode(mode_id: StringName) -> void:
 	if _is_act_input_locked():
 		return
-	if _ids_scanner == null:
+	if _ids_scanner == null or _is_tower_action_locked(_ids_scanner):
 		return
 
 	if not _ids_scanner_can_change_mode_now():
@@ -2699,7 +3129,7 @@ func _set_ids_scanner_mode(mode_id: StringName) -> void:
 func _set_guardian_mode(mode_id: StringName) -> void:
 	if _is_act_input_locked():
 		return
-	if _guardian == null:
+	if _guardian == null or _is_tower_action_locked(_guardian):
 		return
 
 	var knowledge_level := _get_current_knowledge_level()
@@ -2716,7 +3146,20 @@ func _set_guardian_mode(mode_id: StringName) -> void:
 func _activate_guardian_signal_boost() -> void:
 	if _is_act_input_locked() or _is_question_input_locked():
 		return
-	if _guardian == null or not _guardian.activate_signal_boost():
+	if _guardian == null \
+			or _is_tower_action_locked(_guardian) \
+			or not _guardian.activate_signal_boost():
+		return
+
+	_sync_guardian_upgrade_panel()
+
+
+func _activate_guardian_firewall() -> void:
+	if _is_act_input_locked() or _is_question_input_locked():
+		return
+	if _guardian == null \
+			or _is_tower_action_locked(_guardian) \
+			or not _guardian.activate_firewall():
 		return
 
 	_sync_guardian_upgrade_panel()
@@ -2731,6 +3174,20 @@ func _on_guardian_firewall_damage_requested(follow: PathFollow2D, amount: int) -
 
 
 func _on_ips_spike_damage_requested(follow: PathFollow2D, amount: int) -> void:
+	_damage_virus(follow, amount)
+
+
+func _on_xdr_claw_damage_requested(
+	follow: PathFollow2D,
+	amount: int
+) -> void:
+	_damage_virus(follow, amount)
+
+
+func _on_xdr_cannon_damage_requested(
+	follow: PathFollow2D,
+	amount: int
+) -> void:
 	_damage_virus(follow, amount)
 
 
@@ -2775,8 +3232,23 @@ func _on_guardian_signal_boost_status_changed(_state_id: StringName, _time_remai
 	_sync_guardian_upgrade_panel()
 
 
+func _on_guardian_firewall_effect_changed(_active: bool) -> void:
+	_sync_guardian_upgrade_panel()
+
+
+func _on_guardian_firewall_status_changed(
+	_state_id: StringName,
+	_time_remaining: float
+) -> void:
+	_sync_guardian_upgrade_panel()
+
+
 func _on_siem_hawk_dispatch_mode_changed(_dispatched: bool) -> void:
 	_sync_siem_upgrade_panel()
+
+
+func _on_xdr_mech_dispatch_mode_changed(_dispatched: bool) -> void:
+	_sync_xdr_upgrade_panel()
 
 
 func _on_siem_hawk_knowledge_bank_changed(_banked_points: int) -> void:
@@ -2898,6 +3370,7 @@ func _apply_guardian_signal_boost_state() -> void:
 	var firewall_profile := _get_firewall_profile(knowledge_level)
 	var boost_active := _guardian != null \
 		and _guardian.is_placed() \
+		and not _is_tower_action_locked(_guardian) \
 		and _guardian.get_current_mode_id() == GUARDIAN_MODE_SIGNAL_BOOST \
 		and _guardian.is_signal_boost_effect_active() \
 		and knowledge_level >= SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL
@@ -2911,7 +3384,8 @@ func _apply_guardian_signal_boost_state() -> void:
 				boost_active,
 				float(signal_boost_profile["range_multiplier"]),
 				float(signal_boost_profile["cooldown_multiplier"]),
-				float(signal_boost_profile["hawk_speed_multiplier"])
+				float(signal_boost_profile["hawk_speed_multiplier"]),
+				float(signal_boost_profile["damage_multiplier"])
 			)
 		elif node.has_method("set_signal_boost_active"):
 			node.call("set_signal_boost_active", boost_active)
@@ -2926,22 +3400,10 @@ func _apply_guardian_signal_boost_state() -> void:
 
 
 func _get_signal_boost_profile(knowledge_level: int) -> Dictionary:
-	var step_count := 0
-	for threshold in SIGNAL_BOOST_STEP_LEVELS:
-		if knowledge_level >= int(threshold):
-			step_count += 1
-
-	var range_bonus := SIGNAL_BOOST_RANGE_BASE_BONUS + float(step_count) * SIGNAL_BOOST_STEP_BONUS
-	var cooldown_reduction := SIGNAL_BOOST_COOLDOWN_BASE_REDUCTION + float(step_count) * SIGNAL_BOOST_STEP_BONUS
-	var hawk_speed_bonus := SIGNAL_BOOST_HAWK_SPEED_BASE_BONUS + float(step_count) * SIGNAL_BOOST_STEP_BONUS
-	return {
-		"range_bonus": range_bonus,
-		"cooldown_reduction": cooldown_reduction,
-		"hawk_speed_bonus": hawk_speed_bonus,
-		"range_multiplier": 1.0 + range_bonus,
-		"cooldown_multiplier": maxf(0.05, 1.0 - cooldown_reduction),
-		"hawk_speed_multiplier": 1.0 + hawk_speed_bonus
-	}
+	return SignalBoostBalanceScript.get_profile(
+		knowledge_level,
+		SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL
+	)
 
 
 func _get_firewall_profile(knowledge_level: int) -> Dictionary:
@@ -2975,16 +3437,27 @@ func _get_guardian_sidebar_status_text(knowledge_level: int) -> String:
 			state_text = "Signal Boost Active - %ds" % remaining_seconds
 		elif state_id == &"cooldown":
 			state_text = "Signal Boost Cooldown - %ds" % remaining_seconds
-		return "%s\nKnowledge LV %d\nAll tower range: +%s\nAll tower cooldown: -%s\nSIEM Hawk speed: +%s" % [
+		return "%s\nKnowledge LV %d\nAll tower damage: +%s\nAll tower attack speed: +%s\nAll tower radius: +%s\nSIEM Hawk flight speed: +%s" % [
 			state_text,
 			knowledge_level,
+			_format_percent(float(profile["damage_bonus"])),
+			_format_percent(float(profile["attack_speed_bonus"])),
 			_format_percent(float(profile["range_bonus"])),
-			_format_percent(float(profile["cooldown_reduction"])),
 			_format_percent(float(profile["hawk_speed_bonus"]))
 		]
 	if mode_id == GUARDIAN_MODE_FIREWALL:
 		var firewall_profile := _get_firewall_profile(knowledge_level)
-		return "Firewall Active\nKnowledge LV %d\nFirewall hit: %d damage\nBurn: %d damage every %.1fs for %.0fs" % [
+		var state_id := _guardian.get_firewall_state_id()
+		var remaining_seconds := ceili(
+			_guardian.get_firewall_time_remaining()
+		)
+		var state_text := "Firewall Ready"
+		if state_id == &"declare":
+			state_text = "Firewall Deploying - %ds" % remaining_seconds
+		elif state_id == &"active":
+			state_text = "Firewall Active - %ds" % remaining_seconds
+		return "%s\nKnowledge LV %d\nFirewall hit: %d damage\nBurn: %d damage every %.1fs for %.0fs" % [
+			state_text,
 			knowledge_level,
 			int(firewall_profile["hit_damage"]),
 			int(firewall_profile["burn_damage"]),
@@ -3005,6 +3478,7 @@ func _sync_all_tower_upgrade_panels() -> void:
 	_sync_scanner_upgrade_panel()
 	_sync_edr_upgrade_panel()
 	_sync_siem_upgrade_panel()
+	_sync_xdr_upgrade_panel()
 	_sync_ips_upgrade_panel()
 	_sync_honeypot_upgrade_panel()
 
@@ -3024,7 +3498,7 @@ func _sync_guardian_upgrade_panel() -> void:
 
 
 func _sync_laser_upgrade_panel() -> void:
-	if _laser_turret == null or _tower_upgrade_hud == null:
+	if not is_instance_valid(_laser_turret) or _tower_upgrade_hud == null:
 		return
 
 	var level := _laser_turret.get_level()
@@ -3112,6 +3586,21 @@ func _sync_siem_upgrade_panel() -> void:
 	)
 
 
+func _sync_xdr_upgrade_panel() -> void:
+	if _xdr_mech == null or _tower_upgrade_hud == null:
+		return
+	if not _tower_upgrade_hud.is_xdr_panel_visible():
+		return
+	var upgrade_cost := _xdr_mech.get_upgrade_cost()
+	_tower_upgrade_hud.set_xdr_stats(
+		_xdr_mech.get_level(),
+		_xdr_mech.get_max_level(),
+		_xdr_mech.is_dispatched(),
+		_xdr_mech.can_upgrade() and _can_afford_upgrade(upgrade_cost),
+		upgrade_cost
+	)
+
+
 func _sync_ips_upgrade_panel() -> void:
 	if _ips_intrusion == null or _tower_upgrade_hud == null:
 		return
@@ -3176,7 +3665,7 @@ func _ids_scanner_can_change_mode_now() -> bool:
 	if _ids_scanner == null:
 		return false
 
-	return _ids_scanner.refresh_mode_lock(_active_viruses)
+	return _ids_scanner.refresh_mode_lock(_get_path_damage_targets())
 
 
 func _start_next_wave() -> void:
@@ -3185,37 +3674,73 @@ func _start_next_wave() -> void:
 
 	if _wave_in_progress or _wave_question_pending:
 		return
-	if _current_wave >= WAVE_MAX_COUNT:
+	if _current_wave >= _wave_max_count:
 		_update_wave_button()
 		_update_wave_label()
 		return
 	if _should_play_wave_five_cutscene():
 		_play_wave_five_cutscene_then_start_wave()
 		return
+	if _should_play_wave_ten_ransomware_cutscene():
+		_play_wave_ten_ransomware_cutscene_then_start_wave()
+		return
+	if _should_play_zombie_node_entrance():
+		_play_zombie_node_entrance_then_start_wave()
+		return
+	if _should_play_zombie_node_middle_transform():
+		_play_zombie_node_middle_transform_then_start_wave()
+		return
+	if _should_play_zombie_node_final_transform():
+		_play_zombie_node_final_transform_then_start_wave()
+		return
+	if _should_play_worm_boss_intro():
+		_play_worm_boss_intro_then_start_wave()
+		return
+	if _should_play_botnet_node_middle_transform():
+		_play_botnet_node_middle_transform_then_start_wave()
+		return
+	if _should_play_botnet_node_final_transform():
+		_play_botnet_node_final_transform_then_start_wave()
+		return
 
 	_current_wave += 1
 	_wave_in_progress = true
-	_wave_spawns_remaining = WAVE_BASE_VIRUS_COUNT + ((_current_wave - 1) * WAVE_VIRUS_COUNT_STEP)
-	_wave_spawn_cooldown_remaining = 0.0
+	_wave_spawn_schedule = _wave_manager.build_spawn_schedule(_current_wave)
+	_wave_spawns_remaining = _wave_spawn_schedule.size()
+	_wave_spawn_elapsed_seconds = 0.0
+	_wave_minimum_spawn_time_remaining = _wave_manager.get_spawn_duration_seconds(_current_wave)
+	_update_wave_timer_label()
+	if _wave_manager.get_virus_amount(_current_wave, WaveManagerScript.ADWARE) > 0:
+		_rebuild_adware_variation_deck()
 	_update_wave_button()
 	_update_wave_label()
 	current_wave_changed.emit(_current_wave)
 	wave_started.emit(_current_wave)
-	if _current_wave == WAVE_FIVE_CUTSCENE_WAVE:
-		_spawn_cloaked_trojan_horse()
-	if _current_wave == ARMORED_VIRUS_TEST_WAVE:
-		_spawn_evolved_virus(ArmoredVirusScene, "ArmoredVirus", DEFAULT_EVOLVED_VIRUS_SPAWN_SCALE)
-	if _current_wave == SPYWARE_TEST_WAVE:
-		_spawn_spyware()
-	if _current_wave == ADWARE_WAVE:
-		_begin_adware_wave_spawn()
-	if _current_wave == MUTANT_VIRUS_TEST_WAVE:
-		_spawn_evolved_virus(MutantVirusScene, "MutantVirus", DEFAULT_EVOLVED_VIRUS_SPAWN_SCALE)
+	_set_zombie_node_wave_active(
+		_wave_manager.get_progressive_boss_name(_current_wave)
+			== WaveManagerScript.ZOMBIE_NODE
+	)
+	_set_botnet_node_wave_active(
+		_wave_manager.get_progressive_boss_name(_current_wave)
+			== WaveManagerScript.BOTNET_NODE
+	)
+	_ensure_worm_boss_spawned_for_wave()
+	_set_worm_boss_wave_active(
+		_wave_manager.get_progressive_boss_name(_current_wave)
+			== WaveManagerScript.WORM_BOSS
+			or _current_wave == FINAL_BOSS_WAVE
+	)
+	if _current_wave == RANSOMWARE_GUARDIAN_WAVE \
+			and not _wave_ten_ransomware_triggered:
+		var guardian_target := _get_deployed_guardian()
+		if guardian_target == null:
+			_wave_ten_ransomware_pending_guardian = true
+		else:
+			_begin_ransomware_without_cutscene(guardian_target, true)
 
 
 func _should_play_wave_five_cutscene() -> bool:
-	return not _is_admin_scene() \
-		and not _wave_five_cutscene_played \
+	return not _wave_five_cutscene_played \
 		and not _wave_five_cutscene_running \
 		and _current_wave + 1 == WAVE_FIVE_CUTSCENE_WAVE \
 		and _text_cutscene_hud != null \
@@ -3237,40 +3762,317 @@ func _play_wave_five_cutscene_then_start_wave() -> void:
 	_start_next_wave()
 
 
+func _should_play_wave_ten_ransomware_cutscene() -> bool:
+	return not _wave_ten_ransomware_triggered \
+		and not _wave_ten_ransomware_cutscene_running \
+		and _current_wave + 1 == RANSOMWARE_GUARDIAN_WAVE \
+		and _get_deployed_guardian() != null
+
+
+func _play_wave_ten_ransomware_cutscene_then_start_wave() -> void:
+	var guardian_target := _get_deployed_guardian()
+	if guardian_target == null:
+		_wave_ten_ransomware_pending_guardian = true
+		_start_next_wave()
+		return
+
+	await _run_wave_ten_ransomware_cutscene(guardian_target)
+	if _is_act_input_locked() or _game_over:
+		return
+	_start_next_wave()
+
+
+func _play_wave_ten_ransomware_cutscene_during_wave(
+	guardian_target: CyberGuardianTowerScript
+) -> void:
+	if not is_instance_valid(guardian_target) or _wave_ten_ransomware_triggered:
+		return
+	await _run_wave_ten_ransomware_cutscene(guardian_target)
+
+
+func _run_wave_ten_ransomware_cutscene(
+	guardian_target: CyberGuardianTowerScript
+) -> void:
+	_wave_ten_ransomware_cutscene_running = true
+	_wave_ten_ransomware_triggered = true
+	_wave_ten_ransomware_pending_guardian = false
+	var ransomware := _create_ransomware_interruption(guardian_target, true)
+	if ransomware == null:
+		_wave_ten_ransomware_cutscene_running = false
+		return
+
+	_update_wave_button()
+	if _text_cutscene_hud == null \
+			or not _text_cutscene_hud.has_method(
+				"start_wave10_ransomware_cutscene"
+			):
+		await ransomware.play_appear()
+		_wave_ten_ransomware_cutscene_running = false
+		_update_wave_button()
+		return
+	_text_cutscene_hud.call(
+		"start_wave10_ransomware_cutscene",
+		ransomware,
+		guardian_target
+	)
+	if _text_cutscene_hud.has_signal("cutscene_finished"):
+		await _text_cutscene_hud.cutscene_finished
+	if is_instance_valid(ransomware):
+		ransomware.finish_appear_immediately()
+	_wave_ten_ransomware_cutscene_running = false
+	_update_wave_button()
+
+
+func _should_play_zombie_node_entrance() -> bool:
+	return _cutscene_demo_director != null \
+		and _cutscene_demo_director.should_play_zombie_entrance(_current_wave + 1)
+
+
+func _play_zombie_node_entrance_then_start_wave() -> void:
+	_update_wave_button()
+	await _cutscene_demo_director.play_zombie_entrance_cutscene()
+	_update_wave_button()
+	if _is_act_input_locked() or _game_over:
+		return
+	_start_next_wave()
+
+
+func _should_play_zombie_node_middle_transform() -> bool:
+	return _cutscene_demo_director != null \
+		and _cutscene_demo_director.should_play_zombie_middle_transform(
+			_current_wave + 1
+		)
+
+
+func _play_zombie_node_middle_transform_then_start_wave() -> void:
+	_update_wave_button()
+	await _cutscene_demo_director.play_zombie_middle_transform()
+	_update_wave_button()
+	if _is_act_input_locked() or _game_over:
+		return
+	_start_next_wave()
+
+
+func _should_play_zombie_node_final_transform() -> bool:
+	return _cutscene_demo_director != null \
+		and _cutscene_demo_director.should_play_zombie_final_transform(
+			_current_wave + 1
+		)
+
+
+func _play_zombie_node_final_transform_then_start_wave() -> void:
+	_update_wave_button()
+	await _cutscene_demo_director.play_zombie_final_transform_cutscene()
+	_update_wave_button()
+	if _is_act_input_locked() or _game_over:
+		return
+	_start_next_wave()
+
+
+func _should_play_worm_boss_intro() -> bool:
+	return _cutscene_demo_director != null \
+		and _cutscene_demo_director.should_play_worm_boss_intro(
+			_current_wave + 1
+		)
+
+
+func _play_worm_boss_intro_then_start_wave() -> void:
+	if _worm_boss == null or _virus_path == null \
+			or _virus_path.curve == null:
+		_start_next_wave()
+		return
+
+	var spawn_progress := _get_virus_spawn_progress()
+	var preview_anchor := _worm_boss.get_authored_cutscene_position()
+	_worm_boss.prepare_cutscene_preview(preview_anchor)
+	_update_wave_button()
+	await _cutscene_demo_director.play_worm_boss_intro_cutscene()
+	if _game_over:
+		_worm_boss.deactivate()
+		return
+	_worm_boss.begin_path_spawn(_virus_path, spawn_progress)
+	_update_wave_button()
+	if _is_act_input_locked():
+		return
+	_start_next_wave()
+
+
+func _should_play_botnet_node_middle_transform() -> bool:
+	return _cutscene_demo_director != null \
+		and _cutscene_demo_director.should_play_botnet_middle_transform(
+			_current_wave + 1
+		)
+
+
+func _play_botnet_node_middle_transform_then_start_wave() -> void:
+	_update_wave_button()
+	await _cutscene_demo_director.play_botnet_middle_transform()
+	_update_wave_button()
+	if _is_act_input_locked() or _game_over:
+		return
+	_start_next_wave()
+
+
+func _should_play_botnet_node_final_transform() -> bool:
+	return _cutscene_demo_director != null \
+		and _cutscene_demo_director.should_play_botnet_final_transform(
+			_current_wave + 1
+		)
+
+
+func _play_botnet_node_final_transform_then_start_wave() -> void:
+	_update_wave_button()
+	await _cutscene_demo_director.play_botnet_final_transform()
+	_update_wave_button()
+	if _is_act_input_locked() or _game_over:
+		return
+	_start_next_wave()
+
+
 func get_current_wave() -> int:
 	return _current_wave
 
 
+func get_wave_max_count() -> int:
+	return _wave_max_count
+
+
 func set_current_wave_for_demo(wave_number: int) -> void:
+	_clear_all_ransomware_interruptions()
 	_current_wave = clampi(wave_number, 0, WAVE_MAX_COUNT)
+	if _current_wave > WAVE_CLEARANCE_COUNT \
+			or (_is_admin_scene() and _current_wave == WAVE_CLEARANCE_COUNT):
+		_unlock_extended_waves()
 	_wave_in_progress = false
+	_set_zombie_node_wave_active(false)
+	_set_botnet_node_wave_active(false)
+	_set_worm_boss_wave_active(false)
+	if _worm_boss != null:
+		_worm_boss.deactivate()
 	_wave_question_pending = false
 	_wave_spawns_remaining = 0
-	_wave_spawn_cooldown_remaining = 0.0
+	_wave_spawn_elapsed_seconds = 0.0
+	_wave_minimum_spawn_time_remaining = 0.0
+	_wave_spawn_schedule.clear()
+	_update_wave_timer_label()
 	_clear_adware_popups()
 	_wave_five_cutscene_running = false
+	_worm_defeat_sequence_running = false
 	_wave_five_cutscene_played = _current_wave >= WAVE_FIVE_CUTSCENE_WAVE
+	_wave_ten_ransomware_cutscene_running = false
+	_wave_ten_ransomware_pending_guardian = (
+		_current_wave == RANSOMWARE_GUARDIAN_WAVE
+	)
+	_wave_ten_ransomware_triggered = _current_wave > RANSOMWARE_GUARDIAN_WAVE
+	_wave_fourteen_ransomware_triggered = (
+		_current_wave >= RANSOMWARE_RANDOM_TOWER_WAVE
+	)
+	if _cutscene_demo_director != null:
+		_cutscene_demo_director.mark_entrance_played_for_wave(_current_wave)
+	_sync_zombie_node_after_manual_wave_set()
 	_update_wave_button()
 	_update_wave_label()
 	current_wave_changed.emit(_current_wave)
+	if _current_wave == RANSOMWARE_GUARDIAN_WAVE:
+		call_deferred("_try_start_wave_ten_ransomware_for_current_state")
+
+
+func _sync_zombie_node_after_manual_wave_set() -> void:
+	if not is_instance_valid(_zombie_node):
+		return
+	if _current_wave >= 15:
+		_zombie_node.retire_after_final_wave()
+		return
+	if _wave_manager.get_progressive_boss_name(_current_wave) \
+			!= WaveManagerScript.ZOMBIE_NODE:
+		_zombie_node.deactivate()
+		return
+
+	_zombie_node.activate()
+	_zombie_node.set_level(
+		_wave_manager.get_progressive_boss_level(_current_wave)
+	)
+	_zombie_node.set_combat_unlocked(false)
 
 
 func _update_wave_spawner(delta: float) -> void:
 	if not _wave_in_progress:
 		return
 
+	_wave_spawn_elapsed_seconds += delta
+	_wave_minimum_spawn_time_remaining = maxf(
+		0.0,
+		_wave_minimum_spawn_time_remaining - delta
+	)
+	_update_wave_timer_label()
 	if _wave_spawns_remaining > 0:
-		_wave_spawn_cooldown_remaining -= delta
-		if _wave_spawn_cooldown_remaining <= 0.0:
-			_spawn_virus()
-			_wave_spawns_remaining -= 1
-			_wave_spawn_cooldown_remaining = WAVE_SPAWN_INTERVAL
+		while not _wave_spawn_schedule.is_empty():
+			var next_instruction: Dictionary = _wave_spawn_schedule.front()
+			var spawn_time := float(next_instruction.get("spawn_time_seconds", 0.0))
+			if spawn_time > _wave_spawn_elapsed_seconds:
+				break
 
-	if _wave_spawns_remaining <= 0 and _active_viruses.is_empty():
+			_wave_spawn_schedule.pop_front()
+			var virus_type := StringName(
+				next_instruction.get("virus_type", WaveManagerScript.RED_VIRUS)
+			)
+			_spawn_wave_virus(virus_type)
+			_wave_spawns_remaining = _wave_spawn_schedule.size()
+
+	if _wave_spawns_remaining <= 0 \
+			and _wave_minimum_spawn_time_remaining <= 0.0 \
+			and _active_viruses.is_empty() \
+			and not _is_required_zombie_node_alive() \
+			and not _is_required_botnet_node_alive() \
+			and not _is_required_worm_boss_alive() \
+			and not _worm_defeat_sequence_running \
+			and not _has_pending_zombie_minion_spawn():
 		_wave_in_progress = false
+		_set_zombie_node_wave_active(false)
+		_set_botnet_node_wave_active(false)
+		_set_worm_boss_wave_active(false)
 		_show_wave_question()
 		_update_wave_button()
 		_update_wave_label()
+
+
+func _spawn_wave_virus(virus_type: StringName) -> void:
+	match virus_type:
+		WaveManagerScript.RED_VIRUS:
+			_spawn_virus()
+		WaveManagerScript.MUTANT_VIRUS:
+			_spawn_evolved_virus(
+				MutantVirusScene,
+				"MutantVirus",
+				DEFAULT_EVOLVED_VIRUS_SPAWN_SCALE
+			)
+		WaveManagerScript.ARMORED_VIRUS:
+			_spawn_evolved_virus(
+				ArmoredVirusScene,
+				"ArmoredVirus",
+				DEFAULT_EVOLVED_VIRUS_SPAWN_SCALE
+			)
+		WaveManagerScript.TROJAN_HORSE:
+			_spawn_cloaked_trojan_horse()
+		WaveManagerScript.ADWARE:
+			_spawn_adware_miniboss()
+		WaveManagerScript.SPYWARE:
+			_spawn_spyware()
+		WaveManagerScript.ZOMBIE_NODE_MINION:
+			var spawn_position := (
+				_virus_spawn.global_position
+				if _virus_spawn != null
+				else Vector2.ZERO
+			)
+			_spawn_zombie_node_minion(
+				spawn_position,
+				_adware_rng.randi_range(0, 8)
+			)
+		_:
+			push_warning("Wave %d contains unsupported virus type '%s'." % [
+				_current_wave,
+				String(virus_type),
+			])
 
 
 func _begin_adware_wave_spawn() -> void:
@@ -3304,10 +4106,26 @@ func _update_wave_button() -> void:
 		_game_controls_hud.set_wave_button("Answer Question", true)
 		_set_spawn_buttons_disabled(not demo_spawn_buttons_ignore_question_lock)
 		return
+	if _wave_20_clearance_hud != null and _wave_20_clearance_hud.is_cutscene_running():
+		_game_controls_hud.set_wave_button("CPU Clearance", true)
+		_set_spawn_buttons_disabled(true)
+		return
 
 	if _wave_five_cutscene_running:
 		_game_controls_hud.set_wave_button("Wave 5 Intel", true)
 		_set_spawn_buttons_disabled(false)
+		return
+	if _wave_ten_ransomware_cutscene_running:
+		_game_controls_hud.set_wave_button("Ransomware Interruption", true)
+		_set_spawn_buttons_disabled(true)
+		return
+	if _worm_defeat_sequence_running:
+		_game_controls_hud.set_wave_button("Cyber Worm Defeated", true)
+		_set_spawn_buttons_disabled(true)
+		return
+	if _cutscene_demo_director != null and _cutscene_demo_director.is_cutscene_running():
+		_game_controls_hud.set_wave_button("Wave 11 Boss Incoming", true)
+		_set_spawn_buttons_disabled(true)
 		return
 
 	if _wave_in_progress:
@@ -3315,7 +4133,7 @@ func _update_wave_button() -> void:
 		_set_spawn_buttons_disabled(false)
 		return
 
-	if _current_wave >= WAVE_MAX_COUNT:
+	if _current_wave >= _wave_max_count:
 		_game_controls_hud.set_wave_button("Waves Complete", true)
 		_set_spawn_buttons_disabled(false)
 		return
@@ -3328,7 +4146,26 @@ func _update_wave_label() -> void:
 	if _wave_label == null:
 		return
 
-	_wave_label.text = "Wave %d/%d" % [clampi(_current_wave, 0, WAVE_MAX_COUNT), WAVE_MAX_COUNT]
+	_wave_label.text = "Wave %d/%d" % [
+		clampi(_current_wave, 0, _wave_max_count),
+		_wave_max_count
+	]
+
+
+func _update_wave_timer_label() -> void:
+	if _wave_timer_label == null:
+		return
+
+	_wave_timer_label.text = _format_wave_time(
+		_wave_minimum_spawn_time_remaining
+	)
+
+
+func _format_wave_time(time_seconds: float) -> String:
+	var total_seconds := maxi(0, ceili(time_seconds))
+	var minutes := floori(float(total_seconds) / 60.0)
+	var seconds := total_seconds % 60
+	return "%02d:%02d" % [minutes, seconds]
 
 
 func _set_spawn_buttons_disabled(disabled: bool) -> void:
@@ -3338,6 +4175,7 @@ func _set_spawn_buttons_disabled(disabled: bool) -> void:
 
 func _show_wave_question() -> void:
 	if _question_hud == null:
+		_show_wave_20_clearance_cutscene()
 		return
 
 	_wave_question_pending = true
@@ -3346,6 +4184,7 @@ func _show_wave_question() -> void:
 
 func _on_wave_question_solved(_reward: int) -> void:
 	_wave_question_pending = false
+	_show_wave_20_clearance_cutscene()
 	_update_wave_button()
 	_update_wave_label()
 	_sync_laser_upgrade_panel()
@@ -3354,8 +4193,51 @@ func _on_wave_question_solved(_reward: int) -> void:
 	_sync_siem_upgrade_panel()
 
 
+func _show_wave_20_clearance_cutscene() -> void:
+	if _current_wave != WAVE_CLEARANCE_COUNT or _extended_waves_unlocked:
+		return
+	if _is_admin_scene():
+		_unlock_extended_waves()
+		return
+	if _wave_20_clearance_hud == null:
+		_unlock_extended_waves()
+		return
+
+	_wave_20_clearance_hud.show_clearance()
+	_update_wave_button()
+
+
+func _on_wave_20_clearance_choice(_continue_selected: bool) -> void:
+	_unlock_extended_waves()
+
+
+func _unlock_extended_waves() -> void:
+	if _extended_waves_unlocked:
+		return
+
+	_extended_waves_unlocked = true
+	_wave_max_count = WAVE_MAX_COUNT
+	_update_wave_button()
+	_update_wave_label()
+
+
 func _on_phishing_decoy_selected() -> void:
+	_phishing_effect_active = true
 	spawn_virus_batch(100)
+	_end_phishing_effect_if_viruses_cleared()
+
+
+func _end_phishing_effect_if_viruses_cleared() -> void:
+	if not _phishing_effect_active or not _active_viruses.is_empty():
+		return
+
+	_clear_phishing_effect()
+
+
+func _clear_phishing_effect() -> void:
+	_phishing_effect_active = false
+	if _question_hud != null and _question_hud.has_method("end_phishing_effect"):
+		_question_hud.call("end_phishing_effect")
 
 
 func _exit_game() -> void:
@@ -3470,6 +4352,92 @@ func _spawn_evolved_virus(scene: PackedScene, virus_name: String, spawn_scale: V
 	_update_virus_count_label()
 
 
+func _on_zombie_minion_spawn_requested(spawn_global_position: Vector2, variant_index: int) -> void:
+	if not _wave_in_progress:
+		return
+
+	_spawn_zombie_node_minion(spawn_global_position, variant_index)
+
+
+func _spawn_zombie_node_minion(spawn_global_position: Vector2, variant_index: int) -> PathFollow2D:
+	if _virus_path == null or _virus_path.curve == null:
+		push_warning("Cannot spawn Zombie Node minion because VirusElements/Path2D is missing a curve.")
+		return null
+
+	var minion := ZombieNodeMinionScene.instantiate() as ZombieNodeMinion
+	if minion == null:
+		push_warning("Cannot spawn Zombie Node minion because its scene is invalid.")
+		return null
+
+	var path_local_position := _virus_path.to_local(spawn_global_position)
+	var nearest_path_progress := _virus_path.curve.get_closest_offset(path_local_position)
+	var follow := PathFollow2D.new()
+	follow.name = "SpawnedZombieNodeMinionFollow"
+	follow.loop = false
+	follow.progress = _get_available_path_progress(nearest_path_progress, 56.0)
+	_virus_path.add_child(follow)
+
+	minion.name = "SpawnedZombieNodeMinion"
+	minion.position = Vector2.ZERO
+	follow.add_child(minion)
+	minion.configure_variant(variant_index)
+	minion.reset_for_spawn()
+	minion.start_path_entry(spawn_global_position, follow.global_position)
+
+	_active_viruses.append(follow)
+	_update_virus_count_label()
+	return follow
+
+
+func _on_botnet_minion_spawn_requested(
+	spawn_global_position: Vector2,
+	batch_index: int
+) -> void:
+	if not _wave_in_progress:
+		return
+	_spawn_botnet_minion(spawn_global_position, batch_index)
+
+
+func _spawn_botnet_minion(
+	spawn_global_position: Vector2,
+	batch_index: int
+) -> PathFollow2D:
+	if _virus_path == null or _virus_path.curve == null:
+		push_warning(
+			"Cannot spawn Botnet minion because VirusElements/Path2D "
+			+ "is missing a curve."
+		)
+		return null
+
+	var minion := BotnetMinionScene.instantiate() as BotnetMinion
+	if minion == null:
+		push_warning("Cannot spawn Botnet minion because its scene is invalid.")
+		return null
+
+	var desired_progress := (
+		_get_virus_spawn_progress()
+		+ float(maxi(0, batch_index)) * BOTNET_MINION_PATH_SPACING
+	)
+	var follow := PathFollow2D.new()
+	follow.name = "SpawnedBotnetMinionFollow"
+	follow.loop = false
+	follow.progress = _get_available_botnet_scanner_progress(
+		desired_progress,
+		BOTNET_MINION_PATH_SPACING
+	)
+	_virus_path.add_child(follow)
+
+	minion.name = "SpawnedBotnetMinion"
+	minion.position = Vector2.ZERO
+	follow.add_child(minion)
+	minion.reset_for_spawn()
+	minion.start_path_entry(spawn_global_position, follow.global_position)
+
+	_active_viruses.append(follow)
+	_update_virus_count_label()
+	return follow
+
+
 func _spawn_adware_miniboss() -> void:
 	if _virus_path == null or _virus_path.curve == null:
 		push_warning("Cannot spawn Adware because VirusElements/Path2D is missing a curve.")
@@ -3491,11 +4459,11 @@ func _spawn_adware_miniboss() -> void:
 	follow.add_child(adware)
 	adware.global_scale = DEFAULT_ADWARE_SPAWN_SCALE
 	adware.reset_for_spawn()
-	adware.start_popup_burst(
+	adware.start_popup_cycle(
 		_adware_variation_deck.duplicate(),
-		ADWARE_POPUP_COUNT,
 		ADWARE_POPUP_INTERVAL,
-		_get_adware_popup_anchor_candidates()
+		_get_adware_popup_anchor_candidates(),
+		Callable(self, "_get_adware_popup_anchor_candidates")
 	)
 
 	_active_viruses.append(follow)
@@ -3545,10 +4513,10 @@ func _connect_spyware(spyware: SpywareScript) -> void:
 		return
 	if not spyware.knowledge_steal_requested.is_connected(_on_spyware_knowledge_steal_requested):
 		spyware.knowledge_steal_requested.connect(_on_spyware_knowledge_steal_requested)
-	if not spyware.knowledge_recovery_requested.is_connected(_on_spyware_knowledge_recovery_requested):
-		spyware.knowledge_recovery_requested.connect(_on_spyware_knowledge_recovery_requested)
-	if not spyware.knowledge_exfiltrated.is_connected(_on_spyware_knowledge_exfiltrated):
-		spyware.knowledge_exfiltrated.connect(_on_spyware_knowledge_exfiltrated)
+	if not spyware.hijack_started.is_connected(_on_spyware_hijack_started):
+		spyware.hijack_started.connect(_on_spyware_hijack_started)
+	if not spyware.hijack_released.is_connected(_on_spyware_hijack_released):
+		spyware.hijack_released.connect(_on_spyware_hijack_released)
 
 
 func _on_spyware_knowledge_steal_requested(spyware: SpywareScript, amount: int) -> void:
@@ -3556,21 +4524,336 @@ func _on_spyware_knowledge_steal_requested(spyware: SpywareScript, amount: int) 
 		return
 
 	var stolen_amount := _progress_hud.steal_knowledge_points(amount)
-	spyware.accept_stolen_knowledge(stolen_amount)
+	spyware.report_knowledge_stolen(stolen_amount)
 
 
-func _on_spyware_knowledge_recovery_requested(_spyware: SpywareScript, amount: int) -> void:
-	if _progress_hud == null or amount <= 0:
-		return
-
-	_progress_hud.restore_knowledge_points(amount)
-	_apply_guardian_signal_boost_state()
+func _on_spyware_hijack_started(
+	_spyware: SpywareScript,
+	_target: Node2D
+) -> void:
+	_sync_selected_tower_ransomware_panel()
 	_sync_all_tower_upgrade_panels()
 
 
-func _on_spyware_knowledge_exfiltrated(_spyware: SpywareScript, amount: int) -> void:
-	if amount > 0:
-		print("Spyware exfiltrated %d Knowledge Points." % amount)
+func _on_spyware_hijack_released(
+	_spyware: SpywareScript,
+	_target: Node2D
+) -> void:
+	_sync_selected_tower_ransomware_panel()
+	_sync_all_tower_upgrade_panels()
+
+
+func _create_ransomware_interruption(
+	target: Node2D,
+	guardian_override: bool = false
+) -> Ransomware:
+	if not is_instance_valid(target) or _is_tower_action_locked(target):
+		return null
+
+	var ransomware := RansomwareScene.instantiate() as Ransomware
+	if ransomware == null:
+		push_error("Unable to instantiate the Ransomware scene.")
+		return null
+
+	ransomware.name = "RansomwareInterruption"
+	add_child(ransomware)
+	var duration := _get_ransomware_timer_seconds(target, guardian_override)
+	var payment_cost := _get_ransomware_payment_cost(target, guardian_override)
+	ransomware.configure(target, duration, payment_cost)
+	ransomware.timed_out.connect(_on_ransomware_timed_out)
+	ransomware.lock_released.connect(_on_ransomware_lock_released)
+	ransomware.visual_finished.connect(_on_ransomware_visual_finished)
+	_active_ransomware.append(ransomware)
+	_sync_selected_tower_ransomware_panel()
+	_sync_guardian_ransomware_lock_ui()
+	_apply_guardian_signal_boost_state()
+	return ransomware
+
+
+func _begin_ransomware_without_cutscene(
+	target: Node2D,
+	guardian_override: bool = false
+) -> Ransomware:
+	var ransomware := _create_ransomware_interruption(target, guardian_override)
+	if ransomware == null:
+		return null
+
+	if guardian_override:
+		_wave_ten_ransomware_triggered = true
+		_wave_ten_ransomware_pending_guardian = false
+	elif _current_wave == RANSOMWARE_RANDOM_TOWER_WAVE:
+		_wave_fourteen_ransomware_triggered = true
+	_play_ransomware_appearance(ransomware)
+	return ransomware
+
+
+func _play_ransomware_appearance(ransomware: Ransomware) -> void:
+	if not is_instance_valid(ransomware):
+		return
+	await ransomware.play_appear()
+
+
+func _try_start_wave_ten_ransomware_for_current_state() -> void:
+	if _current_wave != RANSOMWARE_GUARDIAN_WAVE \
+			or _wave_ten_ransomware_triggered \
+			or _wave_ten_ransomware_cutscene_running:
+		return
+
+	var guardian_target := _get_deployed_guardian()
+	if guardian_target == null:
+		_wave_ten_ransomware_pending_guardian = true
+		return
+
+	_wave_ten_ransomware_pending_guardian = false
+	_play_wave_ten_ransomware_cutscene_during_wave(guardian_target)
+
+
+func _try_start_pending_ransomware_for_current_wave() -> void:
+	if not _wave_in_progress \
+			or _current_wave != RANSOMWARE_RANDOM_TOWER_WAVE \
+			or _wave_fourteen_ransomware_triggered:
+		return
+
+	var candidates := _get_random_ransomware_tower_candidates()
+	if candidates.is_empty():
+		return
+
+	var target := candidates[_adware_rng.randi_range(0, candidates.size() - 1)]
+	_begin_ransomware_without_cutscene(target)
+
+
+func _get_deployed_guardian() -> CyberGuardianTowerScript:
+	for index in range(_guardians.size() - 1, -1, -1):
+		var guardian := _guardians[index]
+		if not is_instance_valid(guardian):
+			_guardians.remove_at(index)
+			continue
+		if _is_deployed_tower(guardian):
+			return guardian
+	return null
+
+
+func _get_random_ransomware_tower_candidates() -> Array[Node2D]:
+	var candidates: Array[Node2D] = []
+	_append_ransomware_tower_candidates(candidates, _guardians)
+	_append_ransomware_tower_candidates(candidates, _laser_turrets)
+	_append_ransomware_tower_candidates(candidates, _ids_scanners)
+	_append_ransomware_tower_candidates(candidates, _edr_hunters)
+	_append_ransomware_tower_candidates(candidates, _siem_hawks)
+	_append_ransomware_tower_candidates(candidates, _xdr_mechs)
+	_append_ransomware_tower_candidates(candidates, _ips_intrusions)
+	_append_ransomware_tower_candidates(candidates, _honeypot_productions)
+	return candidates
+
+
+func _append_ransomware_tower_candidates(
+	candidates: Array[Node2D],
+	towers: Array
+) -> void:
+	for tower_value in towers:
+		var tower := tower_value as Node2D
+		if not is_instance_valid(tower) \
+				or _is_tower_action_locked(tower) \
+				or not _is_deployed_tower(tower):
+			continue
+		candidates.append(tower)
+
+
+func _is_deployed_tower(tower: Node2D) -> bool:
+	if not is_instance_valid(tower):
+		return false
+	if tower.has_method("is_placed"):
+		return bool(tower.call("is_placed"))
+	if tower.has_method("is_deployed"):
+		return bool(tower.call("is_deployed"))
+	return not _is_store_prototype(tower)
+
+
+func _get_ransomware_timer_seconds(
+	tower: Node2D,
+	guardian_override: bool = false
+) -> float:
+	if guardian_override or _is_cyber_guardian_tower(tower):
+		return RANSOMWARE_GUARDIAN_TIMER_SECONDS
+
+	var deploy_cost := _get_default_tower_deploy_cost(tower)
+	return maxf(
+		1.0,
+		roundf(float(deploy_cost) / RANSOMWARE_COST_TO_TIMER_DIVISOR)
+	)
+
+
+func _get_ransomware_payment_cost(
+	tower: Node2D,
+	guardian_override: bool = false
+) -> int:
+	if guardian_override or _is_cyber_guardian_tower(tower):
+		return RANSOMWARE_GUARDIAN_PAYMENT_COST
+
+	return maxi(
+		0,
+		_get_default_tower_deploy_cost(tower) * RANSOMWARE_PAYMENT_MULTIPLIER
+	)
+
+
+func _update_ransomware_interruptions(delta: float) -> void:
+	for index in range(_active_ransomware.size() - 1, -1, -1):
+		var ransomware := _active_ransomware[index]
+		if not is_instance_valid(ransomware):
+			_active_ransomware.remove_at(index)
+			continue
+		ransomware.update_interruption(delta)
+
+
+func _get_ransomware_attack_targets() -> Array[PathFollow2D]:
+	var targets: Array[PathFollow2D] = []
+	for ransomware in _active_ransomware:
+		if is_instance_valid(ransomware) and ransomware.can_be_targeted():
+			targets.append(ransomware)
+	return targets
+
+
+func _find_ransomware_for_target(target: Node2D) -> Ransomware:
+	if not is_instance_valid(target):
+		return null
+	for ransomware in _active_ransomware:
+		if is_instance_valid(ransomware) \
+				and ransomware.get_target_tower() == target \
+				and target.has_meta("ransomware_owner") \
+				and target.get_meta("ransomware_owner") == ransomware:
+			return ransomware
+	return null
+
+
+func _is_tower_ransom_locked(tower: Node) -> bool:
+	return is_instance_valid(tower) and bool(tower.get_meta("ransom_locked", false))
+
+
+func _is_tower_spyware_locked(tower: Node) -> bool:
+	return is_instance_valid(tower) and bool(tower.get_meta("spyware_locked", false))
+
+
+func _is_tower_action_locked(tower: Node) -> bool:
+	return _is_tower_ransom_locked(tower) or _is_tower_spyware_locked(tower)
+
+
+func _pay_selected_tower_ransomware() -> void:
+	if _tower_upgrade_hud == null or _question_hud == null:
+		return
+
+	var tower := _get_selected_tower()
+	var ransomware := _find_ransomware_for_target(tower)
+	if ransomware == null:
+		_sync_selected_tower_ransomware_panel()
+		return
+
+	var payment_cost := ransomware.get_ransom_cost()
+	if not _question_hud.spend_cyberbucks(payment_cost):
+		_tower_upgrade_hud.set_ransomware_status(
+			"Insufficient Cyber Bucks. The lock remains active."
+		)
+		_sync_selected_tower_ransomware_panel()
+		return
+
+	ransomware.release_from_payment()
+	_sync_economy_upgrade_panels()
+	_sync_selected_tower_ransomware_panel()
+
+
+func _on_ransomware_timed_out(
+	_ransomware: Ransomware,
+	target: Node2D
+) -> void:
+	if _question_hud != null:
+		var penalty := mini(
+			RANSOMWARE_TIMEOUT_PENALTY,
+			_question_hud.get_cyberbucks()
+		)
+		if penalty > 0:
+			_question_hud.spend_cyberbucks(penalty)
+	_remove_ransomware_target_tower(target)
+
+
+func _remove_ransomware_target_tower(tower: Node2D) -> void:
+	if not is_instance_valid(tower):
+		return
+
+	var was_selected := _get_selected_tower() == tower
+	var tower_id := _get_tower_id(tower)
+	_set_tower_menu_radius_previews(false, false, false, false, false, false, false)
+	if tower.has_method("clear_range_preview"):
+		tower.call("clear_range_preview")
+	_remove_sold_tower_from_tracking(tower, tower_id)
+	if tower_id == &"guardian" and tower == _guardian_store:
+		_spawn_replacement_guardian()
+	if was_selected and _tower_upgrade_hud != null:
+		_tower_upgrade_hud.hide_all()
+	tower.queue_free()
+	_apply_guardian_signal_boost_state()
+	_sync_tower_store_items(true)
+	_sync_economy_upgrade_panels()
+	_update_demo_upgrade_buttons()
+
+
+func _on_ransomware_lock_released(
+	_ransomware: Ransomware,
+	_target: Node2D,
+	_reason: StringName
+) -> void:
+	if _tower_upgrade_hud != null:
+		_tower_upgrade_hud.set_ransomware_lock(false)
+	_sync_selected_tower_ransomware_panel()
+	_sync_all_tower_upgrade_panels()
+	_sync_guardian_ransomware_lock_ui()
+	_apply_guardian_signal_boost_state()
+
+
+func _on_ransomware_visual_finished(ransomware: Ransomware) -> void:
+	_active_ransomware.erase(ransomware)
+	_sync_selected_tower_ransomware_panel()
+
+
+func _sync_selected_tower_ransomware_panel() -> void:
+	if _tower_upgrade_hud == null:
+		return
+	var tower := _get_selected_tower()
+	if _is_tower_spyware_locked(tower):
+		_tower_upgrade_hud.set_spyware_lock(true)
+		return
+	_tower_upgrade_hud.set_spyware_lock(false)
+
+	var ransomware := _find_ransomware_for_target(tower)
+	if ransomware == null:
+		_tower_upgrade_hud.set_ransomware_lock(false)
+		return
+
+	var payment_cost := ransomware.get_ransom_cost()
+	var can_afford := _question_hud != null \
+		and _question_hud.can_spend_cyberbucks(payment_cost)
+	_tower_upgrade_hud.set_ransomware_lock(
+		true,
+		ransomware.get_formatted_time(),
+		payment_cost,
+		can_afford
+	)
+
+
+func _sync_guardian_ransomware_lock_ui() -> void:
+	if _signal_boost_hud != null:
+		_signal_boost_hud.set_interaction_locked(
+			_is_tower_action_locked(_guardian)
+		)
+
+
+func _clear_all_ransomware_interruptions() -> void:
+	for ransomware in _active_ransomware:
+		if not is_instance_valid(ransomware):
+			continue
+		ransomware.release_without_payment()
+		ransomware.queue_free()
+	_active_ransomware.clear()
+	if _tower_upgrade_hud != null:
+		_tower_upgrade_hud.set_ransomware_lock(false)
 
 
 func _clear_adware_popups() -> void:
@@ -3615,6 +4898,7 @@ func _get_adware_popup_anchor_candidates() -> Array[Node2D]:
 	_append_adware_popup_anchor_candidates(candidates, _ids_scanners)
 	_append_adware_popup_anchor_candidates(candidates, _edr_hunters)
 	_append_adware_popup_anchor_candidates(candidates, _siem_hawks)
+	_append_adware_popup_anchor_candidates(candidates, _xdr_mechs)
 	_append_adware_popup_anchor_candidates(candidates, _ips_intrusions)
 	_append_adware_popup_anchor_candidates(candidates, _honeypot_productions)
 	return candidates
@@ -3708,10 +4992,12 @@ func spawn_virus_batch(count: int) -> void:
 
 func _update_active_viruses(delta: float) -> void:
 	if _virus_path == null or _virus_path.curve == null:
+		_end_phishing_effect_if_viruses_cleared()
 		return
 
 	var path_length := _virus_path.curve.get_baked_length()
 	if path_length <= 0.0:
+		_end_phishing_effect_if_viruses_cleared()
 		return
 
 	var count_changed := false
@@ -3737,8 +5023,11 @@ func _update_active_viruses(delta: float) -> void:
 			_lose_life()
 			count_changed = true
 
+	_update_zombie_minion_contacts()
+	_update_botnet_minion_contacts()
 	if count_changed:
 		_update_virus_count_label()
+	_end_phishing_effect_if_viruses_cleared()
 
 
 func _lose_life(amount: int = 1) -> void:
@@ -3748,7 +5037,10 @@ func _lose_life(amount: int = 1) -> void:
 	_update_lives_display()
 	if _lives <= 0:
 		_game_over = true
-		call_deferred("_return_to_main_menu_after_defeat")
+		_set_zombie_node_wave_active(false)
+		_set_botnet_node_wave_active(false)
+		_set_worm_boss_wave_active(false)
+		call_deferred("_show_defeat_after_loss")
 
 
 func _update_lives_display() -> void:
@@ -3756,7 +5048,27 @@ func _update_lives_display() -> void:
 		_game_controls_hud.set_lives(_lives, maxi(1, starting_lives))
 
 
-func _return_to_main_menu_after_defeat() -> void:
+func _show_defeat_after_loss() -> void:
+	_clear_phishing_effect()
+	if _defeat_hud == null:
+		push_warning("DefeatHUD is unavailable; returning to the Main Menu.")
+		get_tree().paused = false
+		get_tree().change_scene_to_file("res://Scenes/Menus/MainMenu.tscn")
+		return
+
+	get_tree().paused = true
+	_defeat_hud.show_defeat()
+
+
+func _play_again_after_defeat() -> void:
+	get_tree().paused = false
+	var reload_error := get_tree().reload_current_scene()
+	if reload_error != OK:
+		push_error("Unable to restart the current game scene: %s" % error_string(reload_error))
+		get_tree().change_scene_to_file("res://Scenes/Menus/MainMenu.tscn")
+
+
+func _quit_game_after_defeat() -> void:
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://Scenes/Menus/MainMenu.tscn")
 
@@ -3773,9 +5085,7 @@ func _update_spyware_invasions(delta: float) -> void:
 
 func _get_spyware_invasion_targets() -> Array[Node2D]:
 	var eligible_towers: Array[Node2D] = []
-	_append_placed_spyware_targets(eligible_towers, _laser_turrets)
 	_append_placed_spyware_targets(eligible_towers, _siem_hawks)
-	_append_placed_spyware_targets(eligible_towers, _ips_intrusions)
 	_append_placed_spyware_targets(eligible_towers, _honeypot_productions)
 	return eligible_towers
 
@@ -3787,25 +5097,77 @@ func _append_placed_spyware_targets(targets: Array[Node2D], towers: Array) -> vo
 			continue
 		if not tower.has_method("is_placed") or not bool(tower.call("is_placed")):
 			continue
+		if not tower.has_method("is_spyware_knowledge_source") \
+				or not bool(tower.call("is_spyware_knowledge_source")):
+			continue
 		targets.append(tower)
 
 
 func _update_tower_attack(delta: float) -> void:
+	var attack_targets := _get_offensive_attack_targets()
+	var worm_targets := _get_worm_boss_attack_targets()
+	var final_boss_targets := _get_final_boss_priority_targets()
+	var primary_boss_targets := (
+		final_boss_targets
+		if not final_boss_targets.is_empty()
+		else worm_targets
+	)
+	var spyware_priority_targets := _get_spyware_high_priority_attack_targets()
+	var spyware_low_priority_targets := _get_spyware_low_priority_attack_targets()
+	var path_damage_targets := _get_path_damage_targets()
+	var ransomware_targets := _get_ransomware_attack_targets()
+	var botnet_targets := _get_botnet_low_priority_attack_targets()
 	for guardian in _guardians:
-		if not is_instance_valid(guardian):
+		if not is_instance_valid(guardian) or _is_tower_action_locked(guardian):
 			continue
 		if guardian.has_method("update_firewall"):
-			guardian.call("update_firewall", delta, _active_viruses)
-		var target := guardian.update_attack(delta, _active_viruses)
+			guardian.call("update_firewall", delta, path_damage_targets)
+		var target := guardian.update_attack(delta, primary_boss_targets)
+		if target == null and not spyware_priority_targets.is_empty():
+			target = guardian.update_attack(0.0, spyware_priority_targets)
+		if target == null:
+			target = guardian.update_attack(0.0, attack_targets)
+		if target == null and not ransomware_targets.is_empty():
+			target = guardian.update_attack(0.0, ransomware_targets)
+		if target == null and not spyware_low_priority_targets.is_empty():
+			target = guardian.update_attack(0.0, spyware_low_priority_targets)
+		if target == null and not botnet_targets.is_empty():
+			target = guardian.update_attack(0.0, botnet_targets)
 		if target != null:
 			_shoot_virus(guardian, target)
 
 
 func _update_laser_turret_attack(delta: float) -> void:
+	var attack_targets := _get_offensive_attack_targets()
+	var worm_targets := _get_worm_boss_attack_targets()
+	var final_boss_targets := _get_final_boss_priority_targets()
+	var primary_boss_targets := (
+		final_boss_targets
+		if not final_boss_targets.is_empty()
+		else worm_targets
+	)
+	var spyware_priority_targets := _get_spyware_high_priority_attack_targets()
+	var spyware_low_priority_targets := _get_spyware_low_priority_attack_targets()
+	var ransomware_targets := _get_ransomware_attack_targets()
+	var botnet_targets := _get_botnet_low_priority_attack_targets()
 	for laser_turret in _laser_turrets:
-		if not is_instance_valid(laser_turret):
+		if not is_instance_valid(laser_turret) \
+				or _is_tower_action_locked(laser_turret):
 			continue
-		var targets := laser_turret.update_attack(delta, _active_viruses)
+		var targets := laser_turret.update_attack(
+			delta,
+			primary_boss_targets
+		)
+		if targets.is_empty() and not spyware_priority_targets.is_empty():
+			targets = laser_turret.update_attack(0.0, spyware_priority_targets)
+		if targets.is_empty():
+			targets = laser_turret.update_attack(0.0, attack_targets)
+		if targets.is_empty() and not ransomware_targets.is_empty():
+			targets = laser_turret.update_attack(0.0, ransomware_targets)
+		if targets.is_empty() and not spyware_low_priority_targets.is_empty():
+			targets = laser_turret.update_attack(0.0, spyware_low_priority_targets)
+		if targets.is_empty() and not botnet_targets.is_empty():
+			targets = laser_turret.update_attack(0.0, botnet_targets)
 		if not targets.is_empty():
 			_shoot_laser_turret_targets(laser_turret, targets)
 
@@ -3813,24 +5175,50 @@ func _update_laser_turret_attack(delta: float) -> void:
 func _update_siem_hawk_knowledge(delta: float) -> void:
 	var mouse_world_position := _screen_to_canvas_position(get_viewport().get_mouse_position())
 	for siem_hawk in _siem_hawks:
-		if is_instance_valid(siem_hawk):
+		if is_instance_valid(siem_hawk) \
+				and not _is_tower_action_locked(siem_hawk):
 			siem_hawk.update_knowledge_scan(delta, mouse_world_position, _active_viruses)
 
 
 func _update_ips_intrusion_spikes(delta: float) -> void:
+	var path_damage_targets := _get_path_damage_targets()
 	for ips_intrusion in _ips_intrusions:
-		if is_instance_valid(ips_intrusion):
-			ips_intrusion.update_spike_factory(delta, _active_viruses)
+		if is_instance_valid(ips_intrusion) \
+				and not _is_tower_action_locked(ips_intrusion):
+			ips_intrusion.update_spike_factory(delta, path_damage_targets)
 
 
 func _update_edr_hunter_attack(delta: float) -> void:
+	var attack_targets := _get_offensive_attack_targets()
+	var worm_targets := _get_worm_boss_attack_targets()
+	var final_boss_targets := _get_final_boss_priority_targets()
+	var spyware_priority_targets := _get_spyware_high_priority_attack_targets()
+	var spyware_low_priority_targets := _get_spyware_low_priority_attack_targets()
+	var ransomware_targets := _get_ransomware_attack_targets()
+	var botnet_targets := _get_botnet_low_priority_attack_targets()
 	for edr_hunter in _edr_hunters:
-		if not is_instance_valid(edr_hunter):
+		if not is_instance_valid(edr_hunter) \
+				or _is_tower_action_locked(edr_hunter):
 			continue
-		var target := edr_hunter.update_attack(delta, _active_viruses)
+		var prioritized_targets := (
+			final_boss_targets
+			if not final_boss_targets.is_empty()
+			else worm_targets
+		)
+		if prioritized_targets.is_empty():
+			prioritized_targets = spyware_priority_targets
+		if prioritized_targets.is_empty():
+			prioritized_targets = ransomware_targets
+		if prioritized_targets.is_empty():
+			prioritized_targets = attack_targets
+		if prioritized_targets.is_empty():
+			prioritized_targets = spyware_low_priority_targets
+		if prioritized_targets.is_empty():
+			prioritized_targets = botnet_targets
+		var target := edr_hunter.update_attack(delta, prioritized_targets)
 		if target != null:
 			_shoot_edr_hunter_target(edr_hunter, target)
-		var drone_attacks := edr_hunter.update_drone_attacks(delta, _active_viruses)
+		var drone_attacks := edr_hunter.update_drone_attacks(delta, prioritized_targets)
 		for drone_attack in drone_attacks:
 			var drone_target := drone_attack.get("target") as PathFollow2D
 			var drone_index := int(drone_attack.get("drone_index", 0))
@@ -3839,33 +5227,74 @@ func _update_edr_hunter_attack(delta: float) -> void:
 
 
 func _update_siem_hawk_attack(delta: float) -> void:
+	var attack_targets := _get_offensive_attack_targets()
+	var worm_targets := _get_worm_boss_attack_targets()
+	var final_boss_targets := _get_final_boss_priority_targets()
+	var spyware_priority_targets := _get_spyware_high_priority_attack_targets()
+	var spyware_low_priority_targets := _get_spyware_low_priority_attack_targets()
+	var ransomware_targets := _get_ransomware_attack_targets()
+	var botnet_targets := _get_botnet_low_priority_attack_targets()
 	for siem_hawk in _siem_hawks:
-		if not is_instance_valid(siem_hawk):
+		if not is_instance_valid(siem_hawk) \
+				or _is_tower_action_locked(siem_hawk):
 			continue
-		var target := siem_hawk.update_attack(delta, _active_viruses)
+		var selected_targets := (
+			final_boss_targets
+			if not final_boss_targets.is_empty()
+			else worm_targets
+		)
+		if not siem_hawk.has_attack_target_in_scan(selected_targets):
+			selected_targets = spyware_priority_targets
+		if not siem_hawk.has_attack_target_in_scan(selected_targets):
+			selected_targets = attack_targets
+		if not siem_hawk.has_attack_target_in_scan(selected_targets):
+			selected_targets = ransomware_targets
+		if not siem_hawk.has_attack_target_in_scan(selected_targets):
+			selected_targets = spyware_low_priority_targets
+		if not siem_hawk.has_attack_target_in_scan(selected_targets):
+			selected_targets = botnet_targets
+		var target := siem_hawk.update_attack(delta, selected_targets)
 		if target != null:
 			_shoot_siem_hawk_target(siem_hawk, target)
+
+
+func _update_xdr_mech_attack(delta: float) -> void:
+	var attack_targets := _get_path_damage_targets()
+	for xdr_mech in _xdr_mechs:
+		if not is_instance_valid(xdr_mech) \
+				or _is_tower_action_locked(xdr_mech):
+			continue
+		xdr_mech.update_claw_attack(delta, attack_targets)
 
 
 func _update_support_tower_scans(delta: float) -> void:
 	for node in get_tree().get_nodes_in_group("SUPPORT_TOWER"):
 		if not is_instance_valid(node) or not is_ancestor_of(node):
 			continue
+		if _is_tower_action_locked(node):
+			if node.has_method("clear_support_effects"):
+				node.call("clear_support_effects")
+			continue
 		if not node.has_method("update_support_scan"):
 			continue
 
-		node.call("update_support_scan", _active_viruses, delta)
+		node.call("update_support_scan", _get_path_damage_targets(), delta)
 
 
 func _shoot_virus(guardian: CyberGuardianTowerScript, target: PathFollow2D) -> void:
-	if not is_instance_valid(target):
+	if not _can_shoot_target_now(target):
 		return
 
 	var target_position := _get_target_center(target)
 	guardian.aim_at(target_position)
 	guardian.play_shoot()
 	var destroyed := _damage_virus(target, guardian.get_shot_power())
-	if destroyed and _utility_overlay_hud != null:
+	if destroyed \
+			and target != _zombie_node_target \
+			and target != _botnet_node_target \
+			and not _is_worm_boss_target(target) \
+			and not (target is Ransomware) \
+			and _utility_overlay_hud != null:
 		_utility_overlay_hud.show_guardian_destroy_popup(
 			_world_to_screen_position(guardian.global_position),
 			guardian.get_shot_power(),
@@ -3874,7 +5303,7 @@ func _shoot_virus(guardian: CyberGuardianTowerScript, target: PathFollow2D) -> v
 
 
 func _shoot_edr_hunter_target(edr_hunter: EDRHunterTowerScript, target: PathFollow2D) -> void:
-	if edr_hunter == null or not is_instance_valid(target):
+	if edr_hunter == null or not _can_shoot_target_now(target):
 		return
 
 	var target_position := _get_target_center(target)
@@ -3884,7 +5313,7 @@ func _shoot_edr_hunter_target(edr_hunter: EDRHunterTowerScript, target: PathFoll
 
 
 func _shoot_edr_hunter_drone_target(edr_hunter: EDRHunterTowerScript, target: PathFollow2D, drone_index: int = 0) -> void:
-	if edr_hunter == null or not is_instance_valid(target):
+	if edr_hunter == null or not _can_shoot_target_now(target):
 		return
 
 	var target_position := _get_target_center(target)
@@ -3893,13 +5322,12 @@ func _shoot_edr_hunter_drone_target(edr_hunter: EDRHunterTowerScript, target: Pa
 
 
 func _shoot_siem_hawk_target(siem_hawk: SIEMHawkTowerScript, target: PathFollow2D) -> void:
-	if siem_hawk == null or not is_instance_valid(target):
+	if siem_hawk == null or not _can_shoot_target_now(target):
 		return
 
 	var target_position := _get_target_center(target)
 	siem_hawk.aim_at(target_position)
 	siem_hawk.play_shoot()
-	_spawn_colored_laser(siem_hawk.global_position, target_position, Color(0.2, 0.74, 1.0, 1.0), siem_hawk.get_laser_width())
 	_damage_virus(target, siem_hawk.get_shot_power())
 
 
@@ -3913,10 +5341,12 @@ func _shoot_laser_turret_targets(laser_turret: LaserTurretScript, targets: Array
 	var shot_power := laser_turret.get_shot_power()
 	var destroyed_count := 0
 	var destroyed_reward := 0
+	var shot_count := 0
 	for target in targets:
-		if not is_instance_valid(target):
+		if not _can_shoot_target_now(target):
 			continue
 
+		shot_count += 1
 		var target_position := _get_target_center(target)
 		var target_reward := _get_virus_destroy_reward(_get_red_virus(target))
 		laser_turret.aim_at(target_position)
@@ -3925,7 +5355,11 @@ func _shoot_laser_turret_targets(laser_turret: LaserTurretScript, targets: Array
 				_spawn_colored_laser(origin_position, target_position, laser_color, laser_width)
 		else:
 			_spawn_colored_laser(origin_position, target_position, laser_color, laser_width)
-		if _damage_virus(target, shot_power, false):
+		if _damage_virus(target, shot_power, false) \
+				and target != _zombie_node_target \
+				and target != _botnet_node_target \
+				and not _is_worm_boss_target(target) \
+				and not (target is Ransomware):
 			destroyed_count += 1
 			destroyed_reward += target_reward
 
@@ -3937,8 +5371,9 @@ func _shoot_laser_turret_targets(laser_turret: LaserTurretScript, targets: Array
 				shot_power,
 				laser_turret.get_shot_cooldown()
 			)
-		laser_turret.mark_shot_fired()
 		_update_virus_count_label()
+	if shot_count > 0:
+		laser_turret.mark_shot_fired()
 
 
 func _should_use_demo_laser_turret_beam_fx(laser_turret: LaserTurretScript) -> bool:
@@ -3980,19 +5415,640 @@ func _spawn_colored_laser(start_position: Vector2, end_position: Vector2, color:
 
 
 func _damage_virus(follow: PathFollow2D, amount: int, update_count: bool = true) -> bool:
-	if not is_instance_valid(follow):
+	if not _can_shoot_target_now(follow):
 		return false
+	if follow is Ransomware:
+		return (follow as Ransomware).take_damage(amount)
+	if follow == _zombie_node_target:
+		return _damage_zombie_node(amount)
+	if follow == _botnet_node_target:
+		return _damage_botnet_node(amount)
+	if _is_worm_boss_target(follow):
+		return bool(follow.call("take_damage", amount))
 
 	var virus := _get_red_virus(follow)
 	if virus == null:
 		_despawn_virus(follow, update_count)
 		return true
+	if virus is BotnetMinion \
+			and not (virus as BotnetMinion).can_be_targeted():
+		return false
 
 	if not virus.take_damage(amount):
 		return false
 
 	_begin_virus_destroy(follow, update_count)
 	return true
+
+
+func _damage_zombie_node(amount: int) -> bool:
+	if not is_instance_valid(_zombie_node):
+		return false
+	return _zombie_node.take_damage(amount)
+
+
+func _damage_botnet_node(amount: int) -> bool:
+	if not is_instance_valid(_botnet_node):
+		return false
+	return _botnet_node.take_damage(amount)
+
+
+func _get_offensive_attack_targets() -> Array[PathFollow2D]:
+	var targets: Array[PathFollow2D] = []
+	for follow in _active_viruses:
+		if not is_instance_valid(follow):
+			continue
+		var virus := _get_red_virus(follow)
+		if virus is SpywareScript:
+			continue
+		if virus is BotnetMinion \
+				and not (virus as BotnetMinion).can_be_targeted():
+			continue
+		targets.append(follow)
+
+	if not is_instance_valid(_zombie_node) \
+			or not is_instance_valid(_zombie_node_target) \
+			or not _wave_in_progress \
+			or not _zombie_node.is_wave_active() \
+			or not _zombie_node.can_be_targeted():
+		return targets
+
+	_zombie_node_target.global_position = _zombie_node.global_position
+	targets.append(_zombie_node_target)
+	return targets
+
+
+func _get_spyware_high_priority_attack_targets() -> Array[PathFollow2D]:
+	return _get_spyware_attack_targets(true)
+
+
+func _get_spyware_low_priority_attack_targets() -> Array[PathFollow2D]:
+	return _get_spyware_attack_targets(false)
+
+
+func _get_spyware_attack_targets(attached: bool) -> Array[PathFollow2D]:
+	var targets: Array[PathFollow2D] = []
+	for follow in _active_viruses:
+		if not is_instance_valid(follow):
+			continue
+		var spyware := _get_red_virus(follow) as SpywareScript
+		if spyware == null or spyware.is_destroying():
+			continue
+		if spyware.has_reached_invasion_target() == attached:
+			targets.append(follow)
+	return targets
+
+
+func _get_worm_boss_attack_targets(
+	body_only: bool = false
+) -> Array[PathFollow2D]:
+	if _is_final_boss_link_active():
+		return []
+	if not is_instance_valid(_worm_boss) \
+			or not _wave_in_progress \
+			or not _worm_boss.is_wave_active():
+		return []
+	return _worm_boss.get_attack_targets(body_only)
+
+
+func _get_final_boss_priority_targets() -> Array[PathFollow2D]:
+	if not _is_final_boss_link_active():
+		return []
+	return _get_botnet_low_priority_attack_targets()
+
+
+func _is_final_boss_link_active() -> bool:
+	return _current_wave == FINAL_BOSS_WAVE \
+		and _wave_in_progress \
+		and is_instance_valid(_botnet_node) \
+		and _botnet_node.can_be_targeted() \
+		and is_instance_valid(_worm_boss) \
+		and _worm_boss.is_externally_invulnerable()
+
+
+func _get_path_damage_targets() -> Array[PathFollow2D]:
+	var targets: Array[PathFollow2D] = []
+	for follow in _active_viruses:
+		if is_instance_valid(follow):
+			targets.append(follow)
+	# Progressive bosses expose PathFollow2D target proxies so mobile attacks
+	# such as the XDR claw and swept projectiles can use the same damage path.
+	for target in _get_offensive_attack_targets():
+		if not targets.has(target):
+			targets.append(target)
+	for target in _get_botnet_low_priority_attack_targets():
+		if not targets.has(target):
+			targets.append(target)
+	for target in _get_worm_boss_attack_targets():
+		if not targets.has(target):
+			targets.append(target)
+	return targets
+
+
+func _get_botnet_low_priority_attack_targets() -> Array[PathFollow2D]:
+	var targets: Array[PathFollow2D] = []
+	if not is_instance_valid(_botnet_node) \
+			or not is_instance_valid(_botnet_node_target) \
+			or not _wave_in_progress \
+			or not _botnet_node.can_be_targeted():
+		return targets
+
+	_botnet_node_target.global_position = _botnet_node.global_position
+	targets.append(_botnet_node_target)
+	return targets
+
+
+func _is_required_zombie_node_alive() -> bool:
+	return _wave_manager.get_progressive_boss_name(_current_wave) \
+			== WaveManagerScript.ZOMBIE_NODE \
+		and _current_wave >= 15 \
+		and is_instance_valid(_zombie_node) \
+		and not _zombie_node.is_defeated()
+
+
+func _is_required_botnet_node_alive() -> bool:
+	return _wave_manager.get_progressive_boss_name(_current_wave) \
+			== WaveManagerScript.BOTNET_NODE \
+		and is_instance_valid(_botnet_node) \
+			and _botnet_node.can_be_targeted()
+
+
+func _is_required_worm_boss_alive() -> bool:
+	return (
+		_wave_manager.get_progressive_boss_name(_current_wave)
+			== WaveManagerScript.WORM_BOSS
+		or _current_wave == FINAL_BOSS_WAVE
+	) \
+		and is_instance_valid(_worm_boss) \
+		and _worm_boss.is_active()
+
+
+func _on_botnet_node_defeated(_node: BotnetNode) -> void:
+	if _current_wave != FINAL_BOSS_WAVE:
+		return
+	if is_instance_valid(_worm_boss):
+		_worm_boss.set_external_invulnerability(false)
+	_update_wave_button()
+
+
+func _on_worm_boss_defeated() -> void:
+	if _current_wave == FINAL_BOSS_WAVE:
+		if _worm_defeat_sequence_running:
+			return
+		_worm_defeat_sequence_running = true
+		call_deferred(
+			"_play_final_boss_partial_defeat_sequence"
+		)
+		return
+	if _worm_defeat_sequence_running:
+		return
+	_worm_defeat_sequence_running = true
+	call_deferred("_play_worm_boss_defeat_sequence")
+
+
+func _play_worm_boss_defeat_sequence() -> void:
+	_update_wave_button()
+	if _cutscene_demo_director != null:
+		await _cutscene_demo_director.play_worm_boss_defeat_cutscene()
+	_worm_defeat_sequence_running = false
+	_update_wave_button()
+	_update_wave_spawner(0.0)
+
+
+func _play_final_boss_partial_defeat_sequence() -> void:
+	_update_wave_button()
+	if _cutscene_demo_director != null:
+		await _cutscene_demo_director \
+			.play_final_boss_partial_defeat_cutscene()
+	elif is_instance_valid(_anti_cyberguardian):
+		await _anti_cyberguardian.play_partial_defeat_sequence_at(
+			_botnet_node.global_position
+			if is_instance_valid(_botnet_node)
+			else Vector2.ZERO
+		)
+	_worm_defeat_sequence_running = false
+	_update_wave_button()
+	_update_wave_spawner(0.0)
+
+
+func _on_worm_boss_escaped() -> void:
+	_lose_life()
+	_update_wave_button()
+	call_deferred("_update_wave_spawner", 0.0)
+
+
+func _on_zombie_node_defeated() -> void:
+	if _zombie_defeat_sequence_running:
+		return
+
+	_zombie_defeat_sequence_running = true
+	call_deferred("_play_zombie_node_defeat_sequence")
+
+
+func _play_zombie_node_defeat_sequence() -> void:
+	_update_wave_button()
+	if _cutscene_demo_director != null:
+		await _cutscene_demo_director.play_zombie_defeat_cutscene()
+	elif is_instance_valid(_zombie_node):
+		_zombie_node.complete_defeat()
+	_zombie_defeat_sequence_running = false
+	_update_wave_button()
+	_update_wave_spawner(0.0)
+
+
+func _update_zombie_minion_contacts() -> void:
+	var minions: Array[ZombieNodeMinion] = []
+	var plain_red_viruses: Array[RedVirusScript] = []
+	var red_virus_follows: Dictionary = {}
+	for follow in _active_viruses:
+		if not is_instance_valid(follow):
+			continue
+
+		var virus := _get_red_virus(follow)
+		if virus is ZombieNodeMinion:
+			minions.append(virus as ZombieNodeMinion)
+		elif virus != null \
+				and virus.get_script() == RedVirusScript \
+				and not virus.is_destroying() \
+				and not virus.is_external_transformation_active() \
+				and not follow.has_meta("zombie_mutation_pending"):
+			plain_red_viruses.append(virus)
+			red_virus_follows[virus] = follow
+
+	for minion in minions:
+		if not is_instance_valid(minion) or minion.is_destroying():
+			continue
+
+		var contact_radius := minion.get_mutation_contact_radius()
+		for red_virus in plain_red_viruses:
+			if not is_instance_valid(red_virus):
+				continue
+
+			var red_follow := red_virus_follows.get(red_virus) as PathFollow2D
+			if not is_instance_valid(red_follow) or red_follow.has_meta("zombie_mutation_pending"):
+				continue
+			if minion.global_position.distance_to(red_virus.global_position) > contact_radius:
+				continue
+
+			red_follow.set_meta("zombie_mutation_pending", true)
+			call_deferred("_transform_red_virus_to_mutant", red_follow)
+			break
+
+
+func _transform_red_virus_to_mutant(follow: PathFollow2D) -> void:
+	if not is_instance_valid(follow):
+		return
+
+	var red_virus := _get_red_virus(follow)
+	if red_virus == null or red_virus.get_script() != RedVirusScript:
+		follow.remove_meta("zombie_mutation_pending")
+		return
+	if not red_virus.begin_external_transformation():
+		follow.remove_meta("zombie_mutation_pending")
+		return
+
+	_play_named_sound(&"MutantVirusMutatedSfx")
+	var transition := RedMutantTransformScene.instantiate() as AnimatedSprite2D
+	if transition != null:
+		transition.name = "RedMutantTransform"
+		transition.position = Vector2.ZERO
+		follow.add_child(transition)
+		transition.top_level = true
+		transition.global_position = red_virus.global_position
+		transition.global_rotation = red_virus.global_rotation
+		transition.global_scale = Vector2(0.25, 0.25)
+		transition.play(&"transform")
+		while is_instance_valid(transition) and transition.is_playing():
+			await get_tree().process_frame
+
+	if not is_instance_valid(follow):
+		return
+
+	var mutant := MutantVirusScene.instantiate() as RedVirusScript
+	if mutant == null:
+		if is_instance_valid(transition):
+			transition.queue_free()
+		red_virus.cancel_external_transformation()
+		follow.remove_meta("zombie_mutation_pending")
+		return
+
+	mutant.name = "SpawnedMutantVirus"
+	mutant.position = Vector2.ZERO
+	follow.add_child(mutant)
+	follow.move_child(mutant, 0)
+	mutant.global_scale = DEFAULT_EVOLVED_VIRUS_SPAWN_SCALE
+	mutant.reset_for_spawn()
+	if is_instance_valid(red_virus):
+		red_virus.queue_free()
+	if is_instance_valid(transition):
+		transition.queue_free()
+	follow.remove_meta("zombie_mutation_pending")
+
+
+func _update_botnet_minion_contacts() -> void:
+	for minion_follow in _active_viruses:
+		if not is_instance_valid(minion_follow):
+			continue
+		var minion := _get_red_virus(minion_follow) as BotnetMinion
+		if minion == null or not minion.can_apply_anti_charge():
+			continue
+
+		var target_follow := _find_anti_charge_target_below(
+			minion,
+			minion_follow
+		)
+		if target_follow == null:
+			continue
+
+		minion.mark_anti_charge_applied()
+		target_follow.set_meta("anti_charge_transform_pending", true)
+		call_deferred(
+			"_transform_virus_to_anti_charged",
+			target_follow
+		)
+
+
+func _update_anti_cyberguardian_charge(delta: float) -> void:
+	if _current_wave != FINAL_BOSS_WAVE \
+			or not _wave_in_progress \
+			or not is_instance_valid(_anti_cyberguardian) \
+			or not _anti_cyberguardian.is_ability_active():
+		_anti_cyberguardian_scan_elapsed = 0.0
+		return
+
+	_anti_cyberguardian_scan_elapsed += maxf(0.0, delta)
+	if _anti_cyberguardian_scan_elapsed \
+			< ANTI_CYBERGUARDIAN_SCAN_INTERVAL:
+		return
+	_anti_cyberguardian_scan_elapsed = 0.0
+
+	for follow in _active_viruses:
+		if not is_instance_valid(follow) \
+				or follow.has_meta("anti_charge_transform_pending"):
+			continue
+		var virus := _get_red_virus(follow)
+		if not _is_anti_cyberguardian_charge_target(virus):
+			continue
+		follow.set_meta("anti_charge_transform_pending", true)
+		call_deferred("_transform_virus_to_anti_charged", follow)
+
+
+func _is_anti_cyberguardian_charge_target(
+	virus: RedVirusScript
+) -> bool:
+	if virus == null \
+			or virus.is_destroying() \
+			or virus.is_external_transformation_active() \
+			or virus.is_in_group(&"MUTANT_VIRUS"):
+		return false
+	return virus.get_script() == RedVirusScript \
+		or virus.get_script() == ArmoredVirusScript
+
+
+func _find_anti_charge_target_below(
+	minion: BotnetMinion,
+	minion_follow: PathFollow2D
+) -> PathFollow2D:
+	var best_follow: PathFollow2D
+	var best_normalized_distance := INF
+	var contact_radius := minion.get_anti_charge_contact_radius()
+	var vertical_radius := contact_radius * 0.55
+	var scan_origin := minion.get_scan_origin_global_position()
+	for candidate_follow in _active_viruses:
+		if not is_instance_valid(candidate_follow) \
+				or candidate_follow == minion_follow \
+				or candidate_follow.has_meta("anti_charge_transform_pending"):
+			continue
+
+		var virus := _get_red_virus(candidate_follow)
+		if not _is_standard_anti_charge_target(virus):
+			continue
+
+		var offset := virus.global_position - scan_origin
+		if absf(offset.x) > contact_radius \
+				or absf(offset.y) > vertical_radius:
+			continue
+
+		var normalized_distance := (
+			offset.x * offset.x / (contact_radius * contact_radius)
+			+ offset.y * offset.y / (vertical_radius * vertical_radius)
+		)
+		if normalized_distance > 1.0 \
+				or normalized_distance >= best_normalized_distance:
+			continue
+		best_follow = candidate_follow
+		best_normalized_distance = normalized_distance
+	return best_follow
+
+
+func _is_standard_anti_charge_target(virus: RedVirusScript) -> bool:
+	if virus == null \
+			or virus.is_destroying() \
+			or virus.is_external_transformation_active():
+		return false
+	return virus.get_script() == RedVirusScript \
+		or virus.get_script() == ArmoredVirusScript \
+		or virus.is_in_group(&"MUTANT_VIRUS")
+
+
+func _transform_virus_to_anti_charged(follow: PathFollow2D) -> void:
+	if not is_instance_valid(follow):
+		return
+
+	var source_virus := _get_red_virus(follow)
+	if not _is_standard_anti_charge_target(source_virus) \
+			or not source_virus.begin_external_transformation():
+		_clear_anti_charge_pending(follow)
+		return
+
+	var armored_source: bool = source_virus.get_script() == ArmoredVirusScript
+	var mutant_source := source_virus.is_in_group(&"MUTANT_VIRUS")
+	if mutant_source:
+		_play_named_sound(&"MutantVirusTransformSfx")
+	elif armored_source:
+		_play_named_sound(&"ArmoredVirusTransformSfx")
+	var effect_position := source_virus.global_position
+	var source_rotation := source_virus.global_rotation
+	await _play_anti_charge_effect(
+		AntiChargeBeginVFXScene,
+		effect_position
+	)
+	if not is_instance_valid(follow) or not is_instance_valid(source_virus):
+		_clear_anti_charge_pending(follow)
+		return
+
+	if not mutant_source:
+		await _play_anti_charge_effect(
+			ArmoredVirusAntiTransformScene
+				if armored_source
+				else RedVirusAntiTransformScene,
+			effect_position
+		)
+		if not is_instance_valid(follow) or not is_instance_valid(source_virus):
+			_clear_anti_charge_pending(follow)
+			return
+
+	var charged_scene: PackedScene
+	var charged_name: String
+	var charged_scale: Vector2
+	if mutant_source:
+		charged_scene = AntiChargedMutantVirusScene
+		charged_name = "SpawnedAntiChargedMutantVirus"
+		charged_scale = ANTI_CHARGED_MUTANT_SPAWN_SCALE
+	elif armored_source:
+		charged_scene = AntiChargedArmoredVirusScene
+		charged_name = "SpawnedAntiChargedArmoredVirus"
+		charged_scale = ANTI_CHARGED_ARMORED_SPAWN_SCALE
+	else:
+		charged_scene = AntiChargedRedVirusScene
+		charged_name = "SpawnedAntiChargedRedVirus"
+		charged_scale = ANTI_CHARGED_RED_SPAWN_SCALE
+
+	var charged_virus := charged_scene.instantiate() as RedVirusScript
+	if charged_virus == null:
+		source_virus.cancel_external_transformation()
+		_clear_anti_charge_pending(follow)
+		return
+
+	charged_virus.name = charged_name
+	charged_virus.position = Vector2.ZERO
+	follow.add_child(charged_virus)
+	follow.move_child(charged_virus, 0)
+	charged_virus.global_rotation = source_rotation
+	charged_virus.global_scale = charged_scale
+	charged_virus.reset_for_spawn()
+	source_virus.queue_free()
+
+	await _play_anti_charge_effect(
+		AntiChargeEndVFXScene,
+		charged_virus.global_position
+	)
+	_clear_anti_charge_pending(follow)
+
+
+func _play_anti_charge_effect(
+	effect_scene: PackedScene,
+	effect_global_position: Vector2
+) -> void:
+	if effect_scene == null:
+		return
+	var effect := effect_scene.instantiate() as AnimatedSprite2D
+	if effect == null:
+		return
+
+	effect.top_level = true
+	add_child(effect)
+	effect.global_position = effect_global_position
+	effect.frame = 0
+	effect.frame_progress = 0.0
+	effect.play()
+	if effect.sprite_frames != null \
+			and effect.sprite_frames.get_frame_count(effect.animation) > 1:
+		await effect.animation_finished
+	if is_instance_valid(effect):
+		effect.queue_free()
+
+
+func _clear_anti_charge_pending(follow) -> void:
+	if not is_instance_valid(follow):
+		return
+	follow.remove_meta("anti_charge_transform_pending")
+
+
+func _set_zombie_node_wave_active(value: bool) -> void:
+	if _zombie_node != null:
+		_zombie_node.set_wave_active(value)
+
+
+func _set_botnet_node_wave_active(value: bool) -> void:
+	if _botnet_node != null:
+		_botnet_node.set_wave_active(value)
+
+
+func _set_worm_boss_wave_active(value: bool) -> void:
+	if _worm_boss != null:
+		_worm_boss.set_wave_active(value)
+
+
+func _ensure_worm_boss_spawned_for_wave() -> void:
+	var is_worm_wave := (
+		_wave_manager.get_progressive_boss_name(_current_wave)
+			== WaveManagerScript.WORM_BOSS
+		or _current_wave == FINAL_BOSS_WAVE
+	)
+	if not is_worm_wave:
+		return
+	if _worm_boss == null or _worm_boss.is_active():
+		return
+	if _virus_path == null or _virus_path.curve == null:
+		return
+	_worm_boss.begin_path_spawn(
+		_virus_path,
+		_get_virus_spawn_progress()
+	)
+
+
+func _has_pending_zombie_minion_spawn() -> bool:
+	return _zombie_node != null and _zombie_node.is_minion_spawn_pending()
+
+
+func _get_available_path_progress(desired_progress: float, minimum_spacing: float = 18.0) -> float:
+	if _virus_path == null or _virus_path.curve == null:
+		return desired_progress
+
+	var path_length := _virus_path.curve.get_baked_length()
+	for attempt in range(65):
+		var candidate := desired_progress
+		if attempt > 0:
+			var step := ceili(float(attempt) * 0.5)
+			var direction := 1.0 if attempt % 2 == 1 else -1.0
+			candidate = clampf(desired_progress + float(step) * minimum_spacing * direction, 0.0, path_length)
+
+		var occupied := false
+		for active_follow in _active_viruses:
+			if is_instance_valid(active_follow) \
+					and absf(active_follow.progress - candidate) < minimum_spacing:
+				occupied = true
+				break
+		if not occupied:
+			return candidate
+
+	return clampf(desired_progress, 0.0, path_length)
+
+
+func _get_available_botnet_scanner_progress(
+	desired_progress: float,
+	minimum_spacing: float
+) -> float:
+	if _virus_path == null or _virus_path.curve == null:
+		return desired_progress
+
+	var path_length := _virus_path.curve.get_baked_length()
+	for attempt in range(65):
+		var candidate := desired_progress
+		if attempt > 0:
+			var step := ceili(float(attempt) * 0.5)
+			var direction := 1.0 if attempt % 2 == 1 else -1.0
+			candidate = clampf(
+				desired_progress
+					+ float(step) * minimum_spacing * direction,
+				0.0,
+				path_length
+			)
+
+		var occupied := false
+		for active_follow in _active_viruses:
+			if not is_instance_valid(active_follow):
+				continue
+			var active_virus := _get_red_virus(active_follow)
+			if active_virus is BotnetMinion \
+					and absf(active_follow.progress - candidate) < minimum_spacing:
+				occupied = true
+				break
+		if not occupied:
+			return candidate
+
+	return clampf(desired_progress, 0.0, path_length)
 
 
 func _get_virus_destroy_reward(virus: RedVirusScript) -> int:
@@ -4042,6 +6098,8 @@ func _begin_virus_destroy(follow: PathFollow2D, update_count: bool = true) -> vo
 
 	if update_count and not keep_active:
 		_update_virus_count_label()
+	if not keep_active:
+		_end_phishing_effect_if_viruses_cleared()
 
 
 func _despawn_virus(follow: PathFollow2D, update_count: bool = true) -> void:
@@ -4058,6 +6116,7 @@ func _despawn_virus(follow: PathFollow2D, update_count: bool = true) -> void:
 
 	if update_count:
 		_update_virus_count_label()
+	_end_phishing_effect_if_viruses_cleared()
 
 
 func _get_red_virus(follow: PathFollow2D) -> RedVirusScript:
@@ -4075,6 +6134,21 @@ func _get_target_center(follow: PathFollow2D) -> Vector2:
 		return virus.global_position
 
 	return follow.global_position
+
+
+func _is_worm_boss_target(follow: PathFollow2D) -> bool:
+	return is_instance_valid(follow) \
+		and follow.has_meta("worm_boss_part") \
+		and bool(follow.get_meta("worm_boss_part"))
+
+
+func _can_shoot_target_now(follow: PathFollow2D) -> bool:
+	if not is_instance_valid(follow) or follow.is_queued_for_deletion():
+		return false
+	if not _is_worm_boss_target(follow):
+		return true
+	return follow.has_method("is_targetable") \
+		and bool(follow.call("is_targetable"))
 
 
 func _get_virus_speed(follow: PathFollow2D) -> float:
@@ -4196,9 +6270,14 @@ func _get_siem_headquarters_screen_position(siem_hawk: SIEMHawkTowerScript) -> V
 
 
 func _is_act_input_locked() -> bool:
-	return _text_cutscene_hud != null \
+	var text_cutscene_locked := _text_cutscene_hud != null \
 		and _text_cutscene_hud.has_method("is_cutscene_running") \
 		and bool(_text_cutscene_hud.call("is_cutscene_running"))
+	var director_cutscene_locked := _cutscene_demo_director != null \
+		and _cutscene_demo_director.is_cutscene_running()
+	var clearance_cutscene_locked := _wave_20_clearance_hud != null \
+		and _wave_20_clearance_hud.is_cutscene_running()
+	return text_cutscene_locked or director_cutscene_locked or clearance_cutscene_locked
 
 
 func _is_question_input_locked() -> bool:
@@ -4364,9 +6443,9 @@ func _show_laser_upgrade_panel() -> void:
 		return
 
 	_prepare_tower_upgrade_sidebar_open()
-	_sync_laser_upgrade_panel()
 	_set_tower_menu_radius_previews(false, true, false, false, false)
 	_tower_upgrade_hud.show_laser_panel()
+	_sync_laser_upgrade_panel()
 
 
 func _hide_laser_upgrade_panel() -> void:
@@ -4384,9 +6463,9 @@ func _show_scanner_upgrade_panel() -> void:
 		return
 
 	_prepare_tower_upgrade_sidebar_open()
-	_sync_scanner_upgrade_panel()
 	_set_tower_menu_radius_previews(false, false, true, false, false)
 	_tower_upgrade_hud.show_scanner_panel()
+	_sync_scanner_upgrade_panel()
 
 
 func _hide_scanner_upgrade_panel() -> void:
@@ -4436,6 +6515,22 @@ func _hide_siem_upgrade_panel() -> void:
 	_tower_upgrade_hud.hide_siem_panel()
 	if not _tower_upgrade_hud.is_siem_panel_visible():
 		_set_tower_menu_radius_previews(_tower_upgrade_hud.is_guardian_panel_visible(), _tower_upgrade_hud.is_laser_panel_visible(), _tower_upgrade_hud.is_scanner_panel_visible(), _tower_upgrade_hud.is_edr_panel_visible(), false)
+	_restore_tower_store_after_upgrade_sidebar_closed()
+
+
+func _show_xdr_upgrade_panel() -> void:
+	if _tower_upgrade_hud == null or _xdr_mech == null:
+		return
+	_prepare_tower_upgrade_sidebar_open()
+	_set_tower_menu_radius_previews(false, false, false, false, false, false, false)
+	_tower_upgrade_hud.show_xdr_panel()
+	_sync_xdr_upgrade_panel()
+
+
+func _hide_xdr_upgrade_panel() -> void:
+	if _tower_upgrade_hud == null:
+		return
+	_tower_upgrade_hud.hide_xdr_panel()
 	_restore_tower_store_after_upgrade_sidebar_closed()
 
 

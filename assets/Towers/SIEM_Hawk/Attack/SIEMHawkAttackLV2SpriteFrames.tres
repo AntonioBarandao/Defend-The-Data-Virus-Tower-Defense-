@@ -1,0 +1,109 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://b7dkdf4ig70xp"]
+
+[ext_resource type="Texture2D" uid="uid://cae6mwoqx2f0e" path="res://assets/Towers/SIEM_Hawk/Attack/SIEMHawkAttackLV2Atlas.png" id="1_atlas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_020"]
+atlas = ExtResource("1_atlas")
+region = Rect2(0, 640, 320, 320)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_021"]
+atlas = ExtResource("1_atlas")
+region = Rect2(320, 640, 320, 320)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_022"]
+atlas = ExtResource("1_atlas")
+region = Rect2(640, 640, 320, 320)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_023"]
+atlas = ExtResource("1_atlas")
+region = Rect2(960, 640, 320, 320)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_024"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1280, 640, 320, 320)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_025"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1600, 640, 320, 320)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_026"]
+atlas = ExtResource("1_atlas")
+region = Rect2(1920, 640, 320, 320)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_027"]
+atlas = ExtResource("1_atlas")
+region = Rect2(2240, 640, 320, 320)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_028"]
+atlas = ExtResource("1_atlas")
+region = Rect2(2560, 640, 320, 320)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_029"]
+atlas = ExtResource("1_atlas")
+region = Rect2(2880, 640, 320, 320)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_030"]
+atlas = ExtResource("1_atlas")
+region = Rect2(0, 960, 320, 320)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_031"]
+atlas = ExtResource("1_atlas")
+region = Rect2(320, 960, 320, 320)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_032"]
+atlas = ExtResource("1_atlas")
+region = Rect2(640, 960, 320, 320)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_033"]
+atlas = ExtResource("1_atlas")
+region = Rect2(960, 960, 320, 320)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_020")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_021")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_022")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_023")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_024")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_025")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_026")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_027")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_028")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_029")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_030")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_031")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_032")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_033")
+}],
+"loop": 1,
+"name": &"attack_lv2",
+"speed": 24.0
+}]

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/Towers/XDR_Mech/Display_XDR_Mech.png" id="2_image"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"xdr_mech"
+display_name = "XDR Mech"
+type_label = "Mobile Offense Tower"
+description = "A destination-driven mobile mech with level-specific claw, cannon, and minigun attacks. Its movement respects the protected virus path. At LV5, a blocked mech can use its jetpack to clear the path barrier and continue toward its destination."
+images = Array[Texture2D]([ExtResource("2_image")])
+slide_labels = Array[String](["LV1 Chassis"])

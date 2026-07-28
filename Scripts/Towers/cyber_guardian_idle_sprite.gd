@@ -5,11 +5,18 @@ signal placed(tower: CyberGuardianTower)
 signal mode_changed(mode_id: StringName)
 signal signal_boost_effect_changed(active: bool)
 signal signal_boost_status_changed(state_id: StringName, time_remaining: float)
+signal firewall_effect_changed(active: bool)
+signal firewall_status_changed(state_id: StringName, time_remaining: float)
 signal firewall_damage_requested(follow: PathFollow2D, amount: int)
 
 const TowerSummonEffectScript := preload("res://Scripts/Effects/tower_summon_effect.gd")
+<<<<<<< HEAD
 const SIGNAL_BOOST_TEXTURE := preload("res://Assets/Towers/CyberGuardian/Modes/Cyber_Guardian_SignalBoost_Sprite.png")
 const FIREWALL_TEXTURE := preload("res://Assets/Towers/CyberGuardian/Modes/Cyber_Guardian_Firewall_Sprite.png")
+=======
+const CentralAudioResolver := preload("res://Scripts/Audio/audio_player_resolver.gd")
+const SIGNAL_BOOST_TEXTURE := preload("res://assets/Towers/CyberGuardian/Modes/Cyber_Guardian_SignalBoost_Sprite.png")
+>>>>>>> 4c8daaffc01673569e6d46a60df2b56eb54c60d5
 const IDLE_ANIMATION := &"idle"
 const SUMMON_ANIMATION := &"SummonAnim"
 const SHOOT_ANIMATION := &"ShootAnim"
@@ -25,6 +32,9 @@ const SIGNAL_BOOST_STATE_READY := &"ready"
 const SIGNAL_BOOST_STATE_DECLARE := &"declare"
 const SIGNAL_BOOST_STATE_ACTIVE := &"active"
 const SIGNAL_BOOST_STATE_COOLDOWN := &"cooldown"
+const FIREWALL_STATE_READY := &"ready"
+const FIREWALL_STATE_DECLARE := &"declare"
+const FIREWALL_STATE_ACTIVE := &"active"
 const MODE_SEQUENCE := [
 	MODE_DEFENDER,
 	MODE_SIGNAL_BOOST,
@@ -42,9 +52,10 @@ const MODE_UNLOCK_LEVELS := {
 	MODE_SIGNAL_BOOST: SIGNAL_BOOST_UNLOCK_KNOWLEDGE_LEVEL,
 	MODE_FIREWALL: FIREWALL_UNLOCK_KNOWLEDGE_LEVEL
 }
-const SIGNAL_BOOST_RANGE_MULTIPLIER := 1.1
-const SIGNAL_BOOST_COOLDOWN_MULTIPLIER := 0.9
-const SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER := 1.2
+const SIGNAL_BOOST_RANGE_MULTIPLIER := 1.15
+const SIGNAL_BOOST_COOLDOWN_MULTIPLIER := 1.0 / 1.15
+const SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER := 1.15
+const SIGNAL_BOOST_DAMAGE_MULTIPLIER := 1.15
 const GROUP_OFFENSE_TOWER := "OFFENSE_TOWER"
 const GROUP_SUPPORT_TOWER := "SUPPORT_TOWER"
 const FIREWALL_FIELD_NAME := "GuardianFirewallField"
@@ -91,15 +102,19 @@ const DRAG_INVALID_MODULATE := Color(1.0, 0.22, 0.2, 0.84)
 @export_range(1.0, 600.0, 1.0) var signal_boost_cooldown_duration := 120.0
 @export_group("Mode Sprites")
 @export var signal_boost_sprite_path: NodePath = ^"ModeSprites/SignalBoostSprite"
-@export var firewall_sprite_path: NodePath = ^"ModeSprites/FirewallSprite"
 @export_group("Firewall")
 @export var virus_path_path: NodePath = ^"../../VirusElements/Path2D"
 @export var firewall_size := Vector2(240.0, 54.0)
-@export var firewall_color := Color(1.0, 0.08, 0.04, 0.42)
-@export var firewall_outline_color := Color(1.0, 0.38, 0.26, 0.86)
 @export var firewall_z_index := 58
+@export_range(1.0, 300.0, 1.0) var firewall_active_duration := 60.0
+@export var firewall_field_sprite_template_path: NodePath = ^"Effects/FirewallFieldSpriteTemplate"
+@export var firewall_burn_vfx_template_path: NodePath = ^"Effects/FirewallBurnVFXTemplate"
 @export_group("Audio")
-@export var summon_sfx_path: NodePath = ^"Audio/SummonSfx"
+@export var summon_sfx_path: NodePath = ^"Sounds/CyberGuardianSummonSfx"
+@export var defender_attack_sfx_path: NodePath = ^"Sounds/CyberGuardianDefenderAttackSfx"
+@export var firewall_activate_sfx_path: NodePath = ^"Sounds/CyberGuardianFirewallActivateSfx"
+@export var firewall_mode_sfx_path: NodePath = ^"Sounds/CyberGuardianFirewallChangeSfx"
+@export var signal_boost_mode_sfx_path: NodePath = ^"Sounds/CyberGuardianSignalBoostChangeSfx"
 @export_group("")
 
 var _asset_cache: Node
@@ -120,25 +135,33 @@ var _range_preview_outline: Line2D
 var _range_preview_radius := -1.0
 var _menu_range_preview_active := false
 var _summon_sfx: AudioStreamPlayer
+var _defender_attack_sfx: AudioStreamPlayer
+var _firewall_activate_sfx: AudioStreamPlayer
+var _firewall_mode_sfx: AudioStreamPlayer
+var _signal_boost_mode_sfx: AudioStreamPlayer
 var _base_modulate := Color.WHITE
 var _base_self_modulate := Color.WHITE
 var _current_mode: StringName = MODE_DEFENDER
 var _signal_boost_sprite: Sprite2D
-var _firewall_sprite: Sprite2D
 var _defender_sprite_frames: SpriteFrames
 var _static_mode_sprite_frames := {}
 var _signal_boost_active := false
 var _signal_boost_range_multiplier := SIGNAL_BOOST_RANGE_MULTIPLIER
 var _signal_boost_cooldown_multiplier := SIGNAL_BOOST_COOLDOWN_MULTIPLIER
 var _signal_boost_hawk_speed_multiplier := SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER
+var _signal_boost_damage_multiplier := SIGNAL_BOOST_DAMAGE_MULTIPLIER
 var _signal_boost_state: StringName = SIGNAL_BOOST_STATE_READY
 var _signal_boost_time_remaining := 0.0
 var _signal_boost_last_reported_second := -1
+var _firewall_state: StringName = FIREWALL_STATE_READY
+var _firewall_time_remaining := 0.0
+var _firewall_last_reported_second := -1
 var _virus_path: Path2D
 var _firewall_area: Area2D
 var _firewall_collision_shape: CollisionShape2D
-var _firewall_visual: Polygon2D
-var _firewall_outline: Line2D
+var _firewall_visual: Sprite2D
+var _firewall_field_sprite_template: Sprite2D
+var _firewall_burn_vfx_template: Node2D
 var _firewall_contact_ids := {}
 var _firewall_burn_states := {}
 var _firewall_hit_damage := 1
@@ -165,8 +188,13 @@ func _ready() -> void:
 	_configure_animation_visuals()
 	_platform_highlight = get_node_or_null(platform_highlight_path) as ColorRect
 	_signal_boost_sprite = get_node_or_null(signal_boost_sprite_path) as Sprite2D
-	_firewall_sprite = get_node_or_null(firewall_sprite_path) as Sprite2D
-	_summon_sfx = get_node_or_null(summon_sfx_path) as AudioStreamPlayer
+	_firewall_field_sprite_template = get_node_or_null(
+		firewall_field_sprite_template_path
+	) as Sprite2D
+	_firewall_burn_vfx_template = get_node_or_null(
+		firewall_burn_vfx_template_path
+	) as Node2D
+	_resolve_audio_players()
 	_hide_mode_sprite_source_nodes()
 	if _platform_highlight != null:
 		_platform_highlight.hide()
@@ -196,6 +224,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_update_signal_boost_cycle(delta)
+	_update_firewall_cycle(delta)
 	_update_attack_range_preview()
 
 
@@ -261,6 +290,7 @@ func finish_drag() -> bool:
 func reset_tower() -> void:
 	level = 1
 	_reset_signal_boost_cycle()
+	_reset_firewall_cycle()
 	set_guardian_mode(MODE_DEFENDER)
 	set_signal_boost_active(false)
 	global_position = _home_position
@@ -323,7 +353,7 @@ func get_shot_cooldown() -> float:
 
 
 func get_shot_power() -> int:
-	return LEVEL_DAMAGE_POINTS[level - 1]
+	return _get_signal_boosted_damage(LEVEL_DAMAGE_POINTS[level - 1])
 
 
 func get_level() -> int:
@@ -364,10 +394,22 @@ func set_guardian_mode(mode_id: StringName) -> bool:
 			and _current_mode != MODE_SIGNAL_BOOST \
 			and _signal_boost_state in [SIGNAL_BOOST_STATE_DECLARE, SIGNAL_BOOST_STATE_ACTIVE]:
 		_start_signal_boost_cooldown()
+	if previous_mode == MODE_FIREWALL \
+			and _current_mode != MODE_FIREWALL \
+			and _firewall_state != FIREWALL_STATE_READY:
+		_reset_firewall_cycle()
 	_apply_guardian_mode_visual()
 	_sync_mode_groups()
 	_sync_firewall_field()
 	_update_attack_range_preview()
+	if _placed:
+		match _current_mode:
+			MODE_SIGNAL_BOOST:
+				_play_audio_player(_signal_boost_mode_sfx)
+			MODE_FIREWALL:
+				_play_audio_player(_firewall_mode_sfx)
+			MODE_DEFENDER:
+				_play_audio_player(_summon_sfx)
 	mode_changed.emit(_current_mode)
 	return true
 
@@ -402,6 +444,39 @@ func get_signal_boost_time_remaining() -> float:
 
 func is_signal_boost_effect_active() -> bool:
 	return _signal_boost_state == SIGNAL_BOOST_STATE_ACTIVE
+
+
+func activate_firewall() -> bool:
+	if not can_activate_firewall():
+		return false
+
+	var declare_duration := _get_animation_duration(SUMMON_ANIMATION)
+	_set_firewall_cycle_state(
+		FIREWALL_STATE_DECLARE,
+		maxf(0.01, declare_duration)
+	)
+	_resolve_audio_players()
+	_play_audio_player(_firewall_activate_sfx)
+	play_animation(SUMMON_ANIMATION)
+	return true
+
+
+func can_activate_firewall() -> bool:
+	return _placed \
+		and _current_mode == MODE_FIREWALL \
+		and _firewall_state == FIREWALL_STATE_READY
+
+
+func get_firewall_state_id() -> StringName:
+	return _firewall_state
+
+
+func get_firewall_time_remaining() -> float:
+	return maxf(0.0, _firewall_time_remaining)
+
+
+func is_firewall_effect_active() -> bool:
+	return _firewall_state == FIREWALL_STATE_ACTIVE
 
 
 func get_mode_display_name(mode_id: StringName = &"") -> String:
@@ -459,6 +534,11 @@ func _start_signal_boost_active() -> void:
 		return
 
 	_set_signal_boost_cycle_state(SIGNAL_BOOST_STATE_ACTIVE, signal_boost_active_duration)
+	var active_visual := _get_visual_for_animation(SHOOT_ANIMATION)
+	if active_visual != null \
+			and active_visual.sprite_frames != null \
+			and active_visual.sprite_frames.has_animation(SHOOT_ANIMATION):
+		active_visual.sprite_frames.set_animation_loop(SHOOT_ANIMATION, true)
 	play_animation(SHOOT_ANIMATION)
 
 
@@ -485,6 +565,63 @@ func _set_signal_boost_cycle_state(state_id: StringName, time_remaining: float) 
 	signal_boost_status_changed.emit(_signal_boost_state, _signal_boost_time_remaining)
 
 
+func _update_firewall_cycle(delta: float) -> void:
+	if _firewall_state == FIREWALL_STATE_READY:
+		return
+
+	_firewall_time_remaining = maxf(0.0, _firewall_time_remaining - delta)
+	var reported_second := ceili(_firewall_time_remaining)
+	if reported_second != _firewall_last_reported_second:
+		_firewall_last_reported_second = reported_second
+		firewall_status_changed.emit(_firewall_state, _firewall_time_remaining)
+	if _firewall_time_remaining > 0.0:
+		return
+
+	match _firewall_state:
+		FIREWALL_STATE_DECLARE:
+			_start_firewall_active()
+		FIREWALL_STATE_ACTIVE:
+			_reset_firewall_cycle()
+
+
+func _start_firewall_active() -> void:
+	if not _placed or _current_mode != MODE_FIREWALL:
+		_reset_firewall_cycle()
+		return
+
+	_set_firewall_cycle_state(
+		FIREWALL_STATE_ACTIVE,
+		firewall_active_duration
+	)
+	var active_visual := _get_visual_for_animation(SHOOT_ANIMATION)
+	if active_visual != null \
+			and active_visual.sprite_frames != null \
+			and active_visual.sprite_frames.has_animation(SHOOT_ANIMATION):
+		active_visual.sprite_frames.set_animation_loop(SHOOT_ANIMATION, true)
+	play_animation(SHOOT_ANIMATION)
+
+
+func _reset_firewall_cycle() -> void:
+	_set_firewall_cycle_state(FIREWALL_STATE_READY, 0.0)
+	if _current_mode == MODE_FIREWALL:
+		play_animation(IDLE_ANIMATION)
+
+
+func _set_firewall_cycle_state(
+	state_id: StringName,
+	time_remaining: float
+) -> void:
+	var effect_was_active := _firewall_state == FIREWALL_STATE_ACTIVE
+	_firewall_state = state_id
+	_firewall_time_remaining = maxf(0.0, time_remaining)
+	_firewall_last_reported_second = ceili(_firewall_time_remaining)
+	var effect_is_active := _firewall_state == FIREWALL_STATE_ACTIVE
+	if effect_was_active != effect_is_active:
+		firewall_effect_changed.emit(effect_is_active)
+	_sync_firewall_field()
+	firewall_status_changed.emit(_firewall_state, _firewall_time_remaining)
+
+
 func _get_animation_duration(animation_name: StringName) -> float:
 	var visual := _get_visual_for_animation(animation_name)
 	if visual == null or visual.sprite_frames == null:
@@ -507,7 +644,8 @@ func set_signal_boost_active(active: bool) -> void:
 		active,
 		SIGNAL_BOOST_RANGE_MULTIPLIER,
 		SIGNAL_BOOST_COOLDOWN_MULTIPLIER,
-		SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER
+		SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER,
+		SIGNAL_BOOST_DAMAGE_MULTIPLIER
 	)
 
 
@@ -515,12 +653,14 @@ func set_signal_boost_profile(
 	active: bool,
 	range_multiplier: float,
 	cooldown_multiplier: float,
-	hawk_speed_multiplier: float = SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER
+	hawk_speed_multiplier: float = SIGNAL_BOOST_HAWK_SPEED_MULTIPLIER,
+	damage_multiplier: float = SIGNAL_BOOST_DAMAGE_MULTIPLIER
 ) -> void:
 	if _signal_boost_active == active:
 		_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
 		_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
 		_signal_boost_hawk_speed_multiplier = maxf(0.0, hawk_speed_multiplier)
+		_signal_boost_damage_multiplier = maxf(0.0, damage_multiplier)
 		_range_preview_radius = -1.0
 		_update_attack_range_preview()
 		return
@@ -529,6 +669,7 @@ func set_signal_boost_profile(
 	_signal_boost_range_multiplier = maxf(0.0, range_multiplier)
 	_signal_boost_cooldown_multiplier = maxf(0.01, cooldown_multiplier)
 	_signal_boost_hawk_speed_multiplier = maxf(0.0, hawk_speed_multiplier)
+	_signal_boost_damage_multiplier = maxf(0.0, damage_multiplier)
 	_range_preview_radius = -1.0
 	_update_attack_range_preview()
 
@@ -547,6 +688,23 @@ func get_signal_boost_cooldown_multiplier() -> float:
 
 func get_signal_boost_hawk_speed_multiplier() -> float:
 	return _signal_boost_hawk_speed_multiplier if _signal_boost_active else 1.0
+
+
+func get_signal_boost_damage_multiplier() -> float:
+	return _signal_boost_damage_multiplier if _signal_boost_active else 1.0
+
+
+func _get_signal_boost_damage_multiplier() -> float:
+	return get_signal_boost_damage_multiplier()
+
+
+func _get_signal_boosted_damage(base_damage: int) -> int:
+	if base_damage <= 0:
+		return 0
+	return maxi(
+		1,
+		roundi(float(base_damage) * _get_signal_boost_damage_multiplier())
+	)
 
 
 func set_firewall_profile(hit_damage: int, burn_damage: int, burn_tick_seconds: float, burn_duration: float) -> void:
@@ -580,12 +738,14 @@ func update_attack(delta: float, active_viruses: Array[PathFollow2D]) -> PathFol
 
 func update_firewall(delta: float, active_viruses: Array[PathFollow2D]) -> void:
 	_update_firewall_burns(delta)
-	if not _placed or _current_mode != MODE_FIREWALL:
+	if not _placed \
+			or _current_mode != MODE_FIREWALL \
+			or _firewall_state != FIREWALL_STATE_ACTIVE:
 		_sync_firewall_field()
 		return
 
 	_sync_firewall_field()
-	if _firewall_area == null:
+	if _firewall_area == null or not _firewall_area.visible:
 		return
 
 	for follow in active_viruses:
@@ -687,6 +847,9 @@ func _on_track_visual_animation_finished(visual: AnimatedSprite2D) -> void:
 	if _current_mode == MODE_SIGNAL_BOOST and _signal_boost_state == SIGNAL_BOOST_STATE_DECLARE:
 		_start_signal_boost_active()
 		return
+	if _current_mode == MODE_FIREWALL and _firewall_state == FIREWALL_STATE_DECLARE:
+		_start_firewall_active()
+		return
 
 	_return_to_idle()
 
@@ -737,6 +900,7 @@ func play_animation(animation_name: StringName) -> void:
 
 
 func play_summon() -> void:
+	_resolve_audio_players()
 	_play_audio_player(_summon_sfx)
 	play_animation(SUMMON_ANIMATION)
 
@@ -746,13 +910,42 @@ func play_idle() -> void:
 
 
 func play_shoot() -> void:
+	_resolve_audio_players()
+	if _current_mode == MODE_DEFENDER:
+		_play_audio_player(_defender_attack_sfx)
 	play_animation(SHOOT_ANIMATION)
 	_schedule_return_to_rest_state()
+
+
+func _resolve_audio_players() -> void:
+	if _summon_sfx == null:
+		_summon_sfx = CentralAudioResolver.resolve(self, summon_sfx_path)
+	if _defender_attack_sfx == null:
+		_defender_attack_sfx = CentralAudioResolver.resolve(
+			self,
+			defender_attack_sfx_path
+		)
+	if _firewall_activate_sfx == null:
+		_firewall_activate_sfx = CentralAudioResolver.resolve(
+			self,
+			firewall_activate_sfx_path
+		)
+	if _firewall_mode_sfx == null:
+		_firewall_mode_sfx = CentralAudioResolver.resolve(
+			self,
+			firewall_mode_sfx_path
+		)
+	if _signal_boost_mode_sfx == null:
+		_signal_boost_mode_sfx = CentralAudioResolver.resolve(
+			self,
+			signal_boost_mode_sfx_path
+		)
 
 
 func _find_nearest_virus_in_range(active_viruses: Array[PathFollow2D]) -> PathFollow2D:
 	var best_target: PathFollow2D
 	var best_distance_squared := INF
+	var best_is_worm_target := false
 	var attack_range := get_attack_range()
 	var range_squared := attack_range * attack_range
 
@@ -764,7 +957,16 @@ func _find_nearest_virus_in_range(active_viruses: Array[PathFollow2D]) -> PathFo
 
 		var target_position := _get_follow_target_position(follow)
 		var distance_squared := global_position.distance_squared_to(target_position)
-		if distance_squared > range_squared or distance_squared >= best_distance_squared:
+		if distance_squared > range_squared:
+			continue
+		var is_worm_target := _is_worm_boss_target(follow)
+		if best_is_worm_target and not is_worm_target:
+			continue
+		if is_worm_target and not best_is_worm_target:
+			best_target = null
+			best_distance_squared = INF
+			best_is_worm_target = true
+		if distance_squared >= best_distance_squared:
 			continue
 
 		best_target = follow
@@ -793,6 +995,12 @@ func _get_follow_target_position(follow: PathFollow2D) -> Vector2:
 		return virus.global_position
 
 	return follow.global_position
+
+
+func _is_worm_boss_target(follow: PathFollow2D) -> bool:
+	return is_instance_valid(follow) \
+		and follow.has_meta("worm_boss_part") \
+		and bool(follow.get_meta("worm_boss_part"))
 
 
 func _update_platform_highlight() -> void:
@@ -1041,7 +1249,9 @@ func _sync_mode_groups() -> void:
 
 
 func _sync_firewall_field() -> void:
-	var active := _placed and _current_mode == MODE_FIREWALL
+	var active := _placed \
+		and _current_mode == MODE_FIREWALL \
+		and _firewall_state == FIREWALL_STATE_ACTIVE
 	if not active:
 		_set_firewall_field_visible(false)
 		_firewall_contact_ids.clear()
@@ -1064,8 +1274,7 @@ func _sync_firewall_field() -> void:
 func _ensure_firewall_field() -> void:
 	if is_instance_valid(_firewall_area) \
 			and is_instance_valid(_firewall_collision_shape) \
-			and is_instance_valid(_firewall_visual) \
-			and is_instance_valid(_firewall_outline):
+			and is_instance_valid(_firewall_visual):
 		return
 
 	var game_root := _get_game_root()
@@ -1082,61 +1291,34 @@ func _ensure_firewall_field() -> void:
 	_firewall_area.z_as_relative = false
 	game_root.add_child(_firewall_area)
 
-	_firewall_visual = Polygon2D.new()
+	if is_instance_valid(_firewall_field_sprite_template):
+		_firewall_visual = (
+			_firewall_field_sprite_template.duplicate()
+			as Sprite2D
+		)
+	else:
+		_firewall_visual = Sprite2D.new()
 	_firewall_visual.name = "FirewallVisual"
-	_firewall_visual.color = firewall_color
-	_firewall_visual.z_index = firewall_z_index
-	_firewall_visual.z_as_relative = false
+	_firewall_visual.show()
 	_firewall_area.add_child(_firewall_visual)
-
-	_firewall_outline = Line2D.new()
-	_firewall_outline.name = "FirewallOutline"
-	_firewall_outline.width = 4.0
-	_firewall_outline.default_color = firewall_outline_color
-	_firewall_outline.joint_mode = Line2D.LINE_JOINT_ROUND
-	_firewall_outline.begin_cap_mode = Line2D.LINE_CAP_ROUND
-	_firewall_outline.end_cap_mode = Line2D.LINE_CAP_ROUND
-	_firewall_outline.z_index = firewall_z_index + 1
-	_firewall_outline.z_as_relative = false
-	_firewall_area.add_child(_firewall_outline)
 
 	_firewall_collision_shape = CollisionShape2D.new()
 	_firewall_collision_shape.name = "FirewallCollisionShape"
-	_firewall_collision_shape.debug_color = firewall_outline_color
+	_firewall_collision_shape.debug_color = Color(1.0, 0.38, 0.26, 0.16)
 	var shape := RectangleShape2D.new()
 	shape.size = firewall_size
 	_firewall_collision_shape.shape = shape
 	_firewall_area.add_child(_firewall_collision_shape)
 
-	_rebuild_firewall_geometry()
+	_sync_firewall_collision_shape()
 	_set_firewall_field_visible(false)
 
 
-func _rebuild_firewall_geometry() -> void:
-	if _firewall_visual != null:
-		var half_size := firewall_size * 0.5
-		_firewall_visual.polygon = PackedVector2Array([
-			Vector2(-half_size.x, -half_size.y),
-			Vector2(half_size.x, -half_size.y),
-			Vector2(half_size.x, half_size.y),
-			Vector2(-half_size.x, half_size.y)
-		])
-
-	if _firewall_outline != null:
-		var half_size := firewall_size * 0.5
-		_firewall_outline.points = PackedVector2Array([
-			Vector2(-half_size.x, -half_size.y),
-			Vector2(half_size.x, -half_size.y),
-			Vector2(half_size.x, half_size.y),
-			Vector2(-half_size.x, half_size.y),
-			Vector2(-half_size.x, -half_size.y)
-		])
-
+func _sync_firewall_collision_shape() -> void:
 	if _firewall_collision_shape != null:
 		var shape := _firewall_collision_shape.shape as RectangleShape2D
 		if shape != null:
 			shape.size = firewall_size
-		_firewall_collision_shape.debug_color = firewall_outline_color
 
 
 func _set_firewall_field_visible(value: bool) -> void:
@@ -1148,6 +1330,8 @@ func _set_firewall_field_visible(value: bool) -> void:
 
 func _clear_firewall_effects() -> void:
 	_firewall_contact_ids.clear()
+	for state_value in _firewall_burn_states.values():
+		_stop_firewall_burn_vfx(state_value as Dictionary)
 	_firewall_burn_states.clear()
 	_set_firewall_field_visible(false)
 
@@ -1208,10 +1392,18 @@ func _apply_firewall_burn(follow: PathFollow2D) -> void:
 	if follow == null or _firewall_burn_duration <= 0.0 or _firewall_burn_damage <= 0:
 		return
 
-	_firewall_burn_states[follow.get_instance_id()] = {
+	var follow_id := follow.get_instance_id()
+	var existing_state := (
+		_firewall_burn_states.get(follow_id, {}) as Dictionary
+	)
+	var burn_vfx := existing_state.get("vfx") as Node2D
+	if not is_instance_valid(burn_vfx):
+		burn_vfx = _spawn_firewall_burn_vfx(follow)
+	_firewall_burn_states[follow_id] = {
 		"follow": follow,
 		"remaining": _firewall_burn_duration,
-		"tick_elapsed": 0.0
+		"tick_elapsed": 0.0,
+		"vfx": burn_vfx
 	}
 
 
@@ -1220,6 +1412,7 @@ func _update_firewall_burns(delta: float) -> void:
 		var state := _firewall_burn_states[follow_id] as Dictionary
 		var follow := state.get("follow") as PathFollow2D
 		if not _is_firewall_follow_damageable(follow):
+			_stop_firewall_burn_vfx(state)
 			_firewall_burn_states.erase(follow_id)
 			_firewall_contact_ids.erase(follow_id)
 			continue
@@ -1233,12 +1426,43 @@ func _update_firewall_burns(delta: float) -> void:
 				break
 
 		if remaining <= 0.0 or not _is_firewall_follow_damageable(follow):
+			_stop_firewall_burn_vfx(state)
 			_firewall_burn_states.erase(follow_id)
 			continue
 
 		state["remaining"] = remaining
 		state["tick_elapsed"] = tick_elapsed
 		_firewall_burn_states[follow_id] = state
+
+
+func _spawn_firewall_burn_vfx(follow: PathFollow2D) -> Node2D:
+	if not is_instance_valid(_firewall_burn_vfx_template):
+		return null
+	var target: Node2D = _get_follow_virus(follow)
+	if target == null:
+		target = follow
+	if target == null:
+		return null
+
+	var effect := _firewall_burn_vfx_template.duplicate() as Node2D
+	if effect == null:
+		return null
+	target.add_child(effect)
+	if effect.has_method("play_effect"):
+		effect.call("play_effect")
+	else:
+		effect.show()
+	return effect
+
+
+func _stop_firewall_burn_vfx(state: Dictionary) -> void:
+	var effect := state.get("vfx") as Node2D
+	if not is_instance_valid(effect):
+		return
+	if effect.has_method("stop_and_free"):
+		effect.call("stop_and_free")
+	else:
+		effect.queue_free()
 
 
 func _is_firewall_follow_damageable(follow: PathFollow2D) -> bool:
@@ -1301,9 +1525,7 @@ func _assign_sprite_frames_to_mode(mode_id: StringName, frames: SpriteFrames, ov
 func _prepare_static_mode_sprite_frames() -> void:
 	if _static_mode_sprite_frames.is_empty():
 		_static_mode_sprite_frames[MODE_SIGNAL_BOOST] = _build_static_mode_sprite_frames(_get_signal_boost_texture())
-		_static_mode_sprite_frames[MODE_FIREWALL] = _build_static_mode_sprite_frames(_get_firewall_texture())
 	_assign_sprite_frames_to_mode(MODE_SIGNAL_BOOST, _static_mode_sprite_frames.get(MODE_SIGNAL_BOOST) as SpriteFrames)
-	_assign_sprite_frames_to_mode(MODE_FIREWALL, _static_mode_sprite_frames.get(MODE_FIREWALL) as SpriteFrames)
 
 
 func _build_static_mode_sprite_frames(texture: Texture2D) -> SpriteFrames:
@@ -1328,18 +1550,9 @@ func _get_signal_boost_texture() -> Texture2D:
 	return SIGNAL_BOOST_TEXTURE
 
 
-func _get_firewall_texture() -> Texture2D:
-	if _firewall_sprite != null and _firewall_sprite.texture != null:
-		return _firewall_sprite.texture
-
-	return FIREWALL_TEXTURE
-
-
 func _hide_mode_sprite_source_nodes() -> void:
 	if _signal_boost_sprite != null:
 		_signal_boost_sprite.hide()
-	if _firewall_sprite != null:
-		_firewall_sprite.hide()
 
 
 func _apply_guardian_mode_visual() -> void:
@@ -1399,4 +1612,10 @@ func _return_to_rest_state() -> void:
 	_shot_pose_active = false
 	rotation = _rest_rotation
 	if _current_animation == SHOOT_ANIMATION:
+		if _current_mode == MODE_SIGNAL_BOOST \
+				and _signal_boost_state == SIGNAL_BOOST_STATE_ACTIVE:
+			return
+		if _current_mode == MODE_FIREWALL \
+				and _firewall_state == FIREWALL_STATE_ACTIVE:
+			return
 		play_idle()

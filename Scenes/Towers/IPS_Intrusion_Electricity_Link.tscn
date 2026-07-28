@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://dglrt7acmlin1"]
+
+[ext_resource type="SpriteFrames" uid="uid://c6iiae7ldcwn1" path="res://assets/Towers/IPS_Intrusion/IPSElectricitySpriteFrames.tres" id="1_frames"]
+[ext_resource type="Script" uid="uid://ctrdwuovrj54y" path="res://Scripts/Towers/ips_intrusion_electricity_link.gd" id="2_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hitbox"]
+size = Vector2(66, 44)
+
+[node name="IPS_Intrusion_Electricity_Link" type="Area2D" unique_id=1869923111 groups=["IPS_ELECTRICITY_LINK"]]
+z_index = 2
+monitoring = false
+monitorable = false
+script = ExtResource("2_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=79017366]
+scale = Vector2(1.5, 1.5)
+sprite_frames = ExtResource("1_frames")
+animation = &"Animated_Electricity"
+autoplay = "Animated_Electricity"
+
+[node name="Hitbox" type="CollisionShape2D" parent="." unique_id=194068547]
+shape = SubResource("RectangleShape2D_hitbox")

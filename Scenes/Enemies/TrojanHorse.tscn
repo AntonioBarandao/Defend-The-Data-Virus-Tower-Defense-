@@ -6,8 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://d1m6smrk3mokq" path="res://assets/Enemies/TrojanHorse/HealthBar/trojan_health_under.png" id="4_health_under"]
 [ext_resource type="Texture2D" uid="uid://cmndpa34uosxj" path="res://assets/Enemies/TrojanHorse/HealthBar/trojan_health_progress.png" id="5_health_progress"]
 [ext_resource type="Texture2D" uid="uid://b4o5co2e3jx86" path="res://assets/Enemies/TrojanHorse/HealthBar/trojan_health_over.png" id="6_health_over"]
-[ext_resource type="AudioStream" uid="uid://bfshg7mdbonis" path="res://assets/sfx/trojan_horse_enter.wav" id="7_enter_sfx"]
-[ext_resource type="AudioStream" uid="uid://bqlqgvivmaqt1" path="res://assets/sfx/trojan_horse_transform.wav" id="8_transform_sfx"]
 
 [node name="TrojanHorse" type="AnimatedSprite2D" unique_id=1878623079]
 sprite_frames = ExtResource("1_frames")
@@ -17,6 +15,7 @@ script = ExtResource("2_script")
 path_speed = 25.0
 max_health = 50
 cyberbuck_reward = 500
+destroy_sfx_path = NodePath("Sounds/TrojanHorseDestroySfx")
 
 [node name="MinibossHealthBar" type="Node2D" parent="." unique_id=458405390]
 z_index = 700
@@ -39,13 +38,3 @@ stretch_margin_bottom = 12
 texture_under = ExtResource("4_health_under")
 texture_over = ExtResource("6_health_over")
 texture_progress = ExtResource("5_health_progress")
-
-[node name="Audio" type="Node" parent="." unique_id=1231151374]
-
-[node name="EnterSfx" type="AudioStreamPlayer" parent="Audio" unique_id=2069775479]
-stream = ExtResource("7_enter_sfx")
-volume_db = -15.0
-
-[node name="TransformSfx" type="AudioStreamPlayer" parent="Audio" unique_id=2062236086]
-stream = ExtResource("8_transform_sfx")
-volume_db = -15.0

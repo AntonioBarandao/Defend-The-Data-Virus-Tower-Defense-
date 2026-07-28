@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/ZombieNode/Levels/ZombieNodeLV1.png" id="2_lv1"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/ZombieNode/Levels/ZombieNodeLV2.png" id="3_lv2"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/ZombieNode/Levels/ZombieNodeLV3.png" id="4_lv3"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"zombie_node"
+category = 1
+display_name = "Zombie Node"
+type_label = "Progressive Boss Virus"
+description = "A stationary boss that evolves with later waves and periodically activates to deploy faster minions from separate markers. Its final form becomes targetable, gains a large health bar, and accelerates minion production as its health falls."
+images = Array[Texture2D]([ExtResource("2_lv1"), ExtResource("3_lv2"), ExtResource("4_lv3")])
+slide_labels = Array[String](["LV1", "LV2", "LV3"])
