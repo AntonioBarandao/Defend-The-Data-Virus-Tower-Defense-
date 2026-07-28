@@ -1,18 +1,16 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="SpriteFrames" path="res://assets/Towers/IPS_Intrusion/IPSIntrusionSpikeSpriteFrames.tres" id="1_spike_frames"]
+[ext_resource type="Texture2D" path="res://Assets/Towers/IPS_Intrusion/IPS_Intrusion_LV1_Spike.png" id="1_spike"]
 [ext_resource type="Script" path="res://Scripts/Towers/ips_intrusion_spike.gd" id="2_script"]
 
 [node name="IPS_Intrusion_Spike" type="Area2D" groups=["IPS_SPIKE"]]
-scale = Vector2(0.235, 0.235)
+scale = Vector2(0.055, 0.055)
 monitoring = false
 monitorable = false
 script = ExtResource("2_script")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = ExtResource("1_spike_frames")
-animation = &"Animated_Spikes"
-autoplay = "Animated_Spikes"
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_spike")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(0, -145.3125, 60.9375, -100.78125, 127.734375, -42.1875, 131.25, 60.9375, 60.9375, 123.046875, -60.9375, 123.046875, -131.25, 60.9375, -127.734375, -42.1875, -60.9375, -100.78125)
+polygon = PackedVector2Array(0, -620, 260, -430, 545, -180, 560, 260, 260, 525, -260, 525, -560, 260, -545, -180, -260, -430)

@@ -1,0 +1,21 @@
+[gd_resource type="SpriteFrames" load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://Assets/Towers/CyberGuardian/Modes/Cyber_Guardian_SignalBoost_Sprite.png" id="1_signal"]
+
+[resource]
+animations = [{
+"frames": [{"duration": 1.0, "texture": ExtResource("1_signal")}],
+"loop": true,
+"name": &"idle",
+"speed": 1.0
+}, {
+"frames": [{"duration": 1.0, "texture": ExtResource("1_signal")}],
+"loop": false,
+"name": &"SummonAnim",
+"speed": 1.0
+}, {
+"frames": [{"duration": 1.0, "texture": ExtResource("1_signal")}],
+"loop": true,
+"name": &"ShootAnim",
+"speed": 1.0
+}]

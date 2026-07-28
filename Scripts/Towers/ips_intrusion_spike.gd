@@ -4,7 +4,6 @@ extends Area2D
 @export var damage := 1
 @export var max_hits := 1
 @export_range(4.0, 160.0, 1.0) var hurt_radius := 42.0
-@export var animated_sprite_path: NodePath = ^"AnimatedSprite2D"
 
 var path_offset := 0.0
 var landed := false
@@ -15,14 +14,11 @@ var _target_position := Vector2.ZERO
 var _target_rotation := 0.0
 var _base_scale := Vector2.ONE
 var _deploy_tween: Tween
-var _animated_sprite: AnimatedSprite2D
 
 
 func _ready() -> void:
 	_base_scale = scale
 	_remaining_hits = maxi(1, max_hits)
-	_animated_sprite = get_node_or_null(animated_sprite_path) as AnimatedSprite2D
-	_play_spike_animation()
 
 
 func reset_spike() -> void:
@@ -32,7 +28,6 @@ func reset_spike() -> void:
 	modulate = Color.WHITE
 	scale = _base_scale
 	show()
-	_play_spike_animation()
 
 
 func start_deploy(start_position: Vector2, end_position: Vector2, end_rotation: float, travel_seconds: float) -> void:
@@ -114,12 +109,3 @@ func _get_follow_target_position(follow: PathFollow2D) -> Vector2:
 			return virus.global_position
 
 	return follow.global_position
-
-
-func _play_spike_animation() -> void:
-	if _animated_sprite == null or _animated_sprite.sprite_frames == null:
-		return
-	if not _animated_sprite.sprite_frames.has_animation(&"Animated_Spikes"):
-		return
-
-	_animated_sprite.play(&"Animated_Spikes")
