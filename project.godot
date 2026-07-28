@@ -34,6 +34,10 @@ window/stretch/aspect="expand"
 version_control/plugin_name="GitPlugin"
 version_control/autoload_on_startup=true
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/xogot_connect/plugin.cfg")
+
 [global_group]
 
 Defender=""
@@ -42,6 +46,16 @@ OFFENSE_TOWER=""
 Sound="Gameplay and interface sounds controlled by the Sound settings slider."
 SUPPORT_TOWER=""
 Virus=""
+
+[input_devices]
+
+virtual_controller/ios/enable_controller=false
+virtual_controller/ios/enable_left_thumbstick=true
+virtual_controller/ios/enable_right_thumbstick=true
+virtual_controller/ios/enable_button_a=true
+virtual_controller/ios/enable_button_b=true
+virtual_controller/ios/enable_button_x=true
+virtual_controller/ios/enable_button_y=true
 
 [physics]
 
