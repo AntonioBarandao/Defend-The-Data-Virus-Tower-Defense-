@@ -4,12 +4,14 @@ extends CanvasLayer
 @export var root_path: NodePath = ^"Root"
 @export var progress_bar_path: NodePath = ^"Root/BossPanel/Margin/Content/HealthBar"
 @export var health_label_path: NodePath = ^"Root/BossPanel/Margin/Content/Header/HealthLabel"
+@export var status_label_path: NodePath = ^"Root/BossPanel/Margin/Content/Footer/HintLabel"
 @export var segments_label_path: NodePath = ^"Root/BossPanel/Margin/Content/Footer/SegmentsLabel"
 @export_range(0.05, 2.0, 0.05) var health_tween_duration := 0.3
 
 var _root: Control
 var _progress_bar: ProgressBar
 var _health_label: Label
+var _status_label: Label
 var _segments_label: Label
 var _health_tween: Tween
 var _visibility_tween: Tween
@@ -19,6 +21,7 @@ func _ready() -> void:
 	_root = get_node_or_null(root_path) as Control
 	_progress_bar = get_node_or_null(progress_bar_path) as ProgressBar
 	_health_label = get_node_or_null(health_label_path) as Label
+	_status_label = get_node_or_null(status_label_path) as Label
 	_segments_label = get_node_or_null(segments_label_path) as Label
 	set_bar_visible(false)
 
@@ -56,6 +59,13 @@ func set_emerged_segments(emerged: int, total: int) -> void:
 		clampi(emerged, 0, maxi(1, total)),
 		maxi(1, total),
 	]
+
+
+func set_status(text: String, color: Color) -> void:
+	if _status_label == null:
+		return
+	_status_label.text = text
+	_status_label.add_theme_color_override("font_color", color)
 
 
 func set_bar_visible(value: bool) -> void:

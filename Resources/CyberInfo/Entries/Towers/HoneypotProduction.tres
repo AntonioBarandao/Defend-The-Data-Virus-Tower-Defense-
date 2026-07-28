@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/Towers/Honeypot_Production/Honeypot_Production_LV1.png" id="2_image"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"honeypot_production"
+display_name = "Honeypot Production"
+type_label = "Cyber Bucks / Knowledge Tower"
+description = "Generates Cyber Bucks while viruses are inside its radius and stores them until collected. Ten nearby viruses overload it temporarily. Higher levels improve production and storage, with Knowledge Point production unlocking at LV3."
+images = Array[Texture2D]([ExtResource("2_image")])
+slide_labels = Array[String](["LV1"])

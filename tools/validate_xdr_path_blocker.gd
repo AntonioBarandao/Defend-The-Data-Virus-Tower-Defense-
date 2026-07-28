@@ -70,6 +70,7 @@ func _initialize() -> void:
 			return
 	mech.global_position = Vector2(250.0, 140.0)
 	mech.set("_placed", true)
+	mech.set_level(4)
 	mech.destination_turn_seconds = 0.0
 	mech.set_dispatched(true)
 	if not _require(mech.set_dispatch_destination(Vector2(250.0, 500.0)), "The XDR test destination was rejected."):
@@ -85,8 +86,66 @@ func _initialize() -> void:
 	if not _require(marker != null and not marker.visible, "The canceled destination marker is still visible."):
 		return
 
+	var jetpack_mech := tower_scene.instantiate() as XDRMechTower
+	gameplay.add_child(jetpack_mech)
+	await process_frame
+	await physics_frame
+	jetpack_mech.set_process(false)
+	jetpack_mech.global_position = Vector2(250.0, 140.0)
+	jetpack_mech.set("_placed", true)
+	jetpack_mech.set_level(5)
+	jetpack_mech.destination_turn_seconds = 0.0
+	if not _require(is_equal_approx(jetpack_mech.jetpack_activation_seconds, 2.0), "The LV5 jetpack does not require two seconds of blocked walking."):
+		return
+	if not _require(is_equal_approx(jetpack_mech.jetpack_pause_seconds, 0.5), "The LV5 jetpack does not use the requested half-second launch pause."):
+		return
+	var jetpack_visuals := jetpack_mech.get_node_or_null("Visuals") as Node2D
+	var jetpack_vfx := jetpack_mech.get_node_or_null("Visuals/JetpackVFX") as Node2D
+	if not _require(jetpack_visuals != null and jetpack_vfx != null, "The editable LV5 jetpack visual hierarchy is missing."):
+		return
+
+	# Short durations keep this focused validation fast after checking the authored defaults.
+	jetpack_mech.jetpack_activation_seconds = 0.5
+	jetpack_mech.jetpack_pause_seconds = 0.05
+	jetpack_mech.jetpack_lift_seconds = 0.05
+	jetpack_mech.jetpack_cross_seconds = 0.1
+	jetpack_mech.jetpack_land_seconds = 0.05
+	jetpack_mech.jetpack_landing_clearance = 8.0
+	jetpack_mech.set_dispatched(true)
+	if not _require(jetpack_mech.set_dispatch_destination(Vector2(250.0, 500.0)), "The LV5 jetpack test destination was rejected."):
+		return
+
+	var jetpack_started := false
+	for step in range(50):
+		jetpack_mech._process(0.1)
+		if jetpack_mech.is_jetpacking():
+			jetpack_started = true
+			break
+	if not _require(jetpack_started, "The LV5 jetpack did not activate after walking against the blocker."):
+		return
+	await create_timer(0.45).timeout
+	if not _require(not jetpack_mech.is_jetpacking(), "The LV5 jetpack traversal did not finish."):
+		return
+	if not _require(jetpack_mech.global_position.y > 340.0, "The LV5 jetpack did not land beyond the pathway wall."):
+		return
+	if not _require(not jetpack_mech._would_collide_with_virus_path(jetpack_mech.global_position), "The LV5 jetpack landed inside the pathway collision."):
+		return
+	if not _require(jetpack_visuals.position.is_equal_approx(Vector2.ZERO), "The mech visuals did not return to their authored position after landing."):
+		return
+	if not _require(not jetpack_vfx.visible, "The LV5 jetpack VFX remained visible after landing."):
+		return
+	if not _require(jetpack_mech.has_dispatch_destination(), "The LV5 jetpack discarded the player's original destination."):
+		return
+
+	for step in range(30):
+		jetpack_mech._process(0.1)
+	if not _require(not jetpack_mech.has_dispatch_destination(), "The LV5 mech did not resume movement after landing."):
+		return
+	if not _require(jetpack_mech.global_position.is_equal_approx(Vector2(250.0, 500.0)), "The LV5 mech did not finish at the requested destination."):
+		return
+
 	gameplay.free()
-	print("XDR path blocker validation passed: traced corridor, generated collisions, blocked movement, and timed destination cancellation.")
+	print("XDR path blocker validation passed: 60px collision corridor, LV4 blocking, and LV5 jetpack traversal.")
 	quit(0)
 
 

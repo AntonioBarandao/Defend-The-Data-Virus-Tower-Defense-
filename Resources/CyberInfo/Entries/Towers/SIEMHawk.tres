@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/Towers/SIEM_Hawk/SIEM_Hawk_LV1.png" id="2_image"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"siem_hawk"
+display_name = "SIEM Hawk"
+type_label = "Knowledge Tower"
+description = "Dispatches from its headquarters to scan viruses in a forward arc and collect temporary Knowledge Points. Landing deposits those points into the player's Knowledge Level. LV2 and above can also attack while dispatched or frozen."
+images = Array[Texture2D]([ExtResource("2_image")])
+slide_labels = Array[String](["LV1"])

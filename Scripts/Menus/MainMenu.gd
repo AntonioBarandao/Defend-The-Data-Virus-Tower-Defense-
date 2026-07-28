@@ -9,6 +9,7 @@ const WELCOME_PENDING_META := &"login_welcome_pending"
 @onready var user_game_button: Button = $MenuPanel/VBox/UserGameButton
 @onready var admin_game_button: Button = $MenuPanel/VBox/AdminGameButton
 @onready var login_button: Button = $MenuPanel/VBox/LoginButton
+@onready var cyber_info_button: Button = $MenuPanel/VBox/CyberInfoButton
 @onready var options_button: Button = $MenuPanel/VBox/OptionsButton
 @onready var quit_button: Button = $MenuPanel/VBox/QuitButton
 @onready var status_label: Label = $StatusLabel
@@ -21,6 +22,7 @@ const WELCOME_PENDING_META := &"login_welcome_pending"
 @onready var options_close_button: Button = $OptionsOverlay/Panel/Margin/VBox/CloseButton
 @onready var jumpscare_overlay: ColorRect = $JumpscareOverlay
 @onready var jumpscare_icon: TextureRect = $JumpscareOverlay/Icon
+@onready var cyber_info_hud: CyberInfoHUD = $CyberInfoHUD
 
 var scan_speed := 120.0
 var background_zoom_amount := 0.015
@@ -35,6 +37,7 @@ func _ready() -> void:
 	user_game_button.pressed.connect(_on_user_game_pressed)
 	admin_game_button.pressed.connect(_on_admin_game_pressed)
 	login_button.pressed.connect(_on_login_pressed)
+	cyber_info_button.pressed.connect(_on_cyber_info_pressed)
 	options_button.pressed.connect(_on_options_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 	volume_slider.value_changed.connect(_on_volume_changed)
@@ -148,6 +151,10 @@ func _on_login_pressed() -> void:
 func _on_options_pressed() -> void:
 	options_overlay.show()
 	options_close_button.grab_focus()
+
+
+func _on_cyber_info_pressed() -> void:
+	cyber_info_hud.open(CyberInfoHUD.Page.TOWERS)
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()

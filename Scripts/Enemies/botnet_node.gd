@@ -12,6 +12,7 @@ signal activation_animation_started(level: int)
 signal activation_animation_finished(level: int)
 signal evolution_animation_started(from_level: int, to_level: int)
 signal evolution_animation_finished(level: int)
+signal final_reveal_clip_held(clip_index: int)
 
 const MAX_LEVEL := 3
 const IDLE_ANIMATION_NAMES := [
@@ -28,6 +29,11 @@ const EVOLUTION_ANIMATION_NAMES := [
 	&"evolve_lv1_to_lv2",
 	&"evolve_lv2_to_lv3",
 ]
+const FINAL_REVEAL_ANIMATION_NAMES := [
+	&"appear_hollow_lv3",
+	&"appear_anti_lv3",
+]
+const DESTROY_ANIMATION_NAME := &"destroy_lv3"
 
 @export var idle_animation_paths: Array[NodePath] = [
 	^"LV1IdleAnimation",
@@ -43,9 +49,19 @@ const EVOLUTION_ANIMATION_NAMES := [
 	^"LV1ToLV2EvolveAnimation",
 	^"LV2ToLV3EvolveAnimation",
 ]
+@export var final_reveal_animation_paths: Array[NodePath] = [
+	^"LV3AppearHollowAnimation",
+	^"LV3AppearAntiAnimation",
+]
+@export var anti_guardian_reveal_marker_one_path: NodePath = \
+	^"Anti-Guardian-Botnet-1"
+@export var anti_guardian_reveal_marker_two_path: NodePath = \
+	^"Anti-Guardian-Botnet-2"
+@export var destroy_animation_path: NodePath = ^"LV3DestroyAnimation"
 @export var spawn_markers_path: NodePath = ^"PossibleSpawnMarkers2"
 @export var health_hud_path: NodePath = ^"BotnetHealthHUD"
-@export var health_bar_path: NodePath = ^"BotnetHealthHUD/HealthBar"
+@export var health_bar_path: NodePath = \
+	^"BotnetHealthHUD/Root/BossPanel/Margin/Content/HealthBar"
 @export_range(1, 1000, 1) var maximum_health := 25
 @export_range(1, MAX_LEVEL, 1) var combat_unlock_level := 3
 @export_range(1.0, 120.0, 0.5) var minion_spawn_interval := 20.0
@@ -70,12 +86,22 @@ var _minion_spawn_elapsed := 0.0
 var _idle_animations: Array[AnimatedSprite2D] = []
 var _activate_animations: Array[AnimatedSprite2D] = []
 var _evolution_animations: Array[AnimatedSprite2D] = []
+var _final_reveal_animations: Array[AnimatedSprite2D] = []
 var _activation_playing := false
 var _evolution_playing := false
+var _final_reveal_playing := false
 var _active_activation_sprite: AnimatedSprite2D
 var _active_evolution_sprite: AnimatedSprite2D
+var _active_final_reveal_sprite: AnimatedSprite2D
+var _final_reveal_serial := 0
+var _final_boss_health_suppressed := false
+var _anti_guardian_reveal_marker_one: Marker2D
+var _anti_guardian_reveal_marker_two: Marker2D
+var _destroy_animation: AnimatedSprite2D
+var _destroy_playing := false
+var _destroy_serial := 0
 var _spawn_markers: Array[Marker2D] = []
-var _health_hud: CanvasItem
+var _health_hud: BotnetNodeProgressBar
 var _health_bar: ProgressBar
 var _health_tween: Tween
 var _damage_flash_tween: Tween
@@ -87,13 +113,27 @@ func _ready() -> void:
 	_idle_animations = _resolve_animation_nodes(idle_animation_paths)
 	_activate_animations = _resolve_animation_nodes(activate_animation_paths)
 	_evolution_animations = _resolve_animation_nodes(evolution_animation_paths)
+	_final_reveal_animations = _resolve_animation_nodes(
+		final_reveal_animation_paths
+	)
+	_anti_guardian_reveal_marker_one = get_node_or_null(
+		anti_guardian_reveal_marker_one_path
+	) as Marker2D
+	_anti_guardian_reveal_marker_two = get_node_or_null(
+		anti_guardian_reveal_marker_two_path
+	) as Marker2D
+	_destroy_animation = get_node_or_null(
+		destroy_animation_path
+	) as AnimatedSprite2D
 	var spawn_markers := get_node_or_null(spawn_markers_path)
 	if spawn_markers != null:
 		for child in spawn_markers.get_children():
 			var marker := child as Marker2D
 			if marker != null:
 				_spawn_markers.append(marker)
-	_health_hud = get_node_or_null(health_hud_path) as CanvasItem
+	_health_hud = get_node_or_null(
+		health_hud_path
+	) as BotnetNodeProgressBar
 	_health_bar = get_node_or_null(health_bar_path) as ProgressBar
 	_current_health = maximum_health
 	_configure_health_bar()
@@ -117,6 +157,8 @@ func deactivate() -> void:
 	_minion_spawn_elapsed = 0.0
 	_cancel_activation_animation()
 	_cancel_evolution_animation()
+	_cancel_final_reveal_animation()
+	_cancel_destroy_animation()
 	_sync_visuals()
 
 
@@ -196,6 +238,93 @@ func is_evolution_playing() -> bool:
 	return _evolution_playing
 
 
+func set_encounter_maximum_health(value: int, refill: bool = true) -> void:
+	maximum_health = maxi(1, value)
+	if refill:
+		_cancel_destroy_animation()
+		_current_health = maximum_health
+		_defeated_level = 0
+	else:
+		_current_health = clampi(_current_health, 0, maximum_health)
+	_configure_health_bar()
+	health_changed.emit(_current_health, maximum_health)
+
+
+func play_final_boss_reveal() -> void:
+	await play_final_boss_hollow_reveal()
+	if not _final_reveal_playing:
+		return
+	await play_final_boss_anti_reveal()
+
+
+func play_final_boss_hollow_reveal() -> void:
+	_cancel_final_reveal_animation()
+	_cancel_activation_animation()
+	_cancel_evolution_animation()
+	_final_reveal_playing = true
+	active = true
+	_wave_active = false
+	var serial := _final_reveal_serial
+	await _play_final_reveal_clip(0, serial, true)
+
+
+func play_final_boss_anti_reveal() -> void:
+	if not _final_reveal_playing:
+		_cancel_final_reveal_animation()
+		_final_reveal_playing = true
+		active = true
+		_wave_active = false
+	var serial := _final_reveal_serial
+	await _play_final_reveal_clip(1, serial, true)
+
+
+func get_final_boss_anti_reveal_duration() -> float:
+	var sprite := _get_animation_at(_final_reveal_animations, 1)
+	if sprite == null or FINAL_REVEAL_ANIMATION_NAMES.size() <= 1:
+		return 0.0
+	return _get_sprite_animation_duration(
+		sprite,
+		FINAL_REVEAL_ANIMATION_NAMES[1]
+	)
+
+
+func get_anti_guardian_reveal_marker_global_position(
+	marker_index: int
+) -> Vector2:
+	var marker := (
+		_anti_guardian_reveal_marker_one
+		if marker_index <= 0
+		else _anti_guardian_reveal_marker_two
+	)
+	return marker.global_position if is_instance_valid(marker) else global_position
+
+
+func set_final_boss_health_suppressed(value: bool) -> void:
+	_final_boss_health_suppressed = value
+	if is_inside_tree():
+		_sync_visuals()
+
+
+func is_final_boss_health_suppressed() -> bool:
+	return _final_boss_health_suppressed
+
+
+func finish_final_boss_reveal() -> void:
+	if not _final_reveal_playing:
+		return
+	finish_final_boss_reveal_immediately()
+
+
+func finish_final_boss_reveal_immediately() -> void:
+	_cancel_final_reveal_animation()
+	set_level(MAX_LEVEL)
+	activate()
+
+
+func is_final_boss_reveal_playing() -> bool:
+	return _final_reveal_playing
+
+
 func take_damage(amount: int) -> bool:
 	var damage := maxi(0, amount)
 	if not can_be_targeted() or damage <= 0:
@@ -209,11 +338,9 @@ func take_damage(amount: int) -> bool:
 		return false
 
 	_defeated_level = current_level
-	active = false
 	_wave_active = false
 	_minion_spawn_elapsed = 0.0
-	_sync_visuals()
-	defeated.emit(self)
+	_start_destroy_animation()
 	return true
 
 
@@ -226,6 +353,19 @@ func can_be_targeted() -> bool:
 
 func is_defeated() -> bool:
 	return _defeated_level == current_level
+
+
+func is_destroying() -> bool:
+	return _destroy_playing
+
+
+func finish_destroy_immediately() -> void:
+	if not _destroy_playing:
+		return
+	_cancel_destroy_animation()
+	active = false
+	_sync_visuals()
+	defeated.emit(self)
 
 
 func get_current_health() -> int:
@@ -244,7 +384,9 @@ func get_minion_spawn_count(level: int = current_level) -> int:
 
 
 func _sync_visuals() -> void:
-	var should_show := active and not is_defeated()
+	var should_show := active and (
+		not is_defeated() or _destroy_playing
+	)
 	visible = should_show
 	var visible_level_index := clampi(current_level - 1, 0, MAX_LEVEL - 1)
 	for index in range(_idle_animations.size()):
@@ -254,6 +396,8 @@ func _sync_visuals() -> void:
 		idle_sprite.visible = should_show \
 			and not _activation_playing \
 			and not _evolution_playing \
+			and not _final_reveal_playing \
+			and not _destroy_playing \
 			and index == visible_level_index
 		if idle_sprite.visible:
 			_play_animation_if_needed(
@@ -264,20 +408,34 @@ func _sync_visuals() -> void:
 		if activate_sprite != null:
 			activate_sprite.visible = should_show \
 				and _activation_playing \
+				and not _destroy_playing \
 				and activate_sprite == _active_activation_sprite
 	for evolution_sprite in _evolution_animations:
 		if evolution_sprite != null:
 			evolution_sprite.visible = should_show \
 				and _evolution_playing \
+				and not _destroy_playing \
 				and evolution_sprite == _active_evolution_sprite
+	for reveal_sprite in _final_reveal_animations:
+		if reveal_sprite != null:
+			reveal_sprite.visible = should_show \
+				and _final_reveal_playing \
+				and not _destroy_playing \
+				and reveal_sprite == _active_final_reveal_sprite
+	if _destroy_animation != null:
+		_destroy_animation.visible = should_show and _destroy_playing
 	if _health_hud != null:
-		_health_hud.visible = should_show \
+		_health_hud.set_bar_visible(should_show \
 			and not _evolution_playing \
-			and can_be_targeted()
+			and not _final_reveal_playing \
+			and not _final_boss_health_suppressed \
+			and (can_be_targeted() or _destroy_playing))
 
 
 func _reset_for_new_level() -> void:
 	_cancel_activation_animation()
+	_cancel_final_reveal_animation()
+	_cancel_destroy_animation()
 	_defeated_level = 0
 	_current_health = maximum_health
 	_wave_active = false
@@ -396,7 +554,132 @@ func _cancel_evolution_animation() -> void:
 	_active_evolution_sprite = null
 
 
+func _cancel_final_reveal_animation() -> void:
+	_final_reveal_serial += 1
+	_final_reveal_playing = false
+	if is_instance_valid(_active_final_reveal_sprite):
+		_active_final_reveal_sprite.stop()
+		_active_final_reveal_sprite.hide()
+	_active_final_reveal_sprite = null
+
+
+func _start_destroy_animation() -> void:
+	_cancel_activation_animation()
+	_cancel_evolution_animation()
+	_cancel_final_reveal_animation()
+	_destroy_serial += 1
+	var serial := _destroy_serial
+	_destroy_playing = true
+	active = true
+	_sync_visuals()
+	if _health_hud != null:
+		_health_hud.play_defeat_fade()
+	if _destroy_animation == null \
+			or _destroy_animation.sprite_frames == null \
+			or not _destroy_animation.sprite_frames.has_animation(
+				DESTROY_ANIMATION_NAME
+			):
+		_finish_destroy_animation(serial)
+		return
+	_destroy_animation.frame = 0
+	_destroy_animation.frame_progress = 0.0
+	_destroy_animation.play(DESTROY_ANIMATION_NAME)
+	var duration := _get_sprite_animation_duration(
+		_destroy_animation,
+		DESTROY_ANIMATION_NAME
+	)
+	if duration > 0.0:
+		await get_tree().create_timer(duration).timeout
+	_finish_destroy_animation(serial)
+
+
+func _finish_destroy_animation(serial: int) -> void:
+	if serial != _destroy_serial or not _destroy_playing:
+		return
+	_destroy_playing = false
+	if is_instance_valid(_destroy_animation):
+		_destroy_animation.stop()
+		_destroy_animation.hide()
+	active = false
+	_sync_visuals()
+	defeated.emit(self)
+
+
+func _cancel_destroy_animation() -> void:
+	_destroy_serial += 1
+	_destroy_playing = false
+	if is_instance_valid(_destroy_animation):
+		_destroy_animation.stop()
+		_destroy_animation.hide()
+
+
+func _play_final_reveal_clip(
+	index: int,
+	serial: int,
+	hold_last_frame: bool
+) -> void:
+	var sprite := _get_animation_at(_final_reveal_animations, index)
+	if sprite == null or index >= FINAL_REVEAL_ANIMATION_NAMES.size():
+		return
+	if is_instance_valid(_active_final_reveal_sprite) \
+			and _active_final_reveal_sprite != sprite:
+		_active_final_reveal_sprite.stop()
+		_active_final_reveal_sprite.hide()
+	_active_final_reveal_sprite = sprite
+	_sync_visuals()
+	var animation_name: StringName = FINAL_REVEAL_ANIMATION_NAMES[index]
+	sprite.frame = 0
+	sprite.frame_progress = 0.0
+	sprite.play(animation_name)
+	var duration := _get_sprite_animation_duration(sprite, animation_name)
+	if duration > 0.0:
+		await get_tree().create_timer(duration).timeout
+	if serial != _final_reveal_serial \
+			or not is_instance_valid(sprite):
+		return
+	sprite.stop()
+	if hold_last_frame:
+		sprite.frame = maxi(
+			0,
+			sprite.sprite_frames.get_frame_count(animation_name) - 1
+		)
+		sprite.frame_progress = 0.0
+		sprite.show()
+		final_reveal_clip_held.emit(index)
+		return
+	sprite.hide()
+	_active_final_reveal_sprite = null
+
+
+func _get_sprite_animation_duration(
+	sprite: AnimatedSprite2D,
+	animation_name: StringName
+) -> float:
+	if sprite.sprite_frames == null \
+			or not sprite.sprite_frames.has_animation(animation_name):
+		return 0.0
+	var speed := sprite.sprite_frames.get_animation_speed(animation_name)
+	speed *= maxf(0.001, absf(sprite.speed_scale))
+	if speed <= 0.0:
+		return 0.0
+	var duration := 0.0
+	for frame_index in range(
+		sprite.sprite_frames.get_frame_count(animation_name)
+	):
+		duration += sprite.sprite_frames.get_frame_duration(
+			animation_name,
+			frame_index
+		) / speed
+	return duration
+
+
 func _configure_health_bar() -> void:
+	if _health_hud != null:
+		_health_hud.set_health(
+			_current_health,
+			maximum_health,
+			false
+		)
 	if _health_bar == null:
 		return
 	_health_bar.min_value = 0.0
@@ -406,6 +689,9 @@ func _configure_health_bar() -> void:
 
 
 func _tween_health_bar_to(value: int) -> void:
+	if _health_hud != null:
+		_health_hud.set_health(value, maximum_health, true)
+		return
 	if _health_bar == null:
 		return
 	if _health_tween != null and _health_tween.is_valid():
@@ -445,4 +731,7 @@ func _get_all_animation_nodes() -> Array[AnimatedSprite2D]:
 	sprites.append_array(_idle_animations)
 	sprites.append_array(_activate_animations)
 	sprites.append_array(_evolution_animations)
+	sprites.append_array(_final_reveal_animations)
+	if _destroy_animation != null:
+		sprites.append(_destroy_animation)
 	return sprites

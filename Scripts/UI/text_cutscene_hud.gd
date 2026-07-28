@@ -15,6 +15,8 @@ const ACT_WAVE_TEN := 10
 const ACT_WAVE_ELEVEN := 11
 const ACT_WAVE_FIFTEEN := 15
 const ACT_WAVE_TWENTY := 20
+const ACT_WAVE_TWENTY_FIVE := 25
+const ACT_WAVE_TWENTY_FIVE_DEFEAT := 251
 const ACT_ZOMBIE_NODE_DEFEAT := 150
 const ACT_WORM_BOSS_DEFEAT := 200
 const PHASE_ONE := &"phase_1"
@@ -106,6 +108,27 @@ const PHASE_END := &"phase_end"
 	"Every offensive tower will prioritize the closest Worm segment inside its range! Keep firing until a body segment moves closer than its shields!",
 	"The Cyber Worm has 950 integrity and moves as slowly as a Trojan horse, but it is built to absorb sustained fire!"
 ]
+@export_group("Wave 25 Final Boss Cutscene")
+@export var wave25_botnet_node_path: NodePath = ^"../BotnetNode"
+@export var wave25_worm_boss_path: NodePath = ^"../WormBoss"
+@export_range(0.2, 6.0, 0.05) var wave25_botnet_pan_duration := 1.5
+@export_range(1.0, 4.0, 0.05) var wave25_botnet_camera_zoom := 1.85
+@export_range(1.0, 5.0, 0.05) var wave25_deep_camera_zoom := 2.65
+@export_range(2.0, 24.0, 0.25) var wave25_reveal_zoom_duration := 12.0
+@export_range(0.0, 4.0, 0.05) var wave25_anti_departure_hold_duration := 1.0
+@export_range(0.2, 6.0, 0.05) var wave25_worm_pan_duration := 1.65
+@export_range(0.5, 3.0, 0.05) var wave25_worm_camera_zoom := 1.3
+@export var wave25_warning_lines: PackedStringArray = [
+	"Oh no, something is happening!-"
+]
+@export var wave25_strategy_lines: PackedStringArray = [
+	"The Anti-Cyberguardian linked the Botnet to the Cyber Worm! Destroy the 500-integrity Botnet first!",
+	"The Worm has 2,000 integrity, and every body segment is completely invincible until the Botnet falls! Focus all available fire on the Botnet!"
+]
+@export_group("Wave 25 Anti-Cyberguardian Defeat")
+@export var wave25_defeat_focus_target_path: NodePath = ^"../BotnetNode"
+@export_range(0.2, 6.0, 0.05) var wave25_defeat_pan_duration := 1.4
+@export_range(1.0, 5.0, 0.05) var wave25_defeat_camera_zoom := 2.4
 @export_group("Cyber Worm Defeat Cutscene")
 @export var worm_defeat_phase_two_lines: PackedStringArray = [
 	"We did it! The CPU is safe! We destroyed the Cyber Worm before it could consume our data!",
@@ -159,6 +182,8 @@ var _wave10_target: Node2D
 var _wave11_zombie_node: ZombieNode
 var _focused_zombie_node: ZombieNode
 var _focused_worm_boss: WormBoss
+var _focused_botnet_node: BotnetNode
+var _focused_anti_cyberguardian: AntiCyberguardian
 var _phase_one_target_visible_before_cutscene := false
 var _wave20_alternate_map: CanvasItem
 var _wave20_alternate_map_was_visible := false
@@ -167,6 +192,7 @@ var _wave20_map_actor_visibility: Dictionary = {}
 var _last_handled_cutscene_input_event_id := 0
 var _skip_requested := false
 var _cutscene_finished_emitted := false
+var _wave25_zoom_tween: Tween
 
 
 func _ready() -> void:
@@ -429,6 +455,58 @@ func start_worm_boss_defeat_cutscene() -> void:
 	await _finish_cutscene()
 
 
+func start_wave25_final_boss_cutscene() -> void:
+	if _running:
+		return
+
+	await _prepare_special_zombie_cutscene(ACT_WAVE_TWENTY_FIVE)
+	if _skip_requested or not _running:
+		return
+	await _run_wave25_botnet_focus_phase()
+	if _skip_requested or not _running:
+		return
+	await _run_dialogue_phase(
+		PHASE_TWO,
+		wave25_warning_lines,
+		false
+	)
+	if _skip_requested or not _running:
+		return
+	await _run_wave25_reveal_and_mount_phase()
+	if _skip_requested or not _running:
+		return
+	await _run_dialogue_phase(
+		PHASE_FOUR,
+		wave25_strategy_lines,
+		false
+	)
+	if _skip_requested or not _running:
+		return
+	await _finish_cutscene()
+	_focused_botnet_node = null
+	_focused_worm_boss = null
+	_focused_anti_cyberguardian = null
+
+
+func start_wave25_partial_defeat_cutscene(
+	anti_guardian: AntiCyberguardian
+) -> void:
+	if _running or not is_instance_valid(anti_guardian):
+		return
+
+	_focused_anti_cyberguardian = anti_guardian
+	await _prepare_special_zombie_cutscene(
+		ACT_WAVE_TWENTY_FIVE_DEFEAT
+	)
+	if _skip_requested or not _running:
+		return
+	await _run_wave25_partial_defeat_phase()
+	if _skip_requested or not _running:
+		return
+	await _finish_cutscene()
+	_focused_anti_cyberguardian = null
+
+
 func _prepare_special_zombie_cutscene(act_number: int) -> void:
 	_ensure_gameplay_soundtrack_playing()
 	_running = true
@@ -525,6 +603,156 @@ func _run_wave20_worm_focus_phase() -> void:
 	if _skip_requested or not _running:
 		return
 	_restore_wave20_alternate_map()
+	_finish_phase(PHASE_ONE)
+
+
+func _run_wave25_botnet_focus_phase() -> void:
+	_start_phase(PHASE_ONE)
+	_prepare_phase_one_camera()
+	_prepare_all_overlays_hidden()
+	_focused_botnet_node = get_node_or_null(
+		wave25_botnet_node_path
+	) as BotnetNode
+	_focused_worm_boss = get_node_or_null(
+		wave25_worm_boss_path
+	) as WormBoss
+	if is_instance_valid(_focused_worm_boss):
+		_focused_anti_cyberguardian = (
+			_focused_worm_boss.get_anti_cyberguardian()
+		)
+
+	if not is_instance_valid(_focused_botnet_node):
+		await get_tree().process_frame
+		_finish_phase(PHASE_ONE)
+		return
+	_focused_botnet_node.activate()
+	await _pan_camera_to_target(
+		_focused_botnet_node.global_position,
+		Vector2.ZERO,
+		wave25_botnet_pan_duration,
+		wave25_botnet_camera_zoom
+	)
+	if _skip_requested or not _running:
+		return
+	_finish_phase(PHASE_ONE)
+
+
+func _run_wave25_reveal_and_mount_phase() -> void:
+	_start_phase(PHASE_THREE)
+	_prepare_all_overlays_hidden()
+	if not is_instance_valid(_focused_botnet_node):
+		_finish_phase(PHASE_THREE)
+		return
+
+	if _cutscene_camera != null:
+		_kill_tween(_wave25_zoom_tween)
+		_wave25_zoom_tween = create_tween()
+		_wave25_zoom_tween.tween_property(
+			_cutscene_camera,
+			"zoom",
+			Vector2.ONE * wave25_deep_camera_zoom,
+			wave25_reveal_zoom_duration
+		).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+
+	if _focused_botnet_node.get_level() < BotnetNode.MAX_LEVEL:
+		await _focused_botnet_node.play_evolution_to_level(
+			BotnetNode.MAX_LEVEL
+		)
+		if _skip_requested or not _running:
+			return
+	await _focused_botnet_node.play_final_boss_hollow_reveal()
+	if _skip_requested or not _running:
+		return
+
+	if is_instance_valid(_focused_anti_cyberguardian):
+		var marker_one_position := (
+			_focused_botnet_node
+				.get_anti_guardian_reveal_marker_global_position(0)
+		)
+		var marker_two_position := (
+			_focused_botnet_node
+				.get_anti_guardian_reveal_marker_global_position(1)
+		)
+		await _focused_anti_cyberguardian \
+			.play_botnet_reveal_appearance_at(marker_one_position)
+		if _skip_requested or not _running:
+			return
+		_focused_anti_cyberguardian.move_botnet_reveal_to(
+			marker_two_position,
+			_focused_botnet_node
+				.get_final_boss_anti_reveal_duration()
+		)
+		await _focused_botnet_node.play_final_boss_anti_reveal()
+		if _skip_requested or not _running:
+			return
+		if wave25_anti_departure_hold_duration > 0.0:
+			await get_tree().create_timer(
+				wave25_anti_departure_hold_duration
+			).timeout
+			if _skip_requested or not _running:
+				return
+		await _focused_anti_cyberguardian.play_cloak_departure_at(
+			marker_two_position
+		)
+		if _skip_requested or not _running:
+			return
+	else:
+		await _focused_botnet_node.play_final_boss_anti_reveal()
+		if _skip_requested or not _running:
+			return
+
+	_kill_tween(_wave25_zoom_tween)
+	_wave25_zoom_tween = null
+	_show_wave20_alternate_map()
+	if not is_instance_valid(_focused_worm_boss):
+		_finish_phase(PHASE_THREE)
+		return
+	_focused_worm_boss.prepare_cutscene_preview(
+		_focused_worm_boss.get_authored_cutscene_position()
+	)
+	await get_tree().process_frame
+	await _pan_camera_to_target(
+		_focused_worm_boss.get_preview_center(),
+		Vector2.ZERO,
+		wave25_worm_pan_duration,
+		wave25_worm_camera_zoom
+	)
+	if _skip_requested or not _running:
+		return
+	if is_instance_valid(_focused_anti_cyberguardian):
+		_focused_anti_cyberguardian.mount_on_worm()
+		await _focused_anti_cyberguardian.play_mounted_entrance_and_activate()
+		if _skip_requested or not _running:
+			return
+	_finish_phase(PHASE_THREE)
+
+
+func _run_wave25_partial_defeat_phase() -> void:
+	_start_phase(PHASE_ONE)
+	_prepare_phase_one_camera()
+	_prepare_all_overlays_hidden()
+	var focus_target := get_node_or_null(
+		wave25_defeat_focus_target_path
+	) as Node2D
+	var focus_position := (
+		focus_target.global_position
+		if is_instance_valid(focus_target)
+		else _camera_start_global_position
+	)
+	await _pan_camera_to_target(
+		focus_position,
+		Vector2.ZERO,
+		wave25_defeat_pan_duration,
+		wave25_defeat_camera_zoom
+	)
+	if _skip_requested or not _running:
+		return
+	if is_instance_valid(_focused_anti_cyberguardian):
+		await _focused_anti_cyberguardian.play_partial_defeat_sequence_at(
+			focus_position
+		)
+		if _skip_requested or not _running:
+			return
 	_finish_phase(PHASE_ONE)
 
 
@@ -745,6 +973,12 @@ func skip_cutscene() -> void:
 	if current_act == ACT_WAVE_FIFTEEN \
 			and is_instance_valid(_focused_zombie_node):
 		_focused_zombie_node.finish_evolution_immediately()
+	if current_act == ACT_WAVE_TWENTY_FIVE:
+		_finish_wave25_final_boss_visual()
+	if current_act == ACT_WAVE_TWENTY_FIVE_DEFEAT \
+			and is_instance_valid(_focused_anti_cyberguardian):
+		_focused_anti_cyberguardian \
+			.finish_partial_defeat_sequence_immediately()
 	_restore_wave20_alternate_map()
 	_restore_cutscene_camera_to_start()
 	_set_phase_one_target_visible(false)
@@ -1392,6 +1626,35 @@ func _stop_active_cutscene_tweens() -> void:
 	_phase_two_intro_tween = null
 	_kill_tween(_phase_end_tween)
 	_phase_end_tween = null
+	_kill_tween(_wave25_zoom_tween)
+	_wave25_zoom_tween = null
+
+
+func _finish_wave25_final_boss_visual() -> void:
+	if not is_instance_valid(_focused_botnet_node):
+		_focused_botnet_node = get_node_or_null(
+			wave25_botnet_node_path
+		) as BotnetNode
+	if is_instance_valid(_focused_botnet_node):
+		_focused_botnet_node.finish_evolution_immediately(
+			BotnetNode.MAX_LEVEL
+		)
+		_focused_botnet_node.finish_final_boss_reveal_immediately()
+
+	if not is_instance_valid(_focused_worm_boss):
+		_focused_worm_boss = get_node_or_null(
+			wave25_worm_boss_path
+		) as WormBoss
+	if not is_instance_valid(_focused_worm_boss):
+		return
+	_focused_worm_boss.prepare_cutscene_preview(
+		_focused_worm_boss.get_authored_cutscene_position()
+	)
+	_focused_anti_cyberguardian = (
+		_focused_worm_boss.get_anti_cyberguardian()
+	)
+	if is_instance_valid(_focused_anti_cyberguardian):
+		_focused_anti_cyberguardian.finish_final_boss_intro_immediately()
 
 
 func _kill_tween(tween: Tween) -> void:

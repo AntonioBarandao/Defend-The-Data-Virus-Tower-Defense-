@@ -11,8 +11,10 @@ extends CanvasLayer
 @export var menu_panel_path: NodePath = ^"Root/MenuPanel"
 @export var resume_button_path: NodePath = ^"Root/MenuPanel/Margin/Content/ResumeButton"
 @export var settings_button_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsButton"
+@export var cyber_info_button_path: NodePath = ^"Root/MenuPanel/Margin/Content/CyberInfoButton"
 @export var exit_button_path: NodePath = ^"Root/MenuPanel/Margin/Content/ExitButton"
 @export var settings_panel_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsPanel"
+@export var cyber_info_hud_path: NodePath = ^"CyberInfoHUD"
 @export var master_slider_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsPanel/Margin/Sliders/MasterRow/MasterSlider"
 @export var music_slider_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsPanel/Margin/Sliders/MusicRow/MusicSlider"
 @export var sound_slider_path: NodePath = ^"Root/MenuPanel/Margin/Content/SettingsPanel/Margin/Sliders/SoundRow/SoundSlider"
@@ -33,8 +35,10 @@ var _dim_overlay: ColorRect
 var _menu_panel: PanelContainer
 var _resume_button: Button
 var _settings_button: Button
+var _cyber_info_button: Button
 var _exit_button: Button
 var _settings_panel: PanelContainer
+var _cyber_info_hud: CyberInfoHUD
 var _master_slider: HSlider
 var _music_slider: HSlider
 var _sound_slider: HSlider
@@ -76,6 +80,8 @@ func _ready() -> void:
 		_resume_button.pressed.connect(_close_menu)
 	if _settings_button != null:
 		_settings_button.pressed.connect(_toggle_settings)
+	if _cyber_info_button != null:
+		_cyber_info_button.pressed.connect(_open_cyber_info)
 	if _exit_button != null:
 		_exit_button.pressed.connect(_return_to_main_menu)
 	if _wave_set_button != null:
@@ -98,8 +104,10 @@ func _resolve_ui_nodes() -> void:
 	_menu_panel = get_node_or_null(menu_panel_path) as PanelContainer
 	_resume_button = get_node_or_null(resume_button_path) as Button
 	_settings_button = get_node_or_null(settings_button_path) as Button
+	_cyber_info_button = get_node_or_null(cyber_info_button_path) as Button
 	_exit_button = get_node_or_null(exit_button_path) as Button
 	_settings_panel = get_node_or_null(settings_panel_path) as PanelContainer
+	_cyber_info_hud = get_node_or_null(cyber_info_hud_path) as CyberInfoHUD
 	_master_slider = get_node_or_null(master_slider_path) as HSlider
 	_music_slider = get_node_or_null(music_slider_path) as HSlider
 	_sound_slider = get_node_or_null(sound_slider_path) as HSlider
@@ -182,6 +190,12 @@ func _toggle_settings() -> void:
 		return
 
 	_settings_panel.visible = not _settings_panel.visible
+
+
+func _open_cyber_info() -> void:
+	if _cyber_info_hud == null:
+		return
+	_cyber_info_hud.open(CyberInfoHUD.Page.TOWERS)
 
 
 func _return_to_main_menu() -> void:

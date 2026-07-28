@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/UI/CyberInfo/PhishingEmail.png" id="2_image"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"phishing_email"
+category = 1
+display_name = "Phishing Email"
+type_label = "Question Interruption Virus"
+description = "Corrupts an end-of-wave cybersecurity question by replacing a wrong option with a subtly misspelled copy of the correct answer. Choosing the decoy triggers a per-letter font glitch and releases a large virus surge."
+images = Array[Texture2D]([ExtResource("2_image")])
+slide_labels = Array[String](["Phishing Email"])

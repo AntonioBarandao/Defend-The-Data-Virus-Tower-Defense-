@@ -1,0 +1,58 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Enemies/anti_cyberguardian.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/AntiCyberguardian/Animations/AntiCyberguardianAbilityActivateSpriteFrames.tres" id="2_activate"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/AntiCyberguardian/Animations/AntiCyberguardianAbilityIdleSpriteFrames.tres" id="3_idle"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/AntiCyberguardian/Animations/AntiCyberguardianAppearSpriteFrames.tres" id="4_appear"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/AntiCyberguardian/Animations/AntiCyberguardianCloakDisappearSpriteFrames.tres" id="5_cloak"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/AntiCyberguardian/Animations/AntiCyberguardianCollapseSpriteFrames.tres" id="6_collapse"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/AntiCyberguardian/Animations/AntiCyberguardianDisappearDefeatSpriteFrames.tres" id="7_defeat"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/AntiCyberguardian/Animations/AntiCyberguardianPantingSpriteFrames.tres" id="8_panting"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/AntiCyberguardian/Animations/AntiCyberguardianStrugglePantingSpriteFrames.tres" id="9_struggle"]
+
+[node name="AntiCyberguardian" type="Node2D" groups=["FINAL_BOSS_SUPPORT_VIRUS", "VIRUS_ENEMY"]]
+visible = false
+z_index = 90
+z_as_relative = false
+scale = Vector2(0.34, 0.34)
+script = ExtResource("1_script")
+
+[node name="AbilityActivateAnimation" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = ExtResource("2_activate")
+animation = &"ability_activate"
+
+[node name="AbilityIdleAnimation" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = ExtResource("3_idle")
+animation = &"ability_idle"
+
+[node name="AppearAnimation" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = ExtResource("4_appear")
+animation = &"appear"
+
+[node name="CloakDisappearAnimation" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = ExtResource("5_cloak")
+animation = &"cloak_disappear"
+
+[node name="CollapseAnimation" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = ExtResource("6_collapse")
+animation = &"collapse"
+
+[node name="DisappearDefeatAnimation" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = ExtResource("7_defeat")
+animation = &"disappear_defeat"
+
+[node name="PantingAnimation" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = ExtResource("8_panting")
+animation = &"panting"
+
+[node name="StrugglePantingAnimation" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = ExtResource("9_struggle")
+animation = &"struggle_panting"

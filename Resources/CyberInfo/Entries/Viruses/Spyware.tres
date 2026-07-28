@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/Spyware/Spyware_Sprite.png" id="2_image"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"spyware"
+category = 1
+display_name = "Spyware"
+type_label = "Knowledge Hijacker Virus"
+description = "Leaves the pathway near a Knowledge-producing tower, walks directly to it, and hijacks it with a black lock effect. While attached, it drains Knowledge Points every second and becomes a high-priority target."
+images = Array[Texture2D]([ExtResource("2_image")])
+slide_labels = Array[String](["Spyware"])

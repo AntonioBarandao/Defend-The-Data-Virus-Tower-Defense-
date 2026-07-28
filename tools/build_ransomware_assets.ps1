@@ -16,6 +16,8 @@ $columns = 13
 $framesPerSecond = 24.0
 $connectedWhiteThreshold = 175
 $connectedNeutralDelta = 64
+$globalWhiteSimilarity = 0.30
+$globalWhiteBlend = 0.02
 
 $animations = @(
     @{
@@ -30,7 +32,7 @@ $animations = @(
         Name = "RansomwareHeadAppear"
         Track = "head_appear"
         Loop = $false
-        WhiteMode = "connected"
+        WhiteMode = "global"
     },
     @{
         Source = "Ransomware_Idle.mp4"
@@ -44,14 +46,14 @@ $animations = @(
         Name = "RansomwareFrontStraight"
         Track = "front_straight"
         Loop = $true
-        WhiteMode = "connected"
+        WhiteMode = "global"
     },
     @{
         Source = "Ransomware_Front_Head-Sides.mp4"
         Name = "RansomwareFrontSides"
         Track = "front_sides"
         Loop = $false
-        WhiteMode = "connected"
+        WhiteMode = "global"
     },
     @{
         Source = "Ransomware_Destroy.mp4"
@@ -135,6 +137,17 @@ try {
         $videoFilter = "fps=24,scale=${frameSize}:${frameSize}:flags=lanczos,format=rgba"
         if ($animation.WhiteMode -eq "key") {
             $videoFilter += ",colorkey=0xFFFFFF:0.28:0.0"
+        }
+        elseif ($animation.WhiteMode -eq "global") {
+            $similarity = $globalWhiteSimilarity.ToString(
+                "0.00",
+                [Globalization.CultureInfo]::InvariantCulture
+            )
+            $blend = $globalWhiteBlend.ToString(
+                "0.00",
+                [Globalization.CultureInfo]::InvariantCulture
+            )
+            $videoFilter += ",colorkey=0xFFFFFF:${similarity}:${blend}"
         }
 
         & $ffmpeg -y -hide_banner -loglevel error -i $sourcePath -vf $videoFilter $framePattern

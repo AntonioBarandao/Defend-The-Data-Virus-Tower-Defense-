@@ -47,6 +47,9 @@ const PART_TAIL := &"tail"
 @export_range(0.1, 2.0, 0.05) var destroy_fade_duration := 0.65
 @export_group("Health HUD")
 @export var health_hud_path: NodePath = ^"BossHealthHUD"
+@export_group("Final Boss Link")
+@export var anti_cyberguardian_path: NodePath = \
+	^"HeadAnimation/AntiCyberGuardianSpot/AntiCyberguardian"
 @export_group("Hit Reactions")
 @export var body_damage_flash_color := Color(1.0, 0.08, 0.06, 1.0)
 @export var shield_flash_color := Color(2.2, 2.2, 2.2, 1.0)
@@ -79,6 +82,10 @@ var _part_targets: Array[PathFollow2D] = []
 var _part_flash_tweens: Dictionary = {}
 var _nullifier_suppressed_parts: Dictionary = {}
 var _health_hud: WormBossProgressBar
+var _health_hud_requested_visible := false
+var _health_hud_suppressed := false
+var _anti_cyberguardian: AntiCyberguardian
+var _external_invulnerability := false
 var _emerged_segment_count := 0
 var _authored_cutscene_global_transform := Transform2D.IDENTITY
 var _defeat_fade_tween: Tween
@@ -96,6 +103,9 @@ func _ready() -> void:
 	_capture_authored_destroy_transforms()
 	_build_part_offsets()
 	_health_hud = get_node_or_null(health_hud_path) as WormBossProgressBar
+	_anti_cyberguardian = get_node_or_null(
+		anti_cyberguardian_path
+	) as AntiCyberguardian
 	_entrance_sfx = CentralAudioResolver.resolve(self, entrance_sfx_path)
 	_destroy_sfx = CentralAudioResolver.resolve(self, destroy_sfx_path)
 	current_health = maxi(1, max_health)
@@ -198,6 +208,9 @@ func deactivate() -> void:
 	_restore_authored_destroy_transforms()
 	hide()
 	_set_health_hud_visible(false)
+	_external_invulnerability = false
+	if is_instance_valid(_anti_cyberguardian):
+		_anti_cyberguardian.deactivate()
 
 
 func set_wave_active(value: bool) -> void:
@@ -207,6 +220,18 @@ func set_wave_active(value: bool) -> void:
 
 func is_wave_active() -> bool:
 	return _wave_active
+
+
+func set_health_hud_suppressed(value: bool) -> void:
+	_health_hud_suppressed = value
+	if _health_hud != null:
+		_health_hud.set_bar_visible(
+			_health_hud_requested_visible and not _health_hud_suppressed
+		)
+
+
+func is_health_hud_suppressed() -> bool:
+	return _health_hud_suppressed
 
 
 func is_active() -> bool:
@@ -236,6 +261,10 @@ func can_target_part(part_index: int, _attacker: Node = null) -> bool:
 
 func take_part_damage(part_index: int, amount: int) -> bool:
 	if not can_target_part(part_index) or amount <= 0:
+		return false
+
+	if _external_invulnerability:
+		_play_part_flash(part_index, true)
 		return false
 
 	if _part_kinds[part_index] != PART_BODY \
@@ -299,6 +328,38 @@ func get_emerged_segment_count() -> int:
 
 func get_authored_cutscene_position() -> Vector2:
 	return _authored_cutscene_global_transform.origin
+
+
+func set_encounter_maximum_health(value: int, refill: bool = true) -> void:
+	max_health = maxi(1, value)
+	if refill:
+		current_health = max_health
+	else:
+		current_health = clampi(current_health, 0, max_health)
+	_sync_health(false)
+
+
+func set_external_invulnerability(value: bool) -> void:
+	_external_invulnerability = value
+	if _health_hud != null:
+		if _external_invulnerability:
+			_health_hud.set_status(
+				"BOTNET LINK: WORM INVULNERABLE",
+				Color(0.82, 0.35, 1.0, 1.0)
+			)
+		else:
+			_health_hud.set_status(
+				"BODY CORE INTEGRITY",
+				Color(1.0, 0.72, 0.22, 1.0)
+			)
+
+
+func is_externally_invulnerable() -> bool:
+	return _external_invulnerability
+
+
+func get_anti_cyberguardian() -> AntiCyberguardian:
+	return _anti_cyberguardian
 
 
 func _cache_parts() -> void:
@@ -525,6 +586,8 @@ func _finish_escape() -> void:
 		visual.hide()
 	_set_health_hud_visible(false)
 	hide()
+	if is_instance_valid(_anti_cyberguardian):
+		_anti_cyberguardian.deactivate()
 	escaped.emit()
 
 
@@ -540,6 +603,17 @@ func _begin_defeat() -> void:
 	_clear_nullifier_suppression()
 	_sync_targetable_states()
 	_cleanup_targets()
+	if is_instance_valid(_anti_cyberguardian):
+		if _anti_cyberguardian.is_alive() and get_parent() != null:
+			var departure_position := (
+				_anti_cyberguardian.global_position
+			)
+			_anti_cyberguardian.reparent(get_parent(), true)
+			_anti_cyberguardian.play_cloak_departure_at(
+				departure_position
+			)
+		else:
+			_anti_cyberguardian.deactivate()
 	if _health_hud != null:
 		_health_hud.play_defeat_fade()
 
@@ -782,8 +856,11 @@ func _sync_health(animate: bool) -> void:
 
 
 func _set_health_hud_visible(value: bool) -> void:
+	_health_hud_requested_visible = value
 	if _health_hud != null:
-		_health_hud.set_bar_visible(value)
+		_health_hud.set_bar_visible(
+			value and not _health_hud_suppressed
+		)
 
 
 func _sync_emerged_segment_count() -> void:

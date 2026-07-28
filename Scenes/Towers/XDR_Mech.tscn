@@ -283,7 +283,6 @@ frame = 22
 frame_progress = 1.0
 
 [node name="LV5HitAnimation" type="AnimatedSprite2D" parent="Visuals" unique_id=1422169468]
-visible = false
 z_index = 2
 sprite_frames = ExtResource("13_lv5_hit")
 animation = &"hit_lv5"
@@ -367,6 +366,31 @@ monitorable = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MovementCollision" unique_id=101614755]
 shape = SubResource("RectangleShape2D_xdr_movement")
 debug_color = Color(1, 0.08, 0.06, 0.42)
+
+[node name="JetpackVFX" type="Node2D" parent="Visuals" unique_id=171401144]
+editor_description = "LV5 jetpack exhaust shown while the mech jumps across an XDRPathBlocker. Position and scale are editable."
+z_index = -2
+position = Vector2(0, -142.00009)
+
+[node name="LeftOuterFlame" type="Polygon2D" parent="Visuals/JetpackVFX" unique_id=867224334]
+position = Vector2(-28.666662, 18.666672)
+color = Color(0.04, 0.47, 1, 0.72)
+polygon = PackedVector2Array(-13, 0, 13, 0, 10, -28, 0, -60, -10, -28)
+
+[node name="LeftCoreFlame" type="Polygon2D" parent="Visuals/JetpackVFX" unique_id=743048056]
+position = Vector2(-28.666662, 18.666672)
+color = Color(0.7, 0.96, 1, 0.96)
+polygon = PackedVector2Array(-6, -2, 6, -2, 4, -23, 0, -43, -4, -23)
+
+[node name="RightOuterFlame" type="Polygon2D" parent="Visuals/JetpackVFX" unique_id=1176968029]
+position = Vector2(25.499998, 17.277782)
+color = Color(0.04, 0.47, 1, 0.72)
+polygon = PackedVector2Array(-13, 0, 13, 0, 10, -28, 0, -60, -10, -28)
+
+[node name="RightCoreFlame" type="Polygon2D" parent="Visuals/JetpackVFX" unique_id=241410972]
+position = Vector2(25.499998, 17.277782)
+color = Color(0.7, 0.96, 1, 0.96)
+polygon = PackedVector2Array(-6, -2, 6, -2, 4, -23, 0, -43, -4, -23)
 
 [node name="DestinationMarker" type="Node2D" parent="." unique_id=1851355762]
 visible = false

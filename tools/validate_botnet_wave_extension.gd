@@ -236,8 +236,17 @@ func _first_frame_has_green_shadow(image: Image) -> bool:
 
 
 func _wait_for_wave(game: Node, expected_wave: int) -> bool:
-	for _frame in range(120):
+	var cutscene := game.get_node_or_null(
+		"TextCutsceneHUD"
+	) as TextCutsceneHUD
+	for _frame in range(240):
 		await process_frame
+		if expected_wave == 25 \
+				and cutscene != null \
+				and cutscene.is_cutscene_running() \
+				and cutscene.current_act \
+					== TextCutsceneHUD.ACT_WAVE_TWENTY_FIVE:
+			cutscene.skip_cutscene()
 		if int(game.call("get_current_wave")) == expected_wave:
 			return true
 	return _require(

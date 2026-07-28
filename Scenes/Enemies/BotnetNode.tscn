@@ -1,14 +1,34 @@
 [gd_scene format=3 uid="uid://ds2au7hev63nm"]
 
 [ext_resource type="Script" uid="uid://dobhfb7m6nvel" path="res://Scripts/Enemies/botnet_node.gd" id="1_script"]
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV1IdleSpriteFrames.tres" id="2_lv1_idle"]
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV1ActivateSpriteFrames.tres" id="3_lv1_activate"]
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV1ToLV2EvolveSpriteFrames.tres" id="4_lv1_lv2_evolve"]
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV2IdleSpriteFrames.tres" id="5_lv2_idle"]
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV2ActivateSpriteFrames.tres" id="6_lv2_activate"]
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV2ToLV3EvolveSpriteFrames.tres" id="7_lv2_lv3_evolve"]
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV3IdleSpriteFrames.tres" id="8_lv3_idle"]
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV3ActivateSpriteFrames.tres" id="9_lv3_activate"]
+[ext_resource type="SpriteFrames" uid="uid://brgnbdekru14d" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV1IdleSpriteFrames.tres" id="2_lv1_idle"]
+[ext_resource type="SpriteFrames" uid="uid://b72rbcinjoocc" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV1ActivateSpriteFrames.tres" id="3_lv1_activate"]
+[ext_resource type="SpriteFrames" uid="uid://bawgh6i0vqwxq" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV1ToLV2EvolveSpriteFrames.tres" id="4_lv1_lv2_evolve"]
+[ext_resource type="SpriteFrames" uid="uid://4jjqio80bf16" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV2IdleSpriteFrames.tres" id="5_lv2_idle"]
+[ext_resource type="SpriteFrames" uid="uid://cg84pvylv4p3b" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV2ActivateSpriteFrames.tres" id="6_lv2_activate"]
+[ext_resource type="SpriteFrames" uid="uid://cim4yt5otlkfk" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV2ToLV3EvolveSpriteFrames.tres" id="7_lv2_lv3_evolve"]
+[ext_resource type="SpriteFrames" uid="uid://6d2mrbekgi00" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV3IdleSpriteFrames.tres" id="8_lv3_idle"]
+[ext_resource type="SpriteFrames" uid="uid://bywfq6hceddex" path="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV3ActivateSpriteFrames.tres" id="9_lv3_activate"]
+[ext_resource type="SpriteFrames" uid="uid://bgds2aexvckkb" path="res://assets/Enemies/BotnetNode/Levels/Animations/FinalBoss/BotnetNodeLV3AppearHollowSpriteFrames.tres" id="10_final_hollow"]
+[ext_resource type="SpriteFrames" uid="uid://cx5lqxyqg2ct7" path="res://assets/Enemies/BotnetNode/Levels/Animations/FinalBoss/BotnetNodeLV3AppearAntiSpriteFrames.tres" id="11_final_anti"]
+[ext_resource type="SpriteFrames" uid="uid://dkvkusnvopsvk" path="res://assets/Enemies/BotnetNode/Levels/Animations/FinalBoss/BotnetNodeLV3AppearDestroySpriteFrames.tres" id="12_final_destroy"]
+[ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="13_font"]
+[ext_resource type="Script" uid="uid://bvsaodasughu3" path="res://Scripts/UI/botnet_node_progress_bar.gd" id="14_health_script"]
+[ext_resource type="PackedScene" path="res://Scenes/Enemies/AntiCyberguardian.tscn" id="15_anti_preview"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_boss_panel"]
+bg_color = Color(0.008, 0.012, 0.02, 0.975)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.82, 0.08, 0.18, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+shadow_color = Color(0, 0, 0, 0.76)
+shadow_size = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_background"]
 bg_color = Color(0.025, 0.006, 0.008, 0.96)
@@ -39,17 +59,21 @@ z_index = 70
 script = ExtResource("1_script")
 
 [node name="LV1IdleAnimation" type="AnimatedSprite2D" parent="." unique_id=9898821]
+visible = false
+scale = Vector2(1.472, 1.472)
 sprite_frames = ExtResource("2_lv1_idle")
 animation = &"idle_lv1"
 autoplay = "idle_lv1"
 
 [node name="LV1ActivateAnimation" type="AnimatedSprite2D" parent="." unique_id=104503002]
 visible = false
+scale = Vector2(1.472, 1.472)
 sprite_frames = ExtResource("3_lv1_activate")
 animation = &"activate_lv1"
 
 [node name="LV1ToLV2EvolveAnimation" type="AnimatedSprite2D" parent="." unique_id=1766013112]
 visible = false
+scale = Vector2(1.472, 1.472)
 sprite_frames = ExtResource("4_lv1_lv2_evolve")
 animation = &"evolve_lv1_to_lv2"
 frame = 72
@@ -57,54 +81,151 @@ frame_progress = 1.0
 
 [node name="LV2IdleAnimation" type="AnimatedSprite2D" parent="." unique_id=2044611608]
 visible = false
+scale = Vector2(1.472, 1.472)
 sprite_frames = ExtResource("5_lv2_idle")
 animation = &"idle_lv2"
 autoplay = "idle_lv2"
 
 [node name="LV2ActivateAnimation" type="AnimatedSprite2D" parent="." unique_id=15526823]
 visible = false
+scale = Vector2(1.472, 1.472)
 sprite_frames = ExtResource("6_lv2_activate")
 animation = &"activate_lv2"
 
 [node name="LV2ToLV3EvolveAnimation" type="AnimatedSprite2D" parent="." unique_id=1848959080]
 visible = false
+scale = Vector2(1.472, 1.472)
 sprite_frames = ExtResource("7_lv2_lv3_evolve")
 animation = &"evolve_lv2_to_lv3"
+frame = 72
+frame_progress = 1.0
 
 [node name="LV3IdleAnimation" type="AnimatedSprite2D" parent="." unique_id=152066868]
 visible = false
+scale = Vector2(1.472, 1.472)
 sprite_frames = ExtResource("8_lv3_idle")
 animation = &"idle_lv3"
 autoplay = "idle_lv3"
 
 [node name="LV3ActivateAnimation" type="AnimatedSprite2D" parent="." unique_id=1527850341]
 visible = false
+scale = Vector2(1.472, 1.472)
 sprite_frames = ExtResource("9_lv3_activate")
 animation = &"activate_lv3"
 
-[node name="BotnetHealthHUD" type="Node2D" parent="." unique_id=1187266860]
+[node name="LV3AppearHollowAnimation" type="AnimatedSprite2D" parent="." unique_id=1303629722]
 visible = false
-z_index = 8
-position = Vector2(0, -125)
+scale = Vector2(0.9, 0.9)
+sprite_frames = ExtResource("10_final_hollow")
+animation = &"appear_hollow_lv3"
+frame = 69
+frame_progress = 0.22083475
 
-[node name="Frame" type="Polygon2D" parent="BotnetHealthHUD" unique_id=939543143]
-color = Color(0.48, 0.53, 0.57, 1)
-polygon = PackedVector2Array(-82, 0, -75, -11, 75, -11, 82, 0, 75, 11, -75, 11)
+[node name="LV3AppearAntiAnimation" type="AnimatedSprite2D" parent="." unique_id=101467404]
+scale = Vector2(0.9, 0.9)
+sprite_frames = ExtResource("11_final_anti")
+animation = &"appear_anti_lv3"
+frame = 72
+frame_progress = 0.901503
 
-[node name="Inset" type="Polygon2D" parent="BotnetHealthHUD" unique_id=1789601077]
-color = Color(0.012, 0.015, 0.02, 1)
-polygon = PackedVector2Array(-77, 0, -71, -7, 71, -7, 77, 0, 71, 7, -71, 7)
+[node name="LV3DestroyAnimation" type="AnimatedSprite2D" parent="." unique_id=1591604029]
+visible = false
+scale = Vector2(0.9, 0.9)
+sprite_frames = ExtResource("12_final_destroy")
+animation = &"destroy_lv3"
 
-[node name="HealthBar" type="ProgressBar" parent="BotnetHealthHUD" unique_id=451691088]
-offset_left = -70.0
-offset_top = -6.0
-offset_right = 70.0
-offset_bottom = 6.0
+[node name="BotnetHealthHUD" type="CanvasLayer" parent="." unique_id=1187266860]
+layer = 144
+script = ExtResource("14_health_script")
+
+[node name="Root" type="Control" parent="BotnetHealthHUD" unique_id=1226805635]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BossPanel" type="PanelContainer" parent="BotnetHealthHUD/Root" unique_id=376946766]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -390.0
+offset_top = 170.0
+offset_right = 390.0
+offset_bottom = 300.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_boss_panel")
+
+[node name="Margin" type="MarginContainer" parent="BotnetHealthHUD/Root/BossPanel" unique_id=1055838597]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 13
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 12
+
+[node name="Content" type="VBoxContainer" parent="BotnetHealthHUD/Root/BossPanel/Margin" unique_id=291694364]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Header" type="HBoxContainer" parent="BotnetHealthHUD/Root/BossPanel/Margin/Content" unique_id=260894536]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="TitleLabel" type="Label" parent="BotnetHealthHUD/Root/BossPanel/Margin/Content/Header" unique_id=1286041506]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.16, 0.25, 1)
+theme_override_fonts/font = ExtResource("13_font")
+theme_override_font_sizes/font_size = 27
+text = "BOTNET NODE LV3"
+
+[node name="LinkLabel" type="Label" parent="BotnetHealthHUD/Root/BossPanel/Margin/Content/Header" unique_id=1525332322]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.42, 1, 1)
+theme_override_fonts/font = ExtResource("13_font")
+theme_override_font_sizes/font_size = 17
+text = "ANTI-CHARGE LINK"
+vertical_alignment = 1
+
+[node name="HealthLabel" type="Label" parent="BotnetHealthHUD/Root/BossPanel/Margin/Content/Header" unique_id=307661823]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.97, 1, 1)
+theme_override_fonts/font = ExtResource("13_font")
+theme_override_font_sizes/font_size = 22
+text = "500 / 500"
+horizontal_alignment = 2
+
+[node name="HealthBar" type="ProgressBar" parent="BotnetHealthHUD/Root/BossPanel/Margin/Content" unique_id=190060209]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
 mouse_filter = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_health_background")
 theme_override_styles/fill = SubResource("StyleBoxFlat_health_fill")
-value = 25.0
+max_value = 500.0
+value = 500.0
 show_percentage = false
+
+[node name="Footer" type="HBoxContainer" parent="BotnetHealthHUD/Root/BossPanel/Margin/Content" unique_id=1335570893]
+layout_mode = 2
+
+[node name="HintLabel" type="Label" parent="BotnetHealthHUD/Root/BossPanel/Margin/Content/Footer" unique_id=1358135573]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.74, 0.2, 1)
+theme_override_fonts/font = ExtResource("13_font")
+theme_override_font_sizes/font_size = 16
+text = "DESTROY TO BREAK THE WORM LINK"
+
+[node name="PriorityLabel" type="Label" parent="BotnetHealthHUD/Root/BossPanel/Margin/Content/Footer" unique_id=899821227]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.36, 0.86, 1, 1)
+theme_override_fonts/font = ExtResource("13_font")
+theme_override_font_sizes/font_size = 16
+text = "PRIORITY TARGET"
+horizontal_alignment = 2
 
 [node name="PossibleSpawnMarkers2" type="Node" parent="." unique_id=216226803]
 
@@ -127,3 +248,20 @@ scale = Vector2(0.6217418, 1.2513506)
 [node name="Marker2D5" type="Marker2D" parent="PossibleSpawnMarkers2" unique_id=1539809406]
 position = Vector2(180, 105.99999)
 scale = Vector2(0.6217418, 1.2513506)
+
+[node name="Anti-Guardian-Botnet-1" type="Marker2D" parent="." unique_id=121206549]
+position = Vector2(0, -30)
+
+[node name="AntiGuardianViewportPreview" parent="Anti-Guardian-Botnet-1" unique_id=560535259 instance=ExtResource("15_anti_preview")]
+visible = true
+editor_preview_only = true
+
+[node name="AppearAnimation" parent="Anti-Guardian-Botnet-1/AntiGuardianViewportPreview" index="2"]
+visible = true
+frame = 72
+frame_progress = 1.0
+
+[node name="Anti-Guardian-Botnet-2" type="Marker2D" parent="." unique_id=990532129]
+position = Vector2(0, -54)
+
+[editable path="Anti-Guardian-Botnet-1/AntiGuardianViewportPreview"]

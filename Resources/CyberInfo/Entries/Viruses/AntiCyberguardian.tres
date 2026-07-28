@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/AntiCyberguardian/Animations/AntiCyberguardianAbilityIdleAtlas.webp" id="2_atlas"]
+
+[sub_resource type="AtlasTexture" id="Atlas_anti"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 0, 512, 512)
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"anti_cyberguardian"
+category = 1
+display_name = "Anti-Cyberguardian"
+type_label = "Final Boss Support Virus"
+description = "The wave-25 support boss mounts the Cyber Worm and continuously Anti-Charges eligible viruses while it remains alive. Its link makes every Worm segment absolutely invincible, even inside Nullifier range, until the 500-integrity LV3 Botnet is destroyed."
+images = Array[Texture2D]([SubResource("Atlas_anti")])
+slide_labels = Array[String](["Ability Active"])

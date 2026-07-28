@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CyberInfoEntry" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/cyber_info_entry.gd" id="1_entry"]
+[ext_resource type="Texture2D" path="res://assets/LoadingScreen/RedVirus.png" id="2_base"]
+[ext_resource type="Texture2D" path="res://assets/Enemies/BotnetNode/AntiCharge/RedVirusAntiCharged.png" id="3_anti"]
+
+[resource]
+script = ExtResource("1_entry")
+entry_id = &"red_virus"
+category = 1
+display_name = "Red Virus"
+type_label = "Virus / Anti-Charged Variant"
+description = "The standard pathway threat. It is fast to deploy in groups but has low health. Botnet minions can convert it into an Anti-Charged form with double its normal health."
+images = Array[Texture2D]([ExtResource("2_base"), ExtResource("3_anti")])
+slide_labels = Array[String](["Standard", "Anti-Charged"])

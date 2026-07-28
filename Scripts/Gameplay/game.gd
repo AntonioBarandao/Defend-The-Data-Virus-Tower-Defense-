@@ -98,6 +98,8 @@ const WAVE_FIVE_CUTSCENE_WAVE := 5
 const RANSOMWARE_GUARDIAN_WAVE := 10
 const RANSOMWARE_RANDOM_TOWER_WAVE := 14
 const WORM_BOSS_WAVE := 20
+const FINAL_BOSS_WAVE := 25
+const ANTI_CYBERGUARDIAN_SCAN_INTERVAL := 0.15
 const RANSOMWARE_GUARDIAN_TIMER_SECONDS := 30.0
 const RANSOMWARE_GUARDIAN_PAYMENT_COST := 500
 const RANSOMWARE_TIMEOUT_PENALTY := 500
@@ -291,6 +293,7 @@ var _zombie_node_target: PathFollow2D
 var _botnet_node: BotnetNode
 var _botnet_node_target: PathFollow2D
 var _worm_boss: WormBoss
+var _anti_cyberguardian: AntiCyberguardian
 var _wave_20_clearance_hud: Wave20ClearanceHUDScript
 var _question_hud: CyberQuestionHUDScript
 var _performance_hud: PerformanceHUDScript
@@ -366,6 +369,7 @@ var _adware_spawned_count := 0
 var _adware_rng := RandomNumberGenerator.new()
 var _adware_variation_deck: Array[int] = []
 var _active_adware_popups: Array[Node2D] = []
+var _anti_cyberguardian_scan_elapsed := 0.0
 
 func _ready() -> void:
 	Engine.max_fps = TARGET_FPS
@@ -400,6 +404,8 @@ func _ready() -> void:
 		botnet_node_target_path
 	) as PathFollow2D
 	_worm_boss = get_node_or_null(worm_boss_path) as WormBoss
+	if _worm_boss != null:
+		_anti_cyberguardian = _worm_boss.get_anti_cyberguardian()
 	_wave_20_clearance_hud = get_node_or_null(wave_20_clearance_hud_path) as Wave20ClearanceHUDScript
 	_question_hud = get_node_or_null(question_hud_path) as CyberQuestionHUDScript
 	_performance_hud = get_node_or_null(performance_hud_path) as PerformanceHUDScript
@@ -435,6 +441,9 @@ func _ready() -> void:
 	if _botnet_node != null:
 		_botnet_node.minion_spawn_requested.connect(
 			Callable(self, "_on_botnet_minion_spawn_requested")
+		)
+		_botnet_node.defeated.connect(
+			Callable(self, "_on_botnet_node_defeated")
 		)
 		_botnet_node.set_wave_active(false)
 	if _worm_boss != null:
@@ -962,6 +971,7 @@ func _process(delta: float) -> void:
 		_botnet_node.update_boss(delta)
 	_update_adware_spawner(delta)
 	_update_active_viruses(delta)
+	_update_anti_cyberguardian_charge(delta)
 	_update_ransomware_interruptions(delta)
 	_try_start_pending_ransomware_for_current_wave()
 	if _game_over:
@@ -3718,6 +3728,7 @@ func _start_next_wave() -> void:
 	_set_worm_boss_wave_active(
 		_wave_manager.get_progressive_boss_name(_current_wave)
 			== WaveManagerScript.WORM_BOSS
+			or _current_wave == FINAL_BOSS_WAVE
 	)
 	if _current_wave == RANSOMWARE_GUARDIAN_WAVE \
 			and not _wave_ten_ransomware_triggered:
@@ -5095,6 +5106,12 @@ func _append_placed_spyware_targets(targets: Array[Node2D], towers: Array) -> vo
 func _update_tower_attack(delta: float) -> void:
 	var attack_targets := _get_offensive_attack_targets()
 	var worm_targets := _get_worm_boss_attack_targets()
+	var final_boss_targets := _get_final_boss_priority_targets()
+	var primary_boss_targets := (
+		final_boss_targets
+		if not final_boss_targets.is_empty()
+		else worm_targets
+	)
 	var spyware_priority_targets := _get_spyware_high_priority_attack_targets()
 	var spyware_low_priority_targets := _get_spyware_low_priority_attack_targets()
 	var path_damage_targets := _get_path_damage_targets()
@@ -5105,7 +5122,7 @@ func _update_tower_attack(delta: float) -> void:
 			continue
 		if guardian.has_method("update_firewall"):
 			guardian.call("update_firewall", delta, path_damage_targets)
-		var target := guardian.update_attack(delta, worm_targets)
+		var target := guardian.update_attack(delta, primary_boss_targets)
 		if target == null and not spyware_priority_targets.is_empty():
 			target = guardian.update_attack(0.0, spyware_priority_targets)
 		if target == null:
@@ -5123,6 +5140,12 @@ func _update_tower_attack(delta: float) -> void:
 func _update_laser_turret_attack(delta: float) -> void:
 	var attack_targets := _get_offensive_attack_targets()
 	var worm_targets := _get_worm_boss_attack_targets()
+	var final_boss_targets := _get_final_boss_priority_targets()
+	var primary_boss_targets := (
+		final_boss_targets
+		if not final_boss_targets.is_empty()
+		else worm_targets
+	)
 	var spyware_priority_targets := _get_spyware_high_priority_attack_targets()
 	var spyware_low_priority_targets := _get_spyware_low_priority_attack_targets()
 	var ransomware_targets := _get_ransomware_attack_targets()
@@ -5131,7 +5154,10 @@ func _update_laser_turret_attack(delta: float) -> void:
 		if not is_instance_valid(laser_turret) \
 				or _is_tower_action_locked(laser_turret):
 			continue
-		var targets := laser_turret.update_attack(delta, worm_targets)
+		var targets := laser_turret.update_attack(
+			delta,
+			primary_boss_targets
+		)
 		if targets.is_empty() and not spyware_priority_targets.is_empty():
 			targets = laser_turret.update_attack(0.0, spyware_priority_targets)
 		if targets.is_empty():
@@ -5165,6 +5191,7 @@ func _update_ips_intrusion_spikes(delta: float) -> void:
 func _update_edr_hunter_attack(delta: float) -> void:
 	var attack_targets := _get_offensive_attack_targets()
 	var worm_targets := _get_worm_boss_attack_targets()
+	var final_boss_targets := _get_final_boss_priority_targets()
 	var spyware_priority_targets := _get_spyware_high_priority_attack_targets()
 	var spyware_low_priority_targets := _get_spyware_low_priority_attack_targets()
 	var ransomware_targets := _get_ransomware_attack_targets()
@@ -5173,7 +5200,11 @@ func _update_edr_hunter_attack(delta: float) -> void:
 		if not is_instance_valid(edr_hunter) \
 				or _is_tower_action_locked(edr_hunter):
 			continue
-		var prioritized_targets := worm_targets
+		var prioritized_targets := (
+			final_boss_targets
+			if not final_boss_targets.is_empty()
+			else worm_targets
+		)
 		if prioritized_targets.is_empty():
 			prioritized_targets = spyware_priority_targets
 		if prioritized_targets.is_empty():
@@ -5198,6 +5229,7 @@ func _update_edr_hunter_attack(delta: float) -> void:
 func _update_siem_hawk_attack(delta: float) -> void:
 	var attack_targets := _get_offensive_attack_targets()
 	var worm_targets := _get_worm_boss_attack_targets()
+	var final_boss_targets := _get_final_boss_priority_targets()
 	var spyware_priority_targets := _get_spyware_high_priority_attack_targets()
 	var spyware_low_priority_targets := _get_spyware_low_priority_attack_targets()
 	var ransomware_targets := _get_ransomware_attack_targets()
@@ -5206,7 +5238,11 @@ func _update_siem_hawk_attack(delta: float) -> void:
 		if not is_instance_valid(siem_hawk) \
 				or _is_tower_action_locked(siem_hawk):
 			continue
-		var selected_targets := worm_targets
+		var selected_targets := (
+			final_boss_targets
+			if not final_boss_targets.is_empty()
+			else worm_targets
+		)
 		if not siem_hawk.has_attack_target_in_scan(selected_targets):
 			selected_targets = spyware_priority_targets
 		if not siem_hawk.has_attack_target_in_scan(selected_targets):
@@ -5466,11 +5502,28 @@ func _get_spyware_attack_targets(attached: bool) -> Array[PathFollow2D]:
 func _get_worm_boss_attack_targets(
 	body_only: bool = false
 ) -> Array[PathFollow2D]:
+	if _is_final_boss_link_active():
+		return []
 	if not is_instance_valid(_worm_boss) \
 			or not _wave_in_progress \
 			or not _worm_boss.is_wave_active():
 		return []
 	return _worm_boss.get_attack_targets(body_only)
+
+
+func _get_final_boss_priority_targets() -> Array[PathFollow2D]:
+	if not _is_final_boss_link_active():
+		return []
+	return _get_botnet_low_priority_attack_targets()
+
+
+func _is_final_boss_link_active() -> bool:
+	return _current_wave == FINAL_BOSS_WAVE \
+		and _wave_in_progress \
+		and is_instance_valid(_botnet_node) \
+		and _botnet_node.can_be_targeted() \
+		and is_instance_valid(_worm_boss) \
+		and _worm_boss.is_externally_invulnerable()
 
 
 func _get_path_damage_targets() -> Array[PathFollow2D]:
@@ -5521,13 +5574,32 @@ func _is_required_botnet_node_alive() -> bool:
 
 
 func _is_required_worm_boss_alive() -> bool:
-	return _wave_manager.get_progressive_boss_name(_current_wave) \
-			== WaveManagerScript.WORM_BOSS \
+	return (
+		_wave_manager.get_progressive_boss_name(_current_wave)
+			== WaveManagerScript.WORM_BOSS
+		or _current_wave == FINAL_BOSS_WAVE
+	) \
 		and is_instance_valid(_worm_boss) \
 		and _worm_boss.is_active()
 
 
+func _on_botnet_node_defeated(_node: BotnetNode) -> void:
+	if _current_wave != FINAL_BOSS_WAVE:
+		return
+	if is_instance_valid(_worm_boss):
+		_worm_boss.set_external_invulnerability(false)
+	_update_wave_button()
+
+
 func _on_worm_boss_defeated() -> void:
+	if _current_wave == FINAL_BOSS_WAVE:
+		if _worm_defeat_sequence_running:
+			return
+		_worm_defeat_sequence_running = true
+		call_deferred(
+			"_play_final_boss_partial_defeat_sequence"
+		)
+		return
 	if _worm_defeat_sequence_running:
 		return
 	_worm_defeat_sequence_running = true
@@ -5538,6 +5610,22 @@ func _play_worm_boss_defeat_sequence() -> void:
 	_update_wave_button()
 	if _cutscene_demo_director != null:
 		await _cutscene_demo_director.play_worm_boss_defeat_cutscene()
+	_worm_defeat_sequence_running = false
+	_update_wave_button()
+	_update_wave_spawner(0.0)
+
+
+func _play_final_boss_partial_defeat_sequence() -> void:
+	_update_wave_button()
+	if _cutscene_demo_director != null:
+		await _cutscene_demo_director \
+			.play_final_boss_partial_defeat_cutscene()
+	elif is_instance_valid(_anti_cyberguardian):
+		await _anti_cyberguardian.play_partial_defeat_sequence_at(
+			_botnet_node.global_position
+			if is_instance_valid(_botnet_node)
+			else Vector2.ZERO
+		)
 	_worm_defeat_sequence_running = false
 	_update_wave_button()
 	_update_wave_spawner(0.0)
@@ -5678,6 +5766,43 @@ func _update_botnet_minion_contacts() -> void:
 			"_transform_virus_to_anti_charged",
 			target_follow
 		)
+
+
+func _update_anti_cyberguardian_charge(delta: float) -> void:
+	if _current_wave != FINAL_BOSS_WAVE \
+			or not _wave_in_progress \
+			or not is_instance_valid(_anti_cyberguardian) \
+			or not _anti_cyberguardian.is_ability_active():
+		_anti_cyberguardian_scan_elapsed = 0.0
+		return
+
+	_anti_cyberguardian_scan_elapsed += maxf(0.0, delta)
+	if _anti_cyberguardian_scan_elapsed \
+			< ANTI_CYBERGUARDIAN_SCAN_INTERVAL:
+		return
+	_anti_cyberguardian_scan_elapsed = 0.0
+
+	for follow in _active_viruses:
+		if not is_instance_valid(follow) \
+				or follow.has_meta("anti_charge_transform_pending"):
+			continue
+		var virus := _get_red_virus(follow)
+		if not _is_anti_cyberguardian_charge_target(virus):
+			continue
+		follow.set_meta("anti_charge_transform_pending", true)
+		call_deferred("_transform_virus_to_anti_charged", follow)
+
+
+func _is_anti_cyberguardian_charge_target(
+	virus: RedVirusScript
+) -> bool:
+	if virus == null \
+			or virus.is_destroying() \
+			or virus.is_external_transformation_active() \
+			or virus.is_in_group(&"MUTANT_VIRUS"):
+		return false
+	return virus.get_script() == RedVirusScript \
+		or virus.get_script() == ArmoredVirusScript
 
 
 func _find_anti_charge_target_below(
@@ -5846,8 +5971,12 @@ func _set_worm_boss_wave_active(value: bool) -> void:
 
 
 func _ensure_worm_boss_spawned_for_wave() -> void:
-	if _wave_manager.get_progressive_boss_name(_current_wave) \
-			!= WaveManagerScript.WORM_BOSS:
+	var is_worm_wave := (
+		_wave_manager.get_progressive_boss_name(_current_wave)
+			== WaveManagerScript.WORM_BOSS
+		or _current_wave == FINAL_BOSS_WAVE
+	)
+	if not is_worm_wave:
 		return
 	if _worm_boss == null or _worm_boss.is_active():
 		return

@@ -39,6 +39,8 @@ const XDR_PATH_BLOCKER_COLLISION_LAYER := 1 << 20
 			if level_changed and _claw_attack_active:
 				_cancel_claw_attack(false)
 			if level_changed:
+				if _jetpack_active and level < MAX_LEVEL:
+					_cancel_lv5_jetpack()
 				_cancel_level_2_cannon_projectile()
 				_cancel_level_4_minigun_muzzle_vfx()
 				_cancel_level_5_minigun_muzzle_vfx()
@@ -153,6 +155,18 @@ const XDR_PATH_BLOCKER_COLLISION_LAYER := 1 << 20
 @export_flags_2d_physics var path_collision_mask := XDR_PATH_BLOCKER_COLLISION_LAYER
 @export var movement_collision_shape_path: NodePath = ^"MovementCollision/CollisionShape2D"
 @export_range(0.25, 10.0, 0.25) var blocked_destination_timeout := 3.0
+@export_group("LV5 Jetpack Traversal")
+@export var jetpack_visuals_path: NodePath = ^"Visuals"
+@export var jetpack_vfx_path: NodePath = ^"Visuals/JetpackVFX"
+@export_range(0.5, 10.0, 0.25) var jetpack_activation_seconds := 2.0
+@export_range(0.0, 2.0, 0.05) var jetpack_pause_seconds := 0.5
+@export_range(4.0, 160.0, 1.0) var jetpack_lift_distance := 42.0
+@export_range(0.05, 2.0, 0.05) var jetpack_lift_seconds := 0.25
+@export_range(0.05, 3.0, 0.05) var jetpack_cross_seconds := 0.55
+@export_range(0.05, 2.0, 0.05) var jetpack_land_seconds := 0.3
+@export_range(2.0, 40.0, 1.0) var jetpack_scan_step := 8.0
+@export_range(0.0, 120.0, 1.0) var jetpack_landing_clearance := 20.0
+@export_range(80.0, 600.0, 10.0) var jetpack_max_cross_distance := 240.0
 @export_group("")
 @export_group("Audio")
 @export var deploy_sfx_path: NodePath = ^"Sounds/XDRMechDeploySfx"
@@ -229,6 +243,14 @@ var _head_bob_phase := 0.0
 var _movement_collision_node: CollisionShape2D
 var _movement_collision_shape: Shape2D
 var _path_blocked_elapsed := 0.0
+var _jetpack_visuals: Node2D
+var _jetpack_visuals_rest_position := Vector2.ZERO
+var _jetpack_vfx: Node2D
+var _jetpack_vfx_base_scale := Vector2.ONE
+var _jetpack_tween: Tween
+var _jetpack_active := false
+var _jetpack_takeoff_position := Vector2.ZERO
+var _jetpack_landing_position := Vector2.ZERO
 var _deploy_sfx: AudioStreamPlayer
 var _claw_sfx: AudioStreamPlayer
 var _cannon_sfx: AudioStreamPlayer
@@ -242,6 +264,13 @@ func _ready() -> void:
 	_home_rotation = global_rotation
 	_drag_start_position = _home_position
 	_base_modulate = modulate
+	_jetpack_visuals = get_node_or_null(jetpack_visuals_path) as Node2D
+	if _jetpack_visuals != null:
+		_jetpack_visuals_rest_position = _jetpack_visuals.position
+	_jetpack_vfx = get_node_or_null(jetpack_vfx_path) as Node2D
+	if _jetpack_vfx != null:
+		_jetpack_vfx_base_scale = _jetpack_vfx.scale
+		_jetpack_vfx.hide()
 	_level_1_head = get_node_or_null(level_1_head_path) as Sprite2D
 	_level_2_head = get_node_or_null(level_2_head_path) as Sprite2D
 	_level_3_head = get_node_or_null(level_3_head_path) as Sprite2D
@@ -434,6 +463,7 @@ func finish_drag() -> bool:
 
 func reset_tower() -> void:
 	_cancel_destination_turn()
+	_cancel_lv5_jetpack()
 	_cancel_claw_attack(false)
 	_cancel_level_2_cannon_projectile()
 	_stop_attack_sfx()
@@ -532,6 +562,7 @@ func set_dispatch_destination(destination: Vector2) -> bool:
 	if not can_accept_dispatch_destination():
 		return false
 
+	_cancel_lv5_jetpack()
 	_dispatch_destination = _clamp_dispatch_position_to_viewport(destination)
 	_has_dispatch_destination = true
 	_path_blocked_elapsed = 0.0
@@ -553,6 +584,10 @@ func get_dispatch_destination() -> Vector2:
 
 func get_path_blocked_elapsed() -> float:
 	return _path_blocked_elapsed
+
+
+func is_jetpacking() -> bool:
+	return _jetpack_active
 
 
 func get_level() -> int:
@@ -1697,6 +1732,8 @@ func _reset_head_bob() -> void:
 
 
 func _update_dispatch_movement(delta: float) -> void:
+	if _jetpack_active:
+		return
 	if not _has_dispatch_destination:
 		_path_blocked_elapsed = 0.0
 		_set_walking(false)
@@ -1718,6 +1755,11 @@ func _update_dispatch_movement(delta: float) -> void:
 	var next_position := global_position.move_toward(_dispatch_destination, dispatch_speed * delta)
 	if _would_collide_with_virus_path(next_position):
 		_path_blocked_elapsed += delta
+		if level == MAX_LEVEL \
+			and _path_blocked_elapsed >= jetpack_activation_seconds \
+			and _prepare_lv5_jetpack_landing():
+			_begin_lv5_jetpack()
+			return
 		if _path_blocked_elapsed >= blocked_destination_timeout:
 			_clear_dispatch_destination()
 		return
@@ -1764,6 +1806,7 @@ func _cancel_destination_turn() -> void:
 
 func _clear_dispatch_destination() -> void:
 	_cancel_destination_turn()
+	_cancel_lv5_jetpack()
 	var had_destination := _has_dispatch_destination
 	_has_dispatch_destination = false
 	_path_blocked_elapsed = 0.0
@@ -1772,6 +1815,121 @@ func _clear_dispatch_destination() -> void:
 		_destination_marker.hide()
 	if had_destination:
 		destination_changed.emit(false, global_position)
+
+
+func _prepare_lv5_jetpack_landing() -> bool:
+	var destination_offset := _dispatch_destination - global_position
+	var destination_distance := destination_offset.length()
+	if destination_distance <= DESTINATION_EPSILON:
+		return false
+
+	var direction := destination_offset / destination_distance
+	var maximum_distance := minf(destination_distance, jetpack_max_cross_distance)
+	var step_distance := maxf(2.0, jetpack_scan_step)
+	var scan_distance := step_distance
+	var crossed_blocker := false
+	var last_blocked_distance := 0.0
+	while scan_distance <= maximum_distance:
+		var candidate := global_position + direction * scan_distance
+		candidate = _clamp_dispatch_position_to_viewport(candidate)
+		if _would_collide_with_virus_path(candidate):
+			crossed_blocker = true
+			last_blocked_distance = scan_distance
+		elif crossed_blocker \
+			and scan_distance - last_blocked_distance >= jetpack_landing_clearance:
+			_jetpack_landing_position = candidate
+			return true
+		scan_distance += step_distance
+
+	var clamped_destination := _clamp_dispatch_position_to_viewport(_dispatch_destination)
+	if crossed_blocker and not _would_collide_with_virus_path(clamped_destination):
+		_jetpack_landing_position = clamped_destination
+		return true
+	return false
+
+
+func _begin_lv5_jetpack() -> void:
+	if _jetpack_active or level != MAX_LEVEL:
+		return
+
+	_jetpack_active = true
+	_jetpack_takeoff_position = global_position
+	_path_blocked_elapsed = 0.0
+	_set_walking(false)
+	_reset_head_bob()
+	if _jetpack_vfx != null:
+		_jetpack_vfx.hide()
+	if _jetpack_tween != null:
+		_jetpack_tween.kill()
+
+	var lifted_visual_position := _jetpack_visuals_rest_position
+	if _jetpack_visuals != null:
+		var local_origin := to_local(global_position)
+		var local_lifted := to_local(global_position + Vector2.UP * jetpack_lift_distance)
+		lifted_visual_position += local_lifted - local_origin
+
+	_jetpack_tween = create_tween()
+	_jetpack_tween.tween_interval(jetpack_pause_seconds)
+	_jetpack_tween.tween_callback(Callable(self, "_activate_lv5_jetpack_vfx"))
+	if _jetpack_visuals != null:
+		_jetpack_tween.tween_property(
+			_jetpack_visuals,
+			"position",
+			lifted_visual_position,
+			jetpack_lift_seconds
+		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	else:
+		_jetpack_tween.tween_interval(jetpack_lift_seconds)
+	_jetpack_tween.tween_property(
+		self,
+		"global_position",
+		_jetpack_landing_position,
+		jetpack_cross_seconds
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	if _jetpack_visuals != null:
+		_jetpack_tween.tween_property(
+			_jetpack_visuals,
+			"position",
+			_jetpack_visuals_rest_position,
+			jetpack_land_seconds
+		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	else:
+		_jetpack_tween.tween_interval(jetpack_land_seconds)
+	_jetpack_tween.tween_callback(Callable(self, "_finish_lv5_jetpack"))
+
+
+func _activate_lv5_jetpack_vfx() -> void:
+	if not _jetpack_active or _jetpack_vfx == null:
+		return
+	_jetpack_vfx.scale = _jetpack_vfx_base_scale
+	_jetpack_vfx.show()
+
+
+func _finish_lv5_jetpack() -> void:
+	_jetpack_tween = null
+	_jetpack_active = false
+	_path_blocked_elapsed = 0.0
+	if _jetpack_visuals != null:
+		_jetpack_visuals.position = _jetpack_visuals_rest_position
+	if _jetpack_vfx != null:
+		_jetpack_vfx.hide()
+	if _has_dispatch_destination:
+		_set_walking(true)
+
+
+func _cancel_lv5_jetpack(restore_safe_position: bool = true) -> void:
+	var was_active := _jetpack_active
+	if _jetpack_tween != null:
+		_jetpack_tween.kill()
+		_jetpack_tween = null
+	_jetpack_active = false
+	if restore_safe_position and was_active and _would_collide_with_virus_path(global_position):
+		global_position = _jetpack_takeoff_position
+	if _jetpack_visuals != null:
+		_jetpack_visuals.position = _jetpack_visuals_rest_position
+	if _jetpack_vfx != null:
+		_jetpack_vfx.scale = _jetpack_vfx_base_scale
+		_jetpack_vfx.hide()
 
 
 func _would_collide_with_virus_path(world_position: Vector2) -> bool:

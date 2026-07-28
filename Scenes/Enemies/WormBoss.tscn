@@ -1,15 +1,16 @@
 [gd_scene format=3 uid="uid://4jdofbj14ald"]
 
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/WormBoss/WormHeadSpriteFrames.tres" id="1_head_animation"]
+[ext_resource type="SpriteFrames" uid="uid://xdcvevviiqd0" path="res://assets/Enemies/WormBoss/WormHeadSpriteFrames.tres" id="1_head_animation"]
 [ext_resource type="Texture2D" uid="uid://cvxw2a0gygqhb" path="res://assets/Enemies/WormBoss/WormHeadStatic.png" id="2_head_static"]
 [ext_resource type="Texture2D" uid="uid://drwwqrbskhun1" path="res://assets/Enemies/WormBoss/WormBody.png" id="3_body"]
 [ext_resource type="Texture2D" uid="uid://cwhbjrwkjussm" path="res://assets/Enemies/WormBoss/WormTail.png" id="4_tail"]
 [ext_resource type="Script" uid="uid://bwvwgccj508ls" path="res://Scripts/Enemies/worm_boss.gd" id="5_worm_script"]
 [ext_resource type="Script" uid="uid://djsk2stv6fbm" path="res://Scripts/UI/worm_boss_progress_bar.gd" id="6_health_script"]
 [ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="7_font"]
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/WormBoss/WormHeadDestroySpriteFrames.tres" id="8_head_destroy"]
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/WormBoss/WormBodyDestroySpriteFrames.tres" id="9_body_destroy"]
-[ext_resource type="SpriteFrames" path="res://assets/Enemies/WormBoss/WormTailDestroySpriteFrames.tres" id="10_tail_destroy"]
+[ext_resource type="SpriteFrames" uid="uid://skxdvrxe8s7v" path="res://assets/Enemies/WormBoss/WormHeadDestroySpriteFrames.tres" id="8_head_destroy"]
+[ext_resource type="SpriteFrames" uid="uid://c3xggwojbhceb" path="res://assets/Enemies/WormBoss/WormBodyDestroySpriteFrames.tres" id="9_body_destroy"]
+[ext_resource type="SpriteFrames" uid="uid://dqtayjwi8c27n" path="res://assets/Enemies/WormBoss/WormTailDestroySpriteFrames.tres" id="10_tail_destroy"]
+[ext_resource type="PackedScene" path="res://Scenes/Enemies/AntiCyberguardian.tscn" id="11_anti_guardian"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_boss_panel"]
 bg_color = Color(0.015, 0.022, 0.035, 0.97)
@@ -56,7 +57,7 @@ position = Vector2(31, 0)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_body")
 
-[node name="Body_First_Destroy" type="AnimatedSprite2D" parent="."]
+[node name="Body_First_Destroy" type="AnimatedSprite2D" parent="." unique_id=450996811]
 visible = false
 z_index = 10
 position = Vector2(31, 0)
@@ -70,7 +71,7 @@ position = Vector2(-80.000015, 0)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_body")
 
-[node name="Body_Second_Destroy" type="AnimatedSprite2D" parent="."]
+[node name="Body_Second_Destroy" type="AnimatedSprite2D" parent="." unique_id=286525638]
 visible = false
 z_index = 10
 position = Vector2(-80.000015, 0)
@@ -84,7 +85,7 @@ position = Vector2(-185, 0)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_body")
 
-[node name="Body_Third_Destroy" type="AnimatedSprite2D" parent="."]
+[node name="Body_Third_Destroy" type="AnimatedSprite2D" parent="." unique_id=483044735]
 visible = false
 z_index = 10
 position = Vector2(-185, 0)
@@ -98,7 +99,7 @@ position = Vector2(-287, 0)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_body")
 
-[node name="Body_Fourth_Destroy" type="AnimatedSprite2D" parent="."]
+[node name="Body_Fourth_Destroy" type="AnimatedSprite2D" parent="." unique_id=1892788116]
 visible = false
 z_index = 10
 position = Vector2(-287, 0)
@@ -112,7 +113,7 @@ position = Vector2(-385, 0)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_body")
 
-[node name="Body_Fifth_Destroy" type="AnimatedSprite2D" parent="."]
+[node name="Body_Fifth_Destroy" type="AnimatedSprite2D" parent="." unique_id=1961060057]
 visible = false
 z_index = 10
 position = Vector2(-385, 0)
@@ -129,7 +130,13 @@ animation = &"head"
 autoplay = "head"
 frame_progress = 0.3995906
 
-[node name="Head_Destroy" type="AnimatedSprite2D" parent="."]
+[node name="AntiCyberGuardianSpot" type="Marker2D" parent="HeadAnimation" unique_id=1290939264]
+position = Vector2(-34.60638, -9.887535)
+
+[node name="AntiCyberguardian" parent="HeadAnimation/AntiCyberGuardianSpot" unique_id=139846117 instance=ExtResource("11_anti_guardian")]
+scale = Vector2(0.5603, 0.5603)
+
+[node name="Head_Destroy" type="AnimatedSprite2D" parent="." unique_id=792645119]
 visible = false
 z_index = 10
 position = Vector2(139, 0)
@@ -143,7 +150,7 @@ position = Vector2(-507, 4.0000005)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("4_tail")
 
-[node name="Tail_Destroy" type="AnimatedSprite2D" parent="."]
+[node name="Tail_Destroy" type="AnimatedSprite2D" parent="." unique_id=1003431847]
 visible = false
 z_index = 10
 position = Vector2(-507, 4.0000005)
