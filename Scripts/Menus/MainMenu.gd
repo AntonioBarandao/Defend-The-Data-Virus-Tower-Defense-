@@ -13,6 +13,7 @@ const WELCOME_PENDING_META := &"login_welcome_pending"
 @onready var options_button: Button = $MenuPanel/VBox/OptionsButton
 @onready var quit_button: Button = $MenuPanel/VBox/QuitButton
 @onready var status_label: Label = $StatusLabel
+@onready var sign_out_button: Button = $MenuPanel/VBox/SignOutButton
 @onready var welcome_banner: PanelContainer = $WelcomeBanner
 @onready var welcome_label: Label = $WelcomeBanner/Margin/WelcomeLabel
 @onready var options_overlay: ColorRect = $OptionsOverlay
@@ -40,6 +41,7 @@ func _ready() -> void:
 	cyber_info_button.pressed.connect(_on_cyber_info_pressed)
 	options_button.pressed.connect(_on_options_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
+	sign_out_button.pressed.connect(_on_sign_out_pressed)
 	volume_slider.value_changed.connect(_on_volume_changed)
 	fullscreen_check.toggled.connect(_on_fullscreen_toggled)
 	options_close_button.pressed.connect(_close_options)
@@ -56,6 +58,7 @@ func _ready() -> void:
 func _sync_account_state() -> void:
 	_logged_in_username = String(get_tree().root.get_meta(SESSION_USERNAME_META, "")).strip_edges()
 	login_button.text = "ACCOUNT"
+	sign_out_button.visible = not _logged_in_username.is_empty()
 
 
 func _show_logged_in_welcome() -> void:
@@ -134,6 +137,7 @@ func _on_admin_game_pressed() -> void:
 	status_label.text = "Opening admin sandbox..."
 	_open_game_scene("res://Scenes/Gameplay/Admin_Sandbox.tscn")
 
+
 func _open_game_scene(scene_path: String) -> void:
 	var load_error := LoadingScreen.open_game_scene(get_tree(), scene_path)
 	if load_error != OK:
@@ -147,6 +151,14 @@ func _on_login_pressed() -> void:
 
 	status_label.text = "Opening login..."
 	get_tree().change_scene_to_file("res://Scenes/Menus/LoginScene.tscn")
+
+
+func _on_sign_out_pressed() -> void:
+	get_tree().root.remove_meta(SESSION_USERNAME_META)
+	get_tree().root.remove_meta(WELCOME_PENDING_META)
+	_logged_in_username = ""
+	status_label.text = "Signed out."
+	_sync_account_state()
 
 func _on_options_pressed() -> void:
 	options_overlay.show()

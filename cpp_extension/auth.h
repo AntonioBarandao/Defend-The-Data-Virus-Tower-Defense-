@@ -15,6 +15,11 @@ public:
 
     bool login(std::string username,
                std::string password);
+
+    int get_current_user_id() const;
+
+private:
+    int current_user_id = -1;
 };
 
 #endif
