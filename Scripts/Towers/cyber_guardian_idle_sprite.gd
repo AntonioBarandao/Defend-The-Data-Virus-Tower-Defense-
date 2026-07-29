@@ -10,13 +10,8 @@ signal firewall_status_changed(state_id: StringName, time_remaining: float)
 signal firewall_damage_requested(follow: PathFollow2D, amount: int)
 
 const TowerSummonEffectScript := preload("res://Scripts/Effects/tower_summon_effect.gd")
-<<<<<<< HEAD
-const SIGNAL_BOOST_TEXTURE := preload("res://Assets/Towers/CyberGuardian/Modes/Cyber_Guardian_SignalBoost_Sprite.png")
-const FIREWALL_TEXTURE := preload("res://Assets/Towers/CyberGuardian/Modes/Cyber_Guardian_Firewall_Sprite.png")
-=======
 const CentralAudioResolver := preload("res://Scripts/Audio/audio_player_resolver.gd")
 const SIGNAL_BOOST_TEXTURE := preload("res://assets/Towers/CyberGuardian/Modes/Cyber_Guardian_SignalBoost_Sprite.png")
->>>>>>> 4c8daaffc01673569e6d46a60df2b56eb54c60d5
 const IDLE_ANIMATION := &"idle"
 const SUMMON_ANIMATION := &"SummonAnim"
 const SHOOT_ANIMATION := &"ShootAnim"
