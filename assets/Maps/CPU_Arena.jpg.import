@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b52grujxy1rr2"
-path="res://.godot/imported/CPU_Arena.jpg-ee4730a4c1d9c1c3ff1eae1538fa0c31.ctex"
+path.s3tc="res://.godot/imported/CPU_Arena.jpg-ee4730a4c1d9c1c3ff1eae1538fa0c31.s3tc.ctex"
+path.etc2="res://.godot/imported/CPU_Arena.jpg-ee4730a4c1d9c1c3ff1eae1538fa0c31.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Maps/CPU_Arena.jpg"
-dest_files=["res://.godot/imported/CPU_Arena.jpg-ee4730a4c1d9c1c3ff1eae1538fa0c31.ctex"]
+dest_files=["res://.godot/imported/CPU_Arena.jpg-ee4730a4c1d9c1c3ff1eae1538fa0c31.s3tc.ctex", "res://.godot/imported/CPU_Arena.jpg-ee4730a4c1d9c1c3ff1eae1538fa0c31.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

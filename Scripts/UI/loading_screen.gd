@@ -16,6 +16,7 @@ const ADWARE_POPUP_PATH_FORMAT := "res://assets/Enemies/Adware/Popups/Adware_Pop
 @export_group("Artwork Entrance")
 @export_node_path("Node2D") var towers_group_path := NodePath("ArtworkLayer/Towers")
 @export_node_path("Node2D") var viruses_group_path := NodePath("ArtworkLayer/Viruses")
+@export_range(1.0, 10000.0, 1.0) var artwork_design_width := 1920.0
 @export_range(0.0, 3000.0, 10.0) var artwork_slide_distance := 2050.0
 @export_range(0.1, 3.0, 0.05) var artwork_slide_seconds := 0.9
 @export_range(0.0, 1.0, 0.05) var virus_entrance_delay := 0.08
@@ -63,6 +64,7 @@ func _ready() -> void:
 	_apply_requested_target_scene()
 	_progress_bar.value = 0.0
 	_update_loading_text()
+	_anchor_artwork_groups()
 	_play_artwork_entrance()
 
 	if not ResourceLoader.exists(target_scene_path):
@@ -214,6 +216,21 @@ func _play_artwork_entrance() -> void:
 		entrance_tween.tween_property(viruses, "modulate:a", 1.0, virus_slide_seconds).set_delay(resolved_virus_delay)
 
 	entrance_tween.chain().tween_callback(func() -> void: _artwork_entrance_finished = true)
+
+
+func _anchor_artwork_groups() -> void:
+	var towers := get_node_or_null(towers_group_path) as Node2D
+	if towers == null:
+		return
+
+	# The artwork was authored in a 1920-wide canvas. Aspect-expand adds its
+	# extra width to the right, so only the right-side group follows that edge.
+	var viewport_width := size.x
+	var right_edge_extension := maxf(
+		0.0,
+		viewport_width - artwork_design_width
+	)
+	towers.position.x += right_edge_extension
 
 
 func _poll_loading_progress() -> void:

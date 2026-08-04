@@ -55,6 +55,7 @@ const ProgressHUDScript := preload("res://Scripts/UI/progress_hud.gd")
 const UtilityOverlayHUDScript := preload("res://Scripts/UI/utility_overlay_hud.gd")
 const SignalBoostHUDScript := preload("res://Scripts/UI/signal_boost_hud.gd")
 const DefeatHUDScript := preload("res://Scripts/UI/defeat_hud.gd")
+const VictoryHUDScript := preload("res://Scripts/UI/victory_hud.gd")
 const Wave20ClearanceHUDScript := preload("res://Scripts/UI/wave_20_clearance_hud.gd")
 var TowerShopCardScene: PackedScene = load("res://Scenes/UI/TowerShopCard.tscn") as PackedScene
 var CyberGuardianCardResource: TowerShopCardResource = load(
@@ -229,6 +230,7 @@ const STORE_DRAG_START_THRESHOLD := 12.0
 @export var cutscene_demo_menu_hud_path: NodePath = ^"CutsceneDemoMenuHUD"
 @export var cutscene_demo_director_path: NodePath = ^"CutsceneDemoDirector"
 @export var defeat_hud_path: NodePath = ^"DefeatHUD"
+@export var victory_hud_path: NodePath = ^"VictoryHUD"
 @export var sounds_path: NodePath = ^"Sounds"
 @export var gameplay_soundtrack_path: NodePath = ^"Music/CyberBusiness"
 @export var tower_store_panel_path: NodePath = ^"TestDrag"
@@ -309,6 +311,7 @@ var _cutscene_skip_hud: Node
 var _cutscene_demo_menu_hud: Node
 var _cutscene_demo_director: CutsceneDemoDirector
 var _defeat_hud: DefeatHUDScript
+var _victory_hud: VictoryHUDScript
 var _sounds: Node
 var _gameplay_soundtrack: AudioStreamPlayer
 var _path_guide_container: Node2D
@@ -316,6 +319,7 @@ var _tower_store_panel: Control
 var _tower_store_background: ColorRect
 var _tower_store_toggle_button: Button
 var _tower_store_canvas: CanvasLayer
+var _tower_store_screen_space := false
 var _tower_store_title_label: Label
 var _tower_store_hint_label: Label
 var _tower_store_item_cards: Dictionary = {}
@@ -334,6 +338,8 @@ var _tower_store_open := true
 var _tower_store_tween: Tween
 var _wave_label_store_rest_position := Vector2.ZERO
 var _wave_label_store_position_cached := false
+var _wave_timer_store_rest_position := Vector2.ZERO
+var _wave_timer_store_position_cached := false
 var _pending_store_drag_tower: Node2D
 var _pending_store_drag_start_position := Vector2.ZERO
 var _restore_tower_store_after_drag := false
@@ -344,6 +350,7 @@ var _active_viruses: Array[PathFollow2D] = []
 var _active_ransomware: Array[Ransomware] = []
 var _lives := 0
 var _game_over := false
+var _victory_sequence_playing := false
 var _current_wave := 0
 var _wave_max_count := WAVE_CLEARANCE_COUNT
 var _wave_in_progress := false
@@ -421,13 +428,13 @@ func _ready() -> void:
 	_cutscene_demo_menu_hud = get_node_or_null(cutscene_demo_menu_hud_path)
 	_cutscene_demo_director = get_node_or_null(cutscene_demo_director_path) as CutsceneDemoDirector
 	_defeat_hud = get_node_or_null(defeat_hud_path) as DefeatHUDScript
+	_victory_hud = get_node_or_null(victory_hud_path) as VictoryHUDScript
 	_sounds = get_node_or_null(sounds_path)
 	_gameplay_soundtrack = get_node_or_null(gameplay_soundtrack_path) as AudioStreamPlayer
-	_tower_store_panel = get_node_or_null(tower_store_panel_path) as Control
-	_tower_store_background = get_node_or_null(tower_store_background_path) as ColorRect
-	_tower_store_title_label = get_node_or_null(tower_store_title_label_path) as Label
-	_tower_store_hint_label = get_node_or_null(tower_store_hint_label_path) as Label
-	_tower_store_toggle_button = get_node_or_null(tower_store_toggle_button_path) as Button
+	_resolve_tower_store_nodes()
+	if _tower_store_panel != null:
+		_tower_store_canvas = _tower_store_panel.get_parent() as CanvasLayer
+		_tower_store_screen_space = _tower_store_canvas != null
 	_tower_store_background_authored = _tower_store_background != null
 	_tower_store_title_label_authored = _tower_store_title_label != null
 	_tower_store_hint_label_authored = _tower_store_hint_label != null
@@ -501,6 +508,11 @@ func _ready() -> void:
 	else:
 		_defeat_hud.play_again_requested.connect(Callable(self, "_play_again_after_defeat"))
 		_defeat_hud.quit_game_requested.connect(Callable(self, "_quit_game_after_defeat"))
+	if _victory_hud == null:
+		push_warning("VictoryHUD was not found.")
+	else:
+		_victory_hud.play_again_requested.connect(Callable(self, "_play_again_after_victory"))
+		_victory_hud.main_menu_requested.connect(Callable(self, "_return_to_menu_after_victory"))
 	_lives = maxi(1, starting_lives)
 	_update_lives_display()
 	if _tower_upgrade_hud == null:
@@ -640,6 +652,15 @@ func _add_virus_template(template: RedVirusScript) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	# Touchscreen input is handled explicitly below. Godot also emits a mouse
+	# event for the same touch so Controls still work; processing both here
+	# would open and immediately close a tower sidebar.
+	if (
+		event is InputEventMouse
+		and event.device == InputEvent.DEVICE_ID_EMULATION
+	):
+		return
+
 	if _wave_20_clearance_hud != null \
 			and _wave_20_clearance_hud.is_cutscene_running():
 		if _wave_20_clearance_hud.handle_clearance_input(event):
@@ -680,15 +701,15 @@ func _input(event: InputEvent) -> void:
 			if _game_controls_have_point(mouse_button.position):
 				return
 
-			if _try_handle_store_card_information_press(pointer_position):
+			if _try_handle_store_card_information_press(mouse_button.position):
 				get_viewport().set_input_as_handled()
 				return
 
-			if _try_begin_any_store_tower_drag(pointer_position):
+			if _try_begin_any_store_tower_drag(mouse_button.position, pointer_position):
 				get_viewport().set_input_as_handled()
 				return
 
-			if _tower_store_blocks_point(pointer_position):
+			if _tower_store_blocks_point(mouse_button.position):
 				get_viewport().set_input_as_handled()
 				return
 
@@ -703,28 +724,36 @@ func _input(event: InputEvent) -> void:
 				return
 
 			if _handle_laser_turret_press(pointer_position, mouse_button.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _handle_ids_scanner_press(pointer_position, mouse_button.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _handle_edr_hunter_press(pointer_position, mouse_button.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _handle_siem_hawk_press(pointer_position, mouse_button.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _handle_xdr_mech_press(pointer_position, mouse_button.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _handle_ips_intrusion_press(pointer_position, mouse_button.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _handle_honeypot_production_press(pointer_position, mouse_button.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _find_tower_at_point(_guardians, pointer_position) != null:
 				_handle_placed_tower_press(pointer_position, mouse_button.position)
+				get_viewport().set_input_as_handled()
 				return
 
 			if _try_set_siem_hawk_destination(pointer_position):
@@ -822,15 +851,15 @@ func _input(event: InputEvent) -> void:
 			if _game_controls_have_point(screen_touch.position):
 				return
 
-			if _try_handle_store_card_information_press(pointer_position):
+			if _try_handle_store_card_information_press(screen_touch.position):
 				get_viewport().set_input_as_handled()
 				return
 
-			if _try_begin_any_store_tower_drag(pointer_position):
+			if _try_begin_any_store_tower_drag(screen_touch.position, pointer_position):
 				get_viewport().set_input_as_handled()
 				return
 
-			if _tower_store_blocks_point(pointer_position):
+			if _tower_store_blocks_point(screen_touch.position):
 				get_viewport().set_input_as_handled()
 				return
 
@@ -845,28 +874,36 @@ func _input(event: InputEvent) -> void:
 				return
 
 			if _handle_laser_turret_press(pointer_position, screen_touch.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _handle_ids_scanner_press(pointer_position, screen_touch.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _handle_edr_hunter_press(pointer_position, screen_touch.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _handle_siem_hawk_press(pointer_position, screen_touch.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _handle_xdr_mech_press(pointer_position, screen_touch.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _handle_ips_intrusion_press(pointer_position, screen_touch.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _handle_honeypot_production_press(pointer_position, screen_touch.position):
+				get_viewport().set_input_as_handled()
 				return
 
 			if _find_tower_at_point(_guardians, pointer_position) != null:
 				_handle_placed_tower_press(pointer_position, screen_touch.position)
+				get_viewport().set_input_as_handled()
 				return
 
 			if _try_set_siem_hawk_destination(pointer_position):
@@ -1023,15 +1060,43 @@ func _update_fps_label() -> void:
 	_performance_hud.set_fps(current_fps, TARGET_FPS)
 
 
+func _resolve_tower_store_nodes() -> void:
+	_tower_store_panel = get_node_or_null(tower_store_panel_path) as Control
+	if _tower_store_panel == null:
+		_tower_store_panel = find_child("TestDrag", true, false) as Control
+
+	_tower_store_background = get_node_or_null(tower_store_background_path) as ColorRect
+	_tower_store_title_label = get_node_or_null(tower_store_title_label_path) as Label
+	_tower_store_hint_label = get_node_or_null(tower_store_hint_label_path) as Label
+	_tower_store_toggle_button = get_node_or_null(tower_store_toggle_button_path) as Button
+
+	if _tower_store_panel == null:
+		return
+	if _tower_store_background == null:
+		_tower_store_background = _tower_store_panel.get_node_or_null(^"TowerTrayBackground") as ColorRect
+	if _tower_store_title_label == null:
+		_tower_store_title_label = _tower_store_panel.get_node_or_null(^"TowerShopTitle") as Label
+	if _tower_store_hint_label == null:
+		_tower_store_hint_label = _tower_store_panel.get_node_or_null(^"TowerShopHint") as Label
+	if _tower_store_toggle_button == null:
+		_tower_store_toggle_button = _tower_store_panel.get_node_or_null(^"TowerStoreToggleButton") as Button
+
+
 func _setup_tower_store() -> void:
 	var store_items := _get_tower_store_items()
 	if store_items.is_empty():
 		return
 
 	if _tower_store_panel == null:
+		_tower_store_canvas = CanvasLayer.new()
+		_tower_store_canvas.name = "TowerStoreHUD"
+		_tower_store_canvas.layer = 130
+		add_child(_tower_store_canvas)
+		_tower_store_screen_space = true
 		_tower_store_panel = Control.new()
 		_tower_store_panel.name = "TowerStorePanel"
-		add_child(_tower_store_panel)
+		_tower_store_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_tower_store_canvas.add_child(_tower_store_panel)
 
 	_hide_legacy_store_title()
 	_style_tower_store_panel(store_items)
@@ -1111,9 +1176,9 @@ func _layout_tower_store_items(store_items: Array[Dictionary]) -> void:
 	for index in range(store_items.size()):
 		var tower := store_items[index]["tower"] as Node2D
 		var card := _tower_store_item_cards.get(tower) as Control
-		var home_position := Vector2.ZERO
+		var home_screen_position := Vector2.ZERO
 		if card != null:
-			home_position = card.get_global_rect().get_center()
+			home_screen_position = card.get_global_rect().get_center()
 		else:
 			var column := index % STORE_CARD_COLUMNS
 			var row := index / STORE_CARD_COLUMNS
@@ -1121,7 +1186,12 @@ func _layout_tower_store_items(store_items: Array[Dictionary]) -> void:
 				grid_left + float(column) * (STORE_CARD_SIZE.x + STORE_CARD_GAP.x),
 				grid_top + float(row) * (STORE_CARD_SIZE.y + STORE_CARD_GAP.y)
 			)
-			home_position = card_top_left + STORE_CARD_SIZE * 0.5
+			home_screen_position = card_top_left + STORE_CARD_SIZE * 0.5
+		var home_position := (
+			_screen_to_canvas_position(home_screen_position)
+			if _tower_store_screen_space
+			else home_screen_position
+		)
 
 		_cache_tower_placed_scale(tower)
 		_apply_store_display_scale(tower)
@@ -1209,10 +1279,10 @@ func _get_store_panel_global_rect(store_items: Array[Dictionary]) -> Rect2:
 func _create_tower_store_cards(store_items: Array[Dictionary]) -> void:
 	if _tower_store_title_label == null:
 		_tower_store_title_label = _make_store_label("TOWER SHOP", 28, Color(0.74, 0.93, 1.0, 1.0))
-		add_child(_tower_store_title_label)
+		_tower_store_panel.add_child(_tower_store_title_label)
 	if _tower_store_hint_label == null:
 		_tower_store_hint_label = _make_store_label("Drag a tower onto a platform", 18, Color(0.52, 0.68, 0.82, 1.0))
-		add_child(_tower_store_hint_label)
+		_tower_store_panel.add_child(_tower_store_hint_label)
 
 	for item in store_items:
 		var tower := item["tower"] as Node2D
@@ -1436,11 +1506,15 @@ func _cache_tower_store_toggle_open_position() -> void:
 	if _tower_store_toggle_button_authored:
 		_tower_store_toggle_open_position = _tower_store_toggle_button.global_position
 	else:
-		var open_world_position := Vector2(
+		var open_store_position := Vector2(
 			_tower_store_base_rect.position.x - STORE_TOGGLE_SIZE.x * 0.5,
 			_tower_store_base_rect.get_center().y - STORE_TOGGLE_SIZE.y * 0.5
 		)
-		_tower_store_toggle_open_position = _world_to_screen_position(open_world_position)
+		_tower_store_toggle_open_position = (
+			open_store_position
+			if _tower_store_screen_space
+			else _world_to_screen_position(open_store_position)
+		)
 	_tower_store_toggle_open_position_cached = true
 
 
@@ -1483,12 +1557,7 @@ func _get_tower_store_toggle_closed_position() -> Vector2:
 		viewport_size.x - STORE_TOGGLE_SIZE.x - STORE_TOGGLE_SCREEN_INSET,
 		_tower_store_toggle_open_position.y
 	)
-	if not _tower_store_toggle_button_authored:
-		return closed_screen_position
-
-	var open_screen_position := _world_to_screen_position(_tower_store_toggle_open_position)
-	closed_screen_position.y = open_screen_position.y
-	return _screen_to_canvas_position(closed_screen_position)
+	return closed_screen_position
 
 
 func _toggle_tower_store() -> void:
@@ -1533,6 +1602,9 @@ func _cache_store_companion_ui_positions() -> void:
 	if not _wave_label_store_position_cached and _wave_label != null:
 		_wave_label_store_rest_position = _wave_label.global_position
 		_wave_label_store_position_cached = true
+	if not _wave_timer_store_position_cached and _wave_timer_label != null:
+		_wave_timer_store_rest_position = _wave_timer_label.global_position
+		_wave_timer_store_position_cached = true
 	if _game_controls_hud != null and _game_controls_hud.has_method("cache_store_companion_ui_position"):
 		_game_controls_hud.call("cache_store_companion_ui_position")
 
@@ -1544,6 +1616,11 @@ func _apply_store_companion_ui_slide(slide_offset: float) -> void:
 	_cache_store_companion_ui_positions()
 	if _wave_label != null and _wave_label_store_position_cached:
 		_wave_label.global_position = _wave_label_store_rest_position + Vector2(slide_offset, 0.0)
+	if _wave_timer_label != null and _wave_timer_store_position_cached:
+		_wave_timer_label.global_position = _wave_timer_store_rest_position + Vector2(
+			slide_offset,
+			0.0
+		)
 	if _game_controls_hud != null and _game_controls_hud.has_method("apply_store_companion_slide"):
 		_game_controls_hud.call("apply_store_companion_slide", slide_offset)
 
@@ -1573,7 +1650,10 @@ func _apply_tower_store_slide(slide_offset: float) -> void:
 
 		var alpha := 1.0 - clampf(slide_offset / STORE_PANEL_SLIDE_DISTANCE, 0.0, 1.0)
 		if in_store and not _is_store_tower_dragging(tower_node):
-			tower_node.global_position = _tower_store_home_positions[tower] + Vector2(slide_offset, 0)
+			var tower_slide_offset := Vector2(slide_offset, 0.0)
+			if _tower_store_screen_space:
+				tower_slide_offset = _screen_to_canvas_vector(tower_slide_offset)
+			tower_node.global_position = _tower_store_home_positions[tower] + tower_slide_offset
 			tower_node.modulate.a = alpha
 
 		var card := _tower_store_item_cards.get(tower_node) as Control
@@ -1724,16 +1804,17 @@ func _restore_placed_tower_scale(tower: Node2D) -> void:
 	_sync_tower_scale_dependent_visuals(tower)
 
 
-func _try_handle_store_card_information_press(pointer_position: Vector2) -> bool:
+func _try_handle_store_card_information_press(screen_position: Vector2) -> bool:
 	if not _tower_store_open:
 		return false
+	var store_position := _screen_to_store_position(screen_position)
 
 	for tower in _get_store_drag_order():
 		var tower_node := tower as Node2D
 		var card := _tower_store_item_cards.get(tower_node) as TowerShopCard
 		if card == null or not card.visible:
 			continue
-		if not card.information_button_has_point(pointer_position):
+		if not card.information_button_has_point(store_position):
 			continue
 
 		card.toggle_information_popup()
@@ -1743,28 +1824,40 @@ func _try_handle_store_card_information_press(pointer_position: Vector2) -> bool
 	for tower in _get_store_drag_order():
 		var tower_node := tower as Node2D
 		var card := _tower_store_item_cards.get(tower_node) as TowerShopCard
-		if card != null and card.visible and card.information_popup_has_point(pointer_position):
+		if card != null and card.visible and card.information_popup_has_point(store_position):
 			return true
 
 	return false
 
 
-func _try_begin_any_store_tower_drag(pointer_position: Vector2) -> bool:
+func _try_begin_any_store_tower_drag(
+	screen_position: Vector2,
+	world_position: Vector2
+) -> bool:
 	for tower in _get_store_drag_order():
-		if _try_begin_store_tower_drag(tower as Node2D, pointer_position):
+		if _try_begin_store_tower_drag(tower as Node2D, screen_position, world_position):
 			return true
 
 	return false
 
 
-func _try_begin_store_tower_drag(tower: Node2D, pointer_position: Vector2) -> bool:
+func _try_begin_store_tower_drag(
+	tower: Node2D,
+	screen_position: Vector2,
+	world_position: Vector2
+) -> bool:
 	if not _tower_store_open or tower == null:
 		return false
 
 	var card := _tower_store_item_cards.get(tower) as TowerShopCard
 	if card == null or not card.visible:
 		return false
-	if not card.get_global_rect().grow(8.0).has_point(pointer_position):
+	var store_position := (
+		screen_position
+		if _tower_store_screen_space
+		else world_position
+	)
+	if not card.get_global_rect().grow(8.0).has_point(store_position):
 		return false
 
 	_hide_all_store_card_information()
@@ -1777,7 +1870,7 @@ func _try_begin_store_tower_drag(tower: Node2D, pointer_position: Vector2) -> bo
 		return true
 
 	_pending_store_drag_tower = tower
-	_pending_store_drag_start_position = pointer_position
+	_pending_store_drag_start_position = world_position
 	return true
 
 
@@ -1839,15 +1932,16 @@ func _hide_other_store_card_information(active_card: TowerShopCard) -> void:
 			card.set_information_popup_visible(false)
 
 
-func _tower_store_blocks_point(pointer_position: Vector2) -> bool:
+func _tower_store_blocks_point(screen_position: Vector2) -> bool:
 	if not _tower_store_open:
 		return false
+	var store_position := _screen_to_store_position(screen_position)
 	if _tower_store_background != null \
 			and _tower_store_background.visible \
-			and _tower_store_background.get_global_rect().has_point(pointer_position):
+			and _tower_store_background.get_global_rect().has_point(store_position):
 		return true
 
-	return _tower_store_base_rect.has_point(pointer_position)
+	return _tower_store_base_rect.has_point(store_position)
 
 
 func _game_controls_have_point(screen_position: Vector2) -> bool:
@@ -1952,10 +2046,9 @@ func _close_tower_upgrade_sidebar() -> void:
 
 
 func _tower_store_toggle_has_point(screen_position: Vector2) -> bool:
-	var test_position := _screen_to_canvas_position(screen_position) if _tower_store_toggle_button_authored else screen_position
 	return _tower_store_toggle_button != null \
 		and _tower_store_toggle_button.visible \
-		and _tower_store_toggle_button.get_global_rect().has_point(test_position)
+		and _tower_store_toggle_button.get_global_rect().has_point(screen_position)
 
 
 func _try_start_store_tower_drag(tower: Node2D, pointer_position: Vector2) -> bool:
@@ -1988,11 +2081,12 @@ func _try_start_store_tower_drag(tower: Node2D, pointer_position: Vector2) -> bo
 	return true
 
 
-func _store_tower_card_has_point(tower: Node2D, pointer_position: Vector2) -> bool:
+func _store_tower_card_has_point(tower: Node2D, screen_position: Vector2) -> bool:
 	var card := _tower_store_item_cards.get(tower) as Control
+	var store_position := _screen_to_store_position(screen_position)
 	return card != null \
 		and card.visible \
-		and card.get_global_rect().grow(8.0).has_point(pointer_position)
+		and card.get_global_rect().grow(8.0).has_point(store_position)
 
 
 func _restore_store_tower_preview(tower: Node2D) -> void:
@@ -2018,7 +2112,12 @@ func _update_store_tower_drag(tower: Node2D, pointer_position: Vector2) -> void:
 
 	_restore_placed_tower_scale(tower)
 	tower.call("update_drag", pointer_position)
-	if _tower_store_open and not _tower_store_base_rect.has_point(pointer_position):
+	var store_position := (
+		_world_to_screen_position(pointer_position)
+		if _tower_store_screen_space
+		else pointer_position
+	)
+	if _tower_store_open and not _tower_store_base_rect.has_point(store_position):
 		_set_tower_store_open(false)
 
 
@@ -5073,6 +5172,50 @@ func _quit_game_after_defeat() -> void:
 	get_tree().change_scene_to_file("res://Scenes/Menus/MainMenu.tscn")
 
 
+func _show_victory_after_final_boss() -> void:
+	if _victory_sequence_playing:
+		return
+
+	_victory_sequence_playing = true
+	_game_over = true
+	_wave_in_progress = false
+	_wave_question_pending = false
+	_wave_spawns_remaining = 0
+	_clear_phishing_effect()
+	_set_victory_gameplay_huds_hidden()
+	if _victory_hud == null:
+		push_warning("VictoryHUD is unavailable; returning to the Main Menu.")
+		get_tree().paused = false
+		get_tree().change_scene_to_file("res://Scenes/Menus/MainMenu.tscn")
+		return
+
+	get_tree().paused = true
+	_victory_hud.show_victory()
+
+
+func _set_victory_gameplay_huds_hidden() -> void:
+	for hud in [_cutscene_demo_menu_hud, _cutscene_skip_hud]:
+		if not is_instance_valid(hud):
+			continue
+		if hud.has_method("set_victory_screen_active"):
+			hud.call("set_victory_screen_active", true)
+		else:
+			hud.hide()
+
+
+func _play_again_after_victory() -> void:
+	get_tree().paused = false
+	var reload_error := get_tree().reload_current_scene()
+	if reload_error != OK:
+		push_error("Unable to restart after victory: %s" % error_string(reload_error))
+		get_tree().change_scene_to_file("res://Scenes/Menus/MainMenu.tscn")
+
+
+func _return_to_menu_after_victory() -> void:
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://Scenes/Menus/MainMenu.tscn")
+
+
 func _update_spyware_invasions(delta: float) -> void:
 	var eligible_towers := _get_spyware_invasion_targets()
 	for follow in _active_viruses:
@@ -5628,7 +5771,7 @@ func _play_final_boss_partial_defeat_sequence() -> void:
 		)
 	_worm_defeat_sequence_running = false
 	_update_wave_button()
-	_update_wave_spawner(0.0)
+	_show_victory_after_final_boss()
 
 
 func _on_worm_boss_escaped() -> void:
@@ -6254,6 +6397,18 @@ func _add_path_guide_arrow(distance: float, path_length: float) -> void:
 
 func _screen_to_canvas_position(screen_position: Vector2) -> Vector2:
 	return get_canvas_transform().affine_inverse() * screen_position
+
+
+func _screen_to_canvas_vector(screen_vector: Vector2) -> Vector2:
+	return get_canvas_transform().basis_xform_inv(screen_vector)
+
+
+func _screen_to_store_position(screen_position: Vector2) -> Vector2:
+	return (
+		screen_position
+		if _tower_store_screen_space
+		else _screen_to_canvas_position(screen_position)
+	)
 
 
 func _world_to_screen_position(world_position: Vector2) -> Vector2:

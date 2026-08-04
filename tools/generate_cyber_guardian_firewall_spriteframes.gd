@@ -8,7 +8,7 @@ const BURN_OUTPUT := (
 	"res://assets/Effects/FirewallBurn/FirewallBurnSpriteFrames.tres"
 )
 
-const FIREWALL_FRAME_SIZE := Vector2(720, 720)
+const FIREWALL_FRAME_SIZE := Vector2(300, 300)
 const BURN_FRAME_SIZE := Vector2(320, 320)
 const ANIMATION_SPEED := 24.0
 

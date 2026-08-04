@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b1mc5x8h7h85k"
-path="res://.godot/imported/Horse_Move_atlas_30fps.png-a5f4d2e90f8ff9b11e936a078784e24e.ctex"
+path.s3tc="res://.godot/imported/Horse_Move_atlas_30fps.png-a5f4d2e90f8ff9b11e936a078784e24e.s3tc.ctex"
+path.etc2="res://.godot/imported/Horse_Move_atlas_30fps.png-a5f4d2e90f8ff9b11e936a078784e24e.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Enemies/TrojanHorse/Horse_Move/Horse_Move_atlas_30fps.png"
-dest_files=["res://.godot/imported/Horse_Move_atlas_30fps.png-a5f4d2e90f8ff9b11e936a078784e24e.ctex"]
+dest_files=["res://.godot/imported/Horse_Move_atlas_30fps.png-a5f4d2e90f8ff9b11e936a078784e24e.s3tc.ctex", "res://.godot/imported/Horse_Move_atlas_30fps.png-a5f4d2e90f8ff9b11e936a078784e24e.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

@@ -26,7 +26,7 @@ func _run() -> void:
 		"Sprites/Cybersec Guardian"
 	) as CyberGuardianTower
 	var card := game.get_node_or_null(
-		"TestDrag/CyberGuardianCard"
+		"TowerStoreHUD/TestDrag/CyberGuardianCard"
 	) as TowerShopCard
 	var upgrade_hud := game.get_node_or_null(
 		"TowerUpgradeHUD"

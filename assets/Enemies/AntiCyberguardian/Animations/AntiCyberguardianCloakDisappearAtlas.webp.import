@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://df24md6ql28r0"
-path="res://.godot/imported/AntiCyberguardianCloakDisappearAtlas.webp-64196be8195665a2cff38e52e99a550e.ctex"
+path.s3tc="res://.godot/imported/AntiCyberguardianCloakDisappearAtlas.webp-64196be8195665a2cff38e52e99a550e.s3tc.ctex"
+path.etc2="res://.godot/imported/AntiCyberguardianCloakDisappearAtlas.webp-64196be8195665a2cff38e52e99a550e.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Enemies/AntiCyberguardian/Animations/AntiCyberguardianCloakDisappearAtlas.webp"
-dest_files=["res://.godot/imported/AntiCyberguardianCloakDisappearAtlas.webp-64196be8195665a2cff38e52e99a550e.ctex"]
+dest_files=["res://.godot/imported/AntiCyberguardianCloakDisappearAtlas.webp-64196be8195665a2cff38e52e99a550e.s3tc.ctex", "res://.godot/imported/AntiCyberguardianCloakDisappearAtlas.webp-64196be8195665a2cff38e52e99a550e.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

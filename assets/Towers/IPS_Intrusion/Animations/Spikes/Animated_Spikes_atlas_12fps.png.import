@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dma15bw6vrpp1"
-path="res://.godot/imported/Animated_Spikes_atlas_12fps.png-d05dc2a094f5c6b55b2b2f6fede14e0c.ctex"
+path.s3tc="res://.godot/imported/Animated_Spikes_atlas_12fps.png-d05dc2a094f5c6b55b2b2f6fede14e0c.s3tc.ctex"
+path.etc2="res://.godot/imported/Animated_Spikes_atlas_12fps.png-d05dc2a094f5c6b55b2b2f6fede14e0c.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Towers/IPS_Intrusion/Animations/Spikes/Animated_Spikes_atlas_12fps.png"
-dest_files=["res://.godot/imported/Animated_Spikes_atlas_12fps.png-d05dc2a094f5c6b55b2b2f6fede14e0c.ctex"]
+dest_files=["res://.godot/imported/Animated_Spikes_atlas_12fps.png-d05dc2a094f5c6b55b2b2f6fede14e0c.s3tc.ctex", "res://.godot/imported/Animated_Spikes_atlas_12fps.png-d05dc2a094f5c6b55b2b2f6fede14e0c.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

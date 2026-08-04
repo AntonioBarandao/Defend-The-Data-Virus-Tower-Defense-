@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dedy2o45g6qn0"
-path="res://.godot/imported/ArmoredVirus.png-742dc3f960d009d817dc2f8792f2678c.ctex"
+path.s3tc="res://.godot/imported/ArmoredVirus.png-742dc3f960d009d817dc2f8792f2678c.s3tc.ctex"
+path.etc2="res://.godot/imported/ArmoredVirus.png-742dc3f960d009d817dc2f8792f2678c.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/LoadingScreen/ArmoredVirus.png"
-dest_files=["res://.godot/imported/ArmoredVirus.png-742dc3f960d009d817dc2f8792f2678c.ctex"]
+dest_files=["res://.godot/imported/ArmoredVirus.png-742dc3f960d009d817dc2f8792f2678c.s3tc.ctex", "res://.godot/imported/ArmoredVirus.png-742dc3f960d009d817dc2f8792f2678c.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

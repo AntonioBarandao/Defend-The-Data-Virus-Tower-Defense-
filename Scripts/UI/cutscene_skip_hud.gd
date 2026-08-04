@@ -10,6 +10,7 @@ const MAX_INPUT_LAYER := 4095
 
 var _text_cutscene_hud: Node
 var _announce_text_hud: AnnounceTextHUD
+var _victory_screen_active := false
 
 
 func _ready() -> void:
@@ -30,9 +31,16 @@ func _input(event: InputEvent) -> void:
 
 
 func _process(_delta: float) -> void:
-	var running := _is_cutscene_running()
+	var running := not _victory_screen_active and _is_cutscene_running()
 	visible = running
 	_skip_button.disabled = not running
+
+
+func set_victory_screen_active(active: bool) -> void:
+	_victory_screen_active = active
+	if active:
+		_skip_button.disabled = true
+		hide()
 
 
 func handle_cutscene_skip_input(event: InputEvent) -> bool:
@@ -44,7 +52,9 @@ func handle_cutscene_skip_input(event: InputEvent) -> bool:
 
 
 func event_targets_skip_button(event: InputEvent) -> bool:
-	if not _is_cutscene_running() or not _is_primary_press(event):
+	if _victory_screen_active \
+			or not _is_cutscene_running() \
+			or not _is_primary_press(event):
 		return false
 	if not is_instance_valid(_skip_button) or _skip_button.disabled:
 		return false

@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ceiqhs2rrx8f1"
-path="res://.godot/imported/Defeat_DFD_Atlas_02.png-aad41018c82cca9a100e9aadf5f6f98f.ctex"
+path.s3tc="res://.godot/imported/Defeat_DFD_Atlas_02.png-aad41018c82cca9a100e9aadf5f6f98f.s3tc.ctex"
+path.etc2="res://.godot/imported/Defeat_DFD_Atlas_02.png-aad41018c82cca9a100e9aadf5f6f98f.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/UI/Defeat/Defeat_DFD_Atlas_02.png"
-dest_files=["res://.godot/imported/Defeat_DFD_Atlas_02.png-aad41018c82cca9a100e9aadf5f6f98f.ctex"]
+dest_files=["res://.godot/imported/Defeat_DFD_Atlas_02.png-aad41018c82cca9a100e9aadf5f6f98f.s3tc.ctex", "res://.godot/imported/Defeat_DFD_Atlas_02.png-aad41018c82cca9a100e9aadf5f6f98f.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

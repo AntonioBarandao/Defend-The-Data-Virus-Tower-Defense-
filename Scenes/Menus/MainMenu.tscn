@@ -209,12 +209,16 @@ theme_override_font_sizes/font_size = 24
 text = "SIGN OUT"
 
 [node name="Logo" type="TextureRect" parent="." unique_id=1950426886]
-layout_mode = 0
-offset_left = 745.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -196.0
 offset_top = 145.0
-offset_right = 1137.0
+offset_right = 196.0
 offset_bottom = 405.0
-pivot_offset = Vector2(220, 130)
+grow_horizontal = 2
+pivot_offset = Vector2(196, 130)
 mouse_filter = 0
 mouse_default_cursor_shape = 2
 texture = ExtResource("3_logo")

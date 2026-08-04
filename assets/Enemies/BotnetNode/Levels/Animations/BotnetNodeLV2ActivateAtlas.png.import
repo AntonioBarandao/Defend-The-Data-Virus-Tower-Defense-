@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cbwethn3wyl2r"
-path="res://.godot/imported/BotnetNodeLV2ActivateAtlas.png-81c2ed50dc388edfee8b7c731d6dbb6c.ctex"
+path.s3tc="res://.godot/imported/BotnetNodeLV2ActivateAtlas.png-81c2ed50dc388edfee8b7c731d6dbb6c.s3tc.ctex"
+path.etc2="res://.godot/imported/BotnetNodeLV2ActivateAtlas.png-81c2ed50dc388edfee8b7c731d6dbb6c.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Enemies/BotnetNode/Levels/Animations/BotnetNodeLV2ActivateAtlas.png"
-dest_files=["res://.godot/imported/BotnetNodeLV2ActivateAtlas.png-81c2ed50dc388edfee8b7c731d6dbb6c.ctex"]
+dest_files=["res://.godot/imported/BotnetNodeLV2ActivateAtlas.png-81c2ed50dc388edfee8b7c731d6dbb6c.s3tc.ctex", "res://.godot/imported/BotnetNodeLV2ActivateAtlas.png-81c2ed50dc388edfee8b7c731d6dbb6c.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

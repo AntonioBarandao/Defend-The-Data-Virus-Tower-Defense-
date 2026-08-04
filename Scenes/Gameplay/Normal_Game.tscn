@@ -14,8 +14,8 @@
 [ext_resource type="Texture2D" uid="uid://boaiqtkopvk4n" path="res://assets/Towers/Laser-Turret/Plates/Laser_Turret_LV1_Plate.png" id="38_cfnki"]
 [ext_resource type="Texture2D" uid="uid://bwsgcf3yixwrq" path="res://assets/Towers/EDR_Hunter/Display_EDR_Hunter_LV1.png" id="40_ny6iy"]
 [ext_resource type="Texture2D" uid="uid://buhhmlishb4q0" path="res://assets/Towers/XDR_Mech/Display_XDR_Mech.png" id="44_ny6iy"]
-[ext_resource type="SpriteFrames" uid="uid://bfro7ahwf5sfk" path="res://assets/Enemies/RedVirus/RedVirusSpriteFrames.res" id="47_mljcx"]
-[ext_resource type="AudioStream" uid="uid://cyw3ynfmxrkcw" path="res://assets/soundtrack/Cyber-Business-Soundtrack.wav" id="music_cyber_business"]
+[ext_resource type="SpriteFrames" path="res://assets/Enemies/RedVirus/RedVirusSpriteFrames.res" id="47_mljcx"]
+[ext_resource type="AudioStream" path="res://assets/soundtrack/Cyber-Business-Soundtrack.ogg" id="music_cyber_business"]
 [ext_resource type="AudioStream" uid="uid://c130ih3py156c" path="res://assets/sfx/adware_popup.wav" id="sfx_adware_popup"]
 [ext_resource type="AudioStream" uid="uid://t1ipbpea1ik3" path="res://assets/sfx/Alarm_Cutscene_FX.wav" id="sfx_alarm"]
 [ext_resource type="AudioStream" uid="uid://b13q8eqiw0ie" path="res://assets/sfx/armored_virus_destroy.wav" id="sfx_armored_destroy"]
@@ -665,83 +665,83 @@ shape = SubResource("RectangleShape2D_01u4g")
 [node name="PlacementSlot13" parent="TowerPlacementArea" parent_id_path=PackedInt32Array(817734020) index="12" unique_id=918020816]
 shape = SubResource("RectangleShape2D_01u4g")
 
-[node name="TestDrag" parent="." index="25" unique_id=1456189078]
+[node name="TestDrag" parent="TowerStoreHUD" parent_id_path=PackedInt32Array(207700130) index="0" unique_id=1456189078]
 metadata/_edit_use_anchors_ = true
 
-[node name="CardPanel" parent="TestDrag/CyberGuardianCard" parent_id_path=PackedInt32Array(1248978504) index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/CyberGuardianCard" parent_id_path=PackedInt32Array(1248978504) index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_inrcg")
 
-[node name="DisplaySprite" parent="TestDrag/CyberGuardianCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1248978504, 113385319) index="0" unique_id=590825140]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/CyberGuardianCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1248978504, 113385319) index="0" unique_id=590825140]
 position = Vector2(72.000046, 61.000057)
 scale = Vector2(0.07248045, 0.07248045)
 texture = ExtResource("5_n2mrm")
 
-[node name="PopupSprite" parent="TestDrag/CyberGuardianCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1248978504, 1733699289) index="0" unique_id=522427816]
+[node name="PopupSprite" parent="TowerStoreHUD/TestDrag/CyberGuardianCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1248978504, 1733699289) index="0" unique_id=522427816]
 texture = ExtResource("5_n2mrm")
 
-[node name="CardPanel" parent="TestDrag/LaserTurretCard" parent_id_path=PackedInt32Array(1774681448) index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/LaserTurretCard" parent_id_path=PackedInt32Array(1774681448) index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_xspyg")
 
-[node name="PopupSprite" parent="TestDrag/LaserTurretCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1774681448, 1733699289) index="0" unique_id=522427816]
+[node name="PopupSprite" parent="TowerStoreHUD/TestDrag/LaserTurretCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1774681448, 1733699289) index="0" unique_id=522427816]
 texture = ExtResource("38_cfnki")
 
-[node name="CardPanel" parent="TestDrag/IDSScannerCard" parent_id_path=PackedInt32Array(2136481415) index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/IDSScannerCard" parent_id_path=PackedInt32Array(2136481415) index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_un0un")
 
-[node name="DisplaySprite" parent="TestDrag/IDSScannerCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2136481415, 113385319) index="0" unique_id=590825140]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/IDSScannerCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2136481415, 113385319) index="0" unique_id=590825140]
 texture = ExtResource("5_pqf0i")
 
-[node name="PopupSprite" parent="TestDrag/IDSScannerCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(2136481415, 1733699289) index="0" unique_id=522427816]
+[node name="PopupSprite" parent="TowerStoreHUD/TestDrag/IDSScannerCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(2136481415, 1733699289) index="0" unique_id=522427816]
 texture = ExtResource("5_pqf0i")
 
-[node name="CardPanel" parent="TestDrag/EDRHunterCard" parent_id_path=PackedInt32Array(1058679109) index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/EDRHunterCard" parent_id_path=PackedInt32Array(1058679109) index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_e2fwr")
 
-[node name="PopupSprite" parent="TestDrag/EDRHunterCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1058679109, 1733699289) index="0" unique_id=522427816]
+[node name="PopupSprite" parent="TowerStoreHUD/TestDrag/EDRHunterCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1058679109, 1733699289) index="0" unique_id=522427816]
 texture = ExtResource("40_ny6iy")
 
-[node name="CardPanel" parent="TestDrag/SIEMHawkCard" parent_id_path=PackedInt32Array(2097101912) index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/SIEMHawkCard" parent_id_path=PackedInt32Array(2097101912) index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_klrxh")
 
-[node name="DisplaySprite" parent="TestDrag/SIEMHawkCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2097101912, 113385319) index="0" unique_id=590825140]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/SIEMHawkCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2097101912, 113385319) index="0" unique_id=590825140]
 position = Vector2(70, 59.000053)
 scale = Vector2(0.11234042, 0.11234043)
 texture = ExtResource("6_n2mrm")
 
-[node name="PopupSprite" parent="TestDrag/SIEMHawkCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(2097101912, 1733699289) index="0" unique_id=522427816]
+[node name="PopupSprite" parent="TowerStoreHUD/TestDrag/SIEMHawkCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(2097101912, 1733699289) index="0" unique_id=522427816]
 texture = ExtResource("6_n2mrm")
 
-[node name="CardPanel" parent="TestDrag/IPSIntrusionCard" parent_id_path=PackedInt32Array(1750948893) index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/IPSIntrusionCard" parent_id_path=PackedInt32Array(1750948893) index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_0bv7j")
 
-[node name="DisplaySprite" parent="TestDrag/IPSIntrusionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1750948893, 113385319) index="0" unique_id=590825140]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/IPSIntrusionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1750948893, 113385319) index="0" unique_id=590825140]
 position = Vector2(68.999954, 63.000053)
 scale = Vector2(0.1055319, 0.1055319)
 texture = ExtResource("7_s2uex")
 flip_h = true
 
-[node name="PopupSprite" parent="TestDrag/IPSIntrusionCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1750948893, 1733699289) index="0" unique_id=522427816]
+[node name="PopupSprite" parent="TowerStoreHUD/TestDrag/IPSIntrusionCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1750948893, 1733699289) index="0" unique_id=522427816]
 texture = ExtResource("7_s2uex")
 
-[node name="CardPanel" parent="TestDrag/HoneypotProductionCard" parent_id_path=PackedInt32Array(1207325943) index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/HoneypotProductionCard" parent_id_path=PackedInt32Array(1207325943) index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_ef056")
 
-[node name="DisplaySprite" parent="TestDrag/HoneypotProductionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1207325943, 113385319) index="0" unique_id=590825140]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/HoneypotProductionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1207325943, 113385319) index="0" unique_id=590825140]
 position = Vector2(70.000046, 68.000046)
 scale = Vector2(0.27734375, 0.27734375)
 texture = ExtResource("8_4m1ib")
 
-[node name="PopupSprite" parent="TestDrag/HoneypotProductionCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1207325943, 1733699289) index="0" unique_id=522427816]
+[node name="PopupSprite" parent="TowerStoreHUD/TestDrag/HoneypotProductionCard/InformationPopup/PopupCard/ImagePanel" parent_id_path=PackedInt32Array(1207325943, 1733699289) index="0" unique_id=522427816]
 texture = ExtResource("8_4m1ib")
 
-[node name="CardPanel" parent="TestDrag/XDRMechCard" index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/XDRMechCard" index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_0wjpt")
 
-[node name="DisplaySprite" parent="TestDrag/XDRMechCard/DisplayImageContainer" index="0" unique_id=590825140]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/XDRMechCard/DisplayImageContainer" index="0" unique_id=590825140]
 position = Vector2(67.000015, 63.00008)
 scale = Vector2(0.19083351, 0.19083351)
 
-[node name="PopupSprite" parent="TestDrag/XDRMechCard/InformationPopup/PopupCard/ImagePanel" index="0" unique_id=522427816]
+[node name="PopupSprite" parent="TowerStoreHUD/TestDrag/XDRMechCard/InformationPopup/PopupCard/ImagePanel" index="0" unique_id=522427816]
 texture = ExtResource("44_ny6iy")
 
 [node name="Otherground_Cutscene" parent="." index="27" unique_id=716042366]
@@ -775,11 +775,16 @@ autoplay = "idle"
 [node name="XDR_Mech" parent="Sprites" parent_id_path=PackedInt32Array(1360860051) index="7"]
 level_1_head_path = NodePath("")
 
-[node name="WaveTimerLabel" type="Label" parent="." index="31" unique_id=748525816]
-offset_left = 14.0
-offset_top = 180.0
-offset_right = 75.0
-offset_bottom = 214.0
+[node name="WaveTimerLabel" type="Label" parent="GameControlsHUD/Root" index="6" unique_id=748525816]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -469.0
+offset_top = 72.0
+offset_right = -373.0
+offset_bottom = 104.0
+grow_horizontal = 0
 theme_override_colors/font_color = Color(0.84740216, 0, 0.27653462, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0)
 theme_override_colors/font_outline_color = Color(0.86557156, 0.7852431, 0.73393023, 1)
@@ -813,11 +818,11 @@ debug_color = Color(0.527329, 0.55088747, 0.4387471, 0.41960785)
 [editable path="BotnetNode"]
 [editable path="WormBoss"]
 [editable path="Wave20ClearanceHUD"]
-[editable path="TestDrag/CyberGuardianCard"]
-[editable path="TestDrag/LaserTurretCard"]
-[editable path="TestDrag/IDSScannerCard"]
-[editable path="TestDrag/EDRHunterCard"]
-[editable path="TestDrag/SIEMHawkCard"]
-[editable path="TestDrag/IPSIntrusionCard"]
-[editable path="TestDrag/HoneypotProductionCard"]
-[editable path="TestDrag/XDRMechCard"]
+[editable path="TowerStoreHUD/TestDrag/CyberGuardianCard"]
+[editable path="TowerStoreHUD/TestDrag/LaserTurretCard"]
+[editable path="TowerStoreHUD/TestDrag/IDSScannerCard"]
+[editable path="TowerStoreHUD/TestDrag/EDRHunterCard"]
+[editable path="TowerStoreHUD/TestDrag/SIEMHawkCard"]
+[editable path="TowerStoreHUD/TestDrag/IPSIntrusionCard"]
+[editable path="TowerStoreHUD/TestDrag/HoneypotProductionCard"]
+[editable path="TowerStoreHUD/TestDrag/XDRMechCard"]

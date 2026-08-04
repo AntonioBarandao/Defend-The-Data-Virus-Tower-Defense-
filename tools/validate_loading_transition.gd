@@ -33,6 +33,14 @@ func _run() -> void:
 	if loading_screen == null:
 		quit(1)
 		return
+	var asset_cache := root.get_node_or_null("/root/AssetCache")
+	_check(asset_cache != null, "The demand-loaded asset cache should be available.")
+	if asset_cache != null:
+		var pending_paths := asset_cache.get("_pending_paths") as Dictionary
+		_check(
+			pending_paths.is_empty(),
+			"The asset cache must not preload tower animations during startup."
+		)
 	loading_screen.minimum_visible_seconds = 180.0
 
 	_check(

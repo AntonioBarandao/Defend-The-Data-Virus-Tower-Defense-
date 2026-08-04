@@ -21,8 +21,8 @@ const NORMAL_GAME_SCENE := "res://Scenes/Gameplay/Normal_Game.tscn"
 const CUTSCENE_TEST_GAME_SCENE := "res://Scenes/Gameplay/Cutscene_Test_Game.tscn"
 const ADMIN_GAME_SCENE := "res://Scenes/Gameplay/Admin_Sandbox.tscn"
 const MUSIC_GAME_SCENES := [NORMAL_GAME_SCENE, ADMIN_GAME_SCENE]
-const NORMAL_GAME_SOUNDTRACK := "res://assets/soundtrack/Cyber-Business-Soundtrack.wav"
-const ADMIN_GAME_SOUNDTRACK := "res://assets/soundtrack/Virtual Business.wav"
+const NORMAL_GAME_SOUNDTRACK := "res://assets/soundtrack/Cyber-Business-Soundtrack.ogg"
+const ADMIN_GAME_SOUNDTRACK := "res://assets/soundtrack/Virtual Business.ogg"
 
 var _failures: Array[String] = []
 

@@ -19,7 +19,7 @@ func _run() -> void:
 				12,
 				WaveManagerScript.ADWARE
 			) == 1
-			and wave_manager.get_total_pathway_virus_count(12) == 27
+			and wave_manager.get_total_pathway_virus_count(12) == 64
 			and not schedule.is_empty()
 			and StringName(schedule[0].get("virus_type", &""))
 				== WaveManagerScript.ADWARE,

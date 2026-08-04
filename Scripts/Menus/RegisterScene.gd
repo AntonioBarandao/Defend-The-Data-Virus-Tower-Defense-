@@ -1,8 +1,10 @@
 
 extends Control
-var auth = AuthWrapper.new()
+var auth: Object = null
 
 func _ready():
+	if ClassDB.class_exists(&"AuthWrapper"):
+		auth = ClassDB.instantiate(&"AuthWrapper")
 	$FormPanel/VBox/CreateButton.pressed.connect(_on_create_pressed)
 	$FormPanel/VBox/BackButton.pressed.connect(_on_back_pressed)
 	$FormPanel/VBox/UsernameInput.grab_focus()
@@ -27,7 +29,11 @@ func _on_create_pressed():
 	if password != confirm_password:
 		status.text = "Passwords do not match."
 		return
-	
+
+	if auth == null or not auth.has_method(&"register_user"):
+		status.text = "Account registration is unavailable on this platform."
+		return
+
 	if auth.register_user(username, password):
 		status.text = "Account created successfully!"
 		await get_tree().create_timer(1.0).timeout

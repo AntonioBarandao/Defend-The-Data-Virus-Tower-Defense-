@@ -100,7 +100,7 @@ var current_version_prompt_device_id: String = ""
 var pairing_manager: PairingManager = null
 var pairing_timeout_timer: Timer = null
 var pending_pairing_device_id: String = ""
-const PAIRING_TIMEOUT_SECONDS := 5.0
+const PAIRING_TIMEOUT_SECONDS := 15.0
 signal pairing_succeeded(device_id: String)
 signal pairing_failed(device_id: String, reason: String)
 
@@ -518,14 +518,19 @@ func stop_scanning():
 var udp_listener: PacketPeerUDP
 const UDP_LISTENER_PORT := 9877
 
-func start_udp_listener():
+func start_udp_listener() -> bool:
+	if udp_listener and udp_listener.is_bound():
+		return true
+
 	udp_listener = PacketPeerUDP.new()
 	udp_listener.set_broadcast_enabled(true)
 	var err = udp_listener.bind(UDP_LISTENER_PORT)
 	if err != OK:
 		printerr("Failed to bind UDP listener on port ", UDP_LISTENER_PORT, ": ", err)
-		return
+		udp_listener = null
+		return false
 	debug_print("Started UDP listener on port " + str(UDP_LISTENER_PORT))
+	return true
 
 func stop_udp_listener():
 	if udp_listener and udp_listener.is_bound():
@@ -1043,8 +1048,26 @@ func get_current_godot_version() -> String:
 	return "%d.%d.%d" % [version_info.major, version_info.minor, version_info.patch]
 
 func versions_match(version1: String, version2: String) -> bool:
-	# Compare major.minor.patch versions
-	return version1 == version2
+	# Xogot may report "4.7" while Godot reports "4.7.0". Remote
+	# debugging compatibility is determined by the major/minor engine line.
+	var version1_parts := version1.strip_edges().trim_prefix("v").split(".")
+	var version2_parts := version2.strip_edges().trim_prefix("v").split(".")
+	if version1_parts.size() < 2 or version2_parts.size() < 2:
+		return version1.strip_edges() == version2.strip_edges()
+
+	var version1_major := String(version1_parts[0])
+	var version1_minor := String(version1_parts[1])
+	var version2_major := String(version2_parts[0])
+	var version2_minor := String(version2_parts[1])
+	if not version1_major.is_valid_int() or not version1_minor.is_valid_int():
+		return false
+	if not version2_major.is_valid_int() or not version2_minor.is_valid_int():
+		return false
+
+	return (
+		version1_major.to_int() == version2_major.to_int()
+		and version1_minor.to_int() == version2_minor.to_int()
+	)
 
 func _show_version_mismatch_dialog(client_version: String, editor_version: String, device_name: String):
 	if not version_dialog:
@@ -1308,6 +1331,10 @@ func send_pairing_request(device_data: Dictionary, pairing_code: String) -> void
 			emit_signal("pairing_failed", device_id, "Failed to start TCP server")
 			return
 		debug_print("[Pairing] TCP server started on port %d" % TCP_PORT)
+	if not start_udp_listener():
+		printerr("[Pairing] Failed to start UDP response listener")
+		emit_signal("pairing_failed", device_id, "Failed to start pairing response listener")
+		return
 
 	# Create request message
 	var request = {
@@ -1603,7 +1630,7 @@ func _on_scan_button_pressed() -> void:
 		ensureXogotExportPreset()
 		
 		start_scanning()
-		if start_tcp_server():
+		if start_tcp_server() and start_udp_listener():
 			isScanning = true
 			%ScanButton.text = "Stop Search"
 			
@@ -1614,8 +1641,10 @@ func _on_scan_button_pressed() -> void:
 			# Update help text visibility
 			_update_no_devices_help()
 		else:
-			# TCP server failed, scanning not started
+			# A required response listener failed, so scanning cannot pair.
 			stop_scanning()
+			stop_tcp_server()
+			stop_udp_listener()
 			isScanning = false
 
 # Removed - no longer using device buttons

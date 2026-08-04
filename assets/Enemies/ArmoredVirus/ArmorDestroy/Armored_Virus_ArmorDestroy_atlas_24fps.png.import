@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://de2lrwg0f4l7r"
-path="res://.godot/imported/Armored_Virus_ArmorDestroy_atlas_24fps.png-962c610e3454144993581d92b145d594.ctex"
+path.s3tc="res://.godot/imported/Armored_Virus_ArmorDestroy_atlas_24fps.png-962c610e3454144993581d92b145d594.s3tc.ctex"
+path.etc2="res://.godot/imported/Armored_Virus_ArmorDestroy_atlas_24fps.png-962c610e3454144993581d92b145d594.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Enemies/ArmoredVirus/ArmorDestroy/Armored_Virus_ArmorDestroy_atlas_24fps.png"
-dest_files=["res://.godot/imported/Armored_Virus_ArmorDestroy_atlas_24fps.png-962c610e3454144993581d92b145d594.ctex"]
+dest_files=["res://.godot/imported/Armored_Virus_ArmorDestroy_atlas_24fps.png-962c610e3454144993581d92b145d594.s3tc.ctex", "res://.godot/imported/Armored_Virus_ArmorDestroy_atlas_24fps.png-962c610e3454144993581d92b145d594.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

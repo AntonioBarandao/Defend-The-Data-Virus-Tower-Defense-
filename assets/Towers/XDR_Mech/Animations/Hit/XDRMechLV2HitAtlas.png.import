@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dljuj1h6uyk5a"
-path="res://.godot/imported/XDRMechLV2HitAtlas.png-d6fe0f8b1b97ae1ab59ee9a2a4a2b219.ctex"
+path.s3tc="res://.godot/imported/XDRMechLV2HitAtlas.png-d6fe0f8b1b97ae1ab59ee9a2a4a2b219.s3tc.ctex"
+path.etc2="res://.godot/imported/XDRMechLV2HitAtlas.png-d6fe0f8b1b97ae1ab59ee9a2a4a2b219.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Towers/XDR_Mech/Animations/Hit/XDRMechLV2HitAtlas.png"
-dest_files=["res://.godot/imported/XDRMechLV2HitAtlas.png-d6fe0f8b1b97ae1ab59ee9a2a4a2b219.ctex"]
+dest_files=["res://.godot/imported/XDRMechLV2HitAtlas.png-d6fe0f8b1b97ae1ab59ee9a2a4a2b219.s3tc.ctex", "res://.godot/imported/XDRMechLV2HitAtlas.png-d6fe0f8b1b97ae1ab59ee9a2a4a2b219.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

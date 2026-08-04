@@ -156,10 +156,14 @@ alignment = 2
 [node name="LivesPanel" type="PanelContainer" parent="Root"]
 custom_minimum_size = Vector2(250, 76)
 layout_mode = 1
-offset_left = 1297.0
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -623.0
 offset_top = 104.0
-offset_right = 1547.0
+offset_right = -373.0
 offset_bottom = 183.0
+grow_horizontal = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_lives")
 

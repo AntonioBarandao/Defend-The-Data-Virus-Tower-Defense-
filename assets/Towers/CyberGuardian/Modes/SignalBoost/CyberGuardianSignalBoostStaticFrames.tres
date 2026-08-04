@@ -1,6 +1,6 @@
 [gd_resource type="SpriteFrames" load_steps=2 format=3]
 
-[ext_resource type="Texture2D" path="res://Assets/Towers/CyberGuardian/Modes/Cyber_Guardian_SignalBoost_Sprite.png" id="1_signal"]
+[ext_resource type="Texture2D" path="res://assets/Towers/CyberGuardian/Modes/Cyber_Guardian_SignalBoost_Sprite.png" id="1_signal"]
 
 [resource]
 animations = [{

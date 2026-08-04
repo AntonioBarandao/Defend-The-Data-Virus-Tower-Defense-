@@ -1,7 +1,7 @@
 extends SceneTree
 
 const OUTPUT_PATH := "res://assets/Towers/CyberGuardian/Modes/SignalBoost/CyberGuardianSignalBoostSpriteFrames.tres"
-const FRAME_SIZE := Vector2(720, 720)
+const FRAME_SIZE := Vector2(300, 300)
 const ANIMATION_SPEED := 24.0
 
 const ANIMATIONS := [

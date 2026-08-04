@@ -56,6 +56,7 @@ var _menu_rest_modulate := Color.WHITE
 var _menu_tween: Tween
 var _wave_set_panel_store_rest_position := Vector2.ZERO
 var _wave_set_panel_store_position_cached := false
+var _victory_screen_active := false
 
 
 func _ready() -> void:
@@ -128,8 +129,27 @@ func apply_store_companion_slide(slide_offset: float) -> void:
 		_wave_set_panel.position = _wave_set_panel_store_rest_position + Vector2(slide_offset, 0.0)
 
 
+func set_victory_screen_active(active: bool) -> void:
+	_victory_screen_active = active
+	visible = not active
+	if not active:
+		return
+
+	if _menu_tween != null and _menu_tween.is_valid():
+		_menu_tween.kill()
+	_menu_open = false
+	if _menu_panel != null:
+		_menu_panel.hide()
+	if _dim_overlay != null:
+		_dim_overlay.hide()
+	if _settings_panel != null:
+		_settings_panel.hide()
+	if _cyber_info_hud != null and _cyber_info_hud.has_method("close"):
+		_cyber_info_hud.call("close")
+
+
 func _toggle_menu() -> void:
-	if _menu_panel == null:
+	if _victory_screen_active or _menu_panel == null:
 		return
 
 	if _menu_open:
@@ -204,6 +224,8 @@ func _return_to_main_menu() -> void:
 
 
 func _apply_wave_set() -> void:
+	if _victory_screen_active:
+		return
 	if _game == null or not _game.has_method("set_current_wave_for_demo"):
 		return
 	if _wave_input == null:

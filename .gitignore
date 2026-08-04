@@ -3,3 +3,5 @@
 addons/godot-git-plugin/windows/~libgit_plugin.windows.editor.x86_64.dll*
 /android/
 *.tmp
+/APK_Version/DefendTheData-latest.apk
+/APK_Version/DefendTheData-latest.apk.idsig

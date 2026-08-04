@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://crcfkj8otlwot"
-path="res://.godot/imported/EDR_Hunter_LV1_idle.png-e834fd3adf37caf8fe799ac021976fdb.ctex"
+path.s3tc="res://.godot/imported/EDR_Hunter_LV1_idle.png-e834fd3adf37caf8fe799ac021976fdb.s3tc.ctex"
+path.etc2="res://.godot/imported/EDR_Hunter_LV1_idle.png-e834fd3adf37caf8fe799ac021976fdb.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Towers/EDR_Hunter/EDR_Hunter_LV1_idle.png"
-dest_files=["res://.godot/imported/EDR_Hunter_LV1_idle.png-e834fd3adf37caf8fe799ac021976fdb.ctex"]
+dest_files=["res://.godot/imported/EDR_Hunter_LV1_idle.png-e834fd3adf37caf8fe799ac021976fdb.s3tc.ctex", "res://.godot/imported/EDR_Hunter_LV1_idle.png-e834fd3adf37caf8fe799ac021976fdb.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

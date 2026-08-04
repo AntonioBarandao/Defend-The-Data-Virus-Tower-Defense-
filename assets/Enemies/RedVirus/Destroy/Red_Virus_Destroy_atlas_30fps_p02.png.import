@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ce7kiqvqi88bs"
-path="res://.godot/imported/Red_Virus_Destroy_atlas_30fps_p02.png-5a297efdf4b22d8724292c8ef23b15cf.ctex"
+path.s3tc="res://.godot/imported/Red_Virus_Destroy_atlas_30fps_p02.png-5a297efdf4b22d8724292c8ef23b15cf.s3tc.ctex"
+path.etc2="res://.godot/imported/Red_Virus_Destroy_atlas_30fps_p02.png-5a297efdf4b22d8724292c8ef23b15cf.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Enemies/RedVirus/Destroy/Red_Virus_Destroy_atlas_30fps_p02.png"
-dest_files=["res://.godot/imported/Red_Virus_Destroy_atlas_30fps_p02.png-5a297efdf4b22d8724292c8ef23b15cf.ctex"]
+dest_files=["res://.godot/imported/Red_Virus_Destroy_atlas_30fps_p02.png-5a297efdf4b22d8724292c8ef23b15cf.s3tc.ctex", "res://.godot/imported/Red_Virus_Destroy_atlas_30fps_p02.png-5a297efdf4b22d8724292c8ef23b15cf.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

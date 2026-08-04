@@ -15,7 +15,7 @@ const DEFEAT_ANIMATION := &"defeat"
 
 @onready var _root: Control = $Root
 @onready var _dim_overlay: ColorRect = $Root/DimOverlay
-@onready var _animated_display: AnimatedSprite2D = $Root/AnimatedDisplay
+@onready var _animated_display: AnimatedSprite2D = $Root/DisplayAnchor/AnimatedDisplay
 @onready var _play_again_button: Button = $Root/PlayAgainButton
 @onready var _quit_game_button: Button = $Root/QuitGameButton
 

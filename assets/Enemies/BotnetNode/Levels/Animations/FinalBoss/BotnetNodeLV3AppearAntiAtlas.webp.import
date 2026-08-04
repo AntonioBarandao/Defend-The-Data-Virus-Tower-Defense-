@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c1fmx627iy84x"
-path="res://.godot/imported/BotnetNodeLV3AppearAntiAtlas.webp-4e29af087879f67297d9288bd399c12a.ctex"
+path.s3tc="res://.godot/imported/BotnetNodeLV3AppearAntiAtlas.webp-4e29af087879f67297d9288bd399c12a.s3tc.ctex"
+path.etc2="res://.godot/imported/BotnetNodeLV3AppearAntiAtlas.webp-4e29af087879f67297d9288bd399c12a.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Enemies/BotnetNode/Levels/Animations/FinalBoss/BotnetNodeLV3AppearAntiAtlas.webp"
-dest_files=["res://.godot/imported/BotnetNodeLV3AppearAntiAtlas.webp-4e29af087879f67297d9288bd399c12a.ctex"]
+dest_files=["res://.godot/imported/BotnetNodeLV3AppearAntiAtlas.webp-4e29af087879f67297d9288bd399c12a.s3tc.ctex", "res://.godot/imported/BotnetNodeLV3AppearAntiAtlas.webp-4e29af087879f67297d9288bd399c12a.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

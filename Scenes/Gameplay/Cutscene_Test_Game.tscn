@@ -14,7 +14,7 @@
 [ext_resource type="Script" uid="uid://d1ugiseg13u06" path="res://Scripts/Gameplay/tower_placement_area.gd" id="15_place"]
 [ext_resource type="FontFile" uid="uid://2u6nbvofsl5k" path="res://assets/Fonts/Cyber Crown/Cyber Crown.ttf" id="15_wq1r8"]
 [ext_resource type="PackedScene" uid="uid://fet10k45d4t6" path="res://Scenes/UI/UtilityOverlayHUD.tscn" id="16_demo_overlay"]
-[ext_resource type="Texture2D" uid="uid://bys5vnsudc4iq" path="res://tools/Cutscene.png" id="16_m0vd8"]
+[ext_resource type="Texture2D" uid="uid://c3rt65w284bmx" path="res://assets/Backgrounds/Cutscene.png" id="16_m0vd8"]
 [ext_resource type="PackedScene" uid="uid://bthmcxcu7ao8p" path="res://Scenes/UI/TextCutsceneHUD.tscn" id="18_cutscene"]
 [ext_resource type="Texture2D" uid="uid://bg30biooew5ch" path="res://assets/Towers/CyberGuardian/Display_CyberGuardian.png" id="19_4aenv"]
 [ext_resource type="FontFile" uid="uid://bbxu3ua0wyy5m" path="res://assets/Fonts/naked_power/Naked Power Bd.otf" id="20_4aenv"]
@@ -43,6 +43,7 @@
 [ext_resource type="Texture2D" uid="uid://d26s2ivyd1ttd" path="res://assets/UI/TowerStoreArrowHex.svg" id="37_store_toggle"]
 [ext_resource type="PackedScene" uid="uid://c3y7m55tbgdll" path="res://Scenes/UI/SignalBoostHUD.tscn" id="38_signal_boost_hud"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/DefeatHUD.tscn" id="99_defeat_hud"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/VictoryHUD.tscn" id="100_victory_hud"]
 [ext_resource type="PackedScene" path="res://Scenes/Towers/XDR_Mech.tscn" id="39_xdr_mech"]
 [ext_resource type="Resource" path="res://Resources/TowerShopCards/XDRMechCard.tres" id="40_xdr_card"]
 [ext_resource type="Texture2D" path="res://assets/Towers/XDR_Mech/Display_XDR_Mech.png" id="41_xdr_display"]
@@ -240,6 +241,13 @@ script = ExtResource("1_on2he")
 virus_template_path = NodePath("")
 virus_spawn_path = NodePath("VirusElements/SpawnVirus")
 gameplay_soundtrack_path = NodePath("Music/CyberBusiness")
+tower_store_panel_path = NodePath("TowerStoreHUD/TestDrag")
+tower_store_background_path = NodePath("TowerStoreHUD/TestDrag/TowerTrayBackground")
+tower_store_title_label_path = NodePath("TowerStoreHUD/TestDrag/TowerShopTitle")
+tower_store_hint_label_path = NodePath("TowerStoreHUD/TestDrag/TowerShopHint")
+tower_store_toggle_button_path = NodePath("TowerStoreHUD/TestDrag/TowerStoreToggleButton")
+wave_label_path = NodePath("GameControlsHUD/Root/WavesLabel")
+wave_timer_label_path = NodePath("GameControlsHUD/Root/WaveTimerLabel")
 show_path_guide = false
 
 [node name="Music" type="Node" parent="." unique_id=1762141767]
@@ -327,6 +335,8 @@ offset_bottom = 159.0
 
 [node name="DefeatHUD" parent="." unique_id=192962941 instance=ExtResource("99_defeat_hud")]
 
+[node name="VictoryHUD" parent="." instance=ExtResource("100_victory_hud")]
+
 [node name="CutsceneCamera" type="Camera2D" parent="." unique_id=2005815930]
 position = Vector2(956, 544)
 
@@ -407,15 +417,21 @@ debug_color = Color(0.4392157, 0.45490196, 1, 0.41960785)
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=394633943]
 visible = false
 
-[node name="TestDrag" type="Control" parent="." unique_id=1456189078]
+[node name="TowerStoreHUD" type="CanvasLayer" parent="." unique_id=207700130]
+layer = 130
+
+[node name="TestDrag" type="Control" parent="TowerStoreHUD" unique_id=1456189078]
 z_index = 200
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -1920.0
 offset_top = -124.00006
-offset_right = 40.0
-offset_bottom = -84.00006
+offset_bottom = 955.99994
+grow_horizontal = 0
 
-[node name="TowerTrayBackground" type="ColorRect" parent="TestDrag" unique_id=161859911]
+[node name="TowerTrayBackground" type="ColorRect" parent="TowerStoreHUD/TestDrag" unique_id=161859911]
 z_index = 205
 z_as_relative = false
 layout_mode = 0
@@ -425,7 +441,7 @@ offset_right = 1921.146
 offset_bottom = 1204.0
 color = Color(0, 0, 0, 0.7058824)
 
-[node name="TowerShopTitle" type="Label" parent="TestDrag" unique_id=241194735]
+[node name="TowerShopTitle" type="Label" parent="TowerStoreHUD/TestDrag" unique_id=241194735]
 z_index = 212
 layout_mode = 0
 offset_left = 1580.0
@@ -441,7 +457,7 @@ text = "TOWER SHOP"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TowerShopHint" type="Label" parent="TestDrag" unique_id=900163812]
+[node name="TowerShopHint" type="Label" parent="TowerStoreHUD/TestDrag" unique_id=900163812]
 z_index = 212
 layout_mode = 0
 offset_left = 1580.0
@@ -458,7 +474,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="TowerStoreToggleButton" type="Button" parent="TestDrag" unique_id=1969264728]
+[node name="TowerStoreToggleButton" type="Button" parent="TowerStoreHUD/TestDrag" unique_id=1969264728]
 z_index = 215
 custom_minimum_size = Vector2(64, 80)
 layout_mode = 0
@@ -480,7 +496,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_store_toggle")
 icon = ExtResource("37_store_toggle")
 expand_icon = true
 
-[node name="CyberGuardianCard" parent="TestDrag" unique_id=1248978504 instance=ExtResource("29_shop_card")]
+[node name="CyberGuardianCard" parent="TowerStoreHUD/TestDrag" unique_id=1248978504 instance=ExtResource("29_shop_card")]
 z_index = 210
 z_as_relative = false
 layout_mode = 0
@@ -491,29 +507,29 @@ offset_bottom = 408.0
 card_resource = ExtResource("30_cyber_card")
 tower_name = "Cyber Guardian"
 
-[node name="CardPanel" parent="TestDrag/CyberGuardianCard" index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/CyberGuardianCard" index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_qnrg6")
 
-[node name="DisplaySprite" parent="TestDrag/CyberGuardianCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1248978504, 113385319) index="0" unique_id=590825140]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/CyberGuardianCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1248978504, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 63.00006)
 scale = Vector2(0.2596484, 0.2596484)
 texture = ExtResource("19_4aenv")
 
-[node name="NameLabel" parent="TestDrag/CyberGuardianCard" index="2" unique_id=1393031364]
+[node name="NameLabel" parent="TowerStoreHUD/TestDrag/CyberGuardianCard" index="2" unique_id=1393031364]
 offset_top = -0.99993896
 offset_bottom = 35.00006
 text = "Cyber Guardian"
 
-[node name="CostLabel" parent="TestDrag/CyberGuardianCard" index="3" unique_id=1790508198]
+[node name="CostLabel" parent="TowerStoreHUD/TestDrag/CyberGuardianCard" index="3" unique_id=1790508198]
 text = "FREE"
 
-[node name="InformationPopup" parent="TestDrag/CyberGuardianCard" index="5" unique_id=2022084967]
+[node name="InformationPopup" parent="TowerStoreHUD/TestDrag/CyberGuardianCard" index="5" unique_id=2022084967]
 visible = false
 offset_left = -430.0
 offset_right = -10.0
 offset_bottom = 192.0
 
-[node name="LaserTurretCard" parent="TestDrag" unique_id=1774681448 instance=ExtResource("29_shop_card")]
+[node name="LaserTurretCard" parent="TowerStoreHUD/TestDrag" unique_id=1774681448 instance=ExtResource("29_shop_card")]
 z_index = 210
 z_as_relative = false
 layout_mode = 0
@@ -525,26 +541,26 @@ card_resource = ExtResource("31_laser_card")
 tower_name = "Laser Turret"
 deploy_cost = 125
 
-[node name="CardPanel" parent="TestDrag/LaserTurretCard" index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/LaserTurretCard" index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_syyru")
 
-[node name="DisplaySprite" parent="TestDrag/LaserTurretCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1774681448, 113385319) index="0" unique_id=590825140]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/LaserTurretCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1774681448, 113385319) index="0" unique_id=590825140]
 position = Vector2(68, 59.00006)
 texture = ExtResource("21_qnrg6")
 
-[node name="NameLabel" parent="TestDrag/LaserTurretCard" index="2" unique_id=1393031364]
+[node name="NameLabel" parent="TowerStoreHUD/TestDrag/LaserTurretCard" index="2" unique_id=1393031364]
 text = "Laser Turret"
 
-[node name="CostLabel" parent="TestDrag/LaserTurretCard" index="3" unique_id=1790508198]
+[node name="CostLabel" parent="TowerStoreHUD/TestDrag/LaserTurretCard" index="3" unique_id=1790508198]
 text = "125"
 
-[node name="InformationPopup" parent="TestDrag/LaserTurretCard" index="5" unique_id=2022084967]
+[node name="InformationPopup" parent="TowerStoreHUD/TestDrag/LaserTurretCard" index="5" unique_id=2022084967]
 visible = false
 offset_left = -430.0
 offset_right = -10.0
 offset_bottom = 192.0
 
-[node name="IDSScannerCard" parent="TestDrag" unique_id=2136481415 instance=ExtResource("29_shop_card")]
+[node name="IDSScannerCard" parent="TowerStoreHUD/TestDrag" unique_id=2136481415 instance=ExtResource("29_shop_card")]
 z_index = 210
 z_as_relative = false
 layout_mode = 0
@@ -555,27 +571,27 @@ offset_bottom = 592.0
 card_resource = ExtResource("32_ids_card")
 tower_name = "IDS Scanner"
 
-[node name="CardPanel" parent="TestDrag/IDSScannerCard" index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/IDSScannerCard" index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_5iosg")
 
-[node name="DisplaySprite" parent="TestDrag/IDSScannerCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2136481415, 113385319) index="0" unique_id=590825140]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/IDSScannerCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2136481415, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 58.00006)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("23_syyru")
 
-[node name="NameLabel" parent="TestDrag/IDSScannerCard" index="2" unique_id=1393031364]
+[node name="NameLabel" parent="TowerStoreHUD/TestDrag/IDSScannerCard" index="2" unique_id=1393031364]
 text = "IDS Scanner"
 
-[node name="CostLabel" parent="TestDrag/IDSScannerCard" index="3" unique_id=1790508198]
+[node name="CostLabel" parent="TowerStoreHUD/TestDrag/IDSScannerCard" index="3" unique_id=1790508198]
 text = "150"
 
-[node name="InformationPopup" parent="TestDrag/IDSScannerCard" index="5" unique_id=2022084967]
+[node name="InformationPopup" parent="TowerStoreHUD/TestDrag/IDSScannerCard" index="5" unique_id=2022084967]
 visible = false
 offset_left = -430.0
 offset_right = -10.0
 offset_bottom = 192.0
 
-[node name="EDRHunterCard" parent="TestDrag" unique_id=1058679109 instance=ExtResource("29_shop_card")]
+[node name="EDRHunterCard" parent="TowerStoreHUD/TestDrag" unique_id=1058679109 instance=ExtResource("29_shop_card")]
 z_index = 210
 z_as_relative = false
 layout_mode = 0
@@ -587,29 +603,29 @@ card_resource = ExtResource("33_edr_card")
 tower_name = "EDR Hunter"
 deploy_cost = 175
 
-[node name="CardPanel" parent="TestDrag/EDRHunterCard" index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/EDRHunterCard" index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_cqx10")
 
-[node name="DisplaySprite" parent="TestDrag/EDRHunterCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1058679109, 113385319) index="0" unique_id=590825140]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/EDRHunterCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1058679109, 113385319) index="0" unique_id=590825140]
 position = Vector2(67, 59.00006)
 scale = Vector2(0.06, 0.06)
 texture = ExtResource("25_5iosg")
 
-[node name="NameLabel" parent="TestDrag/EDRHunterCard" index="2" unique_id=1393031364]
+[node name="NameLabel" parent="TowerStoreHUD/TestDrag/EDRHunterCard" index="2" unique_id=1393031364]
 text = "EDR Hunter"
 
-[node name="CostLabel" parent="TestDrag/EDRHunterCard" index="3" unique_id=1790508198]
+[node name="CostLabel" parent="TowerStoreHUD/TestDrag/EDRHunterCard" index="3" unique_id=1790508198]
 offset_left = 12.0
 offset_right = 150.0
 text = "175"
 
-[node name="InformationPopup" parent="TestDrag/EDRHunterCard" index="5" unique_id=2022084967]
+[node name="InformationPopup" parent="TowerStoreHUD/TestDrag/EDRHunterCard" index="5" unique_id=2022084967]
 visible = false
 offset_left = -430.0
 offset_right = -10.0
 offset_bottom = 192.0
 
-[node name="SIEMHawkCard" parent="TestDrag" unique_id=2097101912 instance=ExtResource("29_shop_card")]
+[node name="SIEMHawkCard" parent="TowerStoreHUD/TestDrag" unique_id=2097101912 instance=ExtResource("29_shop_card")]
 z_index = 210
 z_as_relative = false
 layout_mode = 0
@@ -621,27 +637,27 @@ card_resource = ExtResource("34_siem_card")
 tower_name = "SIEM Hawk"
 deploy_cost = 225
 
-[node name="CardPanel" parent="TestDrag/SIEMHawkCard" index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/SIEMHawkCard" index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_b1f5y")
 
-[node name="DisplaySprite" parent="TestDrag/SIEMHawkCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2097101912, 113385319) index="0" unique_id=590825140]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/SIEMHawkCard/DisplayImageContainer" parent_id_path=PackedInt32Array(2097101912, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 63.00006)
 scale = Vector2(0.08, 0.08)
 texture = ExtResource("27_cqx10")
 
-[node name="NameLabel" parent="TestDrag/SIEMHawkCard" index="2" unique_id=1393031364]
+[node name="NameLabel" parent="TowerStoreHUD/TestDrag/SIEMHawkCard" index="2" unique_id=1393031364]
 text = "SIEM Hawk"
 
-[node name="CostLabel" parent="TestDrag/SIEMHawkCard" index="3" unique_id=1790508198]
+[node name="CostLabel" parent="TowerStoreHUD/TestDrag/SIEMHawkCard" index="3" unique_id=1790508198]
 text = "225"
 
-[node name="InformationPopup" parent="TestDrag/SIEMHawkCard" index="5" unique_id=2022084967]
+[node name="InformationPopup" parent="TowerStoreHUD/TestDrag/SIEMHawkCard" index="5" unique_id=2022084967]
 visible = false
 offset_left = -430.0
 offset_right = -10.0
 offset_bottom = 192.0
 
-[node name="IPSIntrusionCard" parent="TestDrag" unique_id=1750948893 instance=ExtResource("29_shop_card")]
+[node name="IPSIntrusionCard" parent="TowerStoreHUD/TestDrag" unique_id=1750948893 instance=ExtResource("29_shop_card")]
 z_index = 210
 z_as_relative = false
 layout_mode = 0
@@ -653,27 +669,27 @@ card_resource = ExtResource("35_ips_card")
 tower_name = "IPS Spike"
 deploy_cost = 200
 
-[node name="CardPanel" parent="TestDrag/IPSIntrusionCard" index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/IPSIntrusionCard" index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_mljs0")
 
-[node name="DisplaySprite" parent="TestDrag/IPSIntrusionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1750948893, 113385319) index="0" unique_id=590825140]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/IPSIntrusionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1750948893, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 61.00006)
 scale = Vector2(0.08, 0.08)
 texture = ExtResource("29_b1f5y")
 
-[node name="NameLabel" parent="TestDrag/IPSIntrusionCard" index="2" unique_id=1393031364]
+[node name="NameLabel" parent="TowerStoreHUD/TestDrag/IPSIntrusionCard" index="2" unique_id=1393031364]
 text = "IPS Intrusion"
 
-[node name="CostLabel" parent="TestDrag/IPSIntrusionCard" index="3" unique_id=1790508198]
+[node name="CostLabel" parent="TowerStoreHUD/TestDrag/IPSIntrusionCard" index="3" unique_id=1790508198]
 text = "200"
 
-[node name="InformationPopup" parent="TestDrag/IPSIntrusionCard" index="5" unique_id=2022084967]
+[node name="InformationPopup" parent="TowerStoreHUD/TestDrag/IPSIntrusionCard" index="5" unique_id=2022084967]
 visible = false
 offset_left = -430.0
 offset_right = -10.0
 offset_bottom = 192.0
 
-[node name="HoneypotProductionCard" parent="TestDrag" unique_id=1207325943 instance=ExtResource("29_shop_card")]
+[node name="HoneypotProductionCard" parent="TowerStoreHUD/TestDrag" unique_id=1207325943 instance=ExtResource("29_shop_card")]
 z_index = 210
 z_as_relative = false
 layout_mode = 0
@@ -685,27 +701,27 @@ card_resource = ExtResource("36_honeypot_card")
 tower_name = "Honeypot"
 deploy_cost = 250
 
-[node name="CardPanel" parent="TestDrag/HoneypotProductionCard" index="0" unique_id=1171323138]
+[node name="CardPanel" parent="TowerStoreHUD/TestDrag/HoneypotProductionCard" index="0" unique_id=1171323138]
 theme_override_styles/panel = SubResource("StyleBoxFlat_qunwk")
 
-[node name="DisplaySprite" parent="TestDrag/HoneypotProductionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1207325943, 113385319) index="0" unique_id=590825140]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/HoneypotProductionCard/DisplayImageContainer" parent_id_path=PackedInt32Array(1207325943, 113385319) index="0" unique_id=590825140]
 position = Vector2(69, 61.00006)
 scale = Vector2(0.08, 0.08)
 texture = ExtResource("31_mljs0")
 
-[node name="NameLabel" parent="TestDrag/HoneypotProductionCard" index="2" unique_id=1393031364]
+[node name="NameLabel" parent="TowerStoreHUD/TestDrag/HoneypotProductionCard" index="2" unique_id=1393031364]
 text = "Honeypot Production"
 
-[node name="CostLabel" parent="TestDrag/HoneypotProductionCard" index="3" unique_id=1790508198]
+[node name="CostLabel" parent="TowerStoreHUD/TestDrag/HoneypotProductionCard" index="3" unique_id=1790508198]
 text = "250"
 
-[node name="InformationPopup" parent="TestDrag/HoneypotProductionCard" index="5" unique_id=2022084967]
+[node name="InformationPopup" parent="TowerStoreHUD/TestDrag/HoneypotProductionCard" index="5" unique_id=2022084967]
 visible = false
 offset_left = -430.0
 offset_right = -10.0
 offset_bottom = 192.0
 
-[node name="XDRMechCard" parent="TestDrag" instance=ExtResource("29_shop_card")]
+[node name="XDRMechCard" parent="TowerStoreHUD/TestDrag" instance=ExtResource("29_shop_card")]
 z_index = 210
 z_as_relative = false
 layout_mode = 0
@@ -717,18 +733,18 @@ card_resource = ExtResource("40_xdr_card")
 tower_name = "XDR Mech"
 deploy_cost = 0
 
-[node name="DisplaySprite" parent="TestDrag/XDRMechCard/DisplayImageContainer" index="0"]
+[node name="DisplaySprite" parent="TowerStoreHUD/TestDrag/XDRMechCard/DisplayImageContainer" index="0"]
 position = Vector2(69, 61)
 scale = Vector2(0.09, 0.09)
 texture = ExtResource("41_xdr_display")
 
-[node name="NameLabel" parent="TestDrag/XDRMechCard" index="2"]
+[node name="NameLabel" parent="TowerStoreHUD/TestDrag/XDRMechCard" index="2"]
 text = "XDR Mech"
 
-[node name="CostLabel" parent="TestDrag/XDRMechCard" index="3"]
+[node name="CostLabel" parent="TowerStoreHUD/TestDrag/XDRMechCard" index="3"]
 text = "FREE"
 
-[node name="InformationPopup" parent="TestDrag/XDRMechCard" index="5"]
+[node name="InformationPopup" parent="TowerStoreHUD/TestDrag/XDRMechCard" index="5"]
 visible = false
 offset_left = -430.0
 offset_right = -10.0
@@ -821,11 +837,16 @@ range_preview_outline_color = Color(0.48, 0.83, 1, 0.78)
 visible = false
 position = Vector2(1827, 839.00006)
 
-[node name="WavesLabel" type="Label" parent="." unique_id=1834529841]
-offset_left = 1291.0
+[node name="WavesLabel" type="Label" parent="GameControlsHUD/Root" unique_id=1834529841]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -629.0
 offset_top = 18.0
-offset_right = 1547.0
+offset_right = -373.0
 offset_bottom = 76.0
+grow_horizontal = 0
 theme_override_fonts/font = ExtResource("15_wq1r8")
 theme_override_font_sizes/font_size = 44
 text = "Wave 0/20"
@@ -890,11 +911,12 @@ debug_color = Color(0.5323416, 0.5497722, 0.4333505, 0.41960785)
 [editable path="CutsceneSkipHUD"]
 [editable path="CutsceneDemoMenuHUD"]
 [editable path="DefeatHUD"]
-[editable path="TestDrag/CyberGuardianCard"]
-[editable path="TestDrag/LaserTurretCard"]
-[editable path="TestDrag/IDSScannerCard"]
-[editable path="TestDrag/EDRHunterCard"]
-[editable path="TestDrag/SIEMHawkCard"]
-[editable path="TestDrag/IPSIntrusionCard"]
-[editable path="TestDrag/HoneypotProductionCard"]
-[editable path="TestDrag/XDRMechCard"]
+[editable path="VictoryHUD"]
+[editable path="TowerStoreHUD/TestDrag/CyberGuardianCard"]
+[editable path="TowerStoreHUD/TestDrag/LaserTurretCard"]
+[editable path="TowerStoreHUD/TestDrag/IDSScannerCard"]
+[editable path="TowerStoreHUD/TestDrag/EDRHunterCard"]
+[editable path="TowerStoreHUD/TestDrag/SIEMHawkCard"]
+[editable path="TowerStoreHUD/TestDrag/IPSIntrusionCard"]
+[editable path="TowerStoreHUD/TestDrag/HoneypotProductionCard"]
+[editable path="TowerStoreHUD/TestDrag/XDRMechCard"]

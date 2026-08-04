@@ -2,7 +2,7 @@ class_name TextCutsceneHUD
 extends CanvasLayer
 
 const CentralAudioResolver := preload("res://Scripts/Audio/audio_player_resolver.gd")
-const CYBER_BUSINESS_SOUNDTRACK := preload("res://assets/soundtrack/Cyber-Business-Soundtrack.wav")
+const CYBER_BUSINESS_SOUNDTRACK := preload("res://assets/soundtrack/Cyber-Business-Soundtrack.ogg")
 
 signal act_started(act_number: int)
 signal phase_started(act_number: int, phase_name: StringName)

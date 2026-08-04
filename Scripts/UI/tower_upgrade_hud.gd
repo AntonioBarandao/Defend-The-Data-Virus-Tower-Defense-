@@ -50,6 +50,7 @@ const GUARDIAN_MODE_FIREWALL := &"firewall"
 @export var upgrade_sfx_path: NodePath = ^"Sounds/UIUpgradeSfx"
 @export_group("")
 
+@onready var _root: Control = $Root
 @onready var _menu_panel: PanelContainer = $Root/MenuPanel
 @onready var _content: Control = $Root/MenuPanel/Margin/Content
 @onready var _title_label: Label = $Root/MenuPanel/Margin/Content/Title
@@ -122,6 +123,7 @@ var _spyware_locked := false
 func _ready() -> void:
 	layer = maxi(layer, 240)
 	_menu_panel.hide()
+	_root.resized.connect(_on_root_resized)
 	_ensure_description_label()
 	_configure_static_tooltips()
 	_cache_drawer_positions()
@@ -799,7 +801,7 @@ func _set_upgrade_button_state(tower_id: StringName, at_max_level: bool, can_upg
 
 
 func _cache_drawer_positions() -> void:
-	var viewport_size := get_viewport().get_visible_rect().size
+	var viewport_size := _root.size
 	var panel_size := _menu_panel.size
 	if panel_size.x <= 0.0 or panel_size.y <= 0.0:
 		panel_size = _menu_panel.custom_minimum_size
@@ -809,8 +811,23 @@ func _cache_drawer_positions() -> void:
 			panel_size.y = viewport_size.y
 		_menu_panel.size = panel_size
 
-	_drawer_target_position = Vector2(maxf(0.0, viewport_size.x - panel_size.x - right_margin), _menu_panel.position.y)
+	var centered_y := maxf(0.0, (viewport_size.y - panel_size.y) * 0.5)
+	_drawer_target_position = Vector2(
+		maxf(0.0, viewport_size.x - panel_size.x - right_margin),
+		centered_y
+	)
 	_drawer_hidden_position = Vector2(viewport_size.x + slide_hidden_offset, _drawer_target_position.y)
+
+
+func _on_root_resized() -> void:
+	_cache_drawer_positions()
+	if _menu_tween != null:
+		return
+	_menu_panel.position = (
+		_drawer_target_position
+		if _menu_panel.visible
+		else _drawer_hidden_position
+	)
 
 
 func _show_menu_panel_animated() -> void:

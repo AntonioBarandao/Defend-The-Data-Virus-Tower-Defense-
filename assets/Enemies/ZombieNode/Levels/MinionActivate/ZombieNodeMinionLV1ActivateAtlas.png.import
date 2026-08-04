@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://df0tsl0xycnlx"
-path="res://.godot/imported/ZombieNodeMinionLV1ActivateAtlas.png-b9988d4443ce59eb6932ad08ee156d96.ctex"
+path.s3tc="res://.godot/imported/ZombieNodeMinionLV1ActivateAtlas.png-b9988d4443ce59eb6932ad08ee156d96.s3tc.ctex"
+path.etc2="res://.godot/imported/ZombieNodeMinionLV1ActivateAtlas.png-b9988d4443ce59eb6932ad08ee156d96.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Enemies/ZombieNode/Levels/MinionActivate/ZombieNodeMinionLV1ActivateAtlas.png"
-dest_files=["res://.godot/imported/ZombieNodeMinionLV1ActivateAtlas.png-b9988d4443ce59eb6932ad08ee156d96.ctex"]
+dest_files=["res://.godot/imported/ZombieNodeMinionLV1ActivateAtlas.png-b9988d4443ce59eb6932ad08ee156d96.s3tc.ctex", "res://.godot/imported/ZombieNodeMinionLV1ActivateAtlas.png-b9988d4443ce59eb6932ad08ee156d96.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

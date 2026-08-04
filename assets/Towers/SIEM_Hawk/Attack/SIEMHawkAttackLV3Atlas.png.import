@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://wrf8e3at34nj"
-path="res://.godot/imported/SIEMHawkAttackLV3Atlas.png-3ba6ee72f03ad523c0d258f6544db640.ctex"
+path.s3tc="res://.godot/imported/SIEMHawkAttackLV3Atlas.png-3ba6ee72f03ad523c0d258f6544db640.s3tc.ctex"
+path.etc2="res://.godot/imported/SIEMHawkAttackLV3Atlas.png-3ba6ee72f03ad523c0d258f6544db640.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Towers/SIEM_Hawk/Attack/SIEMHawkAttackLV3Atlas.png"
-dest_files=["res://.godot/imported/SIEMHawkAttackLV3Atlas.png-3ba6ee72f03ad523c0d258f6544db640.ctex"]
+dest_files=["res://.godot/imported/SIEMHawkAttackLV3Atlas.png-3ba6ee72f03ad523c0d258f6544db640.s3tc.ctex", "res://.godot/imported/SIEMHawkAttackLV3Atlas.png-3ba6ee72f03ad523c0d258f6544db640.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

@@ -2,6 +2,8 @@ extends Control
 
 const SESSION_USERNAME_META := &"logged_in_username"
 const WELCOME_PENDING_META := &"login_welcome_pending"
+const MAIN_MENU_SCENE := "res://Scenes/Menus/MainMenu.tscn"
+const ACCOUNT_RETURN_SCENE_META := &"account_return_main_menu_scene"
 
 @onready var background: TextureRect = $Background
 @onready var scanline: ColorRect = $Scanline
@@ -146,6 +148,12 @@ func _open_game_scene(scene_path: String) -> void:
 func _on_login_pressed() -> void:
 	if not _logged_in_username.is_empty():
 		status_label.text = "Opening account..."
+		var return_scene := load(MAIN_MENU_SCENE) as PackedScene
+		if return_scene != null:
+			get_tree().root.set_meta(
+				ACCOUNT_RETURN_SCENE_META,
+				return_scene
+			)
 		get_tree().change_scene_to_file("res://Scenes/Menus/AccountScene.tscn")
 		return
 

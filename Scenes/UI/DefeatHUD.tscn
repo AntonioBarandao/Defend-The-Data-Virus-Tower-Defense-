@@ -84,8 +84,19 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.055, 0.06, 0.075, 0.86)
 
-[node name="AnimatedDisplay" type="AnimatedSprite2D" parent="Root"]
-position = Vector2(960, 430)
+[node name="DisplayAnchor" type="Control" parent="Root"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="AnimatedDisplay" type="AnimatedSprite2D" parent="Root/DisplayAnchor"]
+position = Vector2(0, -110)
 scale = Vector2(1.22, 1.22)
 sprite_frames = ExtResource("2_frames")
 animation = &"defeat"

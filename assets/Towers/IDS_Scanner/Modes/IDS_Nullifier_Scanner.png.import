@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b6iddf3w8a1ic"
-path="res://.godot/imported/IDS_Nullifier_Scanner.png-69cf53bc423a30c37f49d1e340d73354.ctex"
+path.s3tc="res://.godot/imported/IDS_Nullifier_Scanner.png-69cf53bc423a30c37f49d1e340d73354.s3tc.ctex"
+path.etc2="res://.godot/imported/IDS_Nullifier_Scanner.png-69cf53bc423a30c37f49d1e340d73354.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Towers/IDS_Scanner/Modes/IDS_Nullifier_Scanner.png"
-dest_files=["res://.godot/imported/IDS_Nullifier_Scanner.png-69cf53bc423a30c37f49d1e340d73354.ctex"]
+dest_files=["res://.godot/imported/IDS_Nullifier_Scanner.png-69cf53bc423a30c37f49d1e340d73354.s3tc.ctex", "res://.godot/imported/IDS_Nullifier_Scanner.png-69cf53bc423a30c37f49d1e340d73354.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

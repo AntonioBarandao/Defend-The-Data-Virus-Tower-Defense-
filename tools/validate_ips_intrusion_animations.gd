@@ -108,7 +108,7 @@ func _run() -> void:
 func _validate_level_balance(tower: IPSIntrusionTower) -> void:
 	var expected_limits := [5, 7, 9, 11, 13]
 	var expected_ranges := [360.0, 432.0, 504.0, 576.0, 648.0]
-	var expected_speed_multipliers := [1.0, 1.15, 1.30, 1.45, 1.60]
+	var expected_speed_multipliers := [1.0, 1.45, 1.60, 1.85, 2.60]
 	var expected_durability := [1, 2, 3, 4, 5]
 	for level_index in range(5):
 		tower.level = level_index + 1

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b658jrcj1ke3f"]
 
-[ext_resource type="SpriteFrames" uid="uid://dt4dy4uuteuod" path="res://assets/Towers/Laser-Turret/LaserTurretSpriteFrames.res" id="1_frames"]
+[ext_resource type="SpriteFrames" path="res://assets/Towers/Laser-Turret/LaserTurretSpriteFrames.res" id="1_frames"]
 [ext_resource type="Script" uid="uid://crvaomqv28kb8" path="res://Scripts/Towers/laser_turret.gd" id="2_script"]
 [ext_resource type="SpriteFrames" uid="uid://b5wn6y88c7msa" path="res://assets/Towers/Laser-Turret/LaserFX/LaserTurretBeamFxSpriteFrames.tres" id="3_laser_fx"]
 [ext_resource type="Texture2D" uid="uid://boaiqtkopvk4n" path="res://assets/Towers/Laser-Turret/Plates/Laser_Turret_LV1_Plate.png" id="4_plate_lv1"]
@@ -18,13 +18,14 @@ script = ExtResource("2_script")
 [node name="TurretSpriteLevel1" type="AnimatedSprite2D" parent="RotatingVisual" unique_id=1149028378]
 visible = false
 position = Vector2(0, 79.99999)
-scale = Vector2(1.1081986, 1.1081986)
+scale = Vector2(2.6596766, 2.6596766)
 sprite_frames = ExtResource("1_frames")
 animation = &"level_1"
 autoplay = "level_1"
 
 [node name="TurretSpriteLevel2" type="AnimatedSprite2D" parent="RotatingVisual" unique_id=214102837]
 position = Vector2(-13.333333, 63.333332)
+scale = Vector2(2.4, 2.4)
 sprite_frames = ExtResource("1_frames")
 animation = &"level_2"
 autoplay = "level_2"
@@ -32,7 +33,7 @@ autoplay = "level_2"
 [node name="TurretSpriteLevel3" type="AnimatedSprite2D" parent="RotatingVisual" unique_id=314102837]
 visible = false
 position = Vector2(0, 10.000001)
-scale = Vector2(1.026751, 1.026751)
+scale = Vector2(2.4642024, 2.4642024)
 sprite_frames = ExtResource("1_frames")
 animation = &"level_3"
 autoplay = "level_3"
@@ -40,6 +41,7 @@ autoplay = "level_3"
 [node name="TurretSpriteLevel4" type="AnimatedSprite2D" parent="RotatingVisual" unique_id=414102837]
 visible = false
 position = Vector2(0, 10)
+scale = Vector2(2.4, 2.4)
 sprite_frames = ExtResource("1_frames")
 animation = &"level_4"
 autoplay = "level_4"
@@ -47,6 +49,7 @@ autoplay = "level_4"
 [node name="TurretSpriteLevel5" type="AnimatedSprite2D" parent="RotatingVisual" unique_id=514102837]
 visible = false
 position = Vector2(0, -13.333336)
+scale = Vector2(2.4, 2.4)
 sprite_frames = ExtResource("1_frames")
 animation = &"level_5"
 autoplay = "level_5"
@@ -56,10 +59,10 @@ visible = false
 z_index = 101
 position = Vector2(-3.3333435, 240.00002)
 rotation = 0.7853982
-scale = Vector2(0.99999994, 0.99999994)
+scale = Vector2(2.4, 2.4)
 sprite_frames = ExtResource("3_laser_fx")
 animation = &"Laser_Startup_Shoot"
-offset = Vector2(248, 257)
+offset = Vector2(103.333336, 107.083336)
 
 [node name="Level1Plate" type="Sprite2D" parent="." unique_id=94239434]
 visible = false

@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d1s8ip74w0scw"
-path="res://.godot/imported/IPS_Intrusion_Factory_LV4_atlas_12fps.png-bab7b2252d76d7c55a108ecd8abbfb8f.ctex"
+path.s3tc="res://.godot/imported/IPS_Intrusion_Factory_LV4_atlas_12fps.png-bab7b2252d76d7c55a108ecd8abbfb8f.s3tc.ctex"
+path.etc2="res://.godot/imported/IPS_Intrusion_Factory_LV4_atlas_12fps.png-bab7b2252d76d7c55a108ecd8abbfb8f.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Towers/IPS_Intrusion/Animations/Factory/IPS_Intrusion_Factory_LV4_atlas_12fps.png"
-dest_files=["res://.godot/imported/IPS_Intrusion_Factory_LV4_atlas_12fps.png-bab7b2252d76d7c55a108ecd8abbfb8f.ctex"]
+dest_files=["res://.godot/imported/IPS_Intrusion_Factory_LV4_atlas_12fps.png-bab7b2252d76d7c55a108ecd8abbfb8f.s3tc.ctex", "res://.godot/imported/IPS_Intrusion_Factory_LV4_atlas_12fps.png-bab7b2252d76d7c55a108ecd8abbfb8f.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

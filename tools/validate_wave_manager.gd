@@ -128,11 +128,21 @@ func _initialize() -> void:
 		):
 			return
 
-		var expected_red_count := 5 + ((wave_number - 1) * 2)
+		var full_volume_red_count := (
+			60
+			if wave_number == 1
+			else 100 + ((wave_number - 2) * 8)
+		)
+		var expected_red_count := (
+			roundi(float(full_volume_red_count) / 3.0)
+			if wave_number <= 15
+			else full_volume_red_count
+		)
 		if not _require(
 			manager.get_virus_amount(wave_number, WaveManagerScript.RED_VIRUS)
 				== expected_red_count,
-			"Wave %d did not retain its red-virus progression." % wave_number
+			"Wave %d did not retain its configured red-virus progression."
+				% wave_number
 		):
 			return
 
@@ -174,6 +184,16 @@ func _initialize() -> void:
 	):
 		return
 
+	if not _require(
+		manager.get_virus_amount(6, WaveManagerScript.TROJAN_HORSE) > 0
+			and manager.get_virus_amount(8, WaveManagerScript.ARMORED_VIRUS) > 0
+			and manager.get_virus_amount(14, WaveManagerScript.ADWARE) > 0
+			and manager.get_virus_amount(14, WaveManagerScript.MUTANT_VIRUS) > 0
+			and manager.get_virus_amount(18, WaveManagerScript.SPYWARE) > 0,
+		"Post-introduction waves are missing their elite and miniboss mix."
+	):
+		return
+
 	var game_script := load("res://Scripts/Gameplay/game.gd") as Script
 	if not _require(
 		game_script != null and game_script.can_instantiate(),
@@ -183,7 +203,8 @@ func _initialize() -> void:
 
 	print(
 		"Wave manager validation passed: 25 complete waves, three named leaders, "
-		+ "three phase markers, progressive boss levels, and even schedules are valid."
+		+ "balanced volume, recurring minibosses, progressive boss levels, "
+		+ "and even schedules are valid."
 	)
 	quit(0)
 

@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ck757east6n1w"
-path="res://.godot/imported/Cyberguardian_Signal_Boost_Active_atlas_24fps.png-704b8669c200ff753cc5209259d4462d.ctex"
+path.s3tc="res://.godot/imported/Cyberguardian_Signal_Boost_Active_atlas_24fps.png-704b8669c200ff753cc5209259d4462d.s3tc.ctex"
+path.etc2="res://.godot/imported/Cyberguardian_Signal_Boost_Active_atlas_24fps.png-704b8669c200ff753cc5209259d4462d.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Towers/CyberGuardian/Modes/SignalBoost/Active/Cyberguardian_Signal_Boost_Active_atlas_24fps.png"
-dest_files=["res://.godot/imported/Cyberguardian_Signal_Boost_Active_atlas_24fps.png-704b8669c200ff753cc5209259d4462d.ctex"]
+dest_files=["res://.godot/imported/Cyberguardian_Signal_Boost_Active_atlas_24fps.png-704b8669c200ff753cc5209259d4462d.s3tc.ctex", "res://.godot/imported/Cyberguardian_Signal_Boost_Active_atlas_24fps.png-704b8669c200ff753cc5209259d4462d.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

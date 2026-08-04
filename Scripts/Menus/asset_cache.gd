@@ -17,10 +17,10 @@ var _pending_paths: Dictionary = {}
 
 func _ready() -> void:
 	set_process(false)
-	load_startup_resources()
 
 
 func load_startup_resources() -> void:
+	# Kept as the public demand-load entry point used by Cyber Guardian instances.
 	_request_threaded_load(CYBER_GUARDIAN_SPRITE_FRAMES_PATH)
 	set_process(not _pending_paths.is_empty())
 

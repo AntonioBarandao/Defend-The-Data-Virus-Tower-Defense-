@@ -1,6 +1,8 @@
 class_name XDRMechTower
 extends Node2D
 
+const GameplaySafeArea := preload("res://Scripts/Gameplay/gameplay_safe_area.gd")
+
 const CentralAudioResolver := preload("res://Scripts/Audio/audio_player_resolver.gd")
 
 signal placed(tower: XDRMechTower)
@@ -2014,7 +2016,7 @@ func _clamp_dispatch_position_to_viewport(world_position: Vector2) -> Vector2:
 		return world_position
 
 	var screen_position := canvas_transform * world_position
-	var viewport_rect := get_viewport().get_visible_rect()
+	var viewport_rect := GameplaySafeArea.get_centered_screen_rect(get_viewport())
 	var world_size := interaction_size * Vector2(absf(global_scale.x), absf(global_scale.y))
 	var radius := maxf(world_size.x, world_size.y) * 0.5 + viewport_border_padding
 	var minimum := viewport_rect.position + Vector2.ONE * radius

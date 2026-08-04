@@ -10,7 +10,7 @@ func _init() -> void:
 				"atlas": "res://assets/Towers/CyberGuardian/Idle/Cyber-Guardian_Idle1_atlas_30fps.png",
 				"frame_count": 151,
 				"columns": 13,
-				"frame_size": Vector2i(720, 720),
+				"frame_size": Vector2i(300, 300),
 				"fps": 30.0,
 				"loop": true
 			},
@@ -19,7 +19,7 @@ func _init() -> void:
 				"atlas": "res://assets/Towers/CyberGuardian/SummonAnim/CyberGuardian_Summon1_atlas_30fps.png",
 				"frame_count": 91,
 				"columns": 10,
-				"frame_size": Vector2i(720, 720),
+				"frame_size": Vector2i(300, 300),
 				"fps": 30.0,
 				"loop": false
 			},
@@ -28,7 +28,7 @@ func _init() -> void:
 				"atlas": "res://assets/Towers/CyberGuardian/ShootAnim/CyberGuardian_Attack1_atlas_30fps.png",
 				"frame_count": 151,
 				"columns": 13,
-				"frame_size": Vector2i(720, 720),
+				"frame_size": Vector2i(300, 300),
 				"fps": 30.0,
 				"loop": false
 			}
@@ -42,7 +42,7 @@ func _init() -> void:
 				"atlas": "res://assets/Towers/Laser-Turret/Idle/Laser_Turret_LV1_Baseless_Idle_atlas_30fps.png",
 				"frame_count": 91,
 				"columns": 10,
-				"frame_size": Vector2i(720, 720),
+				"frame_size": Vector2i(300, 300),
 				"fps": 30.0,
 				"loop": true
 			},
@@ -51,7 +51,7 @@ func _init() -> void:
 				"atlas": "res://assets/Towers/Laser-Turret/Idle/Laser_Turret_LV2_Baseless_Idle_atlas_30fps.png",
 				"frame_count": 91,
 				"columns": 10,
-				"frame_size": Vector2i(720, 720),
+				"frame_size": Vector2i(300, 300),
 				"fps": 30.0,
 				"loop": true
 			},
@@ -60,7 +60,7 @@ func _init() -> void:
 				"atlas": "res://assets/Towers/Laser-Turret/Idle/Laser_Turret_LV3_Baseless_Idle_atlas_30fps.png",
 				"frame_count": 91,
 				"columns": 10,
-				"frame_size": Vector2i(720, 720),
+				"frame_size": Vector2i(300, 300),
 				"fps": 30.0,
 				"loop": true
 			},
@@ -69,7 +69,7 @@ func _init() -> void:
 				"atlas": "res://assets/Towers/Laser-Turret/Idle/Laser_Turret_LV4_Baseless_Idle_atlas_30fps.png",
 				"frame_count": 91,
 				"columns": 10,
-				"frame_size": Vector2i(720, 720),
+				"frame_size": Vector2i(300, 300),
 				"fps": 30.0,
 				"loop": true
 			},
@@ -78,54 +78,9 @@ func _init() -> void:
 				"atlas": "res://assets/Towers/Laser-Turret/Idle/Laser_Turret_LV5_Baseless_Idle_atlas_30fps.png",
 				"frame_count": 91,
 				"columns": 10,
-				"frame_size": Vector2i(720, 720),
+				"frame_size": Vector2i(300, 300),
 				"fps": 30.0,
 				"loop": true
-			}
-		]
-	)
-	_save_sprite_frames(
-		"res://assets/Enemies/RedVirus/RedVirusSpriteFrames.res",
-		[
-			{
-				"name": &"idle",
-				"atlas": "res://assets/Enemies/RedVirus/Idle/Red_Virus_Idle_720.png",
-				"frame_count": 1,
-				"columns": 1,
-				"frame_size": Vector2i(720, 720),
-				"fps": 1.0,
-				"loop": true
-			},
-			{
-				"name": &"destroy",
-				"fps": 30.0,
-				"loop": false,
-				"pages": [
-					{
-						"atlas": "res://assets/Enemies/RedVirus/Destroy/Red_Virus_Destroy_atlas_30fps_p01.png",
-						"frame_count": 25,
-						"columns": 5,
-						"frame_size": Vector2i(720, 720)
-					},
-					{
-						"atlas": "res://assets/Enemies/RedVirus/Destroy/Red_Virus_Destroy_atlas_30fps_p02.png",
-						"frame_count": 25,
-						"columns": 5,
-						"frame_size": Vector2i(720, 720)
-					},
-					{
-						"atlas": "res://assets/Enemies/RedVirus/Destroy/Red_Virus_Destroy_atlas_30fps_p03.png",
-						"frame_count": 25,
-						"columns": 5,
-						"frame_size": Vector2i(720, 720)
-					},
-					{
-						"atlas": "res://assets/Enemies/RedVirus/Destroy/Red_Virus_Destroy_atlas_30fps_p04.png",
-						"frame_count": 16,
-						"columns": 4,
-						"frame_size": Vector2i(720, 720)
-					}
-				]
 			}
 		]
 	)

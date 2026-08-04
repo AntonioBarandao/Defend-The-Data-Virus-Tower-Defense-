@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c52ke2x6eylyl"
-path="res://.godot/imported/Cyber_Guardian_Firewall_Sprite.png-ac26c5129c7a0c7d86475b33de3bb207.ctex"
+path.s3tc="res://.godot/imported/Cyber_Guardian_Firewall_Sprite.png-ac26c5129c7a0c7d86475b33de3bb207.s3tc.ctex"
+path.etc2="res://.godot/imported/Cyber_Guardian_Firewall_Sprite.png-ac26c5129c7a0c7d86475b33de3bb207.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Towers/CyberGuardian/Modes/Cyber_Guardian_Firewall_Sprite.png"
-dest_files=["res://.godot/imported/Cyber_Guardian_Firewall_Sprite.png-ac26c5129c7a0c7d86475b33de3bb207.ctex"]
+dest_files=["res://.godot/imported/Cyber_Guardian_Firewall_Sprite.png-ac26c5129c7a0c7d86475b33de3bb207.s3tc.ctex", "res://.godot/imported/Cyber_Guardian_Firewall_Sprite.png-ac26c5129c7a0c7d86475b33de3bb207.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

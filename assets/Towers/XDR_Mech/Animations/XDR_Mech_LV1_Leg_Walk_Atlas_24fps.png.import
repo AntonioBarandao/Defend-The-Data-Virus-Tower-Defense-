@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d13lmvfkfmnjl"
-path="res://.godot/imported/XDR_Mech_LV1_Leg_Walk_Atlas_24fps.png-d57afaaea9121b83016691359bf8a910.ctex"
+path.s3tc="res://.godot/imported/XDR_Mech_LV1_Leg_Walk_Atlas_24fps.png-d57afaaea9121b83016691359bf8a910.s3tc.ctex"
+path.etc2="res://.godot/imported/XDR_Mech_LV1_Leg_Walk_Atlas_24fps.png-d57afaaea9121b83016691359bf8a910.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Towers/XDR_Mech/Animations/XDR_Mech_LV1_Leg_Walk_Atlas_24fps.png"
-dest_files=["res://.godot/imported/XDR_Mech_LV1_Leg_Walk_Atlas_24fps.png-d57afaaea9121b83016691359bf8a910.ctex"]
+dest_files=["res://.godot/imported/XDR_Mech_LV1_Leg_Walk_Atlas_24fps.png-d57afaaea9121b83016691359bf8a910.s3tc.ctex", "res://.godot/imported/XDR_Mech_LV1_Leg_Walk_Atlas_24fps.png-d57afaaea9121b83016691359bf8a910.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

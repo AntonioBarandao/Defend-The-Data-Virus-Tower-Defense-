@@ -800,7 +800,7 @@ func _initialize() -> void:
 	var gameplay := gameplay_scene.instantiate()
 	if not _require(gameplay.get_node_or_null("Sprites/XDR_Mech") is XDRMechTower, "The gameplay XDR store prototype is missing."):
 		return
-	var card := gameplay.get_node_or_null("TestDrag/XDRMechCard") as TowerShopCard
+	var card := gameplay.get_node_or_null("TowerStoreHUD/TestDrag/XDRMechCard") as TowerShopCard
 	if not _require(card != null, "The authored XDR tower card is missing."):
 		return
 	var card_resource := card.get("card_resource") as TowerShopCardResource

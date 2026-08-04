@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cv2euv8rlcgb7"
-path="res://.godot/imported/AntiCyberguardianStrugglePantingAtlas.webp-a4354cf088761ea830bbe5a306f4ac47.ctex"
+path.s3tc="res://.godot/imported/AntiCyberguardianStrugglePantingAtlas.webp-a4354cf088761ea830bbe5a306f4ac47.s3tc.ctex"
+path.etc2="res://.godot/imported/AntiCyberguardianStrugglePantingAtlas.webp-a4354cf088761ea830bbe5a306f4ac47.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Enemies/AntiCyberguardian/Animations/AntiCyberguardianStrugglePantingAtlas.webp"
-dest_files=["res://.godot/imported/AntiCyberguardianStrugglePantingAtlas.webp-a4354cf088761ea830bbe5a306f4ac47.ctex"]
+dest_files=["res://.godot/imported/AntiCyberguardianStrugglePantingAtlas.webp-a4354cf088761ea830bbe5a306f4ac47.s3tc.ctex", "res://.godot/imported/AntiCyberguardianStrugglePantingAtlas.webp-a4354cf088761ea830bbe5a306f4ac47.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://Scenes/Gameplay/Normal_Game.tscn" id="1_normal_game"]
-[ext_resource type="AudioStream" uid="uid://bpts0mu1imbfp" path="res://assets/soundtrack/Virtual Business.wav" id="2_virtual_business"]
+[ext_resource type="AudioStream" path="res://assets/soundtrack/Virtual Business.ogg" id="2_virtual_business"]
 
 [node name="AdminSandbox" instance=ExtResource("1_normal_game")]
 admin_mode = true
@@ -26,10 +26,10 @@ tooltip_text = "Set the current wave from 0 to 25"
 placeholder_text = "0 - 25"
 max_length = 2
 
-[editable path="TestDrag/CyberGuardianCard"]
-[editable path="TestDrag/LaserTurretCard"]
-[editable path="TestDrag/IDSScannerCard"]
-[editable path="TestDrag/EDRHunterCard"]
-[editable path="TestDrag/SIEMHawkCard"]
-[editable path="TestDrag/IPSIntrusionCard"]
-[editable path="TestDrag/HoneypotProductionCard"]
+[editable path="TowerStoreHUD/TestDrag/CyberGuardianCard"]
+[editable path="TowerStoreHUD/TestDrag/LaserTurretCard"]
+[editable path="TowerStoreHUD/TestDrag/IDSScannerCard"]
+[editable path="TowerStoreHUD/TestDrag/EDRHunterCard"]
+[editable path="TowerStoreHUD/TestDrag/SIEMHawkCard"]
+[editable path="TowerStoreHUD/TestDrag/IPSIntrusionCard"]
+[editable path="TowerStoreHUD/TestDrag/HoneypotProductionCard"]

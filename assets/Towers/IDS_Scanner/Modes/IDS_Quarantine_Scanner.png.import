@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://de8rk6dmegkss"
-path="res://.godot/imported/IDS_Quarantine_Scanner.png-2a76f722b589be65cff8ccc9c20066c3.ctex"
+path.s3tc="res://.godot/imported/IDS_Quarantine_Scanner.png-2a76f722b589be65cff8ccc9c20066c3.s3tc.ctex"
+path.etc2="res://.godot/imported/IDS_Quarantine_Scanner.png-2a76f722b589be65cff8ccc9c20066c3.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/Towers/IDS_Scanner/Modes/IDS_Quarantine_Scanner.png"
-dest_files=["res://.godot/imported/IDS_Quarantine_Scanner.png-2a76f722b589be65cff8ccc9c20066c3.ctex"]
+dest_files=["res://.godot/imported/IDS_Quarantine_Scanner.png-2a76f722b589be65cff8ccc9c20066c3.s3tc.ctex", "res://.godot/imported/IDS_Quarantine_Scanner.png-2a76f722b589be65cff8ccc9c20066c3.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

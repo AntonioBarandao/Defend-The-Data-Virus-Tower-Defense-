@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bm6812ek60efy"
-path="res://.godot/imported/Kernal_Bob.png-39c01f7734e37e4d4b562b69d0d856a8.ctex"
+path.s3tc="res://.godot/imported/Kernal_Bob.png-39c01f7734e37e4d4b562b69d0d856a8.s3tc.ctex"
+path.etc2="res://.godot/imported/Kernal_Bob.png-39c01f7734e37e4d4b562b69d0d856a8.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/LoadingScreen/Kernal_Bob.png"
-dest_files=["res://.godot/imported/Kernal_Bob.png-39c01f7734e37e4d4b562b69d0d856a8.ctex"]
+dest_files=["res://.godot/imported/Kernal_Bob.png-39c01f7734e37e4d4b562b69d0d856a8.s3tc.ctex", "res://.godot/imported/Kernal_Bob.png-39c01f7734e37e4d4b562b69d0d856a8.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

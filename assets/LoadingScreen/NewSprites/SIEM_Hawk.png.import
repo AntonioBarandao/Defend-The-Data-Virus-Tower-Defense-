@@ -3,19 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cdm1t6og20f6g"
-path="res://.godot/imported/SIEM_Hawk.png-7169f9a2bf87ae3cd4bac7fd8a084e2e.ctex"
+path.s3tc="res://.godot/imported/SIEM_Hawk.png-7169f9a2bf87ae3cd4bac7fd8a084e2e.s3tc.ctex"
+path.etc2="res://.godot/imported/SIEM_Hawk.png-7169f9a2bf87ae3cd4bac7fd8a084e2e.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/LoadingScreen/NewSprites/SIEM_Hawk.png"
-dest_files=["res://.godot/imported/SIEM_Hawk.png-7169f9a2bf87ae3cd4bac7fd8a084e2e.ctex"]
+dest_files=["res://.godot/imported/SIEM_Hawk.png-7169f9a2bf87ae3cd4bac7fd8a084e2e.s3tc.ctex", "res://.godot/imported/SIEM_Hawk.png-7169f9a2bf87ae3cd4bac7fd8a084e2e.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

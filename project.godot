@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Defend The Data"
-run/main_scene="uid://day3pew2qansw"
+run/main_scene="res://Scenes/Menus/MainMenu.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 run/max_fps=60
 config/icon="res://icon.svg"
@@ -66,4 +66,5 @@ virtual_controller/ios/enable_button_y=true
 
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="mobile"
+textures/vram_compression/import_s3tc_bptc=true
 textures/vram_compression/import_etc2_astc=true

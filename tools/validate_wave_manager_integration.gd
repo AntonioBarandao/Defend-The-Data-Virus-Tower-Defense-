@@ -21,9 +21,9 @@ func _run() -> void:
 	):
 		return
 	if not _require(
-		int(game.get("_wave_spawns_remaining")) == 5
-			and (game.get("_wave_spawn_schedule") as Array).size() == 5,
-		"Wave 1 did not receive its five configured red-virus spawns."
+		int(game.get("_wave_spawns_remaining")) == 20
+			and (game.get("_wave_spawn_schedule") as Array).size() == 20,
+		"Wave 1 did not receive its 20 configured red-virus spawns."
 	):
 		return
 	if not _require(
@@ -54,7 +54,7 @@ func _run() -> void:
 
 	game.call("_update_wave_spawner", 0.0)
 	if not _require(
-		int(game.get("_wave_spawns_remaining")) == 4
+		int(game.get("_wave_spawns_remaining")) == 19
 			and (game.get("_active_viruses") as Array).size() == 1,
 		"The gameplay spawner did not consume the first WaveManager queue entry."
 	):
@@ -62,7 +62,7 @@ func _run() -> void:
 
 	print(
 		"Wave manager integration passed: game.gd starts wave 1 with "
-		+ "five spawns distributed over 15 seconds."
+		+ "20 spawns distributed over 15 seconds."
 	)
 	game.queue_free()
 	quit(0)

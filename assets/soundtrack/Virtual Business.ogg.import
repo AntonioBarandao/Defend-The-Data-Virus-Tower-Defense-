@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://dr7g01kr8ll72"
+path="res://.godot/imported/Virtual Business.ogg-e628243447d95564622a0615e5c956ed.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/soundtrack/Virtual Business.ogg"
+dest_files=["res://.godot/imported/Virtual Business.ogg-e628243447d95564622a0615e5c956ed.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -15,7 +15,10 @@ func _run() -> void:
 	await process_frame
 
 	var overlay := hud.get_node("Root/DimOverlay") as ColorRect
-	var animation := hud.get_node("Root/AnimatedDisplay") as AnimatedSprite2D
+	var display_anchor := hud.get_node("Root/DisplayAnchor") as Control
+	var animation := hud.get_node(
+		"Root/DisplayAnchor/AnimatedDisplay"
+	) as AnimatedSprite2D
 	var play_again := hud.get_node("Root/PlayAgainButton") as Button
 	var quit_game := hud.get_node("Root/QuitGameButton") as Button
 	var frames := animation.sprite_frames
@@ -23,6 +26,12 @@ func _run() -> void:
 	_check(frames.get_frame_count(&"defeat") == 145, "Defeat animation must contain 145 frames.")
 	_check(is_equal_approx(frames.get_animation_speed(&"defeat"), 24.0), "Defeat animation must play at the source 24 FPS.")
 	_check(not frames.get_animation_loop(&"defeat"), "Defeat animation must not loop.")
+	_check(
+		display_anchor.get_global_rect().get_center().distance_to(
+			root.get_visible_rect().get_center()
+		) <= 0.5,
+		"Defeat display anchor must remain centered in the viewport."
+	)
 
 	paused = true
 	hud.show_defeat()
